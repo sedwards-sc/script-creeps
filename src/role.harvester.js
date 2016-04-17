@@ -23,7 +23,9 @@ module.exports = {
 	    }
 	    
 	    if (creep.carry.energy == 0) {
-	        //creep.say('I\'m empty!');
+			if(creep.memory.state == 1) {
+				creep.say('I\'m empty!');
+			}
 	        creep.memory.state = 0;
 	    }
 	    
