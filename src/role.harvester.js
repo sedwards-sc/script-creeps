@@ -16,7 +16,9 @@ module.exports = {
 	    }
 	    
 	    if(creep.carry.energy == creep.carryCapacity) {
-	        //creep.say('I\'m full!');
+			if(creep.memory.state == 0) {
+				creep.say('I\'m full!');
+			}
 	        creep.memory.state = 1;
 	    }
 	    
