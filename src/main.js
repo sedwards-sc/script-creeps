@@ -83,8 +83,8 @@ module.exports.loop = function () {
     //var sources = Game.room.find(FIND_SOURCES);
     //console.log("source length" + sources.length);
 
-    for(var name in Game.creeps) {
-        var creep = Game.creeps[name];
+    for(var creepName in Game.creeps) {
+        var creep = Game.creeps[creepName];
         if(creep.memory.role == 'harvester') {
             roleHarvester.run(creep);
         }
