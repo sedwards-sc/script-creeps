@@ -26,28 +26,36 @@ module.exports.loop = function () {
                 }
         }
     }
-    
 
-    var harvesters = _.filter(Game.creeps, (creep) => creep.memory.role == 'harvester');
 
-    if(harvesters.length < 4) {
-		var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'harvester'});
-        console.log('Spawning new harvester: ' + newName);
-    }
+	// room spawn loop
+	for(var roomName in Game.rooms) {
+		var roomCreeps = Game.rooms[roomName].find(FIND_MY_CREEPS);
+		var roomSpawns = Game.rooms[roomName].find(FIND_MY_SPAWNS);
+		var mainSpawn = roomSpawns[0];
+		
+		var harvesters = _.filter(roomCreeps, (creep) => creep.memory.role == 'harvester');
 
-    var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
+		if(harvesters.length < 4) {
+			var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'harvester'});
+			console.log('Spawning new harvester: ' + newName);
+		}
 
-    if(builders.length < 2) {
-		var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'builder'});
-        console.log('Spawning new builder: ' + newName);
-    }
+		var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
 
-    var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
+		if(builders.length < 2) {
+			var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'builder'});
+			console.log('Spawning new builder: ' + newName);
+		}
 
-    if(upgraders.length < 2) {
-		var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'});
-        console.log('Spawning new upgrader: ' + newName);
-    }
+		var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
+
+		if(upgraders.length < 2) {
+			var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'});
+			console.log('Spawning new upgrader: ' + newName);
+		}
+	}
+
 
 	// run creep loop
     for(var creepName in Game.creeps) {
