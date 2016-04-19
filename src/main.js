@@ -31,27 +31,28 @@ module.exports.loop = function () {
 	// room spawn loop
 	for(var roomName in Game.rooms) {
 		var roomCreeps = Game.rooms[roomName].find(FIND_MY_CREEPS);
+		//var roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
 		var roomSpawns = Game.rooms[roomName].find(FIND_MY_SPAWNS);
 		var mainSpawn = roomSpawns[0];
 		
 		var harvesters = _.filter(roomCreeps, (creep) => creep.memory.role == 'harvester');
 
 		if(harvesters.length < 4) {
-			var newName = mainSpawn.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'harvester'});
+			var newName = mainSpawn.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'harvester', spawnRoom: roomName});
 			console.log('Spawning new harvester: ' + newName);
 		}
 
 		var builders = _.filter(roomCreeps, (creep) => creep.memory.role == 'builder');
 
 		if(builders.length < 2) {
-			var newName = mainSpawn.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'builder'});
+			var newName = mainSpawn.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'builder', spawnRoom: roomName});
 			console.log('Spawning new builder: ' + newName);
 		}
 
 		var upgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'upgrader');
 
 		if(upgraders.length < 2) {
-			var newName = mainSpawn.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'});
+			var newName = mainSpawn.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader', spawnRoom: roomName});
 			console.log('Spawning new upgrader: ' + newName);
 		}
 	}
