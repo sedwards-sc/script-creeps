@@ -5,12 +5,15 @@ var roleDefender = require('role.defender');
 
 module.exports.loop = function () {
 
+	// loop to clean dead creeps out of memory
     for(var name in Memory.creeps) {
         if(!Game.creeps[name]) {
             delete Memory.creeps[name];
         }
     }
     
+	
+	// room defence loop
     for(var name in Game.rooms) {
         defendRoom(name);
         var hostiles = Game.rooms[name].find(FIND_HOSTILE_CREEPS);
@@ -46,7 +49,7 @@ module.exports.loop = function () {
         console.log('Spawning new upgrader: ' + newName);
     }
 
-
+	// run creep loop
     for(var creepName in Game.creeps) {
         var creep = Game.creeps[creepName];
         if(creep.memory.role == 'harvester') {
@@ -78,16 +81,16 @@ function defendRoom(roomName) {
     }
 }
 
-//##old ingredients
-//#harvester
+// ##old ingredients
+// #harvester
         //var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'harvester'});
         //var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'harvester'});
         //var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE], undefined, {role: 'harvester'});
-//#upgrader
+// #upgrader
         //var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'builder'});
         //var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'builder'});
         //var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE], undefined, {role: 'builder'});
-//#builder
+// #builder
         //var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'});
         //var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'});
         //var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'});
