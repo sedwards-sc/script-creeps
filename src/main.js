@@ -41,14 +41,14 @@ module.exports.loop = function () {
 			console.log('Spawning new harvester: ' + newName);
 		}
 
-		var builders = _.filter(Game.creeps, (creep) => creep.memory.role == 'builder');
+		var builders = _.filter(roomCreeps, (creep) => creep.memory.role == 'builder');
 
 		if(builders.length < 2) {
 			var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'builder'});
 			console.log('Spawning new builder: ' + newName);
 		}
 
-		var upgraders = _.filter(Game.creeps, (creep) => creep.memory.role == 'upgrader');
+		var upgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'upgrader');
 
 		if(upgraders.length < 2) {
 			var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'upgrader'});
