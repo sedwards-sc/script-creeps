@@ -30,10 +30,12 @@ module.exports.loop = function () {
 
 	// room spawn loop
 	for(var roomName in Game.rooms) {
-		var roomCreeps = Game.rooms[roomName].find(FIND_MY_CREEPS);
-		//var roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
+		// find room spawns
 		var roomSpawns = Game.rooms[roomName].find(FIND_MY_SPAWNS);
 		var mainSpawn = roomSpawns[0];
+	
+		// find room creeps
+		var roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
 		
 		var harvesters = _.filter(roomCreeps, (creep) => creep.memory.role == 'harvester');
 
