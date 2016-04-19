@@ -83,21 +83,27 @@ module.exports.loop = function () {
     //var sources = Game.room.find(FIND_SOURCES);
     //console.log("source length" + sources.length);
 
-    for(var name in Game.creeps) {
-        var creep = Game.creeps[name];
-        if(creep.memory.role == 'harvester') {
-            roleHarvester.run(creep);
-        }
-        if(creep.memory.role == 'upgrader') {
-            roleUpgrader.run(creep);
-        }
-        if(creep.memory.role == 'builder') {
-            roleBuilder.run(creep);
-        }
-        if(creep.memory.role == 'defender') {
-            roleDefender.run(creep);
-        }
-    }
+	for(var roomName in Game.rooms) {
+		var currentRoom = Game.rooms[roomName];
+		
+		for(var creepName in currentRoom.creeps) {
+			var currentCreep = currentRoom.creeps[creepName];
+			
+			if(currentCreep.memory.role == 'harvester') {
+				roleHarvester.run(currentCreep);
+			}
+			if(currentCreep.memory.role == 'builder') {
+				roleBuilder.run(currentCreep);
+			}
+			if(currentCreep.memory.role == 'upgrader') {
+				roleUpgrader.run(currentCreep);
+			}
+			if(currentCreep.memory.role == 'defender') {
+				roleDefender.run(currentCreep);
+			}
+		}
+	}
+
 }
 
 function defendRoom(roomName) {
