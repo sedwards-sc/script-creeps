@@ -30,14 +30,15 @@ module.exports = {
 	    }
 	    
 	    if(creep.memory.state == 0) {
-	        //harvest
-	        var source = creep.pos.findClosestByPath
+	        // harvest
+			// TODO: find closest source
+	        //var source = creep.pos.findClosestByPath
             var sources = creep.room.find(FIND_SOURCES);
             if(creep.harvest(sources[1]) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(sources[1]);
             }
         } else {
-            //transfer energy
+            // transfer energy
 /*
              var targets = creep.room.find(FIND_STRUCTURES, {
                     filter: (structure) => {
@@ -70,14 +71,14 @@ module.exports = {
                     creep.moveTo(targets[0]);
                 }
             } else {
-                //build
+                // build
                 var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
                 if(targets.length) {
                     if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(targets[0]);
                     }
                 } else {
-                    //else upgrade
+                    // else upgrade
                     if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(creep.room.controller);
                     }
