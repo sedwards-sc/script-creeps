@@ -53,6 +53,7 @@ module.exports = {
 					});
 				}
 			} else {
+				closestTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
 						filter: (structure) => {
 							return (structure.structureType == STRUCTURE_EXTENSION ||
 									structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
@@ -61,6 +62,7 @@ module.exports = {
 			}
 
 			if(!closestTarget) {
+				closestTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
 						filter: (structure) => {
 							return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
 						}
