@@ -35,26 +35,41 @@ module.exports = {
         } else {
             // transfer energy
             
-			var closestExtensionTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-					filter: (structure) => {
-						return (structure.structureType == STRUCTURE_EXTENSION) && structure.energy < structure.energyCapacity;
-					}
-			});
+			var closestTarget;
 
-            var targets = creep.room.find(FIND_STRUCTURES, {
-                    filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_SPAWN ||
-                                structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
-                    }
-            });
+			// if room energy is < 300, fill extensions first so spawn can generate energy
+			if(creep.room.energyAvailable < 300) {
+				closestTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+						filter: (structure) => {
+							return (structure.structureType == STRUCTURE_EXTENSION) && structure.energy < structure.energyCapacity;
+						}
+				});
+				
+				if(!closestTarget) {
+					closestTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+							filter: (structure) => {
+								return (structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
+							}
+					});
+				}
+			} else {
+						filter: (structure) => {
+							return (structure.structureType == STRUCTURE_EXTENSION ||
+									structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
+						}
+				});
+			}
+
+			if(!closestTarget) {
+						filter: (structure) => {
+							return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+						}
+				});
+			}
             
-            if(closestExtensionTarget) {
-                if(creep.transfer(closestExtensionTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(closestExtensionTarget);
-                }
-            } else if(targets.length > 0) {
-                if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targets[0]);
+            if(closestTarget) {
+                if(creep.transfer(closestTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(closestTarget);
                 }
             } else {
                 // build
