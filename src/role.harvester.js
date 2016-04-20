@@ -1,10 +1,5 @@
 /*
- * Module code goes here. Use 'module.exports' to export things:
- * module.exports.thing = 'a thing';
- *
- * You can import it from another modules like this:
- * var mod = require('role.harvester');
- * mod.thing == 'a thing'; // true
+ * role.harvester
  */
 
 module.exports = {
@@ -39,22 +34,13 @@ module.exports = {
             }
         } else {
             // transfer energy
-/*
-             var targets = creep.room.find(FIND_STRUCTURES, {
-                    filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_EXTENSION ||
-                                structure.structureType == STRUCTURE_SPAWN ||
-                                structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
-                    }
-            });
-*/
             
-            var extensionTargets = creep.room.find(FIND_STRUCTURES, {
-                    filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_EXTENSION) && structure.energy < structure.energyCapacity;
-                    }
-            });
-            
+			var closestExtensionTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+					filter: (structure) => {
+						return (structure.structureType == STRUCTURE_EXTENSION) && structure.energy < structure.energyCapacity;
+					}
+			});
+
             var targets = creep.room.find(FIND_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_SPAWN ||
@@ -62,9 +48,9 @@ module.exports = {
                     }
             });
             
-            if(extensionTargets.length > 0) {
-                if(creep.transfer(extensionTargets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(extensionTargets[0]);
+            if(closestExtensionTarget) {
+                if(creep.transfer(closestExtensionTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(closestExtensionTarget);
                 }
             } else if(targets.length > 0) {
                 if(creep.transfer(targets[0], RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
@@ -87,3 +73,21 @@ module.exports = {
         }
 	}
 };
+
+/*
+             var targets = creep.room.find(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return (structure.structureType == STRUCTURE_EXTENSION ||
+                                structure.structureType == STRUCTURE_SPAWN ||
+                                structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+                    }
+            });
+*/
+
+/*
+            var extensionTargets = creep.room.find(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return (structure.structureType == STRUCTURE_EXTENSION) && structure.energy < structure.energyCapacity;
+                    }
+            });
+*/
