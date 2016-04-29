@@ -96,7 +96,20 @@ function defendRoom(roomName) {
         var towers = Game.rooms[roomName].find(
             FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
         towers.forEach(tower => tower.attack(hostiles[0]));
-    }
+    } else {
+		
+		var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {filter: {structureType: STRUCTURE_WALL}});
+		console.log(walls);
+/*
+		var repairTargets = Game.rooms[roomName].find(FIND_STRUCTURES, {
+				filter: (structure) => {
+					return (structure.structureType == STRUCTURE_EXTENSION ||
+							structure.structureType == STRUCTURE_SPAWN ||
+							structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+				}
+		});
+*/
+	}
 }
 
 // ##old ingredients
