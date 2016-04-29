@@ -98,7 +98,12 @@ function defendRoom(roomName) {
         towers.forEach(tower => tower.attack(hostiles[0]));
     } else {
 		
-		var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {filter: {structureType: STRUCTURE_WALL}});
+		//var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {filter: {structureType: STRUCTURE_WALL}});
+		var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
+				filter: (structure) => {
+					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 100;
+				}
+		});
 		console.log(walls);
 /*
 		var repairTargets = Game.rooms[roomName].find(FIND_STRUCTURES, {
