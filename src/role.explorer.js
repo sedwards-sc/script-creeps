@@ -22,7 +22,7 @@ module.exports = {
 			creep.memory.state = 1;
 		}
 		
-		if(creep.carry.energy === creep.carryCapacity) {
+		if((creep.memory.state === 1) && (creep.carry.energy === creep.carryCapacity)) {
 			creep.say('capacity full');
 	        creep.memory.state = 2;
 	    }
@@ -32,7 +32,7 @@ module.exports = {
 			creep.memory.state = 3;
 		}
 		
-		if (creep.carry.energy === 0) {
+		if ((creep.memory.state === 3) && (creep.carry.energy === 0)) {
 			creep.say('capacity empty');
 	        creep.memory.state = 0;
 	    }
