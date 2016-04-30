@@ -42,7 +42,7 @@ module.exports = {
 			creep.moveTo(checkPointAway);
 		} else if(creep.memory.state === 1) {
 	        // harvest
-            var closeSource = creep.room.findClosestByPath(FIND_SOURCES);
+            var closeSource = creep.pos.findClosestByPath(FIND_SOURCES);
             if(creep.harvest(closeSource) === ERR_NOT_IN_RANGE) {
                 creep.moveTo(closestSource);
             }
