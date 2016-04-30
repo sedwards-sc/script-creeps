@@ -18,22 +18,22 @@ module.exports = {
 		}
 
 		if((creep.memory.state === 0) && (JSON.stringify(creep.pos) === JSON.stringify(checkPointAway))) {
-		    console.log('checkpoint away reached');
+		    creep.say('away pt');
 			creep.memory.state = 1;
 		}
 		
 		if((creep.memory.state === 1) && (creep.carry.energy === creep.carryCapacity)) {
-			creep.say('capacity full');
+			creep.say('full');
 	        creep.memory.state = 2;
 	    }
 
 		if((creep.memory.state === 2) && (JSON.stringify(creep.pos) === JSON.stringify(checkPointHome))) {
-		    console.log('checkpoint home reached');
+		    creep.say('home pt');
 			creep.memory.state = 3;
 		}
 		
 		if ((creep.memory.state === 3) && (creep.carry.energy === 0)) {
-			creep.say('capacity empty');
+			creep.say('empty');
 	        creep.memory.state = 0;
 	    }
 		
