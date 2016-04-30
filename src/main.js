@@ -45,7 +45,10 @@ module.exports.loop = function () {
 		var builders = _.filter(roomCreeps, (creep) => creep.memory.role == 'builder');
 		var upgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'upgrader');
 
-		if(Game.rooms[roomName].energyAvailable >= 950) {
+		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
+		if(Game.rooms[roomName].energyAvailable >= 1100) {
+			var currentBody = [WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+		} else if(Game.rooms[roomName].energyAvailable >= 950) {
 			var currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 		} else {
 			var currentBody = [WORK,CARRY,MOVE,MOVE];
