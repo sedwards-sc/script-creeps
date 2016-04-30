@@ -89,6 +89,9 @@ module.exports.loop = function () {
 			if(creep.memory.role == 'defender') {
 				roleDefender.run(creep);
 			}
+			if(creep.memory.role == 'explorer') {
+				roleExplorer.run(creep);
+			}
 		}
     }
 	
