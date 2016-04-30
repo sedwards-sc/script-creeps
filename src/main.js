@@ -37,6 +37,12 @@ module.exports.loop = function () {
 	for(var roomName in Game.rooms) {
 		// find room spawns
 		var roomSpawns = Game.rooms[roomName].find(FIND_MY_SPAWNS);
+		
+		// continue to next room if there are no spawns
+		if(roomSpawns.length < 1) {
+		    continue;
+		}
+		
 		var mainSpawn = roomSpawns[0];
 	
 		// find room creeps
