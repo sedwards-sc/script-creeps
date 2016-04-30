@@ -45,6 +45,7 @@ module.exports.loop = function () {
 		var harvesters = _.filter(roomCreeps, (creep) => creep.memory.role == 'harvester');
 		var builders = _.filter(roomCreeps, (creep) => creep.memory.role == 'builder');
 		var upgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'upgrader');
+		var explorers = _.filter(roomCreeps, (creep) => creep.memory.role == 'explorer');
 
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
 		if(Game.rooms[roomName].energyAvailable >= 1100) {
@@ -64,6 +65,9 @@ module.exports.loop = function () {
 		} else if(upgraders.length < 2) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'upgrader', spawnRoom: roomName});
 			console.log('Spawning new upgrader: ' + newName);
+		} else if(explorers.length < 1) {
+			var newName = mainSpawn.createCreep([WORK,MOVE,CARRY,MOVE], undefined, {role: 'explorer', spawnRoom: roomName});
+			console.log('Spawning new explorer: ' + newName);
 		}
 	}
 
