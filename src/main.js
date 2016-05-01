@@ -119,7 +119,24 @@ function defendRoom(roomName) {
 					return (structure.structureType == STRUCTURE_WALL || structure.structureType == STRUCTURE_RAMPART) && structure.hits < 10000;
 				}
 		});
-
+		
+		var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
+				filter: (structure) => {
+					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 10000;
+				}
+		});
+		
+		var ramparts = Game.rooms[roomName].find(FIND_STRUCTURES, {
+				filter: (structure) => {
+					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 10000;
+				}
+		});
+		
+		if(ramparts.length >= 1) {
+		
+		} else if(walls.length >= 1) {
+		
+		}
 		var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
 		towers.forEach(tower => tower.repair(defenses[0]));
 	}
