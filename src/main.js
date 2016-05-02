@@ -116,19 +116,19 @@ function defendRoom(roomName) {
 		//var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {filter: {structureType: STRUCTURE_WALL}});
 		var defenses = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_WALL || structure.structureType == STRUCTURE_RAMPART) && structure.hits < 15000;
+					return (structure.structureType == STRUCTURE_WALL || structure.structureType == STRUCTURE_RAMPART) && structure.hits < 20000;
 				}
 		});
 		
 		var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 15000;
+					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 20000;
 				}
 		});
 		
 		var ramparts = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 15000;
+					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 20000;
 				}
 		});
 		
