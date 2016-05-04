@@ -132,7 +132,12 @@ function defendRoom(roomName) {
 		});
 		var sortedWalls = _.sortBy(walls, function(wall) { return wall.hits; });
 		
-		var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
+		//var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
+		var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {
+				filter: (tower) => {
+					return (tower.structureType == STRUCTURE_TOWER) && tower.energy > 400;
+				}
+		});
 		
 		if(sortedRamparts.length >= 1) {
 			towers.forEach(tower => tower.repair(sortedRamparts[0]));
