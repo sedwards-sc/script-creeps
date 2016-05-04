@@ -113,24 +113,26 @@ function defendRoom(roomName) {
         var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
         towers.forEach(tower => tower.attack(hostiles[0]));
     } else {
-		var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
-				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 35000;
-				}
-		});
-		
 		var ramparts = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
 					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 35000;
 				}
 		});
+		var sortedRamparts = _.sortBy(ramparts, function(rampart) { return rampart.hits; });
+
+		var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
+				filter: (structure) => {
+					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 35000;
+				}
+		});
+		var sortedWalls = _.sortBy(walls, function(wall) { return wall.hits; });
 		
 		var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
 		
-		if(ramparts.length >= 1) {
-			towers.forEach(tower => tower.repair(ramparts[0]));
-		} else if(walls.length >= 1) {
-			towers.forEach(tower => tower.repair(walls[0]));
+		if(sortedRamparts.length >= 1) {
+			towers.forEach(tower => tower.repair(sortedRamparts[0]));
+		} else if(sortedWalls.length >= 1) {
+			towers.forEach(tower => tower.repair(sortedWalls[0]));
 		}
 	}
 }
