@@ -113,32 +113,25 @@ function defendRoom(roomName) {
         var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
         towers.forEach(tower => tower.attack(hostiles[0]));
     } else {
-		//var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {filter: {structureType: STRUCTURE_WALL}});
-		var defenses = Game.rooms[roomName].find(FIND_STRUCTURES, {
-				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_WALL || structure.structureType == STRUCTURE_RAMPART) && structure.hits < 35000;
-				}
-		});
-		
 		var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 20000;
+					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 35000;
 				}
 		});
 		
 		var ramparts = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 20000;
+					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 35000;
 				}
 		});
 		
-		if(ramparts.length >= 1) {
-		
-		} else if(walls.length >= 1) {
-		
-		}
 		var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
-		towers.forEach(tower => tower.repair(defenses[0]));
+		
+		if(ramparts.length >= 1) {
+			towers.forEach(tower => tower.repair(ramparts[0]));
+		} else if(walls.length >= 1) {
+			towers.forEach(tower => tower.repair(walls[0]));
+		}
 	}
 }
 
@@ -181,4 +174,12 @@ function defendRoom(roomName) {
 
     //var sources = Game.room.find(FIND_SOURCES);
     //console.log("source length" + sources.length);
-	
+
+//var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {filter: {structureType: STRUCTURE_WALL}});
+/*
+		var defenses = Game.rooms[roomName].find(FIND_STRUCTURES, {
+				filter: (structure) => {
+					return (structure.structureType == STRUCTURE_WALL || structure.structureType == STRUCTURE_RAMPART) && structure.hits < 35000;
+				}
+		});
+*/
