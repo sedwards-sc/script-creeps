@@ -54,12 +54,17 @@ module.exports.loop = function () {
 		var explorers = _.filter(roomCreeps, (creep) => creep.memory.role == 'explorer');
 
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
-		if(Game.rooms[roomName].energyAvailable >= 1100) {
+		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
+		if(harvesters.length > 1) {
 			var currentBody = [WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
-		} else if(Game.rooms[roomName].energyAvailable >= 950) {
-			var currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 		} else {
-			var currentBody = [WORK,CARRY,MOVE,MOVE];
+			if(Game.rooms[roomName].energyAvailable >= 1100) {
+				var currentBody = [WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+			} else if(Game.rooms[roomName].energyAvailable >= 950) {
+				var currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+			} else {
+				var currentBody = [WORK,CARRY,MOVE,MOVE];
+			}
 		}
 		
 		if(harvesters.length < 4) {
