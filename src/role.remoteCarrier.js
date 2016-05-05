@@ -11,7 +11,7 @@ module.exports = {
 		// state 3 is upgrade controller
 		
 		var checkPointAway = new RoomPosition(40, 33, 'E7S23');
-		var checkPointHome = new RoomPosition(5, 25, 'E8S23');
+		var checkPointHome = new RoomPosition(13, 11, 'E8S23');
 		
 		if(creep.memory.state === undefined) {
 			creep.memory.state = 0;
@@ -49,10 +49,8 @@ module.exports = {
         } else if(creep.memory.state === 2) {
 			creep.moveTo(checkPointHome);
 		} else if(creep.memory.state === 3) {
-			// upgrade
-			if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-				creep.moveTo(creep.room.controller);
-			}
+			// drop energy
+			creep.drop(RESOURCE_ENERGY);
 		}
 	}
 };
