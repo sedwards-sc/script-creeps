@@ -19,16 +19,16 @@ module.exports.loop = function () {
         defendRoom(name);
         var hostiles = Game.rooms[name].find(FIND_HOSTILE_CREEPS);
         if(hostiles.length > 0) {
-                var defenders = _.filter(Game.creeps, (creep) => creep.memory.role == 'defender');
-            
-                if(defenders.length < 1) {
-					if(Game.rooms[name].energyAvailable >= 1610) {
-						var newName = Game.spawns.Spawn1.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {role: 'defender'});
-					} else {
-						var newName = Game.spawns.Spawn1.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {role: 'defender'});
-					}
-                    console.log('Spawning new defender: ' + newName);
-                }
+			var defenders = _.filter(Game.creeps, (creep) => creep.memory.role == 'defender');
+		
+			if(defenders.length < 1) {
+				if(Game.rooms[name].energyAvailable >= 1610) {
+					var newName = Game.spawns.Spawn1.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {role: 'defender'});
+				} else {
+					var newName = Game.spawns.Spawn1.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {role: 'defender'});
+				}
+				console.log('Spawning new defender: ' + newName);
+			}
         }
     }
 
@@ -44,7 +44,11 @@ module.exports.loop = function () {
 		}
 		
 		var mainSpawn = roomSpawns[0];
-	
+
+		var controllerProgress = Game.rooms[roomName].controller.progress / Game.rooms[roomName].controller.progressTotal * 100;
+		var roomEnergy = Game.rooms[roomName].energyAvailable;
+		console.log(roomName + ' energy is ' + roomEnergy + ' - controller progress: ' + controllerProgress + '%');
+
 		// find room creeps
 		var roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
 		
@@ -55,28 +59,28 @@ module.exports.loop = function () {
 
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
 		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
-		if(harvesters.length > 1) {
-			var currentBody = [WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+		if(roomCreeps.length > 1) {
+			var currentBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 		} else {
-			if(Game.rooms[roomName].energyAvailable >= 1100) {
+			if(roomEnergy >= 1100) {
 				var currentBody = [WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
-			} else if(Game.rooms[roomName].energyAvailable >= 950) {
+			} else if(roomEnergy >= 950) {
 				var currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 			} else {
 				var currentBody = [WORK,CARRY,MOVE,MOVE];
 			}
 		}
 		
-		if(harvesters.length < 4) {
+		if(harvesters.length < 1) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'harvester', spawnRoom: roomName});
 			console.log('Spawning new harvester: ' + newName);
-		} else if(builders.length < 2) {
+		} else if(builders.length < 1) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'builder', spawnRoom: roomName});
 			console.log('Spawning new builder: ' + newName);
-		} else if(upgraders.length < 1) {
+		} else if(upgraders.length < 0) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'upgrader', spawnRoom: roomName});
 			console.log('Spawning new upgrader: ' + newName);
-		} else if(explorers.length < 1) {
+		} else if(explorers.length < 3) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'explorer', spawnRoom: roomName});
 			console.log('Spawning new explorer: ' + newName);
 		}

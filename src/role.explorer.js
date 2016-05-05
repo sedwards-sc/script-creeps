@@ -10,8 +10,8 @@ module.exports = {
 		// state 2 is head back to home room
 		// state 3 is upgrade controller
 		
-		var checkPointAway = new RoomPosition(5, 7, 'E22S1');
-		var checkPointHome = new RoomPosition(45, 23, 'E21S1');
+		var checkPointAway = new RoomPosition(47, 29, 'E7S23');
+		var checkPointHome = new RoomPosition(4, 25, 'E8S23');
 		
 		if(creep.memory.state === undefined) {
 			creep.memory.state = 0;
