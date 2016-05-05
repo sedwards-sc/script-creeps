@@ -4,7 +4,7 @@
 
 module.exports = {
     run(creep) {
-		creep.say('remoteMiner');
+		creep.say('rMiner');
 		// state 0 is head to next room
 		// state 1 harvest
 		
