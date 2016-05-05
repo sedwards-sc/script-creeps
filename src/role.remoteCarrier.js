@@ -4,7 +4,7 @@
 
 module.exports = {
 	run(creep) {
-		creep.say('rCarrier');
+		//creep.say('rCarrier');
 		// state 0 is head to next room
 		// state 1 harvest
 		// state 2 is head back to home room
