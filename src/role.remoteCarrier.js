@@ -50,7 +50,7 @@ module.exports = {
 			creep.moveTo(checkPointHome);
 		} else if(creep.memory.state === 3) {
 			// drop energy
-			creep.drop(RESOURCE_ENERGY);
+			//creep.drop(RESOURCE_ENERGY);
 		}
 	}
 };

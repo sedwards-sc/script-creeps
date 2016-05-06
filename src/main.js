@@ -78,19 +78,19 @@ module.exports.loop = function () {
 		if(harvesters.length < 1) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'harvester', spawnRoom: roomName});
 			console.log('Spawning new harvester: ' + newName);
-		} else if(builders.length < 1) {
+		} else if(builders.length < 0) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'builder', spawnRoom: roomName});
 			console.log('Spawning new builder: ' + newName);
 		} else if(upgraders.length < 0) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'upgrader', spawnRoom: roomName});
 			console.log('Spawning new upgrader: ' + newName);
-		} else if(explorers.length < 3) {
+		} else if(explorers.length < 4) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'explorer', spawnRoom: roomName});
 			console.log('Spawning new explorer: ' + newName);
 		} else if(remoteMiners.length < 1) {
 			var newName = mainSpawn.createCreep([WORK,WORK,MOVE,MOVE], undefined, {role: 'remoteMiner', spawnRoom: roomName});
 			console.log('Spawning new remote miner: ' + newName);
-		} else if(remoteCarriers.length < 1) {
+		} else if(remoteCarriers.length < 2) {
 			var newName = mainSpawn.createCreep([CARRY,MOVE], undefined, {role: 'remoteCarrier', spawnRoom: roomName});
 			console.log('Spawning new remote carrier: ' + newName);
 		}

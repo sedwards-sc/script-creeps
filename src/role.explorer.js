@@ -49,9 +49,16 @@ module.exports = {
         } else if(creep.memory.state === 2) {
 			creep.moveTo(checkPointHome);
 		} else if(creep.memory.state === 3) {
-			// upgrade
-			if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-				creep.moveTo(creep.room.controller);
+			// work
+			var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+			if(targets.length) {
+				if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
+					creep.moveTo(targets[0]);
+				}
+			} else {
+				if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+					creep.moveTo(creep.room.controller);
+				}
 			}
 		}
 	}
