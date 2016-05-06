@@ -49,8 +49,47 @@ module.exports = {
         } else if(creep.memory.state === 2) {
 			creep.moveTo(checkPointHome);
 		} else if(creep.memory.state === 3) {
-			// drop energy
-			//creep.drop(RESOURCE_ENERGY);
+			// transfer energy
+            
+			var closestTarget;
+
+			// if room energy is < 300, fill extensions first so spawn can generate energy
+			if(creep.room.energyAvailable < 300) {
+				closestTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+						filter: (structure) => {
+							return (structure.structureType == STRUCTURE_EXTENSION) && structure.energy < structure.energyCapacity;
+						}
+				});
+				
+				if(!closestTarget) {
+					closestTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+							filter: (structure) => {
+								return (structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
+							}
+					});
+				}
+			} else {
+				closestTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+						filter: (structure) => {
+							return (structure.structureType == STRUCTURE_EXTENSION ||
+									structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
+						}
+				});
+			}
+
+			if(!closestTarget) {
+				closestTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+						filter: (structure) => {
+							return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+						}
+				});
+			}
+            
+            if(closestTarget) {
+                if(creep.transfer(closestTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(closestTarget);
+                }
+            }
 		}
 	}
 };
