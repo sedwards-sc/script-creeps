@@ -21,7 +21,7 @@ module.exports = {
 	    
 	    if(creep.memory.state == 0) {
 	        // get energy
-            var droppedEnergy = creep.room.findClosestByRange(FIND_DROPPED_ENERGY);
+            var droppedEnergy = creep.room.findClosestByPath(FIND_DROPPED_ENERGY);
 			if(droppedEnergy.length >= 1) {
 				if(creep.pickup(droppedEnergy[0]) == ERR_NOT_IN_RANGE) {
 					creep.moveTo(droppedEnergy[0]);
