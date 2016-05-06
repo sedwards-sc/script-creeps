@@ -170,6 +170,7 @@ function defendRoom(roomName) {
 			towers.forEach(tower => tower.repair(sortedRamparts[0]));
 		} else if(sortedWalls.length >= 1) {
 			towers.forEach(tower => tower.repair(sortedWalls[0]));
+		} else if(sortedDamagedContainers.length >= 1) {
 			towers.forEach(tower => tower.repair(sortedDamagedContainers[0]));
 		}
 	}
