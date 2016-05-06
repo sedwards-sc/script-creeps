@@ -20,11 +20,13 @@ module.exports = {
 	    }
 	    
 	    if(creep.memory.state == 0) {
-	        // harvest
-            var sources = creep.room.find(FIND_SOURCES);
-            if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0]);
-            }
+	        // get energy
+            var droppedEnergy = creep.room.findClosestByRange(FIND_DROPPED_ENERGY);
+			if(droppedEnergy.length >= 1) {
+				if(creep.pickup(droppedEnergy[0]) == ERR_NOT_IN_RANGE) {
+					creep.moveTo(droppedEnergy[0]);
+				}
+			}
         } else {
             // upgrade
             if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
