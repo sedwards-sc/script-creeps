@@ -7,7 +7,7 @@ var roleRemoteMiner = require('role.remoteMiner');
 var roleRemoteCarrier = require('role.remoteCarrier');
 
 module.exports.loop = function () {
-
+	console.log('branch test');
 	// loop to clean dead creeps out of memory
     for(var name in Memory.creeps) {
         if(!Game.creeps[name]) {
