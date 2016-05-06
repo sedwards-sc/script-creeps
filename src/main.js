@@ -152,6 +152,13 @@ function defendRoom(roomName) {
 		});
 		var sortedWalls = _.sortBy(walls, function(wall) { return wall.hits; });
 		
+		var damagedContainers = Game.rooms[roomName].find(FIND_STRUCTURES, {
+				filter: (structure) => {
+					return (structure.structureType == STRUCTURE_CONTAINER) && structure.hits < structure.hitsMax;
+				}
+		});
+		var sortedDamagedContainers = _.sortBy(damagedContainers, function(damagedContainer) { return damagedContainer.hits; });
+		
 		//var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
 		var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {
 				filter: (tower) => {
@@ -163,6 +170,7 @@ function defendRoom(roomName) {
 			towers.forEach(tower => tower.repair(sortedRamparts[0]));
 		} else if(sortedWalls.length >= 1) {
 			towers.forEach(tower => tower.repair(sortedWalls[0]));
+			towers.forEach(tower => tower.repair(sortedDamagedContainers[0]));
 		}
 	}
 }
