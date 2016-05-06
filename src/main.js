@@ -171,7 +171,7 @@ function defendRoom(roomName) {
 		} else if(sortedWalls.length >= 1) {
 			towers.forEach(tower => tower.repair(sortedWalls[0]));
 		} else if(sortedDamagedContainers.length >= 1) {
-			towers.forEach(tower => tower.repair(sortedDamagedContainers[0]));
+			//towers.forEach(tower => tower.repair(sortedDamagedContainers[0]));
 		}
 	}
 }
