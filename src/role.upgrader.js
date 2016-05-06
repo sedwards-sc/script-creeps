@@ -22,9 +22,9 @@ module.exports = {
 	    if(creep.memory.state == 0) {
 	        // get energy
             var droppedEnergy = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
-			if(droppedEnergy.length >= 1) {
-				if(creep.pickup(droppedEnergy[0]) == ERR_NOT_IN_RANGE) {
-					creep.moveTo(droppedEnergy[0]);
+			if(droppedEnergy) {
+				if(creep.pickup(droppedEnergy) == ERR_NOT_IN_RANGE) {
+					creep.moveTo(droppedEnergy);
 				}
 			}
         } else {
