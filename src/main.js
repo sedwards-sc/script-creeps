@@ -152,12 +152,12 @@ function defendRoom(roomName) {
 		});
 		var sortedWalls = _.sortBy(walls, function(wall) { return wall.hits; });
 		
-		var damagedContainers = Game.rooms[roomName].find(FIND_STRUCTURES, {
+		var damagedContainersAndRoads = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_CONTAINER) && structure.hits < structure.hitsMax;
+					return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_ROAD) && structure.hits < structure.hitsMax;
 				}
 		});
-		var sortedDamagedContainers = _.sortBy(damagedContainers, function(damagedContainer) { return damagedContainer.hits; });
+		var sortedDamagedContainersAndRoads = _.sortBy(damagedContainersAndRoads, function(damagedContainerOrRoad) { return damagedContainerOrRoad.hits; });
 		
 		//var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
 		var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {
@@ -170,8 +170,8 @@ function defendRoom(roomName) {
 			towers.forEach(tower => tower.repair(sortedRamparts[0]));
 		} else if(sortedWalls.length >= 1) {
 			towers.forEach(tower => tower.repair(sortedWalls[0]));
-		} else if(sortedDamagedContainers.length >= 1) {
-			//towers.forEach(tower => tower.repair(sortedDamagedContainers[0]));
+		} else if(sortedDamagedContainersAndRoads.length >= 1) {
+			towers.forEach(tower => tower.repair(sortedDamagedContainersAndRoads[0]));
 		}
 	}
 }
