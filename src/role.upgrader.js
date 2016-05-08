@@ -21,10 +21,15 @@ module.exports = {
 	    
 	    if(creep.memory.state == 0) {
 	        // get energy
-            var droppedEnergy = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
-			if(droppedEnergy) {
-				if(creep.pickup(droppedEnergy) == ERR_NOT_IN_RANGE) {
-					creep.moveTo(droppedEnergy);
+			var closestEnergy = creep.pos.findClosestByPath(FIND_DROPPED_ENERGY, {
+					filter: (pile) => {
+						return pile.energy >= creep.carryCapacity;
+					}
+			});
+            //var droppedEnergy = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
+			if(closestEnergy) {
+				if(creep.pickup(closestEnergy) == ERR_NOT_IN_RANGE) {
+					creep.moveTo(closestEnergy);
 				}
 			}
         } else {
