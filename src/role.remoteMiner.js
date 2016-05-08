@@ -8,7 +8,7 @@ module.exports = {
 		// state 0 is head to next room
 		// state 1 harvest
 		
-		var checkPointAway = new RoomPosition(41, 33, 'E7S23');
+		var checkPointAway = new RoomPosition(48, 31, 'E7S23');
 		
 		if(creep.memory.state === undefined) {
 			creep.memory.state = 0;
@@ -24,10 +24,16 @@ module.exports = {
 			creep.moveTo(checkPointAway);
 		} else if(creep.memory.state === 1) {
 	        // harvest
-            var closestSource = creep.pos.findClosestByPath(FIND_SOURCES);
-            if(creep.harvest(closestSource) === ERR_NOT_IN_RANGE) {
-                creep.moveTo(closestSource);
-            }
+			if(creep.memory.remoteMine === undefined) {
+				var mySource = creep.pos.findClosestByPath(FIND_SOURCES);
+			} else {
+				var mySource = creep.room.find(FIND_SOURCES)[creep.memory.remoteMine];
+			}
+			if(creep.harvest(mySource) === ERR_NOT_IN_RANGE) {
+				creep.moveTo(mySource);
+			}
         }
     }
 };
+
+//var sourceTest = Game.getObjectById('55db333cefa8e3fe66e056d7');

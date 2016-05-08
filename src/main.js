@@ -57,7 +57,9 @@ module.exports.loop = function () {
 		var harvesters = _.filter(roomCreeps, (creep) => creep.memory.role == 'harvester');
 		var builders = _.filter(roomCreeps, (creep) => creep.memory.role == 'builder');
 		var upgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'upgrader');
+		
 		var explorers = _.filter(roomCreeps, (creep) => creep.memory.role == 'explorer');
+		
 		var remoteMiners = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteMiner');
 		var remoteCarriers = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteCarrier');
 
@@ -75,6 +77,9 @@ module.exports.loop = function () {
 			}
 		}
 		
+		var minerBody = [WORK,WORK,MOVE,MOVE];
+		var carrierBody = [CARRY,MOVE];
+		
 		if(harvesters.length < 1) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'harvester', spawnRoom: roomName});
 			console.log('Spawning new harvester: ' + newName);
@@ -88,10 +93,16 @@ module.exports.loop = function () {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'explorer', spawnRoom: roomName});
 			console.log('Spawning new explorer: ' + newName);
 		} else if(remoteMiners.length < 1) {
-			var newName = mainSpawn.createCreep([WORK,WORK,MOVE,MOVE], undefined, {role: 'remoteMiner', spawnRoom: roomName});
-			console.log('Spawning new remote miner: ' + newName);
+			var remoteMiner0 = _.filter(remoteMiners, (creep) => creep.memory.remoteMine == 0);
+			
+			if(remoteMiner0.length < 0) {
+				var newName = mainSpawn.createCreep(minerBody, undefined, {role: 'remoteMiner', remoteMine: 0, spawnRoom: roomName});
+				console.log('Spawning new remote miner 0: ' + newName);
+			} else if(remoteMiner1.length < 1) {
+				var newName = mainSpawn.createCreep(minerBody, undefined, {role: 'remoteMiner', remoteMine: 1, spawnRoom: roomName});
+			}
 		} else if(remoteCarriers.length < 2) {
-			var newName = mainSpawn.createCreep([CARRY,MOVE], undefined, {role: 'remoteCarrier', spawnRoom: roomName});
+			var newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'remoteCarrier', spawnRoom: roomName});
 			console.log('Spawning new remote carrier: ' + newName);
 		}
 	}
