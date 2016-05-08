@@ -42,7 +42,13 @@ module.exports = {
 			creep.moveTo(checkPointAway);
 		} else if(creep.memory.state === 1) {
 	        // harvest
-            var closestEnergy = creep.pos.findClosestByPath(FIND_DROPPED_ENERGY);
+			var energyPiles = creep.room.find(FIND_DROPPED_ENERGY, {
+					filter: (pile) => {
+						return pile.energy >= creep.carryCapacity;
+					}
+			});
+			
+            var closestEnergy = creep.pos.findClosestByPath(energyPiles);
             if(creep.pickup(closestEnergy) === ERR_NOT_IN_RANGE) {
                 creep.moveTo(closestEnergy);
             }
