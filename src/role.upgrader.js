@@ -23,7 +23,7 @@ module.exports = {
 	        // get energy
 			var closestEnergy = creep.pos.findClosestByPath(FIND_DROPPED_ENERGY, {
 					filter: (pile) => {
-						return pile.energy >= creep.carryCapacity;
+						return pile.energy >= (creep.carryCapacity / 2);
 					}
 			});
             //var droppedEnergy = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
