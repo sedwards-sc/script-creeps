@@ -1,33 +1,44 @@
 /*
- * role.remoteMiner
+ * role.miner
  */
 
 module.exports = {
     run(creep) {
-        //creep.say('rMiner');
-        // state 0 is head to next room
-        // state 1 harvest
-
-        var checkPointAway = new RoomPosition(41, 33, 'E7S23');
-
-        if (creep.memory.state === undefined) {
-            creep.memory.state = 0;
-        }
-
-        if ((creep.memory.state === 0) && (JSON.stringify(creep.pos) === JSON.stringify(checkPointAway))) {
-            creep.say('away pt');
-            creep.memory.state = 1;
-        }
-
-
-        if (creep.memory.state === 0) {
-            creep.moveTo(checkPointAway);
-        } else if (creep.memory.state === 1) {
+        creep.say('miner');
+		// state 0 is harvest
+	    // state 1 is transfer energy
+	    if(creep.memory.state == undefined) {
+	        creep.memory.state = 0;
+	    }
+	    
+	    if(creep.carry.energy == creep.carryCapacity) {
+			if(creep.memory.state == 0) {
+				creep.say('I\'m full!');
+			}
+	        creep.memory.state = 1;
+	    }
+	    
+	    if (creep.carry.energy == 0) {
+			if(creep.memory.state == 1) {
+				creep.say('I\'m empty!');
+			}
+	        creep.memory.state = 0;
+	    }
+	    
+	    if(creep.memory.state == 0) {
             // harvest
             var closestSource = creep.pos.findClosestByPath(FIND_SOURCES);
             if (creep.harvest(closestSource) === ERR_NOT_IN_RANGE) {
                 creep.moveTo(closestSource);
             }
-        }
+		} else if(creep.memory.state == 1) {
+			// transfer to storage
+			var closestStorage = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
+			if(creep.transfer(closestStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+				creep.moveTo(closestStorage);
+			}
+        } else {
+			creep.memory.state = 0;
+		}
     }
 };
