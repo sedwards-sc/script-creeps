@@ -127,7 +127,7 @@ module.exports.loop = function () {
 			var newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'remoteCarrier', spawnRoom: roomName});
 			console.log('Spawning new remote carrier: ' + newName);
 		} else if(reservers.length < 1) {
-			var newName = mainSpawn.createCreep([CLAIM,MOVE], undefined, {role: 'reserver', spawnRoom: roomName});
+			var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {role: 'reserver', spawnRoom: roomName});
 			console.log('Spawning new reserver: ' + newName);
 		}
 
