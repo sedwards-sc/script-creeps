@@ -7,6 +7,7 @@ var roleRemoteMiner = require('role.remoteMiner');
 var roleRemoteCarrier = require('role.remoteCarrier');
 var roleMiner = require('role.miner');
 var roleCarrier = require('role.carrier');
+var roleReserver = require('role.reserver');
 require('debug').populate(global);
 
 module.exports.loop = function () {
@@ -68,6 +69,8 @@ module.exports.loop = function () {
 		
 		var miners = _.filter(roomCreeps, (creep) => creep.memory.role == 'miner');
 		var carriers = _.filter(roomCreeps, (creep) => creep.memory.role == 'carrier');
+		
+		var reservers = _.filter(roomCreeps, (creep) => creep.memory.role == 'reserver');
 
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
 		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
@@ -123,6 +126,9 @@ module.exports.loop = function () {
 		} else if(remoteCarriers.length < 2) {
 			var newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'remoteCarrier', spawnRoom: roomName});
 			console.log('Spawning new remote carrier: ' + newName);
+		} else if(reservers.length < 1) {
+			var newName = mainSpawn.createCreep([CLAIM,MOVE], undefined, {role: 'reserver', spawnRoom: roomName});
+			console.log('Spawning new reserver: ' + newName);
 		}
 
 		// transfer energy from storage to carriers if they are in range
@@ -172,6 +178,9 @@ module.exports.loop = function () {
 			}
 			if(creep.memory.role == 'remoteCarrier') {
 				roleRemoteCarrier.run(creep);
+			}
+			if(creep.memory.role == 'reserver') {
+				roleReserver.run(creep);
 			}
 		}
     }
