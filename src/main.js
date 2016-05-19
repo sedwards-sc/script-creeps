@@ -94,10 +94,10 @@ module.exports.loop = function () {
 		if(carriers.length < 2) {
 			var newName = mainSpawn.createCreep([CARRY,CARRY,MOVE,MOVE], undefined, {role: 'carrier', spawnRoom: roomName});
 			console.log('Spawning new carrier: ' + newName);
-		} else if(miners.length < 0) {
-			var newName = mainSpawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'mniner', spawnRoom: roomName});
+		} else if(miners.length < 1) {
+			var newName = mainSpawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'mniner', spawnRoom: roomName});
 			console.log('Spawning new miner: ' + newName);
-		} else if(harvesters.length < 1) {
+		} else if(harvesters.length < 0) {
 			var newName = mainSpawn.createCreep(currentHarvesterBody, undefined, {role: 'harvester', spawnRoom: roomName});
 			console.log('Spawning new harvester: ' + newName);
 		} else if(builders.length < 0) {

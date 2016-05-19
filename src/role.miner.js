@@ -4,7 +4,7 @@
 
 module.exports = {
     run(creep) {
-        creep.say('miner');
+        //creep.say('miner');
 		// state 0 is harvest
 	    // state 1 is transfer energy
 	    if(creep.memory.state == undefined) {
