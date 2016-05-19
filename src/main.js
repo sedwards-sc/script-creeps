@@ -116,7 +116,7 @@ module.exports.loop = function () {
 		
 		// transfer energy from storage to carriers if they are in range
 		var storages = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
-		if(storages.length > 0) {
+		if((storages.length > 0) && carriers) {
 			var mainStorage = storages[0];
 			
 			var inRangeCarriers = mainStorage.pos.findInRange(carriers, 1);
