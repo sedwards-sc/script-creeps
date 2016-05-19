@@ -1,56 +1,81 @@
 /*
- * role.remoteCarrier
+ * role.carrier
  */
 
 module.exports = {
     run(creep) {
-        //creep.say('rCarrier');
-        // state 0 is head to next room
-        // state 1 harvest
-        // state 2 is head back to home room
-        // state 3 is upgrade controller
-
-        var checkPointAway = new RoomPosition(40, 33, 'E7S23');
-        var checkPointHome = new RoomPosition(13, 11, 'E8S23');
-
-        if (creep.memory.state === undefined) {
-            creep.memory.state = 0;
-        }
-
-        if ((creep.memory.state === 0) && (JSON.stringify(creep.pos) === JSON.stringify(checkPointAway))) {
-            creep.say('away pt');
-            creep.memory.state = 1;
-        }
-
-        if ((creep.memory.state === 1) && (creep.carry.energy === creep.carryCapacity)) {
-            creep.say('full');
-            creep.memory.state = 2;
-        }
-
-        if ((creep.memory.state === 2) && (JSON.stringify(creep.pos) === JSON.stringify(checkPointHome))) {
-            creep.say('home pt');
-            creep.memory.state = 3;
-        }
-
-        if ((creep.memory.state === 3) && (creep.carry.energy === 0)) {
-            creep.say('empty');
-            creep.memory.state = 0;
-        }
-
-
-        if (creep.memory.state === 0) {
-            creep.moveTo(checkPointAway);
-        } else if (creep.memory.state === 1) {
-            // harvest
-            var closestEnergy = creep.pos.findClosestByPath(FIND_DROPPED_ENERGY);
-            if (creep.pickup(closestEnergy) === ERR_NOT_IN_RANGE) {
-                creep.moveTo(closestEnergy);
+        creep.say('carrier');
+		// state 0 is get energy from storage
+	    // state 1 is transfer energy to structures
+	    if(creep.memory.state == undefined) {
+	        creep.memory.state = 0;
+	    }
+	    
+	    if(creep.carry.energy == creep.carryCapacity) {
+			if(creep.memory.state == 0) {
+				creep.say('I\'m full!');
+			}
+	        creep.memory.state = 1;
+	    }
+	    
+	    if (creep.carry.energy == 0) {
+			if(creep.memory.state == 1) {
+				creep.say('I\'m empty!');
+			}
+	        creep.memory.state = 0;
+	    }
+	    
+	    if(creep.memory.state == 0) {
+	        // find storage
+            var closestStorage = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
+            if(creep.pos.getRangeTo(closestStorage) > 1) {
+                creep.moveTo(closestStorage);
             }
-        } else if (creep.memory.state === 2) {
-            creep.moveTo(checkPointHome);
-        } else if (creep.memory.state === 3) {
-            // drop energy
-            //creep.drop(RESOURCE_ENERGY);
-        }
+        } else if(creep.memory.state == 1) {
+			// transfer energy to structures
+			var closestTarget;
+
+			// if room energy is < 300, fill extensions first so spawn can generate energy
+			if(creep.room.energyAvailable < 300) {
+				closestTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+						filter: (structure) => {
+							return (structure.structureType == STRUCTURE_EXTENSION) && structure.energy < structure.energyCapacity;
+						}
+				});
+				
+				if(!closestTarget) {
+					closestTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+							filter: (structure) => {
+								return (structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
+							}
+					});
+				}
+			} else {
+				closestTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+						filter: (structure) => {
+							return (structure.structureType == STRUCTURE_EXTENSION ||
+									structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
+						}
+				});
+			}
+
+			if(!closestTarget) {
+				closestTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+						filter: (structure) => {
+							return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+						}
+				});
+			}
+            
+            if(closestTarget) {
+                if(creep.transfer(closestTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(closestTarget);
+                }
+            } else {
+				creep.say('bored');
+			}
+		} else {
+			creep.memory.state = 0;
+		}
     }
 };

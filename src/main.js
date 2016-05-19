@@ -5,6 +5,7 @@ var roleDefender = require('role.defender');
 var roleExplorer = require('role.explorer');
 var roleRemoteMiner = require('role.remoteMiner');
 var roleRemoteCarrier = require('role.remoteCarrier');
+require('debug').populate(global);
 
 module.exports.loop = function () {
 
@@ -67,6 +68,10 @@ module.exports.loop = function () {
 		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
 		if(roomCreeps.length > 1) {
 			var currentBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
+			var currentHarvesterBody = [WORK,CARRY,MOVE,MOVE];
+			if(roomEnergy >= 950) {
+				var currentHarvesterBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+			}
 		} else {
 			if(roomEnergy >= 1100) {
 				var currentBody = [WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
@@ -75,13 +80,14 @@ module.exports.loop = function () {
 			} else {
 				var currentBody = [WORK,CARRY,MOVE,MOVE];
 			}
+			var currentHarvesterBody = currentBody;
 		}
 		
 		var minerBody = [WORK,WORK,MOVE,MOVE];
 		var carrierBody = [CARRY,MOVE];
 		
 		if(harvesters.length < 1) {
-			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'harvester', spawnRoom: roomName});
+			var newName = mainSpawn.createCreep(currentHarvesterBody, undefined, {role: 'harvester', spawnRoom: roomName});
 			console.log('Spawning new harvester: ' + newName);
 		} else if(builders.length < 0) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'builder', spawnRoom: roomName});
@@ -153,14 +159,14 @@ function defendRoom(roomName) {
     } else {
 		var ramparts = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 40000;
+					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 10000;
 				}
 		});
 		var sortedRamparts = _.sortBy(ramparts, function(rampart) { return rampart.hits; });
 
 		var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 40000;
+					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 10000;
 				}
 		});
 		var sortedWalls = _.sortBy(walls, function(wall) { return wall.hits; });
