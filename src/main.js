@@ -5,6 +5,8 @@ var roleDefender = require('role.defender');
 var roleExplorer = require('role.explorer');
 var roleRemoteMiner = require('role.remoteMiner');
 var roleRemoteCarrier = require('role.remoteCarrier');
+var roleMiner = require('role.miner');
+var roleCarrier = require('role.carrier');
 require('debug').populate(global);
 
 module.exports.loop = function () {
@@ -63,6 +65,9 @@ module.exports.loop = function () {
 		
 		var remoteMiners = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteMiner');
 		var remoteCarriers = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteCarrier');
+		
+		var miners = _.filter(roomCreeps, (creep) => creep.memory.role == 'miner');
+		var carriers = _.filter(roomCreeps, (creep) => creep.memory.role == 'carrier');
 
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
 		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
@@ -86,7 +91,13 @@ module.exports.loop = function () {
 		var minerBody = [WORK,WORK,MOVE,MOVE];
 		var carrierBody = [CARRY,MOVE];
 		
-		if(harvesters.length < 1) {
+		if(carriers.length < 1) {
+			var newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
+			console.log('Spawning new carrier: ' + newName);
+		} else if(miners.length < 0) {
+			var newName = mainSpawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'mniner', spawnRoom: roomName});
+			console.log('Spawning new miner: ' + newName);
+		} else if(harvesters.length < 1) {
 			var newName = mainSpawn.createCreep(currentHarvesterBody, undefined, {role: 'harvester', spawnRoom: roomName});
 			console.log('Spawning new harvester: ' + newName);
 		} else if(builders.length < 0) {
@@ -113,8 +124,7 @@ module.exports.loop = function () {
 			var newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'remoteCarrier', spawnRoom: roomName});
 			console.log('Spawning new remote carrier: ' + newName);
 		}
-		
-		var carriers;
+
 		// transfer energy from storage to carriers if they are in range
 		var storages = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
 		if(storages.length > 0) {
@@ -136,6 +146,12 @@ module.exports.loop = function () {
         var creep = Game.creeps[creepName];
 		
 		if(!creep.spawning) {
+			if(creep.memory.role == 'miner') {
+				roleMiner.run(creep);
+			}
+			if(creep.memory.role == 'carrier') {
+				roleCarrier.run(creep);
+			}
 			if(creep.memory.role == 'harvester') {
 				roleHarvester.run(creep);
 			}
