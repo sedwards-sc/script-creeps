@@ -113,6 +113,20 @@ module.exports.loop = function () {
 			var newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'remoteCarrier', spawnRoom: roomName});
 			console.log('Spawning new remote carrier: ' + newName);
 		}
+		
+		// transfer energy from storage to carriers if they are in range
+		var storages = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
+		if(storages.length > 0) {
+			var mainStorage = storages[0];
+			
+			var inRangeCarriers = mainStorage.pos.findInRange(carriers, 1);
+			
+			if(inRangeCarriers.length > 0) {
+				if(mainStorage.transfer(inRangeCarriers[0], RESOURCE_ENERGY) === OK) {
+					console.log('energy transferred to: ' + inRangeCarriers[0].name);
+				}
+			}
+		}
 	}
 
 
