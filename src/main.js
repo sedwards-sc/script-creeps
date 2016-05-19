@@ -114,9 +114,10 @@ module.exports.loop = function () {
 			console.log('Spawning new remote carrier: ' + newName);
 		}
 		
+		var carriers;
 		// transfer energy from storage to carriers if they are in range
 		var storages = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
-		if((storages.length > 0) && carriers) {
+		if(storages.length > 0) {
 			var mainStorage = storages[0];
 			
 			var inRangeCarriers = mainStorage.pos.findInRange(carriers, 1);
