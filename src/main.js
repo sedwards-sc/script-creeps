@@ -91,8 +91,8 @@ module.exports.loop = function () {
 		var minerBody = [WORK,WORK,MOVE,MOVE];
 		var carrierBody = [CARRY,MOVE];
 		
-		if(carriers.length < 1) {
-			var newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
+		if(carriers.length < 2) {
+			var newName = mainSpawn.createCreep([CARRY,CARRY,MOVE,MOVE], undefined, {role: 'carrier', spawnRoom: roomName});
 			console.log('Spawning new carrier: ' + newName);
 		} else if(miners.length < 0) {
 			var newName = mainSpawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'mniner', spawnRoom: roomName});
@@ -190,14 +190,14 @@ function defendRoom(roomName) {
     } else {
 		var ramparts = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 10000;
+					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 20000;
 				}
 		});
 		var sortedRamparts = _.sortBy(ramparts, function(rampart) { return rampart.hits; });
 
 		var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 10000;
+					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 20000;
 				}
 		});
 		var sortedWalls = _.sortBy(walls, function(wall) { return wall.hits; });
