@@ -29,9 +29,9 @@ module.exports.loop = function () {
 		
 			if(defenders.length < 1) {
 				if(Game.rooms[name].energyAvailable >= 1610) {
-					var newName = Game.spawns.Spawn1.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {role: 'defender'});
+					var newName = Game.spawns.Hatchery.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {role: 'defender'});
 				} else {
-					var newName = Game.spawns.Spawn1.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {role: 'defender'});
+					var newName = Game.spawns.Hatchery.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {role: 'defender'});
 				}
 				console.log('Spawning new defender: ' + newName);
 			}
@@ -199,14 +199,14 @@ function defendRoom(roomName) {
     } else {
 		var ramparts = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 20000;
+					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 100000;
 				}
 		});
 		var sortedRamparts = _.sortBy(ramparts, function(rampart) { return rampart.hits; });
 
 		var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 20000;
+					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 100000;
 				}
 		});
 		var sortedWalls = _.sortBy(walls, function(wall) { return wall.hits; });

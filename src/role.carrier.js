@@ -62,7 +62,7 @@ module.exports = {
 			if(!closestTarget) {
 				closestTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
 						filter: (structure) => {
-							return (structure.structureType == STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+							return (structure.structureType == STRUCTURE_TOWER) && structure.energy < (structure.energyCapacity - 20);
 						}
 				});
 			}
