@@ -23,7 +23,7 @@ module.exports = {
 	        // get energy piles
 			var droppedEnergy = creep.room.find(FIND_DROPPED_ENERGY, {
 					filter: (pile) => {
-						return pile.energy >= (creep.carryCapacity / 2);
+						return (pile.energy >= (creep.carryCapacity / 2)) && (pile.pos.roomName === creep.memory.spawnRoom);
 					}
 			});
             
