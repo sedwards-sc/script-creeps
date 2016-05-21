@@ -46,14 +46,18 @@ module.exports = {
 			
 			var closestEnergy = creep.pos.findClosestByPath(energySources);
 			
-			if(closestEnergy.structureType === STRUCTURE_LINK) {
-				if(!creep.pos.isNearTo(closestEnergy)) {
-					creep.moveTo(closestEnergy);
+			if(closestEnergy) {
+				if(closestEnergy.structureType === STRUCTURE_LINK) {
+					if(!creep.pos.isNearTo(closestEnergy)) {
+						creep.moveTo(closestEnergy);
+					}
+				} else {
+					if(creep.pickup(closestEnergy) === ERR_NOT_IN_RANGE) {
+						creep.moveTo(closestEnergy);
+					}
 				}
 			} else {
-				if(creep.pickup(closestEnergy) === ERR_NOT_IN_RANGE) {
-					creep.moveTo(closestEnergy);
-				}
+				creep.say('no energy');
 			}
         } else {
             // work
