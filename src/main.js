@@ -144,6 +144,20 @@ module.exports.loop = function () {
 				}
 			}
 		}
+		
+		// transfer energy from storage to any creeps except carriers
+		var links = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
+		for(var linkIndex in links) {
+			var currentLink = links[linkIndex];
+			console.log(currentLink);
+			//var inRangeCarriers = mainStorage.pos.findInRange(carriers, 1);
+			
+			//if(inRangeCarriers.length > 0) {
+			//	if(mainStorage.transfer(inRangeCarriers[0], RESOURCE_ENERGY) === OK) {
+			//		console.log('energy transferred to: ' + inRangeCarriers[0].name);
+			//	}
+			//}
+		}
 	}
 
 
