@@ -103,10 +103,10 @@ module.exports.loop = function () {
 		} else if(harvesters.length < 0) {
 			var newName = mainSpawn.createCreep(currentHarvesterBody, undefined, {role: 'harvester', spawnRoom: roomName});
 			console.log('Spawning new harvester: ' + newName);
-		} else if(builders.length < 0) {
+		} else if(builders.length < 1) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'builder', spawnRoom: roomName});
 			console.log('Spawning new builder: ' + newName);
-		} else if(upgraders.length < 1) {
+		} else if(upgraders.length < 0) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'upgrader', spawnRoom: roomName});
 			console.log('Spawning new upgrader: ' + newName);
 		} else if(explorers.length < 4) {
