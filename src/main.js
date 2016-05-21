@@ -146,7 +146,7 @@ module.exports.loop = function () {
 			
 			if(inRangeCarriers.length > 0) {
 				if(mainStorage.transfer(inRangeCarriers[0], RESOURCE_ENERGY) === OK) {
-					console.log('spawn energy transferred to: ' + inRangeCarriers[0].name);
+					console.log('storage energy transferred to: ' + inRangeCarriers[0].name);
 				}
 			}
 		}
