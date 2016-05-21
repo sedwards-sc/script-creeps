@@ -145,6 +145,16 @@ module.exports.loop = function () {
 			}
 		}
 		
+		// transfer energy across room if remote link is full
+		var remoteLink = Game.getObjectById('573a7a3d3f08575071c9c160');
+		var storageLink = Game.getObjectById('573a6ed5d32c966b71bd066b');
+		console.log('remote link cooldown: ' + remoteLink.cooldown);
+		if(remoteLink.energy === remoteLink.energyCapacity) {
+			if(remoteLink.transferEnergy(storageLink) === OK) {
+				console.log('remote link energy transferred to storage link');
+			}
+		}
+		
 		var nonCarriers = _.filter(roomCreeps, (creep) => {
 				return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier');
 		});
