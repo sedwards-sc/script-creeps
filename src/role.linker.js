@@ -27,11 +27,14 @@ module.exports = {
 	    
 	    if(creep.memory.state == 0) {
 	        // find link that isn't empty
-			var closestLink = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
-					filter: (structure) => {
-						return (structure.structureType === STRUCTURE_LINK) && (structure.energy >= creep.carryCapacity);
-					}
-			});
+			//var closestLink = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+			//		filter: (structure) => {
+			//			return (structure.structureType === STRUCTURE_LINK) && (structure.energy >= creep.carryCapacity);
+			//		}
+			//});
+			
+			// find storage link
+			var closestLink = Game.getObjectById('573a6ed5d32c966b71bd066b');
 			
             if(!creep.pos.isNearTo(closestLink)) {
                 creep.moveTo(closestLink);
