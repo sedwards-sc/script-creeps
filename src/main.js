@@ -146,7 +146,7 @@ module.exports.loop = function () {
 			
 			if(inRangeCarriers.length > 0) {
 				if(mainStorage.transfer(inRangeCarriers[0], RESOURCE_ENERGY) === OK) {
-					console.log('storage energy transferred to: ' + inRangeCarriers[0].name);
+					console.log('storage energy transferred to: ' + inRangeCarriers[0].name + ' - ' + inRangeCarriers[0].memory.role);
 				}
 			}
 		}
@@ -173,7 +173,7 @@ module.exports.loop = function () {
 			
 			if(inRangeCreeps.length > 0) {
 				if(currentLink.transferEnergy(inRangeCreeps[0]) === OK) {
-					console.log('link energy transferred to: ' + inRangeCreeps[0].name);
+					console.log('link energy transferred to: ' + inRangeCreeps[0].name + ' - ' + inRangeCreeps[0].memory.role);
 				}
 			}
 		}
