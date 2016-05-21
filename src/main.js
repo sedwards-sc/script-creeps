@@ -157,7 +157,7 @@ module.exports.loop = function () {
 			var inRangeCreeps = currentLink.pos.findInRange(nonCarriers, 1);
 			
 			if(inRangeCreeps.length > 0) {
-				if(currentLink.transfer(inRangeCreeps[0], RESOURCE_ENERGY) === OK) {
+				if(currentLink.transferEnergy(inRangeCreeps[0]) === OK) {
 					console.log('link energy transferred to: ' + inRangeCreeps[0].name);
 				}
 			}
