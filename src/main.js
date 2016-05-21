@@ -140,27 +140,27 @@ module.exports.loop = function () {
 			
 			if(inRangeCarriers.length > 0) {
 				if(mainStorage.transfer(inRangeCarriers[0], RESOURCE_ENERGY) === OK) {
-					console.log('energy transferred to: ' + inRangeCarriers[0].name);
+					console.log('spawn energy transferred to: ' + inRangeCarriers[0].name);
 				}
 			}
 		}
 		
-		var nonCarriers = _.filter(roomCreeps, (creep) => {return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier');});
-		console.log(nonCarriers);
+		var nonCarriers = _.filter(roomCreeps, (creep) => {
+				return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier');
+		});
+
 		// transfer energy from storage to any creeps except carriers
 		var links = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
 		for(var linkIndex in links) {
 			var currentLink = links[linkIndex];
-			console.log(currentLink);
 			
+			var inRangeCreeps = currentLink.pos.findInRange(nonCarriers, 1);
 			
-			//var inRangeCarriers = mainStorage.pos.findInRange(carriers, 1);
-			
-			//if(inRangeCarriers.length > 0) {
-			//	if(mainStorage.transfer(inRangeCarriers[0], RESOURCE_ENERGY) === OK) {
-			//		console.log('energy transferred to: ' + inRangeCarriers[0].name);
-			//	}
-			//}
+			if(inRangeCreeps.length > 0) {
+				if(currentLink.transfer(inRangeCreeps[0], RESOURCE_ENERGY) === OK) {
+					console.log('link energy transferred to: ' + inRangeCreeps[0].name);
+				}
+			}
 		}
 	}
 
