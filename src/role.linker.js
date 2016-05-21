@@ -4,7 +4,7 @@
 
 module.exports = {
     run(creep) {
-        creep.say('linker');
+        //creep.say('linker');
 		// state 0 is get energy from link
 	    // state 1 is transfer energy to storage
 	    if(creep.memory.state == undefined) {
