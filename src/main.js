@@ -146,6 +146,7 @@ module.exports.loop = function () {
 		}
 		
 		var nonCarriers = _.filter(roomCreeps, (creep) => {return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier');});
+		console.log(nonCarriers);
 		// transfer energy from storage to any creeps except carriers
 		var links = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
 		for(var linkIndex in links) {
