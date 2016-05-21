@@ -20,11 +20,41 @@ module.exports = {
 	    }
 	    
 	    if(creep.memory.state == 0) {
-	        // harvest
-            var sources = creep.room.find(FIND_SOURCES);
-            if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0]);
-            }
+	        // get energy piles
+			var droppedEnergy = creep.room.find(FIND_DROPPED_ENERGY, {
+					filter: (pile) => {
+						return pile.energy >= (creep.carryCapacity / 2);
+					}
+			});
+            
+			//get links with energy
+			var linksWithEnergy = creep.room.find(FIND_MY_STRUCTURES, {
+					filter: (structure) => {
+						return (structure.structureType === STRUCTURE_LINK) && (structure.energy >= creep.carryCapacity);
+					}
+			});
+			
+			var energySources = [];
+			
+			for(var i in droppedEnergy) {
+				energySources.push(droppedEnergy[i]);
+			}
+			
+			for(var i in linksWithEnergy) {
+				energySources.push(linksWithEnergy[i]);
+			}
+			
+			var closestEnergy = creep.pos.findClosestByPath(energySources);
+			
+			if(closestEnergy.structureType === STRUCTURE_LINK) {
+				if(!creep.pos.isNearTo(closestEnergy)) {
+					creep.moveTo(closestEnergy);
+				}
+			} else {
+				if(creep.pickup(closestEnergy) === ERR_NOT_IN_RANGE) {
+					creep.moveTo(closestEnergy);
+				}
+			}
         } else {
             // work
             var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
@@ -38,8 +68,19 @@ module.exports = {
                 }
             }
         }
-	    
+	}
+};
+
 /*
+ * Module code goes here. Use 'module.exports' to export things:
+ * module.exports.thing = 'a thing';
+ *
+ * You can import it from another modules like this:
+ * var mod = require('role.builder');
+ * mod.thing == 'a thing'; // true
+ */
+ 
+ /*
 	    if(creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
 	    }
@@ -86,14 +127,4 @@ module.exports = {
 	    }
 */
 
-	}
-};
 
-/*
- * Module code goes here. Use 'module.exports' to export things:
- * module.exports.thing = 'a thing';
- *
- * You can import it from another modules like this:
- * var mod = require('role.builder');
- * mod.thing == 'a thing'; // true
- */
