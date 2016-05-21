@@ -74,11 +74,11 @@ module.exports.loop = function () {
 
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
 		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
-		if(roomCreeps.length > 1) {
+		if(carriers.length > 1) {
 			var currentBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 			var currentHarvesterBody = [WORK,CARRY,MOVE,MOVE];
 			if(roomEnergy >= 950) {
-				var currentHarvesterBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+				var currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 			}
 		} else {
 			if(roomEnergy >= 1100) {
@@ -91,8 +91,8 @@ module.exports.loop = function () {
 			var currentHarvesterBody = currentBody;
 		}
 		
-		var minerBody = [WORK,WORK,MOVE,MOVE];
-		var carrierBody = [CARRY,MOVE];
+		var minerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE];
+		var carrierBody = [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
 		
 		if(carriers.length < 2) {
 			var newName = mainSpawn.createCreep([CARRY,CARRY,MOVE,MOVE], undefined, {role: 'carrier', spawnRoom: roomName});
@@ -199,14 +199,14 @@ function defendRoom(roomName) {
     } else {
 		var ramparts = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 100000;
+					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 200000;
 				}
 		});
 		var sortedRamparts = _.sortBy(ramparts, function(rampart) { return rampart.hits; });
 
 		var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 100000;
+					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 150000;
 				}
 		});
 		var sortedWalls = _.sortBy(walls, function(wall) { return wall.hits; });
