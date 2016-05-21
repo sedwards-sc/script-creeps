@@ -11,7 +11,8 @@ module.exports = {
 		// state 3 is upgrade controller
 		
 		var checkPointAway = new RoomPosition(48, 32, 'E7S23');
-		var checkPointHome = new RoomPosition(13, 11, 'E8S23');
+		var checkPointHome = new RoomPosition(2, 25, 'E8S23');
+		//var checkPointHome = new RoomPosition(13, 11, 'E8S23');
 		
 		if(creep.memory.state === undefined) {
 			creep.memory.state = 0;
@@ -54,8 +55,21 @@ module.exports = {
         } else if(creep.memory.state === 2) {
 			creep.moveTo(checkPointHome);
 		} else if(creep.memory.state === 3) {
-			//drop energy
-			creep.drop(RESOURCE_ENERGY);
+			// transfer to link if there is one that isn't full
+			var closestLink = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+					filter: (structure) => {
+						return (structure.structureType === STRUCTURE_LINK) && (structure.energy < structure.energyCapacity);
+					}
+			});
+			
+			if(closestLink) {
+				if(creep.transfer(closestLink, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+					creep.moveTo(closestLink);
+				}
+			} else {
+				//drop energy
+				creep.drop(RESOURCE_ENERGY);
+			}
 		}
 	}
 };
