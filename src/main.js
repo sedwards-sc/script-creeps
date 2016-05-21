@@ -8,6 +8,7 @@ var roleRemoteCarrier = require('role.remoteCarrier');
 var roleMiner = require('role.miner');
 var roleCarrier = require('role.carrier');
 var roleReserver = require('role.reserver');
+var roleLinker = require('role.linker');
 require('debug').populate(global);
 
 module.exports.loop = function () {
@@ -70,6 +71,8 @@ module.exports.loop = function () {
 		var miners = _.filter(roomCreeps, (creep) => creep.memory.role == 'miner');
 		var carriers = _.filter(roomCreeps, (creep) => creep.memory.role == 'carrier');
 		
+		var linkers = _.filter(roomCreeps, (creep) => creep.memory.role == 'linker');
+		
 		var reservers = _.filter(roomCreeps, (creep) => creep.memory.role == 'reserver');
 
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
@@ -100,6 +103,9 @@ module.exports.loop = function () {
 		} else if(miners.length < 1) {
 			var newName = mainSpawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'miner', spawnRoom: roomName});
 			console.log('Spawning new miner: ' + newName);
+		} else if(linkers.length < 1) {
+			var newName = mainSpawn.createCreep([CARRY,MOVE], undefined, {role: 'linker', spawnRoom: roomName});
+			console.log('Spawning new linker: ' + newName);
 		} else if(harvesters.length < 0) {
 			var newName = mainSpawn.createCreep(currentHarvesterBody, undefined, {role: 'harvester', spawnRoom: roomName});
 			console.log('Spawning new harvester: ' + newName);
@@ -155,7 +161,7 @@ module.exports.loop = function () {
 		}
 		
 		var nonCarriers = _.filter(roomCreeps, (creep) => {
-				return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier');
+				return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer');
 		});
 
 		// transfer energy from storage to any creeps except carriers
@@ -184,6 +190,9 @@ module.exports.loop = function () {
 			}
 			if(creep.memory.role == 'carrier') {
 				roleCarrier.run(creep);
+			}
+			if(creep.memory.role == 'linker') {
+				roleLinker.run(creep);
 			}
 			if(creep.memory.role == 'harvester') {
 				roleHarvester.run(creep);
