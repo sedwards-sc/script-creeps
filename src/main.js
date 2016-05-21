@@ -157,6 +157,11 @@ module.exports.loop = function () {
 		if((remoteLink.cooldown === 0) && (remoteLink.energy === remoteLink.energyCapacity)) {
 			if(remoteLink.transferEnergy(storageLink) === OK) {
 				console.log('remote link energy transferred to storage link');
+				if(remoteLink.memory.transferCount === undefined) {
+					remoteLink.memory.transferCount = 1;
+				} else {
+					remoteLink.memory.transferCount++;
+				}
 			}
 		}
 		
