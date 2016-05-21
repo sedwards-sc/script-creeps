@@ -242,7 +242,7 @@ function defendRoom(roomName) {
 
 		var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 150000;
+					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 175000;
 				}
 		});
 		var sortedWalls = _.sortBy(walls, function(wall) { return wall.hits; });
