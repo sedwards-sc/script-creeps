@@ -22,10 +22,10 @@ module.exports.loop = function () {
     
 	
 	// room defence loop
-    for(var name in Game.rooms) {
-        defendRoom(name);
-        var hostiles = Game.rooms[name].find(FIND_HOSTILE_CREEPS);
-        if(hostiles.length > 0) {
+	for(var name in Game.rooms) {
+		defendRoom(name);
+		var hostiles = Game.rooms[name].find(FIND_HOSTILE_CREEPS);
+		if(hostiles.length > 0) {
 			var defenders = _.filter(Game.creeps, (creep) => creep.memory.role == 'defender');
 		
 			if(defenders.length < 1) {
@@ -36,8 +36,8 @@ module.exports.loop = function () {
 				}
 				console.log('Spawning new defender: ' + newName);
 			}
-        }
-    }
+		}
+	}
 
 
 	// room spawn loop
