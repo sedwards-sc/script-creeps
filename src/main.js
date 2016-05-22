@@ -9,6 +9,7 @@ var roleMiner = require('role.miner');
 var roleCarrier = require('role.carrier');
 var roleReserver = require('role.reserver');
 var roleLinker = require('role.linker');
+var roleReinforcer = require('role.reinforcer');
 require('debug').populate(global);
 
 module.exports.loop = function () {
@@ -73,6 +74,8 @@ module.exports.loop = function () {
 		
 		var linkers = _.filter(roomCreeps, (creep) => creep.memory.role == 'linker');
 		
+		var reinforcers = _.filter(roomCreeps, (creep) => creep.memory.role == 'reinforcer');
+		
 		var reservers = _.filter(roomCreeps, (creep) => creep.memory.role == 'reserver');
 
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
@@ -135,6 +138,9 @@ module.exports.loop = function () {
 		} else if(reservers.length < 1) {
 			var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {role: 'reserver', spawnRoom: roomName});
 			console.log('Spawning new reserver: ' + newName);
+		} else if(reinforcers.length < 1) {
+			var newName = mainSpawn.createCreep([WORK,CARRY,MOVE,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
+			console.log('Spawning new reinforcer: ' + newName);
 		}
 
 		// transfer energy from storage to carriers if they are in range
@@ -222,6 +228,9 @@ module.exports.loop = function () {
 			}
 			if(creep.memory.role == 'reserver') {
 				roleReserver.run(creep);
+			}
+			if(creep.memory.role == 'reinforcer') {
+				roleReinforcer.run(creep);
 			}
 		}
     }
