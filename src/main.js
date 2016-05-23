@@ -138,8 +138,8 @@ module.exports.loop = function () {
 		} else if(reservers.length < 1) {
 			var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {role: 'reserver', spawnRoom: roomName});
 			console.log('Spawning new reserver: ' + newName);
-		} else if(reinforcers.length < 1) {
-			var newName = mainSpawn.createCreep([WORK,CARRY,MOVE,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
+		} else if(reinforcers.length < 2) {
+			var newName = mainSpawn.createCreep([WORK,CARRY,CARRY,MOVE,MOVE,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
 			console.log('Spawning new reinforcer: ' + newName);
 		}
 
