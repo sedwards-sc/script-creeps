@@ -164,13 +164,21 @@ module.exports.loop = function () {
 		// transfer energy across room if remote link is full
 		var remoteLink = Game.getObjectById('573a7a3d3f08575071c9c160');
 		var storageLink = Game.getObjectById('573a6ed5d32c966b71bd066b');
-		if((remoteLink.cooldown === 0) && (remoteLink.energy === remoteLink.energyCapacity)) {
-			if(remoteLink.transferEnergy(storageLink) === OK) {
+		if(remoteLink.energy === remoteLink.energyCapacity) {
+			var transferReturn = remoteLink.transferEnergy(storageLink);
+			if(transferReturn === OK) {
 				console.log('remote link energy transferred to storage link');
 				if(Memory.transferCount === undefined) {
 					Memory.transferCount = 1;
 				} else {
 					Memory.transferCount++;
+				}
+			} else if(transferReturn === ERR_TIRED) {
+				console.log('too tired to transfer remote link energy to storage link');
+				if(Memory.transferTired === undefined) {
+					Memory.transferTired = 1;
+				} else {
+					Memory.transferTired++;
 				}
 			}
 		}
