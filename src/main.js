@@ -118,7 +118,7 @@ module.exports.loop = function () {
 		} else if(upgraders.length < 0) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'upgrader', spawnRoom: roomName});
 			console.log('Spawning new upgrader: ' + newName);
-		} else if(explorers.length < 0) {
+		} else if(explorers.length < 1) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'explorer', spawnRoom: roomName});
 			console.log('Spawning new explorer: ' + newName);
 		} else if(remoteMiners.length < 2) {
