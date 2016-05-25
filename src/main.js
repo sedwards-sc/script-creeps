@@ -161,10 +161,18 @@ module.exports.loop = function () {
 			}
 		}
 		
-		// transfer energy across room if remote link is full
-		var remoteLink = Game.getObjectById('573a7a3d3f08575071c9c160');
+		// transfer energy across room if remote link is full and refillers are in range
 		var storageLink = Game.getObjectById('573a6ed5d32c966b71bd066b');
-		if(remoteLink.energy === remoteLink.energyCapacity) {
+		var remoteLink = Game.getObjectById('573a7a3d3f08575071c9c160');
+		var remoteLink2 = Game.getObjectById('57425474d734dbd25194bbc0');
+		
+		var refillers = _.filter(roomCreeps, (creep) => {
+				return ((creep.memory.role === 'remoteCarrier') || (creep.memory.role === 'carrier') || (creep.memory.role === 'explorer')) && (creep.carry.energy > 0);
+		});
+		
+		// for remote link 1
+		var inRangeRefillers = remoteLink.pos.findInRange(refillers, 3);
+		if((inRangeRefillers.length > 0) && (remoteLink.energy === remoteLink.energyCapacity)) {
 			var transferReturn = remoteLink.transferEnergy(storageLink);
 			if(transferReturn === OK) {
 				console.log('remote link energy transferred to storage link');
@@ -183,11 +191,33 @@ module.exports.loop = function () {
 			}
 		}
 		
+		// for remote link 2
+		var inRangeRefillers2 = remoteLink2.pos.findInRange(refillers, 3);
+		if((inRangeRefillers2.length > 0) && (remoteLink2.energy === remoteLink2.energyCapacity)) {
+			var transferReturn2 = remoteLink2.transferEnergy(storageLink);
+			if(transferReturn2 === OK) {
+				console.log('remote link 2 energy transferred to storage link');
+				if(Memory.transferCount2 === undefined) {
+					Memory.transferCount2 = 1;
+				} else {
+					Memory.transferCount2++;
+				}
+			} else if(transferReturn2 === ERR_TIRED) {
+				console.log('too tired to transfer remote link 2 energy to storage link');
+				if(Memory.transferTired2 === undefined) {
+					Memory.transferTired2 = 1;
+				} else {
+					Memory.transferTired2++;
+				}
+			}
+		}
+		
+		// find non carriers that aren't full of energy
 		var nonCarriers = _.filter(roomCreeps, (creep) => {
-				return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer');
+				return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.carry.energy < creep.carryCapacity);
 		});
 
-		// transfer energy from storage to any creeps except carriers
+		// transfer energy from links to any creeps except carriers
 		var links = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
 		for(var linkIndex in links) {
 			var currentLink = links[linkIndex];
