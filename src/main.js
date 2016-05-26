@@ -12,6 +12,7 @@ var roleLinker = require('role.linker');
 var roleReinforcer = require('role.reinforcer');
 var roleClaimer = require('role.claimer');
 var roleRemoteUpgrader = require('role.remoteUpgrader');
+var roleRemoteBuilder = require('role.remoteBuilder');
 require('debug').populate(global);
 
 module.exports.loop = function () {
@@ -89,6 +90,7 @@ module.exports.loop = function () {
 		var claimers = _.filter(roomCreeps, (creep) => creep.memory.role == 'claimer');
 		
 		var remoteUpgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteUpgrader');
+		var remoteBuilders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteBuilder');
 
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
 		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
@@ -159,6 +161,9 @@ module.exports.loop = function () {
 		} else if(remoteUpgraders.length < 1) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteUpgrader', spawnRoom: roomName});
 			console.log('Spawning new remote upgrader: ' + newName);
+		} else if(remoteBuilders.length < 1) {
+			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteBuilder', spawnRoom: roomName});
+			console.log('Spawning new remote builder: ' + newName);
 		}
 
 		// transfer energy from storage to carriers or reinforcers if they are in range
@@ -297,6 +302,9 @@ module.exports.loop = function () {
 			}
 			if(creep.memory.role == 'remoteUpgrader') {
 				roleRemoteUpgrader.run(creep);
+			}
+			if(creep.memory.role == 'remoteBuilder') {
+				roleRemoteBuilder.run(creep);
 			}
 		}
     }
