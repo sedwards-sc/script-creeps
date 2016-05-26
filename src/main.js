@@ -282,6 +282,7 @@ module.exports.loop = function () {
 				roleReinforcer.run(creep);
 			}
 			if(creep.memory.role == 'claimer') {
+				roleClaimer.run(creep);
 			}
 		}
     }
