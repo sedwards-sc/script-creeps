@@ -10,6 +10,7 @@ module.exports = {
 		
 		var checkPoint1 = new RoomPosition(4, 46, 'E10S23');
 		var checkPoint2 = new RoomPosition(15, 3, 'E10S26');
+		var checkPoint3 = new RoomPosition(13, 4, 'E9S27');
 		
 		
 		if(creep.memory.state === undefined) {
@@ -26,11 +27,18 @@ module.exports = {
 			creep.memory.state = 2;
 		}
 		
+		if((creep.memory.state === 2) && (JSON.stringify(creep.pos) === JSON.stringify(checkPoint3))) {
+		    creep.say('chkpt 3');
+			creep.memory.state = 3;
+		}
+		
 		if(creep.memory.state === 0) {
 			creep.moveTo(checkPoint1);
 		} else if(creep.memory.state === 1) {
 			creep.moveTo(checkPoint2);
 		} else if(creep.memory.state === 2) {
+			creep.moveTo(checkPoint3);
+		} else if(creep.memory.state === 3) {
 	        var controllerToClaim = Game.getObjectById('55db3356efa8e3fe66e05765');
 			if(creep.claimController(controllerToClaim) === ERR_NOT_IN_RANGE) {
 				creep.moveTo(controllerToClaim);
