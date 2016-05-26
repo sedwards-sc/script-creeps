@@ -113,13 +113,13 @@ module.exports.loop = function () {
 		} else if(harvesters.length < 0) {
 			var newName = mainSpawn.createCreep(currentHarvesterBody, undefined, {role: 'harvester', spawnRoom: roomName});
 			console.log('Spawning new harvester: ' + newName);
-		} else if(builders.length < 4) {
+		} else if(builders.length < 5) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'builder', spawnRoom: roomName});
 			console.log('Spawning new builder: ' + newName);
 		} else if(upgraders.length < 0) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'upgrader', spawnRoom: roomName});
 			console.log('Spawning new upgrader: ' + newName);
-		} else if(explorers.length < 2) {
+		} else if(explorers.length < 3) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'explorer', spawnRoom: roomName});
 			console.log('Spawning new explorer: ' + newName);
 		} else if(remoteMiners.length < 2) {
@@ -215,7 +215,7 @@ module.exports.loop = function () {
 		
 		// find non carriers that aren't full of energy
 		var nonCarriers = _.filter(roomCreeps, (creep) => {
-				return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.carry.energy < creep.carryCapacity);
+				return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.carry.energy < creep.carryCapacity);
 		});
 
 		// transfer energy from links to any creeps except carriers
