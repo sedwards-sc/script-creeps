@@ -16,7 +16,7 @@ module.exports = {
 		
 		//var checkPointHome = new RoomPosition(13, 11, 'E8S23');
 		var checkPointHome = new RoomPosition(2, 25, 'E8S23');
-		var checkPointAway = new RoomPosition(48, 32, 'E7S23');;
+		var checkPointAway = new RoomPosition(48, 32, 'E7S23');
 		
 		if(creep.memory.positionState === 0) {
 			checkPointAway = new RoomPosition(45, 28, 'E7S23');
