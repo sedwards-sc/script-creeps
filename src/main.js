@@ -53,6 +53,11 @@ module.exports.loop = function () {
 		    continue;
 		}
 		
+		// skip other rooms so it doesn't mess up anything when i claim a new room
+		if(roomName !== 'E8S23') {
+		    continue;
+		}
+		
 		var mainSpawn = roomSpawns[0];
 
 		var controllerProgress = Game.rooms[roomName].controller.progress / Game.rooms[roomName].controller.progressTotal * 100;
