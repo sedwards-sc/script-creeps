@@ -27,6 +27,11 @@ module.exports.loop = function () {
 	
 	// room defence loop
 	for(var name in Game.rooms) {
+		// skip other rooms so it doesn't mess up anything when i claim a new room
+		if(roomName !== 'E8S23') {
+		    continue;
+		}
+	
 		defendRoom(name);
 		var hostiles = Game.rooms[name].find(FIND_HOSTILE_CREEPS);
 		if(hostiles.length > 0) {
