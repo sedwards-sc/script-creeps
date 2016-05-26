@@ -32,11 +32,11 @@ module.exports = {
 			creep.memory.state = 3;
 		}
 		
-		if(creep.carry.energy === creep.carryCapacity) {
+		if((creep.memory.state === 3) && (creep.carry.energy === creep.carryCapacity)) {
 	        creep.memory.state = 4;
 	    }
 	    
-	    if (creep.carry.energy === 0) {
+	    if ((creep.memory.state === 4) && (creep.carry.energy === 0)) {
 	        creep.memory.state = 3;
 	    }
 		
