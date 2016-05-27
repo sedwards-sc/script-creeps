@@ -62,7 +62,20 @@ module.exports.loop = function () {
 	// room spawn loop
 	for(var roomName in Game.rooms) {
 		Memory.roster[roomName] = {
-				remoteCarriers: 0
+				harvesters: 0,
+				builders: 0,
+				upgraders: 0,
+				explorers: 0,
+				remoteMiners: 0,
+				remoteCarriers: 0,
+				miners: 0,
+				carriers: 0,
+				linkers: 0,
+				reinforcers: 0,
+				reservers: 0,
+				claimers: 0,
+				remoteUpgraders: 0,
+				remoteBuilders: 0
 		};
 	
 		// find room spawns
@@ -283,30 +296,39 @@ module.exports.loop = function () {
 		
 			if(creep.memory.role == 'miner') {
 				roleMiner.run(creep);
+				Memory.roster[creep.pos.roomName].miners++;
 			}
 			if(creep.memory.role == 'carrier') {
 				roleCarrier.run(creep);
+				Memory.roster[creep.pos.roomName].carriers++;
 			}
 			if(creep.memory.role == 'linker') {
 				roleLinker.run(creep);
+				Memory.roster[creep.pos.roomName].linkers++;
 			}
 			if(creep.memory.role == 'harvester') {
 				roleHarvester.run(creep);
+				Memory.roster[creep.pos.roomName].harvesters++;
 			}
 			if(creep.memory.role == 'upgrader') {
 				roleUpgrader.run(creep);
+				Memory.roster[creep.pos.roomName].upgraders++;
 			}
 			if(creep.memory.role == 'builder') {
 				roleBuilder.run(creep);
+				Memory.roster[creep.pos.roomName].builders++;
 			}
 			if(creep.memory.role == 'defender') {
 				roleDefender.run(creep);
+				Memory.roster[creep.pos.roomName].defenders++;
 			}
 			if(creep.memory.role == 'explorer') {
 				roleExplorer.run(creep);
+				Memory.roster[creep.pos.roomName].explorers++;
 			}
 			if(creep.memory.role == 'remoteMiner') {
 				roleRemoteMiner.run(creep);
+				Memory.roster[creep.pos.roomName].remoteMiners++;
 			}
 			if(creep.memory.role == 'remoteCarrier') {
 				roleRemoteCarrier.run(creep);
@@ -314,18 +336,23 @@ module.exports.loop = function () {
 			}
 			if(creep.memory.role == 'reserver') {
 				roleReserver.run(creep);
+				Memory.roster[creep.pos.roomName].reservers++;
 			}
 			if(creep.memory.role == 'reinforcer') {
 				roleReinforcer.run(creep);
+				Memory.roster[creep.pos.roomName].reinforcers++;
 			}
 			if(creep.memory.role == 'claimer') {
 				roleClaimer.run(creep);
+				Memory.roster[creep.pos.roomName].claimers++;
 			}
 			if(creep.memory.role == 'remoteUpgrader') {
 				roleRemoteUpgrader.run(creep);
+				Memory.roster[creep.pos.roomName].remoteUpgraders++;
 			}
 			if(creep.memory.role == 'remoteBuilder') {
 				roleRemoteBuilder.run(creep);
+				Memory.roster[creep.pos.roomName].remoteBuilders++;
 			}
 		} else {
 			// this is a test that will break when there are multiple spawns working and will remain when nothing is spawning
