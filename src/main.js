@@ -28,11 +28,16 @@ module.exports.loop = function () {
 	// room defence loop
 	for(var name in Game.rooms) {
 		// skip other rooms so it doesn't mess up anything when i claim a new room
-		if(name !== 'E8S23') {
+		if(!((name === 'E8S23') || (name === 'E9S27'))) {
 		    continue;
 		}
 	
 		defendRoom(name);
+		
+		if(name !== 'E8S23') {
+		    continue;
+		}
+		
 		var hostiles = Game.rooms[name].find(FIND_HOSTILE_CREEPS);
 		if(hostiles.length > 0) {
 			var defenders = _.filter(Game.creeps, (creep) => creep.memory.role == 'defender');
