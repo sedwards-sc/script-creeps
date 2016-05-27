@@ -4,7 +4,7 @@
 
 module.exports = {
 	run(creep) {
-		creep.say('remoteUpgrader');
+		//creep.say('remoteUpgrader');
 		// state 0 is head to next room
 
 		

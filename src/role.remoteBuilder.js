@@ -4,7 +4,7 @@
 
 module.exports = {
 	run(creep) {
-		creep.say('remoteBuilder');
+		//creep.say('remoteBuilder');
 		// state 0 is head to next room
 
 		
