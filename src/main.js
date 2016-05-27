@@ -91,12 +91,6 @@ module.exports.loop = function () {
 		var controllerProgress = Game.rooms[roomName].controller.progress / Game.rooms[roomName].controller.progressTotal * 100;
 		var roomEnergy = Game.rooms[roomName].energyAvailable;
 		console.log(roomName + ' energy is ' + roomEnergy + ' - controller progress: ' + controllerProgress + '%');
-
-		// skip other rooms so it doesn't mess up anything when i claim a new room
-		// TODO create spawning for new room
-		if(roomName !== 'E8S23') {
-		    continue;
-		}
 		
 		// find room creeps
 		var roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
@@ -123,6 +117,19 @@ module.exports.loop = function () {
 		
 		var remoteUpgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteUpgrader');
 		var remoteBuilders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteBuilder');
+		
+		if(roomName === 'E9S27') {
+			if(harvesters.length < 1) {
+				var newName = mainSpawn.createCreep([WORK,CARRY,MOVE,MOVE], undefined, {role: 'harvester', spawnRoom: roomName});
+				console.log('Spawning new harvester: ' + newName);
+			}
+		}
+		
+		// skip other rooms so it doesn't mess up anything when i claim a new room
+		// TODO create spawning for new room
+		if(roomName !== 'E8S23') {
+		    continue;
+		}
 		
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
 		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)

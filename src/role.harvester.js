@@ -75,23 +75,23 @@ module.exports = {
                 }
             } else {
                 // build
-                //var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-                //if(targets.length) {
-                //    if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-                //        creep.moveTo(targets[0]);
-                //    }
-                //} else {
-                    //else transfer to storage
-                    var closestStorage = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
-                    if(creep.transfer(closestStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-                        creep.moveTo(closestStorage);
+                var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+                if(targets.length) {
+                    if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(targets[0]);
                     }
+                } else {
+                    //else transfer to storage
+                    //var closestStorage = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
+                    //if(creep.transfer(closestStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+                    //    creep.moveTo(closestStorage);
+                    //}
                     
                     // else upgrade
-                    //if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-                    //    creep.moveTo(creep.room.controller);
-                    //}
-                //}
+                    if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(creep.room.controller);
+                    }
+                }
             }
         }
 	}
