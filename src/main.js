@@ -37,12 +37,15 @@ module.exports.loop = function () {
 		if(hostiles.length > 0) {
 			var defenders = _.filter(Game.creeps, (creep) => creep.memory.role == 'defender');
 			
-			// TODO: find spawn instead of using Game.spawn (which doesn't seem to work all the time)
+			// find room spawns
+			var roomSpawns = Game.rooms[name].find(FIND_MY_SPAWNS);
+			var mainSpawn = roomSpawns[0];
+			
 			if(defenders.length < 1) {
 				if(Game.rooms[name].energyAvailable >= 1610) {
-					var newName = Game.spawns.Hatchery.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {role: 'defender'});
+					var newName = mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {role: 'defender'});
 				} else {
-					var newName = Game.spawns.Hatchery.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {role: 'defender'});
+					var newName = mainSpawn.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {role: 'defender'});
 				}
 				console.log('Spawning new defender: ' + newName);
 			}
