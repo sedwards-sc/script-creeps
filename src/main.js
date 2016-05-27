@@ -102,7 +102,7 @@ module.exports.loop = function () {
 		var remoteBuilders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteBuilder');
 
 		Memory.roster[roomName] = {};
-		Memory.roster[roomName]remoteCarriersCounter = remoteCarriers.length;
+		Memory.roster[roomName].remoteCarriersCounter = remoteCarriers.length;
 		
 		// skip other rooms so it doesn't mess up anything when i claim a new room
 		// TODO create spawning for new room
