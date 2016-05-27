@@ -61,6 +61,10 @@ module.exports.loop = function () {
 
 	// room spawn loop
 	for(var roomName in Game.rooms) {
+		Memory.roster[roomName] = {
+				remoteCarriers: 0
+		};
+	
 		// find room spawns
 		var roomSpawns = Game.rooms[roomName].find(FIND_MY_SPAWNS);
 		
@@ -75,6 +79,12 @@ module.exports.loop = function () {
 		var roomEnergy = Game.rooms[roomName].energyAvailable;
 		console.log(roomName + ' energy is ' + roomEnergy + ' - controller progress: ' + controllerProgress + '%');
 
+		// skip other rooms so it doesn't mess up anything when i claim a new room
+		// TODO create spawning for new room
+		if(roomName !== 'E8S23') {
+		    continue;
+		}
+		
 		// find room creeps
 		var roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
 		
@@ -100,15 +110,6 @@ module.exports.loop = function () {
 		
 		var remoteUpgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteUpgrader');
 		var remoteBuilders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteBuilder');
-
-		Memory.roster[roomName] = {};
-		Memory.roster[roomName].remoteCarriersCounter = remoteCarriers.length;
-		
-		// skip other rooms so it doesn't mess up anything when i claim a new room
-		// TODO create spawning for new room
-		if(roomName !== 'E8S23') {
-		    continue;
-		}
 		
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
 		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
@@ -273,12 +274,13 @@ module.exports.loop = function () {
 		}
 	}
 
-
 	// run creep loop
     for(var creepName in Game.creeps) {
         var creep = Game.creeps[creepName];
 		
 		if(!creep.spawning) {
+			
+		
 			if(creep.memory.role == 'miner') {
 				roleMiner.run(creep);
 			}
@@ -308,6 +310,7 @@ module.exports.loop = function () {
 			}
 			if(creep.memory.role == 'remoteCarrier') {
 				roleRemoteCarrier.run(creep);
+				Memory.roster[creep.pos.roomName].remoteCarriers++;
 			}
 			if(creep.memory.role == 'reserver') {
 				roleReserver.run(creep);
@@ -324,6 +327,10 @@ module.exports.loop = function () {
 			if(creep.memory.role == 'remoteBuilder') {
 				roleRemoteBuilder.run(creep);
 			}
+		} else {
+			// this is a test that will break when there are multiple spawns working and will remain when nothing is spawning
+			// TODO fix this to be better
+			Memory.creepSpawning = creep.memory.role;
 		}
     }
 	
