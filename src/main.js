@@ -57,6 +57,7 @@ module.exports.loop = function () {
 		}
 	}
 
+	Memory.roster = {};
 
 	// room spawn loop
 	for(var roomName in Game.rooms) {
@@ -65,11 +66,6 @@ module.exports.loop = function () {
 		
 		// continue to next room if there are no spawns
 		if(roomSpawns.length < 1) {
-		    continue;
-		}
-		
-		// skip other rooms so it doesn't mess up anything when i claim a new room
-		if(roomName !== 'E8S23') {
 		    continue;
 		}
 		
@@ -105,6 +101,15 @@ module.exports.loop = function () {
 		var remoteUpgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteUpgrader');
 		var remoteBuilders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteBuilder');
 
+		Memory.roster.roomName = {};
+		Memory.roster.roomName.remoteCarriersCounter = remoteCarriers.length;
+		
+		// skip other rooms so it doesn't mess up anything when i claim a new room
+		// TODO create spawning for new room
+		if(roomName !== 'E8S23') {
+		    continue;
+		}
+		
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
 		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
 		if(carriers.length > 1) {
