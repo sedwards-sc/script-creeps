@@ -28,7 +28,7 @@ module.exports.loop = function () {
 	// room defence loop
 	for(var name in Game.rooms) {
 		// skip other rooms so it doesn't mess up anything when i claim a new room
-		if(roomName !== 'E8S23') {
+		if(name !== 'E8S23') {
 		    continue;
 		}
 	
@@ -166,7 +166,7 @@ module.exports.loop = function () {
 		} else if(remoteUpgraders.length < 1) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteUpgrader', spawnRoom: roomName});
 			console.log('Spawning new remote upgrader: ' + newName);
-		} else if(remoteBuilders.length < 1) {
+		} else if(remoteBuilders.length < 2) {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteBuilder', spawnRoom: roomName});
 			console.log('Spawning new remote builder: ' + newName);
 		}
