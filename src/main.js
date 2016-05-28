@@ -119,7 +119,7 @@ module.exports.loop = function () {
 		var remoteBuilders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteBuilder');
 		
 		if(roomName === 'E9S27') {
-			if(harvesters.length < 1) {
+			if(harvesters.length < 2) {
 				var newName = mainSpawn.createCreep([WORK,CARRY,MOVE,MOVE], undefined, {role: 'harvester', spawnRoom: roomName});
 				console.log('Spawning new harvester: ' + newName);
 			}
@@ -153,7 +153,7 @@ module.exports.loop = function () {
 		var minerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE];
 		var carrierBody = [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
 		
-		if(carriers.length < 2) {
+		if(carriers.length < 3) {
 			var newName = mainSpawn.createCreep([CARRY,CARRY,MOVE,MOVE], undefined, {role: 'carrier', spawnRoom: roomName});
 			console.log('Spawning new carrier: ' + newName);
 		} else if(miners.length < 1) {
