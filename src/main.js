@@ -119,7 +119,7 @@ module.exports.loop = function () {
 		var remoteBuilders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteBuilder');
 		
 		if(roomName === 'E9S27') {
-			if(harvesters.length < 2) {
+			if(harvesters.length < 3) {
 				var newName = mainSpawn.createCreep([WORK,CARRY,MOVE,MOVE], undefined, {role: 'harvester', spawnRoom: roomName});
 				console.log('Spawning new harvester: ' + newName);
 			}
