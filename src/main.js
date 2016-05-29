@@ -161,7 +161,7 @@ module.exports.loop = function () {
 		var remoteMinerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE];
 		var remoteCarrierBody = [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
 		
-		if(carriers.length < 3) {
+		if(carriers.length < 2) {
 			var newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
 			console.log('Spawning new carrier: ' + newName);
 		} else if(miners.length < 1) {
