@@ -191,7 +191,7 @@ module.exports.loop = function () {
 		} else if(reservers.length < 1) {
 			var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {role: 'reserver', spawnRoom: roomName});
 			console.log('Spawning new reserver: ' + newName);
-		} else if(reinforcers.length < 2) {
+		} else if(reinforcers.length < 0) {
 			var newName = mainSpawn.createCreep([WORK,CARRY,CARRY,MOVE,MOVE,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
 			console.log('Spawning new reinforcer: ' + newName);
 		} else if(claimers.length < 0) {
@@ -382,14 +382,14 @@ function defendRoom(roomName) {
     } else {
 		var ramparts = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 200000;
+					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 1150000;
 				}
 		});
 		var sortedRamparts = _.sortBy(ramparts, function(rampart) { return rampart.hits; });
 
 		var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 200000;
+					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 1150000;
 				}
 		});
 		var sortedWalls = _.sortBy(walls, function(wall) { return wall.hits; });
