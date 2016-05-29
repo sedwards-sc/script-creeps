@@ -150,14 +150,22 @@ module.exports.loop = function () {
 			var currentHarvesterBody = currentBody;
 		}
 		
-		var minerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE];
-		var carrierBody = [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
+		if(roomEnergy >= 400) {
+			var carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
+		} else {
+			var carrierBody = [CARRY,CARRY,MOVE,MOVE];
+		}
+		
+		var minerBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
+		
+		var remoteMinerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE];
+		var remoteCarrierBody = [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
 		
 		if(carriers.length < 3) {
-			var newName = mainSpawn.createCreep([CARRY,CARRY,MOVE,MOVE], undefined, {role: 'carrier', spawnRoom: roomName});
+			var newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
 			console.log('Spawning new carrier: ' + newName);
 		} else if(miners.length < 1) {
-			var newName = mainSpawn.createCreep([WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'miner', spawnRoom: roomName});
+			var newName = mainSpawn.createCreep(minerBody, undefined, {role: 'miner', spawnRoom: roomName});
 			console.log('Spawning new miner: ' + newName);
 		} else if(linkers.length < 1) {
 			var newName = mainSpawn.createCreep([CARRY,MOVE], undefined, {role: 'linker', spawnRoom: roomName});
@@ -179,14 +187,14 @@ module.exports.loop = function () {
 			var remoteMiner1 = _.filter(remoteMiners, (creep) => creep.memory.remoteMine == 1);
 			
 			if(remoteMiner0.length < 1) {
-				var newName = mainSpawn.createCreep(minerBody, undefined, {role: 'remoteMiner', remoteMine: 0, spawnRoom: roomName});
+				var newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', remoteMine: 0, spawnRoom: roomName});
 				console.log('Spawning new remote miner 0: ' + newName);
 			} else if(remoteMiner1.length < 1) {
-				var newName = mainSpawn.createCreep(minerBody, undefined, {role: 'remoteMiner', remoteMine: 1, spawnRoom: roomName});
+				var newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', remoteMine: 1, spawnRoom: roomName});
 				console.log('Spawning new remote miner 1: ' + newName);
 			}
 		} else if(remoteCarriers.length < 4) {
-			var newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'remoteCarrier', spawnRoom: roomName});
+			var newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {role: 'remoteCarrier', spawnRoom: roomName});
 			console.log('Spawning new remote carrier: ' + newName);
 		} else if(reservers.length < 1) {
 			var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {role: 'reserver', spawnRoom: roomName});
