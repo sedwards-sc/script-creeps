@@ -13,6 +13,7 @@ var roleReinforcer = require('role.reinforcer');
 var roleClaimer = require('role.claimer');
 var roleRemoteUpgrader = require('role.remoteUpgrader');
 var roleRemoteBuilder = require('role.remoteBuilder');
+require('prototype.test');
 require('debug').populate(global);
 
 module.exports.loop = function () {
@@ -351,6 +352,8 @@ module.exports.loop = function () {
 			if(creep.memory.role == 'linker') {
 				roleLinker.run(creep);
 				Memory.roster[creep.pos.roomName].linkers++;
+				creep.consoleTest();
+				creep.consoleTest2(5);
 			}
 			if(creep.memory.role == 'harvester') {
 				roleHarvester.run(creep);
