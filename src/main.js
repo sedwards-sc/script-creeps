@@ -125,7 +125,7 @@ module.exports.loop = function () {
 			if(harvesters.length < 3) {
 				//var newName = mainSpawn.createCreep([WORK,CARRY,MOVE,MOVE], undefined, {role: 'harvester', spawnRoom: roomName});
 				//console.log('Spawning new harvester: ' + newName);
-				mainSpawn.spawnHarvester();
+				mainSpawn.spawnHarvester(roomCreeps);
 			}
 		}
 		
