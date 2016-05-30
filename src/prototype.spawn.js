@@ -17,6 +17,6 @@ StructureSpawn.prototype.spawnHarvester = function(roomCreeps) {
 	
 	var newName = this.createCreep(harvesterBody, undefined, {role: 'harvester', spawnRoom: this.pos.roomName});
 	console.log('-test Spawning new harvester: ' + newName);
-	console.log('--' + myRoomEnergy + ' ' + JSON.stringify(roomCreeps));
+	console.log('--' + myRoomEnergy + ' ' + roomCreeps.length + ' ' + JSON.stringify(roomCreeps));
 };
 
