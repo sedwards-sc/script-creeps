@@ -123,8 +123,6 @@ module.exports.loop = function () {
 		
 		if(roomName === 'E9S27') {
 			if(harvesters.length < 3) {
-				//var newName = mainSpawn.createCreep([WORK,CARRY,MOVE,MOVE], undefined, {role: 'harvester', spawnRoom: roomName});
-				//console.log('Spawning new harvester: ' + newName);
 				mainSpawn.spawnHarvester(roomCreeps);
 			}
 		}
@@ -183,8 +181,7 @@ module.exports.loop = function () {
 			var newName = mainSpawn.createCreep([CARRY,MOVE], undefined, {role: 'linker', spawnRoom: roomName});
 			console.log('Spawning new linker: ' + newName);
 		} else if(harvesters.length < 0) {
-			var newName = mainSpawn.createCreep(currentHarvesterBody, undefined, {role: 'harvester', spawnRoom: roomName});
-			console.log('Spawning new harvester: ' + newName);
+			mainSpawn.spawnHarvester(roomCreeps);
 		} else if(builders.length < 4) {
 			var newName = mainSpawn.createCreep(builderBody, undefined, {role: 'builder', spawnRoom: roomName});
 			console.log('Spawning new builder: ' + newName);
