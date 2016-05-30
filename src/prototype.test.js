@@ -1,6 +1,6 @@
 Creep.prototype.consoleTest = function() {
 	console.log('-console test');
-	this.say('consoleTest');
+	//this.say('consoleTest');
 };
 
 Creep.prototype.consoleTest2 = function(varTest) {
