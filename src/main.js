@@ -94,7 +94,11 @@ module.exports.loop = function () {
 		var controllerProgress = Game.rooms[roomName].controller.progress / Game.rooms[roomName].controller.progressTotal * 100;
 		var roomEnergy = Game.rooms[roomName].energyAvailable;
 		var roomEnergyCapacity = Game.rooms[roomName].energyCapacityAvailable;
-		console.log(roomName + ' energy is ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - controller progress: ' + controllerProgress + '%');
+		var roomStorageEnergy;
+		if(Game.rooms[roomName].storage) {
+			roomStorageEnergy = Game.rooms[roomName].storage.store[RESOURCE_ENERGY];
+		}
+		console.log(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '%');
 		
 		// find room creeps
 		var roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
