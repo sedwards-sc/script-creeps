@@ -165,7 +165,7 @@ module.exports.loop = function () {
 		
 		var minerBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
 		
-		if(roomEnergy >= 1800) {
+		if((roomEnergy >= 1800) && (roomStorageEnergy > 500000)) {
 			var builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,MOVE];
 		} else if(roomEnergy >= 950) {
 			var builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
