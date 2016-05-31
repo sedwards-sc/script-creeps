@@ -341,7 +341,8 @@ module.exports.loop = function () {
 	}
 
 	var rosterTest = new RoomRoster();
-	
+	console.log(JSON.stringify(rosterTest));
+	var rosterTest = new RoomRoster(1,2,3,10);
 	console.log(JSON.stringify(rosterTest));
 	
 	// run creep loop

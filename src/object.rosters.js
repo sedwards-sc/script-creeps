@@ -4,7 +4,7 @@
 
 module.exports = (function(){
 
-	RoomRoster = function (harvesters, builders, upgraders, explorers, remoteMiners, remoteCarriers, miners, carriers, linkers, reinforcers, reservers, claimers, remoteUpgraders, remoteBuilders) {
+	RoomRoster = function(harvesters, builders, upgraders, explorers, remoteMiners, remoteCarriers, miners, carriers, linkers, reinforcers, reservers, claimers, remoteUpgraders, remoteBuilders) {
 		this.harvesters = harvesters || 0;
 		this.builders = builders || 0;
 		this.upgraders = upgraders || 0;
@@ -19,6 +19,10 @@ module.exports = (function(){
 		this.claimers = claimers || 0;
 		this.remoteUpgraders = remoteUpgraders || 0;
 		this.remoteBuilders = remoteBuilders || 0;
+	}
+	
+	WorldRoster = function() {
+		
 	}
 	
 })();
