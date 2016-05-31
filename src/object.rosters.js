@@ -2,8 +2,9 @@
  * object.rosters
  */
 
-module.exports = {
-	RoomRoster: function (harvesters, builders, upgraders, explorers, remoteMiners, remoteCarriers, miners, carriers, linkers, reinforcers, reservers, claimers, remoteUpgraders, remoteBuilders) {
+module.exports = (function(){
+
+	RoomRoster = function (harvesters, builders, upgraders, explorers, remoteMiners, remoteCarriers, miners, carriers, linkers, reinforcers, reservers, claimers, remoteUpgraders, remoteBuilders) {
 		this.harvesters = harvesters || 0;
 		this.builders = builders || 0;
 		this.upgraders = upgraders || 0;
@@ -19,7 +20,8 @@ module.exports = {
 		this.remoteUpgraders = remoteUpgraders;
 		this.remoteBuilders = remoteBuilders;
 	}
-};
+	
+})();
 
 /*
 Memory.roster[roomName] = {
