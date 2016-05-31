@@ -16,7 +16,7 @@ var roleRemoteBuilder = require('role.remoteBuilder');
 //require('prototype.storage');
 //require('prototype.creep');
 require('prototype.spawn');
-require('object.rosters.js');
+require('object.rosters');
 require('debug').populate(global);
 
 module.exports.loop = function () {
