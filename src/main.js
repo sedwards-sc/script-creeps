@@ -62,6 +62,7 @@ module.exports.loop = function () {
 	}
 
 	Memory.roster = {};
+	var roomQuotas = new WorldRoster();
 
 	// room spawn loop
 	for(var roomName in Game.rooms) {
@@ -81,6 +82,12 @@ module.exports.loop = function () {
 				remoteUpgraders: 0,
 				remoteBuilders: 0
 		};
+	
+		var roomQuota = roomQuotas[roomName];
+		if(roomQuota === undefined) {
+			console.log(roomName);
+			continue;
+		}
 	
 		// find room spawns
 		var roomSpawns = Game.rooms[roomName].find(FIND_MY_SPAWNS);
@@ -126,6 +133,8 @@ module.exports.loop = function () {
 		
 		var remoteUpgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteUpgrader');
 		var remoteBuilders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteBuilder');
+		
+		
 		
 		if(roomName === 'E9S27') {
 			if(harvesters.length < 3) {
