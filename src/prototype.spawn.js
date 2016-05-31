@@ -5,12 +5,12 @@
 StructureSpawn.prototype.spawnHarvester = function(roomCreeps) {
 	var harvesterBody = [WORK,CARRY,MOVE,MOVE];
 	
-	var myRoomEnergy = Game.rooms[this.pos.roomName].energyAvailable;
+	var myRoomEnergyCapacity = Game.rooms[this.pos.roomName].energyCapacityAvailable;
 	
 	if(roomCreeps && roomCreeps.length > 0) {
-		if(myRoomEnergy >= 950) {
+		if(myRoomEnergyCapacity >= 950) {
 			harvesterBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
-		} else if (myRoomEnergy >= 350) {
+		} else if (myRoomEnergyCapacity >= 350) {
 			harvesterBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 		}
 	}
