@@ -83,18 +83,18 @@ module.exports.loop = function () {
 				remoteBuilders: 0
 		};
 	
-		var roomQuota = roomQuotas[roomName];
-		if(roomQuota === undefined) {
-			console.log(roomName);
-			continue;
-		}
-	
 		// find room spawns
 		var roomSpawns = Game.rooms[roomName].find(FIND_MY_SPAWNS);
 		
-		// continue to next room if there are no spawns
+		// get room creep role quota
+		var roomQuota = roomQuotas[roomName];
+		
+		// continue to next room if there are no spawns or no room quota
 		if(roomSpawns.length < 1) {
 		    continue;
+		} else if(roomQuota === undefined) {
+			console.log('!!!' + roomName + ' has spawn but no quota!!!');
+			continue;
 		}
 		
 		var mainSpawn = roomSpawns[0];
@@ -133,8 +133,6 @@ module.exports.loop = function () {
 		
 		var remoteUpgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteUpgrader');
 		var remoteBuilders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteBuilder');
-		
-		
 		
 		if(roomName === 'E9S27') {
 			if(harvesters.length < 3) {
@@ -186,7 +184,7 @@ module.exports.loop = function () {
 		var remoteMinerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE];
 		var remoteCarrierBody = [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
 		
-		if(carriers.length < 2) {
+		if(carriers.length < roomQuota.carriers) {
 			var newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
 			console.log('Spawning new carrier: ' + newName);
 		} else if(miners.length < 1) {
