@@ -339,16 +339,6 @@ module.exports.loop = function () {
 			}
 		}
 	}
-
-	//var rosterTest = new RoomRoster(1,2,3,10);
-	//console.log(JSON.stringify(rosterTest));
-	var WorldRosterTest = new WorldRoster();
-	for(roomRoster in WorldRosterTest) {
-		//var rRoster = WorldRosterTest[roomRoster];
-		
-		console.log(JSON.stringify(WorldRosterTest[roomRoster]));
-	}
-	//console.log(JSON.stringify(WorldRosterTest));
 	
 	// run creep loop
     for(var creepName in Game.creeps) {
