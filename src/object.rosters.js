@@ -2,21 +2,23 @@
  * object.rosters
  */
 
-function RoomRoster(harvesters, builders, upgraders, explorers, remoteMiners, remoteCarriers, miners, carriers, linkers, reinforcers, reservers, claimers, remoteUpgraders, remoteBuilders) {
-	this.harvesters = harvesters || 0;
-	this.builders = builders || 0;
-	this.upgraders = upgraders || 0;
-	this.explorers = explorers || 0;
-	this.remoteMiners = remoteMiners;
-	this.remoteCarriers = remoteCarriers;
-	this.miners = miners;
-	this.carriers = carriers;
-	this.linkers = linkers;
-	this.reinforcers = reinforcers;
-	this.reservers = reservers;
-	this.claimers = claimers;
-	this.remoteUpgraders = remoteUpgraders;
-	this.remoteBuilders = remoteBuilders;
+module.exports = {
+	RoomRoster: function (harvesters, builders, upgraders, explorers, remoteMiners, remoteCarriers, miners, carriers, linkers, reinforcers, reservers, claimers, remoteUpgraders, remoteBuilders) {
+		this.harvesters = harvesters || 0;
+		this.builders = builders || 0;
+		this.upgraders = upgraders || 0;
+		this.explorers = explorers || 0;
+		this.remoteMiners = remoteMiners;
+		this.remoteCarriers = remoteCarriers;
+		this.miners = miners;
+		this.carriers = carriers;
+		this.linkers = linkers;
+		this.reinforcers = reinforcers;
+		this.reservers = reservers;
+		this.claimers = claimers;
+		this.remoteUpgraders = remoteUpgraders;
+		this.remoteBuilders = remoteBuilders;
+	}
 };
 
 /*
