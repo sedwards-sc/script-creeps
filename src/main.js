@@ -339,6 +339,10 @@ module.exports.loop = function () {
 		}
 	}
 
+	var rosterTest = new RoomRoster();
+	
+	console.log(JSON.stringify(rosterTest));
+	
 	// run creep loop
     for(var creepName in Game.creeps) {
         var creep = Game.creeps[creepName];
