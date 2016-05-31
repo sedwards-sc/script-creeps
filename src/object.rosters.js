@@ -22,6 +22,39 @@ module.exports = (function(){
 	}
 	
 	WorldRoster = function() {
+		this.E8S23 = new RoomRoster(
+				0, //harvesters
+				4, //builders
+				0, //upgraders
+				3, //explorers
+				2, //remoteMiners
+				4, //remoteCarriers
+				1, //miners
+				2, //carriers
+				1, //linkers
+				2, //reinforcers
+				1, //reservers
+				0, //claimers
+				1, //remoteUpgraders
+				2 //remoteBuilders
+		);
+		
+		this.E9S27 = new RoomRoster(
+				3, //harvesters
+				0, //builders
+				0, //upgraders
+				0, //explorers
+				0, //remoteMiners
+				0, //remoteCarriers
+				0, //miners
+				0, //carriers
+				0, //linkers
+				0, //reinforcers
+				0, //reservers
+				0, //claimers
+				0, //remoteUpgraders
+				0 //remoteBuilders
+		);
 		
 	}
 	
