@@ -9,16 +9,16 @@ module.exports = (function(){
 		this.builders = builders || 0;
 		this.upgraders = upgraders || 0;
 		this.explorers = explorers || 0;
-		this.remoteMiners = remoteMiners;
-		this.remoteCarriers = remoteCarriers;
-		this.miners = miners;
-		this.carriers = carriers;
-		this.linkers = linkers;
-		this.reinforcers = reinforcers;
-		this.reservers = reservers;
-		this.claimers = claimers;
-		this.remoteUpgraders = remoteUpgraders;
-		this.remoteBuilders = remoteBuilders;
+		this.remoteMiners = remoteMiners || 0;
+		this.remoteCarriers = remoteCarriers || 0;
+		this.miners = miners || 0;
+		this.carriers = carriers || 0;
+		this.linkers = linkers || 0;
+		this.reinforcers = reinforcers || 0;
+		this.reservers = reservers || 0;
+		this.claimers = claimers || 0;
+		this.remoteUpgraders = remoteUpgraders || 0;
+		this.remoteBuilders = remoteBuilders || 0;
 	}
 	
 })();
