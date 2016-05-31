@@ -252,16 +252,25 @@ module.exports.loop = function () {
 					return (creep.memory.role === 'carrier') && (creep.carry.energy < creep.carryCapacity);
 			});
 			
+			var nonFullBuilders = _.filter(roomCreeps, (creep) => {
+					return (creep.memory.role === 'builder') && (creep.carry.energy < creep.carryCapacity);
+			});
+			
 			var nonFullReinforcers = _.filter(roomCreeps, (creep) => {
 					return (creep.memory.role === 'reinforcer') && (creep.carry.energy === 0);
 			});
 			
 			var inRangeCarriers = mainStorage.pos.findInRange(nonFullCarriers, 1);
+			var inRangeBuilders = mainStorage.pos.findInRange(nonFullBuilders, 1);
 			var inRangeReinforcers = mainStorage.pos.findInRange(nonFullReinforcers, 1);
 			
 			if(inRangeCarriers.length > 0) {
 				if(mainStorage.transfer(inRangeCarriers[0], RESOURCE_ENERGY) === OK) {
 					console.log('storage energy transferred to: ' + inRangeCarriers[0].name + ' - ' + inRangeCarriers[0].memory.role);
+				}
+			} else if(inRangeBuilders.length > 0) {
+				if(mainStorage.transfer(inRangeBuilders[0], RESOURCE_ENERGY) === OK) {
+					console.log('storage energy transferred to: ' + inRangeBuilders[0].name + ' - ' + inRangeBuilders[0].memory.role);
 				}
 			} else if(inRangeReinforcers.length > 0) {
 				if(mainStorage.transfer(inRangeReinforcers[0], RESOURCE_ENERGY) === OK) {

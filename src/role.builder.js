@@ -27,10 +27,10 @@ module.exports = {
 					}
 			});
             
-			//get links with energy
-			var linksWithEnergy = creep.room.find(FIND_MY_STRUCTURES, {
+			//get links with energy or storage with enough surplus energy
+			var structuresWithEnergy = creep.room.find(FIND_MY_STRUCTURES, {
 					filter: (structure) => {
-						return (structure.structureType === STRUCTURE_LINK) && (structure.energy >= creep.carryCapacity);
+						return ((structure.structureType === STRUCTURE_LINK) && (structure.energy >= creep.carryCapacity)) || ((structure.structureType === STRUCTURE_STORAGE) && (structure.store[RESOURCE_ENERGY] >= 5000));
 					}
 			});
 			
@@ -40,14 +40,14 @@ module.exports = {
 				energySources.push(droppedEnergy[i]);
 			}
 			
-			for(var i in linksWithEnergy) {
-				energySources.push(linksWithEnergy[i]);
+			for(var i in structuresWithEnergy) {
+				energySources.push(structuresWithEnergy[i]);
 			}
 			
 			var closestEnergy = creep.pos.findClosestByPath(energySources);
 			
 			if(closestEnergy) {
-				if(closestEnergy.structureType === STRUCTURE_LINK) {
+				if((closestEnergy.structureType === STRUCTURE_LINK) || (closestEnergy.structureType === STRUCTURE_STORAGE)) {
 					if(!creep.pos.isNearTo(closestEnergy)) {
 						creep.moveTo(closestEnergy);
 					}
