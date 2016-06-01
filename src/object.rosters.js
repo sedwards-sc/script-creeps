@@ -47,7 +47,7 @@ module.exports = (function(){
 				0, //remoteMiners
 				0, //remoteCarriers
 				1, //miners
-				0, //carriers
+				1, //carriers
 				0, //linkers
 				0, //reinforcers
 				0, //reservers
