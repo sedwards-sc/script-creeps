@@ -30,7 +30,7 @@ module.exports = {
 			//get links with energy or storage with enough surplus energy
 			var structuresWithEnergy = creep.room.find(FIND_MY_STRUCTURES, {
 					filter: (structure) => {
-						return ((structure.structureType === STRUCTURE_LINK) && (structure.energy >= creep.carryCapacity)) || ((structure.structureType === STRUCTURE_STORAGE) && (structure.store[RESOURCE_ENERGY] >= 5000));
+						return ((structure.structureType === STRUCTURE_LINK) && (structure.energy >= creep.carryCapacity)) || ((structure.structureType === STRUCTURE_STORAGE) && (structure.store[RESOURCE_ENERGY] >= 1000));
 					}
 			});
 			
