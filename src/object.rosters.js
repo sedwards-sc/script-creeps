@@ -35,8 +35,8 @@ module.exports = (function(){
 				2, //reinforcers
 				1, //reservers
 				0, //claimers
-				1, //remoteUpgraders
-				2 //remoteBuilders
+				0, //remoteUpgraders
+				0 //remoteBuilders
 		);
 		
 		this.E9S27 = new RoomRoster(
