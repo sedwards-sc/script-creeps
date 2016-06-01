@@ -253,7 +253,8 @@ module.exports.loop = function () {
 			});
 			
 			var nonFullBuilders = _.filter(roomCreeps, (creep) => {
-					return (creep.memory.role === 'builder') && (creep.carry.energy < creep.carryCapacity);
+					//return (creep.memory.role === 'builder') && (creep.carry.energy < creep.carryCapacity);
+					return (creep.memory.role === 'builder') && (creep.carry.energy === 0);
 			});
 			
 			var nonFullReinforcers = _.filter(roomCreeps, (creep) => {
