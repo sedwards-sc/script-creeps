@@ -28,8 +28,13 @@ module.exports = {
 	    if(creep.memory.state == 0) {
             // harvest
             var closestSource = creep.pos.findClosestByPath(FIND_SOURCES);
-            if (creep.harvest(closestSource) === ERR_NOT_IN_RANGE) {
+            var harvestReturn = creep.harvest(closestSource);
+            if (harvestReturn === ERR_NOT_IN_RANGE) {
                 creep.moveTo(closestSource);
+            } else if(harvestReturn === OK) {
+                if((creep.memory.spawnRoom === 'E9S27') && (creep.pos.y !== 36) && (creep.pos.y !== 35)) {
+                    creep.move(TOP);
+                }
             }
 		} else if(creep.memory.state == 1) {
 			// transfer to storage

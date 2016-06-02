@@ -41,7 +41,7 @@ module.exports = (function(){
 		
 		this.E9S27 = new RoomRoster(
 				0, //harvesters
-				3, //builders
+				4, //builders
 				0, //upgraders
 				0, //explorers
 				0, //remoteMiners

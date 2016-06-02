@@ -175,6 +175,14 @@ module.exports.loop = function () {
 			var builderBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 		}
 		
+		if((roomEnergy >= 1150) && (roomStorageEnergy > 500000)) {
+			var explorerBody = [WORK,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE];
+		} else if(roomEnergy >= 950) {
+			var explorerBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+		} else {
+			var explorerBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
+		}
+		
 		var remoteMinerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE];
 		var remoteCarrierBody = [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
 		
@@ -196,7 +204,7 @@ module.exports.loop = function () {
 			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'upgrader', spawnRoom: roomName});
 			console.log('Spawning new upgrader: ' + newName);
 		} else if(explorers.length < roomQuota.explorers) {
-			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'explorer', spawnRoom: roomName});
+			var newName = mainSpawn.createCreep(explorerBody, undefined, {role: 'explorer', spawnRoom: roomName});
 			console.log('Spawning new explorer: ' + newName);
 		} else if(remoteMiners.length < roomQuota.remoteMiners) {
 			var remoteMiner0 = _.filter(remoteMiners, (creep) => creep.memory.remoteMine == 0);
