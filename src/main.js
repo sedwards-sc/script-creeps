@@ -63,6 +63,8 @@ module.exports.loop = function () {
 
 	Memory.roster = {};
 	var roomQuotas = new WorldRoster();
+	var remoteInfo = new RoomRemotes();
+	console.log(remoteInfo);
 
 	// room spawn loop
 	for(var roomName in Game.rooms) {
