@@ -177,7 +177,7 @@ module.exports.loop = function () {
 			var builderBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 		}
 		
-		if((roomEnergy >= 1150) && (roomStorageEnergy > 500000)) {
+		if((roomEnergy >= 1150) && (roomStorageEnergy > 250000)) {
 			var explorerBody = [WORK,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE];
 		} else if(roomEnergy >= 950) {
 			var explorerBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
