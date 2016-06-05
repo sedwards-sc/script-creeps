@@ -8,7 +8,9 @@ module.exports = {
 		// state 0 is head to next room
 		// state 1 harvest
 		
-		var checkPointAway = new RoomPosition(48, 31, 'E7S23');
+		//var checkPointAway = new RoomPosition(48, 31, 'E7S23');
+		
+		var checkPointAway = new RoomPosition(creep.memory.rX, creep.memory.rY, creep.memory.rRoomName);
 		
 		if(creep.memory.state === undefined) {
 			creep.memory.state = 0;
