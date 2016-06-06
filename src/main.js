@@ -242,8 +242,33 @@ module.exports.loop = function () {
 			//	console.log('Spawning new remote miner 1: ' + newName);
 			//}
 		} else if(remoteCarriers.length < roomQuota.remoteCarriers) {
-			var newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {role: 'remoteCarrier', spawnRoom: roomName});
-			console.log('Spawning new remote carrier: ' + newName);
+			if(roomRemoteInfo && (roomRemoteInfo.remoteCarriers.length > 0)) {
+				for(var remoteCarriersIndex in roomRemoteInfo.remoteCarriers) {
+					var currentRemoteCarrier = roomRemoteInfo.remoteCarriers[remoteCarriersIndex];
+					var currentRemoteCarrierFilter = _.filter(remoteCarriers, (creep) => creep.memory.creepId === currentRemoteCarrier.creepId);
+					
+					if(currentRemoteCarrierFilter.length < 1) {
+						var newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {
+							role: 'remoteCarrier', 
+							spawnRoom: roomName, 
+							creepId: currentRemoteCarrier.creepId, 
+							rRoomName: currentRemoteCarrier.checkPointAway.roomName, 
+							rX: currentRemoteCarrier.checkPointAway.x, 
+							rY: currentRemoteCarrier.checkPointAway.y, 
+							hRoomName: currentRemoteCarrier.checkPointHome.roomName, 
+							hX: currentRemoteCarrier.checkPointHome.x, 
+							hY: currentRemoteCarrier.checkPointHome.y
+						});
+						console.log('Spawning new remote carrier: ' + newName + ' - ' + JSON.stringify(currentRemoteCarrier));
+						break;
+					}
+				}
+			} else {
+				console.log('!!!' + roomName + ' quota has remote carriers but there is no remote carrier info for this room!!!');
+			}
+		
+			//var newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {role: 'remoteCarrier', spawnRoom: roomName});
+			//console.log('Spawning new remote carrier: ' + newName);
 		} else if(reservers.length < roomQuota.reservers) {
 			var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {role: 'reserver', spawnRoom: roomName});
 			console.log('Spawning new reserver: ' + newName);

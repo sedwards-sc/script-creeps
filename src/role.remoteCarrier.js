@@ -10,19 +10,30 @@ module.exports = {
 		// state 2 is head back to home room
 		// state 3 is upgrade controller
 		
-		if(creep.memory.positionState === undefined) {
-			creep.memory.positionState = 0;
+		if((creep.memory.rRoomName === undefined) || (creep.memory.rX === undefined) || (creep.memory.rY === undefined)) {
+			return;
 		}
+		
+		if((creep.memory.hRoomName === undefined) || (creep.memory.hX === undefined) || (creep.memory.hY === undefined)) {
+			return;
+		}
+		
+		var checkPointAway = new RoomPosition(creep.memory.rX, creep.memory.rY, creep.memory.rRoomName);
+		var checkPointHome = new RoomPosition(creep.memory.hX, creep.memory.hY, creep.memory.hRoomName);
+		
+		//if(creep.memory.positionState === undefined) {
+		//	creep.memory.positionState = 0;
+		//}
 		
 		//var checkPointHome = new RoomPosition(13, 11, 'E8S23');
-		var checkPointHome = new RoomPosition(2, 25, 'E8S23');
-		var checkPointAway = new RoomPosition(48, 32, 'E7S23');
+		//var checkPointHome = new RoomPosition(2, 25, 'E8S23');
+		//var checkPointAway = new RoomPosition(48, 32, 'E7S23');
 		
-		if(creep.memory.positionState === 0) {
-			checkPointAway = new RoomPosition(45, 28, 'E7S23');
-		} else {
-			checkPointAway = new RoomPosition(48, 34, 'E7S23');
-		}
+		//if(creep.memory.positionState === 0) {
+		//	checkPointAway = new RoomPosition(45, 28, 'E7S23');
+		//} else {
+		//	checkPointAway = new RoomPosition(48, 34, 'E7S23');
+		//}
 		
 		if(creep.memory.state === undefined) {
 			creep.memory.state = 0;
@@ -46,11 +57,11 @@ module.exports = {
 		if ((creep.memory.state === 3) && (creep.carry.energy === 0)) {
 			creep.say('empty');
 	        creep.memory.state = 0;
-			if(creep.memory.positionState === 0) {
-				creep.memory.positionState = 1;
-			} else if(creep.memory.positionState === 1) {
-				creep.memory.positionState = 0;
-			}
+			//if(creep.memory.positionState === 0) {
+			//	creep.memory.positionState = 1;
+			//} else if(creep.memory.positionState === 1) {
+			//	creep.memory.positionState = 0;
+			//}
 	    }
 		
 		
