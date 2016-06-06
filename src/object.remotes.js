@@ -61,6 +61,9 @@ module.exports = (function(){
 		// reservers
 		var reserverInfo0 = new ReserverInfo('reserver0', '55db333cefa8e3fe66e056d8');
 		this.E8S23.reservers.push(reserverInfo0);
+		
+		var reserverInfo1 = new ReserverInfo('reserver1', '55db3354efa8e3fe66e05757');
+		this.E8S23.reservers.push(reserverInfo1);
 	}	
 })();
 

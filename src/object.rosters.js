@@ -33,7 +33,7 @@ module.exports = (function(){
 				2, //carriers
 				1, //linkers
 				2, //reinforcers
-				1, //reservers
+				2, //reservers
 				0, //claimers
 				0, //remoteUpgraders
 				0 //remoteBuilders
