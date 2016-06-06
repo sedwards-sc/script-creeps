@@ -15,12 +15,18 @@ module.exports = (function(){
 		this.checkPointAway = checkPointAway;
 		this.checkPointHome = checkPointHome;
 	}
+	
+	ReserverInfo = function(creepId, controllerId) {
+		this.creepId = creepId;
+		this.controllerId = controllerId;
+	}
 
 	RemoteRoster = function() {
 		this.remoteMiners = [];
 		this.remoteCarriers = [];
 		this.remoteBuilders = [];
 		this.remoteUpgraders = [];
+		this.reservers = [];
 	}
 	
 	RoomRemotes = function() {
@@ -51,6 +57,10 @@ module.exports = (function(){
 		
 		var remoteCarrierInfo3 = new RemoteCarrierInfo('remoteCarrier3', remoteCarrierCheckPointE7S23Away1, remoteCarrierCheckPointE8S23HomeLeft);
 		this.E8S23.remoteCarriers.push(remoteCarrierInfo3);
+		
+		// reservers
+		var reserverInfo0 = new ReserverInfo('reserver0', '55db333cefa8e3fe66e056d8');
+		this.E8S23.reservers.push(reserverInfo0);
 	}	
 })();
 

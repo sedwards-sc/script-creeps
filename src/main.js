@@ -270,8 +270,28 @@ module.exports.loop = function () {
 			//var newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {role: 'remoteCarrier', spawnRoom: roomName});
 			//console.log('Spawning new remote carrier: ' + newName);
 		} else if(reservers.length < roomQuota.reservers) {
-			var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {role: 'reserver', spawnRoom: roomName});
-			console.log('Spawning new reserver: ' + newName);
+			if(roomRemoteInfo && (roomRemoteInfo.reservers.length > 0)) {
+				for(var reserversIndex in roomRemoteInfo.reservers) {
+					var currentReserver = roomRemoteInfo.reservers[reserversIndex];
+					var currentReserverFilter = _.filter(reservers, (creep) => creep.memory.creepId === currentReserver.creepId);
+					
+					if(currentReserverFilter.length < 1) {
+						var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {
+							role: 'reserver', 
+							spawnRoom: roomName, 
+							creepId: currentRemoteCarrier.creepId, 
+							controllerId: currentReserver.controllerId
+						});
+						console.log('Spawning new reserver: ' + newName + ' - ' + JSON.stringify(currentReserver));
+						break;
+					}
+				}
+			} else {
+				console.log('!!!' + roomName + ' quota has reservers but there is no reserver info for this room!!!');
+			}
+		
+			//var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {role: 'reserver', spawnRoom: roomName});
+			//console.log('Spawning new reserver: ' + newName);
 		} else if(reinforcers.length < roomQuota.reinforcers) {
 			var newName = mainSpawn.createCreep([WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
 			console.log('Spawning new reinforcer: ' + newName);
