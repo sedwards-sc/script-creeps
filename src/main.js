@@ -219,15 +219,10 @@ module.exports.loop = function () {
 			if(roomRemoteInfo && (roomRemoteInfo.remoteMiners.length > 0)) {
 				for(var remoteMinersIndex in roomRemoteInfo.remoteMiners) {
 					var currentRemoteMiner = roomRemoteInfo.remoteMiners[remoteMinersIndex];
-					var currentRemoteMinerFind = _.filter(remoteMiners, (creep) => {
-							return (creep.memory.rRoomName === currentRemoteMiner.checkPointAway.roomName) &&
-								(creep.memory.rX === currentRemoteMiner.checkPointAway.x) &&
-								(creep.memory.rY === currentRemoteMiner.checkPointAway.y) &&
-								(creep.memory.remoteMine === currentRemoteMiner.sourceIndex);
-					});
+					var currentRemoteMinerFilter = _.filter(remoteMiners, (creep) => creep.memory.creepId === currentRemoteMiner.creepId);
 					
-					if(currentRemoteMinerFind.length < 1) {
-						var newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', spawnRoom: roomName, rRoomName: currentRemoteMiner.checkPointAway.roomName, rX: currentRemoteMiner.checkPointAway.x, rY: currentRemoteMiner.checkPointAway.y, remoteMine: currentRemoteMiner.sourceIndex});
+					if(currentRemoteMinerFilter.length < 1) {
+						var newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', spawnRoom: roomName, creepId: currentRemoteMiner.creepId, rRoomName: currentRemoteMiner.checkPointAway.roomName, rX: currentRemoteMiner.checkPointAway.x, rY: currentRemoteMiner.checkPointAway.y, remoteMine: currentRemoteMiner.sourceIndex});
 						console.log('Spawning new remote miner: ' + newName + ' - ' + JSON.stringify(currentRemoteMiner));
 						break;
 					}
