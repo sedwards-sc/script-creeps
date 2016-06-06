@@ -279,7 +279,7 @@ module.exports.loop = function () {
 						var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {
 							role: 'reserver', 
 							spawnRoom: roomName, 
-							creepId: currentRemoteCarrier.creepId, 
+							creepId: currentReserver.creepId, 
 							controllerId: currentReserver.controllerId
 						});
 						console.log('Spawning new reserver: ' + newName + ' - ' + JSON.stringify(currentReserver));
