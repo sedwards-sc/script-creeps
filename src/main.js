@@ -110,6 +110,10 @@ module.exports.loop = function () {
 			roomStorageEnergy = Game.rooms[roomName].storage.store[RESOURCE_ENERGY];
 		}
 		console.log(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '%');
+		// send update email every 7200 game ticks (2 game hours)
+		if((Game.time % 7200) === 0) {
+			Game.notify(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '% - time: ' + Game.time);
+		}
 		
 		// find room creeps
 		var roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
