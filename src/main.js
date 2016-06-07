@@ -116,7 +116,7 @@ module.exports.loop = function () {
 		}
 		
 		// send update email every 7200 game ticks (2 game hours)
-		if((Game.time % 3600) === 0) {
+		if((Game.time % 2000) === 0) {
 			Game.notify(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '% - time: ' + Game.time);
 		}
 		
