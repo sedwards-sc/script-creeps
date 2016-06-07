@@ -87,6 +87,17 @@ module.exports = (function(){
 		var reserverInfo1 = new ReserverInfo('reserver1', '55db3354efa8e3fe66e05757');
 		this.E8S23.reservers.push(reserverInfo1);
 		
+		
+		
+		// Room: E9S27
+		this.E9S27 = new RemoteRoster();
+
+		// remote miner for E8S27
+		var remoteMinerCheckPointE8S27 = new RoomPosition(23, 25, 'E8S27');
+
+		var remoteMinerInfo3 = new RemoteMinerInfo('remoteMiner3', remoteMinerCheckPointE8S27, 0);
+		this.E9S27.remoteMiners.push(remoteMinerInfo3);
+		
 	}	
 })();
 
