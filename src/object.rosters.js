@@ -28,7 +28,7 @@ module.exports = (function(){
 				0, //upgraders
 				0, //explorers
 				3, //remoteMiners
-				6, //remoteCarriers
+				7, //remoteCarriers
 				1, //miners
 				2, //carriers
 				1, //linkers
