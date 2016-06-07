@@ -66,7 +66,7 @@ module.exports = (function(){
 		var remoteCarrierInfo3 = new RemoteCarrierInfo('remoteCarrier3', remoteCarrierCheckPointE7S23Away1, remoteCarrierCheckPointE8S23HomeLeft);
 		this.E8S23.remoteCarriers.push(remoteCarrierInfo3);
 		
-		// remote carrier for E9S23
+		// remote carriers for E9S23
 		var remoteCarrierCheckPointE8S23HomeRight = new RoomPosition(47, 10, 'E8S23');
 		var remoteCarrierCheckPointE9S23Away0 = new RoomPosition(8, 10, 'E9S23');
 		
@@ -98,6 +98,21 @@ module.exports = (function(){
 		var remoteMinerInfo3 = new RemoteMinerInfo('remoteMiner3', remoteMinerCheckPointE8S27, 0);
 		this.E9S27.remoteMiners.push(remoteMinerInfo3);
 		
+		
+		// remote carriers for E8S27
+		var remoteCarrierCheckPointE9S27HomeLeft = new RoomPosition(2, 8, 'E9S27');
+		var remoteCarrierCheckPointE8S27Away0 = new RoomPosition(25, 25, 'E8S27');
+		
+		var remoteCarrierInfo7 = new RemoteCarrierInfo('remoteCarrier7', remoteCarrierCheckPointE8S27Away0, remoteCarrierCheckPointE9S27HomeLeft);
+		this.E9S27.remoteCarriers.push(remoteCarrierInfo7);
+		
+		var remoteCarrierInfo8 = new RemoteCarrierInfo('remoteCarrier8', remoteCarrierCheckPointE8S27Away0, remoteCarrierCheckPointE9S27HomeLeft);
+		this.E9S27.remoteCarriers.push(remoteCarrierInfo8);
+		
+		
+		// reservers
+		var reserverInfo2 = new ReserverInfo('reserver2', '55db334aefa8e3fe66e05727');
+		this.E9S27.reservers.push(reserverInfo2);
 	}	
 })();
 
