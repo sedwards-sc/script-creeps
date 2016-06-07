@@ -207,7 +207,7 @@ module.exports.loop = function () {
 			var newName = mainSpawn.createCreep(minerBody, undefined, {role: 'miner', spawnRoom: roomName});
 			console.log('Spawning new miner: ' + newName);
 		} else if(linkers.length < roomQuota.linkers) {
-			var newName = mainSpawn.createCreep([CARRY,MOVE], undefined, {role: 'linker', spawnRoom: roomName});
+			var newName = mainSpawn.createCreep([CARRY,CARRY,MOVE], undefined, {role: 'linker', spawnRoom: roomName});
 			console.log('Spawning new linker: ' + newName);
 		} else if(harvesters.length < roomQuota.harvesters) {
 			mainSpawn.spawnHarvester(roomCreeps);
