@@ -30,9 +30,10 @@ module.exports = (function(){
 	}
 	
 	RoomRemotes = function() {
+		// Room: E8S23
 		this.E8S23 = new RemoteRoster();
 
-		// remote miners
+		// remote miners for E7S23
 		var remoteMinerCheckPointE7S23 = new RoomPosition(48, 31, 'E7S23');
 
 		var remoteMinerInfo0 = new RemoteMinerInfo('remoteMiner0', remoteMinerCheckPointE7S23, 0);
@@ -40,8 +41,15 @@ module.exports = (function(){
 
 		var remoteMinerInfo1 = new RemoteMinerInfo('remoteMiner1', remoteMinerCheckPointE7S23, 1);
 		this.E8S23.remoteMiners.push(remoteMinerInfo1);
+		
+		// remote miner for E9S23
+		var remoteMinerCheckPointE9S23 = new RoomPosition(6, 10, 'E9S23');
 
-		// remote carriers
+		var remoteMinerInfo2 = new RemoteMinerInfo('remoteMiner2', remoteMinerCheckPointE9S23, 0);
+		this.E8S23.remoteMiners.push(remoteMinerInfo2);
+
+		
+		// remote carriers for E7S23
 		var remoteCarrierCheckPointE8S23HomeLeft = new RoomPosition(2, 25, 'E8S23');
 		
 		var remoteCarrierCheckPointE7S23Away0 = new RoomPosition(48, 34, 'E7S23');
@@ -58,12 +66,24 @@ module.exports = (function(){
 		var remoteCarrierInfo3 = new RemoteCarrierInfo('remoteCarrier3', remoteCarrierCheckPointE7S23Away1, remoteCarrierCheckPointE8S23HomeLeft);
 		this.E8S23.remoteCarriers.push(remoteCarrierInfo3);
 		
+		// remote carrier for E9S23
+		var remoteCarrierCheckPointE8S23HomeRight = new RoomPosition(47, 10, 'E8S23');
+		var remoteCarrierCheckPointE9S23Away0 = new RoomPosition(8, 10, 'E9S23');
+		
+		var remoteCarrierInfo4 = new RemoteCarrierInfo('remoteCarrier4', remoteCarrierCheckPointE9S23Away0, remoteCarrierCheckPointE8S23HomeRight);
+		this.E8S23.remoteCarriers.push(remoteCarrierInfo4);
+		
+		var remoteCarrierInfo5 = new RemoteCarrierInfo('remoteCarrier5', remoteCarrierCheckPointE9S23Away0, remoteCarrierCheckPointE8S23HomeRight);
+		this.E8S23.remoteCarriers.push(remoteCarrierInfo5);
+		
+		
 		// reservers
 		var reserverInfo0 = new ReserverInfo('reserver0', '55db333cefa8e3fe66e056d8');
 		this.E8S23.reservers.push(reserverInfo0);
 		
 		var reserverInfo1 = new ReserverInfo('reserver1', '55db3354efa8e3fe66e05757');
 		this.E8S23.reservers.push(reserverInfo1);
+		
 	}	
 })();
 
