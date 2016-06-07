@@ -109,7 +109,12 @@ module.exports.loop = function () {
 		if(Game.rooms[roomName].storage) {
 			roomStorageEnergy = Game.rooms[roomName].storage.store[RESOURCE_ENERGY];
 		}
-		console.log(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '%');
+		
+		// print update but not every tick so console doesn't scroll as fast
+		if((Game.time % 5) === 0) {
+			console.log(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '%');
+		}
+		
 		// send update email every 7200 game ticks (2 game hours)
 		if((Game.time % 3600) === 0) {
 			Game.notify(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '% - time: ' + Game.time);
