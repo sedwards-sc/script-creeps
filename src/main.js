@@ -181,7 +181,7 @@ module.exports.loop = function () {
 		
 		if((roomEnergy >= 1800) && (roomStorageEnergy > 500000)) {
 			var builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,MOVE];
-		} else if((roomEnergy >= 950) && (roomStorageEnergy > 25000)) {
+		} else if((roomEnergy >= 950) && (roomStorageEnergy > 100000)) {
 			var builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 		} else if(roomEnergy >= 500) {
 			var builderBody = [WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
