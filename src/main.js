@@ -115,8 +115,8 @@ module.exports.loop = function () {
 			console.log(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '%');
 		}
 		
-		// send update email every 7200 game ticks (2 game hours)
-		if((Game.time % 2000) === 0) {
+		// send update email occasionally
+		if((Game.time % 1500) === 0) {
 			Game.notify(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '% - time: ' + Game.time);
 		}
 		
@@ -450,7 +450,8 @@ module.exports.loop = function () {
 		for(var linkIndex in links) {
 			var currentLink = links[linkIndex];
 			
-			var inRangeCreeps = currentLink.pos.findInRange(nonCarriers, 1);
+			var inRangeCreepsPreSort = currentLink.pos.findInRange(nonCarriers, 1);
+			var inRangeCreeps = _.sortBy(inRangeCreepsPreSort, function(inRangeCreep) { return inRangeCreep.carry.energy; });
 			
 			if(inRangeCreeps.length > 0) {
 				if(currentLink.transferEnergy(inRangeCreeps[0]) === OK) {

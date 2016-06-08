@@ -33,8 +33,10 @@ module.exports = {
 			//		}
 			//});
 			
+			var closestLink = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
+			
 			// find storage link
-			var closestLink = Game.getObjectById('573a6ed5d32c966b71bd066b');
+			//var closestLink = Game.getObjectById('573a6ed5d32c966b71bd066b');
 			
             if(!creep.pos.isNearTo(closestLink)) {
                 creep.moveTo(closestLink);

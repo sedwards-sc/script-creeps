@@ -109,6 +109,9 @@ module.exports = (function(){
 		var remoteCarrierInfo8 = new RemoteCarrierInfo('remoteCarrier8', remoteCarrierCheckPointE8S27Away0, remoteCarrierCheckPointE9S27HomeLeft);
 		this.E9S27.remoteCarriers.push(remoteCarrierInfo8);
 		
+		var remoteCarrierInfo9 = new RemoteCarrierInfo('remoteCarrier9', remoteCarrierCheckPointE8S27Away0, remoteCarrierCheckPointE9S27HomeLeft);
+		this.E9S27.remoteCarriers.push(remoteCarrierInfo9);
+		
 		
 		// reservers
 		var reserverInfo2 = new ReserverInfo('reserver2', '55db334aefa8e3fe66e05727');
