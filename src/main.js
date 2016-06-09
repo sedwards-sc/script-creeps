@@ -16,6 +16,7 @@ var roleRemoteBuilder = require('role.remoteBuilder');
 //require('prototype.storage');
 //require('prototype.creep');
 require('prototype.spawn');
+require('prototype.link');
 require('object.rosters');
 require('object.remotes');
 require('debug').populate(global);
@@ -376,7 +377,7 @@ module.exports.loop = function () {
 			// for remote link 1
 			var inRangeRefillers = remoteLink.pos.findInRange(refillers, 3);
 			if((inRangeRefillers.length > 0) && (remoteLink.energy === remoteLink.energyCapacity)) {
-				var transferReturn = remoteLink.transferEnergy(storageLink);
+				var transferReturn = remoteLink.transferEnergyFirstTimeOnly(storageLink);
 				if(transferReturn === OK) {
 					console.log('remote link energy transferred to storage link - room: ' + roomName);
 					if(Memory.transferCount === undefined) {
@@ -397,7 +398,7 @@ module.exports.loop = function () {
 			// for remote link 2
 			var inRangeRefillers2 = remoteLink2.pos.findInRange(refillers, 3);
 			if((inRangeRefillers2.length > 0) && (remoteLink2.energy === remoteLink2.energyCapacity)) {
-				var transferReturn2 = remoteLink2.transferEnergy(storageLink);
+				var transferReturn2 = remoteLink2.transferEnergyFirstTimeOnly(storageLink);
 				if(transferReturn2 === OK) {
 					console.log('remote link 2 energy transferred to storage link - room: ' + roomName);
 					if(Memory.transferCount2 === undefined) {
@@ -420,8 +421,8 @@ module.exports.loop = function () {
 			var remoteLink = Game.getObjectById('574e6e0c9d9251982714fed9');
 			
 			var inRangeRefillers = remoteLink.pos.findInRange(refillers, 3);
-			if((inRangeRefillers.length > 0) && (remoteLink.energy === remoteLink.energyCapacity)) {
-				var transferReturn = remoteLink.transferEnergy(storageLink);
+			if((inRangeRefillers.length > 0) && (remoteLink.energy >= (remoteLink.energyCapacity * 0.95))) {
+				var transferReturn = remoteLink.transferEnergyFirstTimeOnly(storageLink);
 				if(transferReturn === OK) {
 					console.log('remote link energy transferred to storage link - room: ' + roomName);
 					if(Memory.transferCount3 === undefined) {
@@ -454,7 +455,7 @@ module.exports.loop = function () {
 			var inRangeCreeps = _.sortBy(inRangeCreepsPreSort, function(inRangeCreep) { return inRangeCreep.carry.energy; });
 			
 			if(inRangeCreeps.length > 0) {
-				if(currentLink.transferEnergy(inRangeCreeps[0]) === OK) {
+				if(currentLink.transferEnergyFirstTimeOnly(inRangeCreeps[0]) === OK) {
 					console.log('link energy transferred to: ' + inRangeCreeps[0].name + ' - ' + inRangeCreeps[0].memory.role);
 				}
 			}
