@@ -345,7 +345,9 @@ module.exports.loop = function () {
 			});
 			
 			var inRangeCarriers = mainStorage.pos.findInRange(nonFullCarriers, 1);
-			var inRangeBuilders = mainStorage.pos.findInRange(nonFullBuilders, 1);
+			// EDITS
+			var inRangeBuildersPreSort = mainStorage.pos.findInRange(nonFullBuilders, 1);
+			var inRangeBuilders = _.sortBy(inRangeBuildersPreSort, function(inRangeBuilder) { return inRangeBuilder.carry.energy; });
 			var inRangeReinforcers = mainStorage.pos.findInRange(nonFullReinforcers, 1);
 			
 			if(inRangeCarriers.length > 0) {
@@ -420,7 +422,8 @@ module.exports.loop = function () {
 			var storageLink = Game.getObjectById('574e5c57d719fc5a5b37f24e');
 			var remoteLink = Game.getObjectById('574e6e0c9d9251982714fed9');
 			
-			var inRangeRefillers = remoteLink.pos.findInRange(refillers, 3);
+			// EDITS
+			var inRangeRefillers = remoteLink.pos.findInRange(refillers, 7);
 			if((inRangeRefillers.length > 0) && (remoteLink.energy >= (remoteLink.energyCapacity * 0.95))) {
 				var transferReturn = remoteLink.transferEnergyFirstTimeOnly(storageLink);
 				if(transferReturn === OK) {
