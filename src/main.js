@@ -44,8 +44,8 @@ module.exports.loop = function () {
 		    continue;
 		}
 		
-		var hostiles = Game.rooms[name].find(FIND_HOSTILE_CREEPS);
-		if(hostiles.length > 0) {
+		//var hostiles = Game.rooms[name].find(FIND_HOSTILE_CREEPS);
+		//if(hostiles.length > 0) {
 			var defenders = _.filter(Game.creeps, (creep) => creep.memory.role == 'defender');
 			
 			// find room spawns
@@ -60,7 +60,7 @@ module.exports.loop = function () {
 				}
 				console.log('Spawning new defender: ' + newName);
 			}
-		}
+		//}
 	}
 
 	Memory.roster = {};
@@ -101,7 +101,11 @@ module.exports.loop = function () {
 			continue;
 		}
 		
-		var mainSpawn = roomSpawns[0];
+		//if((roomSpawns.length >= 2) && (roomSpawns[0].spawning)) {
+		//    var mainSpawn = roomSpawns[1];
+		//} else {
+		    var mainSpawn = roomSpawns[0];
+		//}
 
 		var controllerProgress = Game.rooms[roomName].controller.progress / Game.rooms[roomName].controller.progressTotal * 100;
 		var roomEnergy = Game.rooms[roomName].energyAvailable;
@@ -201,115 +205,117 @@ module.exports.loop = function () {
 		var remoteMinerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE];
 		var remoteCarrierBody = [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
 		
-		if(carriers.length < roomQuota.carriers) {
-			var newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
-			console.log('Spawning new carrier: ' + newName);
-		} else if(miners.length < roomQuota.miners) {
-			var newName = mainSpawn.createCreep(minerBody, undefined, {role: 'miner', spawnRoom: roomName});
-			console.log('Spawning new miner: ' + newName);
-		} else if(linkers.length < roomQuota.linkers) {
-			var newName = mainSpawn.createCreep([CARRY,CARRY,MOVE], undefined, {role: 'linker', spawnRoom: roomName});
-			console.log('Spawning new linker: ' + newName);
-		} else if(harvesters.length < roomQuota.harvesters) {
-			mainSpawn.spawnHarvester(roomCreeps);
-		} else if(builders.length < roomQuota.builders) {
-			var newName = mainSpawn.createCreep(builderBody, undefined, {role: 'builder', spawnRoom: roomName});
-			console.log('Spawning new builder: ' + newName);
-		} else if(upgraders.length < roomQuota.upgraders) {
-			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'upgrader', spawnRoom: roomName});
-			console.log('Spawning new upgrader: ' + newName);
-		} else if(explorers.length < roomQuota.explorers) {
-			var newName = mainSpawn.createCreep(explorerBody, undefined, {role: 'explorer', spawnRoom: roomName});
-			console.log('Spawning new explorer: ' + newName);
-		} else if(remoteMiners.length < roomQuota.remoteMiners) {
-			if(roomRemoteInfo && (roomRemoteInfo.remoteMiners.length > 0)) {
-				for(var remoteMinersIndex in roomRemoteInfo.remoteMiners) {
-					var currentRemoteMiner = roomRemoteInfo.remoteMiners[remoteMinersIndex];
-					var currentRemoteMinerFilter = _.filter(remoteMiners, (creep) => creep.memory.creepId === currentRemoteMiner.creepId);
-					
-					if(currentRemoteMinerFilter.length < 1) {
-						var newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', spawnRoom: roomName, creepId: currentRemoteMiner.creepId, rRoomName: currentRemoteMiner.checkPointAway.roomName, rX: currentRemoteMiner.checkPointAway.x, rY: currentRemoteMiner.checkPointAway.y, remoteMine: currentRemoteMiner.sourceIndex});
-						console.log('Spawning new remote miner: ' + newName + ' - ' + JSON.stringify(currentRemoteMiner));
-						break;
-					}
-				}
-			} else {
-				console.log('!!!' + roomName + ' quota has remote miners but there is no remote miner info for this room!!!');
-			}
-		
-			//var remoteMiner0 = _.filter(remoteMiners, (creep) => creep.memory.remoteMine == 0);
-			//var remoteMiner1 = _.filter(remoteMiners, (creep) => creep.memory.remoteMine == 1);
-			
-			//if(remoteMiner0.length < 1) {
-			//	var newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', remoteMine: 0, spawnRoom: roomName});
-			//	console.log('Spawning new remote miner 0: ' + newName);
-			//} else if(remoteMiner1.length < 1) {
-			//	var newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', remoteMine: 1, spawnRoom: roomName});
-			//	console.log('Spawning new remote miner 1: ' + newName);
-			//}
-		} else if(remoteCarriers.length < roomQuota.remoteCarriers) {
-			if(roomRemoteInfo && (roomRemoteInfo.remoteCarriers.length > 0)) {
-				for(var remoteCarriersIndex in roomRemoteInfo.remoteCarriers) {
-					var currentRemoteCarrier = roomRemoteInfo.remoteCarriers[remoteCarriersIndex];
-					var currentRemoteCarrierFilter = _.filter(remoteCarriers, (creep) => creep.memory.creepId === currentRemoteCarrier.creepId);
-					
-					if(currentRemoteCarrierFilter.length < 1) {
-						var newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {
-							role: 'remoteCarrier', 
-							spawnRoom: roomName, 
-							creepId: currentRemoteCarrier.creepId, 
-							rRoomName: currentRemoteCarrier.checkPointAway.roomName, 
-							rX: currentRemoteCarrier.checkPointAway.x, 
-							rY: currentRemoteCarrier.checkPointAway.y, 
-							hRoomName: currentRemoteCarrier.checkPointHome.roomName, 
-							hX: currentRemoteCarrier.checkPointHome.x, 
-							hY: currentRemoteCarrier.checkPointHome.y
-						});
-						console.log('Spawning new remote carrier: ' + newName + ' - ' + JSON.stringify(currentRemoteCarrier));
-						break;
-					}
-				}
-			} else {
-				console.log('!!!' + roomName + ' quota has remote carriers but there is no remote carrier info for this room!!!');
-			}
-		
-			//var newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {role: 'remoteCarrier', spawnRoom: roomName});
-			//console.log('Spawning new remote carrier: ' + newName);
-		} else if(reservers.length < roomQuota.reservers) {
-			if(roomRemoteInfo && (roomRemoteInfo.reservers.length > 0)) {
-				for(var reserversIndex in roomRemoteInfo.reservers) {
-					var currentReserver = roomRemoteInfo.reservers[reserversIndex];
-					var currentReserverFilter = _.filter(reservers, (creep) => creep.memory.creepId === currentReserver.creepId);
-					
-					if(currentReserverFilter.length < 1) {
-						var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {
-							role: 'reserver', 
-							spawnRoom: roomName, 
-							creepId: currentReserver.creepId, 
-							controllerId: currentReserver.controllerId
-						});
-						console.log('Spawning new reserver: ' + newName + ' - ' + JSON.stringify(currentReserver));
-						break;
-					}
-				}
-			} else {
-				console.log('!!!' + roomName + ' quota has reservers but there is no reserver info for this room!!!');
-			}
-		
-			//var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {role: 'reserver', spawnRoom: roomName});
-			//console.log('Spawning new reserver: ' + newName);
-		} else if(reinforcers.length < roomQuota.reinforcers) {
-			var newName = mainSpawn.createCreep([WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
-			console.log('Spawning new reinforcer: ' + newName);
-		} else if(claimers.length < roomQuota.claimers) {
-			var newName = mainSpawn.createCreep([CLAIM,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
-			console.log('Spawning new claimer: ' + newName);
-		} else if(remoteUpgraders.length < roomQuota.remoteUpgraders) {
-			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteUpgrader', spawnRoom: roomName});
-			console.log('Spawning new remote upgrader: ' + newName);
-		} else if(remoteBuilders.length < roomQuota.remoteBuilders) {
-			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteBuilder', spawnRoom: roomName});
-			console.log('Spawning new remote builder: ' + newName);
+		if(!mainSpawn.spawning) {
+    		if(carriers.length < roomQuota.carriers) {
+    			var newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
+    			console.log('Spawning new carrier: ' + newName);
+    		} else if(miners.length < roomQuota.miners) {
+    			var newName = mainSpawn.createCreep(minerBody, undefined, {role: 'miner', spawnRoom: roomName});
+    			console.log('Spawning new miner: ' + newName);
+    		} else if(linkers.length < roomQuota.linkers) {
+    			var newName = mainSpawn.createCreep([CARRY,CARRY,MOVE], undefined, {role: 'linker', spawnRoom: roomName});
+    			console.log('Spawning new linker: ' + newName);
+    		} else if(harvesters.length < roomQuota.harvesters) {
+    			mainSpawn.spawnHarvester(roomCreeps);
+    		} else if(builders.length < roomQuota.builders) {
+    			var newName = mainSpawn.createCreep(builderBody, undefined, {role: 'builder', spawnRoom: roomName});
+    			console.log('Spawning new builder: ' + newName);
+    		} else if(upgraders.length < roomQuota.upgraders) {
+    			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'upgrader', spawnRoom: roomName});
+    			console.log('Spawning new upgrader: ' + newName);
+    		} else if(explorers.length < roomQuota.explorers) {
+    			var newName = mainSpawn.createCreep(explorerBody, undefined, {role: 'explorer', spawnRoom: roomName});
+    			console.log('Spawning new explorer: ' + newName);
+    		} else if(remoteMiners.length < roomQuota.remoteMiners) {
+    			if(roomRemoteInfo && (roomRemoteInfo.remoteMiners.length > 0)) {
+    				for(var remoteMinersIndex in roomRemoteInfo.remoteMiners) {
+    					var currentRemoteMiner = roomRemoteInfo.remoteMiners[remoteMinersIndex];
+    					var currentRemoteMinerFilter = _.filter(remoteMiners, (creep) => creep.memory.creepId === currentRemoteMiner.creepId);
+    					
+    					if(currentRemoteMinerFilter.length < 1) {
+    						var newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', spawnRoom: roomName, creepId: currentRemoteMiner.creepId, rRoomName: currentRemoteMiner.checkPointAway.roomName, rX: currentRemoteMiner.checkPointAway.x, rY: currentRemoteMiner.checkPointAway.y, remoteMine: currentRemoteMiner.sourceIndex});
+    						console.log('Spawning new remote miner: ' + newName + ' - ' + JSON.stringify(currentRemoteMiner));
+    						break;
+    					}
+    				}
+    			} else {
+    				console.log('!!!' + roomName + ' quota has remote miners but there is no remote miner info for this room!!!');
+    			}
+    		
+    			//var remoteMiner0 = _.filter(remoteMiners, (creep) => creep.memory.remoteMine == 0);
+    			//var remoteMiner1 = _.filter(remoteMiners, (creep) => creep.memory.remoteMine == 1);
+    			
+    			//if(remoteMiner0.length < 1) {
+    			//	var newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', remoteMine: 0, spawnRoom: roomName});
+    			//	console.log('Spawning new remote miner 0: ' + newName);
+    			//} else if(remoteMiner1.length < 1) {
+    			//	var newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', remoteMine: 1, spawnRoom: roomName});
+    			//	console.log('Spawning new remote miner 1: ' + newName);
+    			//}
+    		} else if(remoteCarriers.length < roomQuota.remoteCarriers) {
+    			if(roomRemoteInfo && (roomRemoteInfo.remoteCarriers.length > 0)) {
+    				for(var remoteCarriersIndex in roomRemoteInfo.remoteCarriers) {
+    					var currentRemoteCarrier = roomRemoteInfo.remoteCarriers[remoteCarriersIndex];
+    					var currentRemoteCarrierFilter = _.filter(remoteCarriers, (creep) => creep.memory.creepId === currentRemoteCarrier.creepId);
+    					
+    					if(currentRemoteCarrierFilter.length < 1) {
+    						var newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {
+    							role: 'remoteCarrier', 
+    							spawnRoom: roomName, 
+    							creepId: currentRemoteCarrier.creepId, 
+    							rRoomName: currentRemoteCarrier.checkPointAway.roomName, 
+    							rX: currentRemoteCarrier.checkPointAway.x, 
+    							rY: currentRemoteCarrier.checkPointAway.y, 
+    							hRoomName: currentRemoteCarrier.checkPointHome.roomName, 
+    							hX: currentRemoteCarrier.checkPointHome.x, 
+    							hY: currentRemoteCarrier.checkPointHome.y
+    						});
+    						console.log('Spawning new remote carrier: ' + newName + ' - ' + JSON.stringify(currentRemoteCarrier));
+    						break;
+    					}
+    				}
+    			} else {
+    				console.log('!!!' + roomName + ' quota has remote carriers but there is no remote carrier info for this room!!!');
+    			}
+    		
+    			//var newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {role: 'remoteCarrier', spawnRoom: roomName});
+    			//console.log('Spawning new remote carrier: ' + newName);
+    		} else if(reservers.length < roomQuota.reservers) {
+    			if(roomRemoteInfo && (roomRemoteInfo.reservers.length > 0)) {
+    				for(var reserversIndex in roomRemoteInfo.reservers) {
+    					var currentReserver = roomRemoteInfo.reservers[reserversIndex];
+    					var currentReserverFilter = _.filter(reservers, (creep) => creep.memory.creepId === currentReserver.creepId);
+    					
+    					if(currentReserverFilter.length < 1) {
+    						var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {
+    							role: 'reserver', 
+    							spawnRoom: roomName, 
+    							creepId: currentReserver.creepId, 
+    							controllerId: currentReserver.controllerId
+    						});
+    						console.log('Spawning new reserver: ' + newName + ' - ' + JSON.stringify(currentReserver));
+    						break;
+    					}
+    				}
+    			} else {
+    				console.log('!!!' + roomName + ' quota has reservers but there is no reserver info for this room!!!');
+    			}
+    		
+    			//var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {role: 'reserver', spawnRoom: roomName});
+    			//console.log('Spawning new reserver: ' + newName);
+    		} else if(reinforcers.length < roomQuota.reinforcers) {
+    			var newName = mainSpawn.createCreep([WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
+    			console.log('Spawning new reinforcer: ' + newName);
+    		} else if(claimers.length < roomQuota.claimers) {
+    			var newName = mainSpawn.createCreep([CLAIM,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
+    			console.log('Spawning new claimer: ' + newName);
+    		} else if(remoteUpgraders.length < roomQuota.remoteUpgraders) {
+    			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteUpgrader', spawnRoom: roomName});
+    			console.log('Spawning new remote upgrader: ' + newName);
+    		} else if(remoteBuilders.length < roomQuota.remoteBuilders) {
+    			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteBuilder', spawnRoom: roomName});
+    			console.log('Spawning new remote builder: ' + newName);
+    		}
 		}
 		
 		// transfer energy from storage to carriers or reinforcers if they are in range
