@@ -51,7 +51,7 @@ module.exports = (function(){
 				1, //linkers
 				0, //reinforcers
 				1, //reservers
-				0, //claimers
+				1, //claimers
 				0, //remoteUpgraders
 				0 //remoteBuilders
 		);
