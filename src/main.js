@@ -59,6 +59,7 @@ module.exports.loop = function () {
 					var newName = mainSpawn.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {role: 'defender'});
 				}
 				console.log('Spawning new defender: ' + newName);
+				mainSpawn.spawnCalled = 1;
 			}
 		//}
 	}
@@ -205,7 +206,7 @@ module.exports.loop = function () {
 		var remoteMinerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE];
 		var remoteCarrierBody = [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
 		
-		if(!mainSpawn.spawning) {
+		if((!mainSpawn.spawnCalled) && (mainSpawn.spawning === null)) {
     		if(carriers.length < roomQuota.carriers) {
     			var newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
     			console.log('Spawning new carrier: ' + newName);
