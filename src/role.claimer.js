@@ -8,9 +8,9 @@ module.exports = {
 		// state 0 is head to next room
 
 		
-		var checkPoint1 = new RoomPosition(4, 46, 'E10S23');
-		var checkPoint2 = new RoomPosition(15, 3, 'E10S26');
-		var checkPoint3 = new RoomPosition(13, 4, 'E9S27');
+		var checkPoint1 = new RoomPosition(45, 4, 'E9S28');
+		var checkPoint2 = new RoomPosition(45, 4, 'E9S28');
+		var checkPoint3 = new RoomPosition(45, 4, 'E9S28');
 		
 		
 		if(creep.memory.state === undefined) {
@@ -39,7 +39,7 @@ module.exports = {
 		} else if(creep.memory.state === 2) {
 			creep.moveTo(checkPoint3);
 		} else if(creep.memory.state === 3) {
-	        var controllerToClaim = Game.getObjectById('55db3356efa8e3fe66e05765');
+	        var controllerToClaim = creep.room.controller;
 			if(creep.claimController(controllerToClaim) === ERR_NOT_IN_RANGE) {
 				creep.moveTo(controllerToClaim);
 			}
