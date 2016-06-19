@@ -29,29 +29,29 @@ module.exports.loop = function () {
             delete Memory.creeps[name];
         }
     }
-    
-	
+
+
 	// room defence loop
 	for(var name in Game.rooms) {
 		// skip other rooms so it doesn't mess up anything when i claim a new room
 		if(!((name === 'E8S23') || (name === 'E9S27'))) {
 		    continue;
 		}
-	
+
 		defendRoom(name);
-		
+
 		if(name !== 'E8S23') {
 		    continue;
 		}
-		
+
 		//var hostiles = Game.rooms[name].find(FIND_HOSTILE_CREEPS);
 		//if(hostiles.length > 0) {
 			var defenders = _.filter(Game.creeps, (creep) => creep.memory.role == 'defender');
-			
+
 			// find room spawns
 			var roomSpawns = Game.rooms[name].find(FIND_MY_SPAWNS);
 			var mainSpawn = roomSpawns[0];
-			
+
 			if(defenders.length < 1) {
 				if(Game.rooms[name].energyAvailable >= 1610) {
 					var newName = mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {role: 'defender'});
@@ -86,14 +86,14 @@ module.exports.loop = function () {
 				remoteUpgraders: 0,
 				remoteBuilders: 0
 		};
-	
+
 		// find room spawns
 		var roomSpawns = Game.rooms[roomName].find(FIND_MY_SPAWNS);
-		
+
 		// get room creep role quota and remote info for this room
 		var roomQuota = roomQuotas[roomName];
 		var roomRemoteInfo = remoteInfo[roomName];
-		
+
 		// continue to next room if there are no spawns or no room quota
 		if(roomSpawns.length < 1) {
 		    continue;
@@ -101,7 +101,7 @@ module.exports.loop = function () {
 			console.log('!!!' + roomName + ' has spawn but no quota!!!');
 			continue;
 		}
-		
+
 		//if((roomSpawns.length >= 2) && (roomSpawns[0].spawning)) {
 		//    var mainSpawn = roomSpawns[1];
 		//} else {
@@ -115,49 +115,49 @@ module.exports.loop = function () {
 		if(Game.rooms[roomName].storage) {
 			roomStorageEnergy = Game.rooms[roomName].storage.store[RESOURCE_ENERGY];
 		}
-		
+
 		// print update but not every tick so console doesn't scroll as fast
 		if((Game.time % 5) === 0) {
 			console.log(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '%');
 		}
-		
+
 		// send update email occasionally
 		if((Game.time % 1500) === 0) {
 			Game.notify(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '% - time: ' + Game.time);
 		}
-		
+
 		// find room creeps
 		var roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
-		
+
 		var harvesters = _.filter(roomCreeps, (creep) => creep.memory.role == 'harvester');
 		var builders = _.filter(roomCreeps, (creep) => creep.memory.role == 'builder');
 		var upgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'upgrader');
-		
+
 		var explorers = _.filter(roomCreeps, (creep) => creep.memory.role == 'explorer');
-		
+
 		var remoteMiners = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteMiner');
 		var remoteCarriers = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteCarrier');
-		
+
 		var miners = _.filter(roomCreeps, (creep) => creep.memory.role == 'miner');
 		var carriers = _.filter(roomCreeps, (creep) => creep.memory.role == 'carrier');
-		
+
 		var linkers = _.filter(roomCreeps, (creep) => creep.memory.role == 'linker');
-		
+
 		var reinforcers = _.filter(roomCreeps, (creep) => creep.memory.role == 'reinforcer');
-		
+
 		var reservers = _.filter(roomCreeps, (creep) => creep.memory.role == 'reserver');
-		
+
 		var claimers = _.filter(roomCreeps, (creep) => creep.memory.role == 'claimer');
-		
+
 		var remoteUpgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteUpgrader');
 		var remoteBuilders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteBuilder');
-		
+
 		//if(roomName === 'E9S27') {
 		//	if(harvesters.length < 3) {
 		//		mainSpawn.spawnHarvester(roomCreeps);
 		//	}
 		//}
-		
+
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
 		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
 		if(carriers.length > 1) {
@@ -176,15 +176,15 @@ module.exports.loop = function () {
 			}
 			var currentHarvesterBody = currentBody;
 		}
-		
+
 		if(roomEnergy >= 400) {
 			var carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
 		} else {
 			var carrierBody = [CARRY,CARRY,MOVE,MOVE];
 		}
-		
+
 		var minerBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
-		
+
 		if((roomEnergy >= 1800) && (roomStorageEnergy > 500000)) {
 			var builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,MOVE];
 		} else if((roomEnergy >= 950) && (roomStorageEnergy > 100000)) {
@@ -194,7 +194,7 @@ module.exports.loop = function () {
 		} else {
 			var builderBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 		}
-		
+
 		if((roomEnergy >= 1150) && (roomStorageEnergy > 250000)) {
 			var explorerBody = [WORK,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE];
 		} else if(roomEnergy >= 950) {
@@ -202,11 +202,11 @@ module.exports.loop = function () {
 		} else {
 			var explorerBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 		}
-		
+
 		var remoteMinerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE];
 		var remoteCarrierBody = [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
-		
-		if((!mainSpawn.spawnCalled) && (mainSpawn.spawning === null)) {
+
+		if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
     		if(carriers.length < roomQuota.carriers) {
     			var newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
     			console.log('Spawning new carrier: ' + newName);
@@ -232,7 +232,7 @@ module.exports.loop = function () {
     				for(var remoteMinersIndex in roomRemoteInfo.remoteMiners) {
     					var currentRemoteMiner = roomRemoteInfo.remoteMiners[remoteMinersIndex];
     					var currentRemoteMinerFilter = _.filter(remoteMiners, (creep) => creep.memory.creepId === currentRemoteMiner.creepId);
-    					
+
     					if(currentRemoteMinerFilter.length < 1) {
     						var newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', spawnRoom: roomName, creepId: currentRemoteMiner.creepId, rRoomName: currentRemoteMiner.checkPointAway.roomName, rX: currentRemoteMiner.checkPointAway.x, rY: currentRemoteMiner.checkPointAway.y, remoteMine: currentRemoteMiner.sourceIndex});
     						console.log('Spawning new remote miner: ' + newName + ' - ' + JSON.stringify(currentRemoteMiner));
@@ -242,10 +242,10 @@ module.exports.loop = function () {
     			} else {
     				console.log('!!!' + roomName + ' quota has remote miners but there is no remote miner info for this room!!!');
     			}
-    		
+
     			//var remoteMiner0 = _.filter(remoteMiners, (creep) => creep.memory.remoteMine == 0);
     			//var remoteMiner1 = _.filter(remoteMiners, (creep) => creep.memory.remoteMine == 1);
-    			
+
     			//if(remoteMiner0.length < 1) {
     			//	var newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', remoteMine: 0, spawnRoom: roomName});
     			//	console.log('Spawning new remote miner 0: ' + newName);
@@ -258,17 +258,17 @@ module.exports.loop = function () {
     				for(var remoteCarriersIndex in roomRemoteInfo.remoteCarriers) {
     					var currentRemoteCarrier = roomRemoteInfo.remoteCarriers[remoteCarriersIndex];
     					var currentRemoteCarrierFilter = _.filter(remoteCarriers, (creep) => creep.memory.creepId === currentRemoteCarrier.creepId);
-    					
+
     					if(currentRemoteCarrierFilter.length < 1) {
     						var newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {
-    							role: 'remoteCarrier', 
-    							spawnRoom: roomName, 
-    							creepId: currentRemoteCarrier.creepId, 
-    							rRoomName: currentRemoteCarrier.checkPointAway.roomName, 
-    							rX: currentRemoteCarrier.checkPointAway.x, 
-    							rY: currentRemoteCarrier.checkPointAway.y, 
-    							hRoomName: currentRemoteCarrier.checkPointHome.roomName, 
-    							hX: currentRemoteCarrier.checkPointHome.x, 
+    							role: 'remoteCarrier',
+    							spawnRoom: roomName,
+    							creepId: currentRemoteCarrier.creepId,
+    							rRoomName: currentRemoteCarrier.checkPointAway.roomName,
+    							rX: currentRemoteCarrier.checkPointAway.x,
+    							rY: currentRemoteCarrier.checkPointAway.y,
+    							hRoomName: currentRemoteCarrier.checkPointHome.roomName,
+    							hX: currentRemoteCarrier.checkPointHome.x,
     							hY: currentRemoteCarrier.checkPointHome.y
     						});
     						console.log('Spawning new remote carrier: ' + newName + ' - ' + JSON.stringify(currentRemoteCarrier));
@@ -278,7 +278,7 @@ module.exports.loop = function () {
     			} else {
     				console.log('!!!' + roomName + ' quota has remote carriers but there is no remote carrier info for this room!!!');
     			}
-    		
+
     			//var newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {role: 'remoteCarrier', spawnRoom: roomName});
     			//console.log('Spawning new remote carrier: ' + newName);
     		} else if(reservers.length < roomQuota.reservers) {
@@ -286,12 +286,12 @@ module.exports.loop = function () {
     				for(var reserversIndex in roomRemoteInfo.reservers) {
     					var currentReserver = roomRemoteInfo.reservers[reserversIndex];
     					var currentReserverFilter = _.filter(reservers, (creep) => creep.memory.creepId === currentReserver.creepId);
-    					
+
     					if(currentReserverFilter.length < 1) {
     						var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {
-    							role: 'reserver', 
-    							spawnRoom: roomName, 
-    							creepId: currentReserver.creepId, 
+    							role: 'reserver',
+    							spawnRoom: roomName,
+    							creepId: currentReserver.creepId,
     							controllerId: currentReserver.controllerId
     						});
     						console.log('Spawning new reserver: ' + newName + ' - ' + JSON.stringify(currentReserver));
@@ -301,7 +301,7 @@ module.exports.loop = function () {
     			} else {
     				console.log('!!!' + roomName + ' quota has reservers but there is no reserver info for this room!!!');
     			}
-    		
+
     			//var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {role: 'reserver', spawnRoom: roomName});
     			//console.log('Spawning new reserver: ' + newName);
     		} else if(reinforcers.length < roomQuota.reinforcers) {
@@ -318,45 +318,45 @@ module.exports.loop = function () {
     			console.log('Spawning new remote builder: ' + newName);
     		}
 		}
-		
+
 		// transfer energy from storage to carriers or reinforcers if they are in range
 		var storages = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
 		if(storages.length > 0) {
 			var mainStorage = storages[0];
-			
+
 			/*
 			var candidates = _.filter(roomCreeps, (creep) => {
 					return ((creep.memory.role === 'carrier') || (creep.memory.role === 'reinforcer')) && creep.carry.energy < creep.carryCapacity;
 			});
-			
+
 			var inRangeCandidates = mainStorage.pos.findInRange(candidates, 1);
-			
+
 			if(inRangeCandidates.length > 0) {
 				if(mainStorage.transfer(inRangeCandidates[0], RESOURCE_ENERGY) === OK) {
 					console.log('storage energy transferred to: ' + inRangeCandidates[0].name + ' - ' + inRangeCandidates[0].memory.role);
 				}
 			}
 			*/
-			
+
 			var nonFullCarriers = _.filter(roomCreeps, (creep) => {
 					return (creep.memory.role === 'carrier') && (creep.carry.energy < creep.carryCapacity);
 			});
-			
+
 			var nonFullBuilders = _.filter(roomCreeps, (creep) => {
 					return (creep.memory.role === 'builder') && (creep.carry.energy < creep.carryCapacity);
 					//return (creep.memory.role === 'builder') && (creep.carry.energy === 0);
 			});
-			
+
 			var nonFullReinforcers = _.filter(roomCreeps, (creep) => {
 					return (creep.memory.role === 'reinforcer') && (creep.carry.energy === 0);
 			});
-			
+
 			var inRangeCarriers = mainStorage.pos.findInRange(nonFullCarriers, 1);
 			// EDITS
 			var inRangeBuildersPreSort = mainStorage.pos.findInRange(nonFullBuilders, 1);
 			var inRangeBuilders = _.sortBy(inRangeBuildersPreSort, function(inRangeBuilder) { return inRangeBuilder.carry.energy; });
 			var inRangeReinforcers = mainStorage.pos.findInRange(nonFullReinforcers, 1);
-			
+
 			if(inRangeCarriers.length > 0) {
 				if(mainStorage.transfer(inRangeCarriers[0], RESOURCE_ENERGY) === OK) {
 					console.log('storage energy transferred to: ' + inRangeCarriers[0].name + ' - ' + inRangeCarriers[0].memory.role);
@@ -376,13 +376,13 @@ module.exports.loop = function () {
 		var refillers = _.filter(roomCreeps, (creep) => {
 				return ((creep.memory.role === 'remoteCarrier') || (creep.memory.role === 'carrier') || (creep.memory.role === 'explorer')) && (creep.carry.energy > 0);
 		});
-		
+
 		if(roomName === 'E8S23') {
 			// transfer energy across room if remote link is full and refillers are in range
 			var storageLink = Game.getObjectById('573a6ed5d32c966b71bd066b');
 			var remoteLink = Game.getObjectById('573a7a3d3f08575071c9c160');
 			var remoteLink2 = Game.getObjectById('57425474d734dbd25194bbc0');
-			
+
 			// for remote link 1
 			var inRangeRefillers = remoteLink.pos.findInRange(refillers, 3);
 			if((inRangeRefillers.length > 0) && (remoteLink.energy === remoteLink.energyCapacity)) {
@@ -403,7 +403,7 @@ module.exports.loop = function () {
 					}
 				}
 			}
-			
+
 			// for remote link 2
 			var inRangeRefillers2 = remoteLink2.pos.findInRange(refillers, 3);
 			if((inRangeRefillers2.length > 0) && (remoteLink2.energy === remoteLink2.energyCapacity)) {
@@ -428,7 +428,7 @@ module.exports.loop = function () {
 			// transfer energy across room if remote link is full and refillers are in range
 			var storageLink = Game.getObjectById('574e5c57d719fc5a5b37f24e');
 			var remoteLink = Game.getObjectById('574e6e0c9d9251982714fed9');
-			
+
 			// EDITS
 			var inRangeRefillers = remoteLink.pos.findInRange(refillers, 7);
 			if((inRangeRefillers.length > 0) && (remoteLink.energy >= (remoteLink.energyCapacity * 0.95))) {
@@ -450,7 +450,7 @@ module.exports.loop = function () {
 				}
 			}
 		}
-		
+
 		// find non carriers that aren't full of energy
 		var nonCarriers = _.filter(roomCreeps, (creep) => {
 				return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.carry.energy < creep.carryCapacity);
@@ -460,10 +460,10 @@ module.exports.loop = function () {
 		var links = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
 		for(var linkIndex in links) {
 			var currentLink = links[linkIndex];
-			
+
 			var inRangeCreepsPreSort = currentLink.pos.findInRange(nonCarriers, 1);
 			var inRangeCreeps = _.sortBy(inRangeCreepsPreSort, function(inRangeCreep) { return inRangeCreep.carry.energy; });
-			
+
 			if(inRangeCreeps.length > 0) {
 				if(currentLink.transferEnergyFirstTimeOnly(inRangeCreeps[0]) === OK) {
 					console.log('link energy transferred to: ' + inRangeCreeps[0].name + ' - ' + inRangeCreeps[0].memory.role);
@@ -471,14 +471,14 @@ module.exports.loop = function () {
 			}
 		}
 	}
-	
+
 	// run creep loop
     for(var creepName in Game.creeps) {
         var creep = Game.creeps[creepName];
-		
+
 		if(!creep.spawning) {
-			
-		
+
+
 			if(creep.memory.role == 'miner') {
 				roleMiner.run(creep);
 				Memory.roster[creep.pos.roomName].miners++;
@@ -545,13 +545,13 @@ module.exports.loop = function () {
 			Memory.creepSpawning = creep.memory.role;
 		}
     }
-	
+
 }
 
 function defendRoom(roomName) {
-    
+
     var hostiles = Game.rooms[roomName].find(FIND_HOSTILE_CREEPS);
-    
+
     if(hostiles.length > 0) {
         var username = hostiles[0].owner.username;
 		var gameTime = Game.time;
@@ -572,21 +572,21 @@ function defendRoom(roomName) {
 				}
 		});
 		var sortedWalls = _.sortBy(walls, function(wall) { return wall.hits; });
-		
+
 		var damagedContainersAndRoads = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
 					return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_ROAD) && structure.hits < structure.hitsMax;
 				}
 		});
 		var sortedDamagedContainersAndRoads = _.sortBy(damagedContainersAndRoads, function(damagedContainerOrRoad) { return damagedContainerOrRoad.hits; });
-		
+
 		//var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
 		var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {
 				filter: (tower) => {
 					return (tower.structureType == STRUCTURE_TOWER) && tower.energy > 400;
 				}
 		});
-		
+
 		if(sortedRamparts.length >= 1) {
 			towers.forEach(tower => tower.repair(sortedRamparts[0]));
 		} else if(sortedWalls.length >= 1) {
