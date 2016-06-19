@@ -19,8 +19,8 @@ module.exports = (function(){
 		this.claimers = claimers || 0;
 		this.remoteUpgraders = remoteUpgraders || 0;
 		this.remoteBuilders = remoteBuilders || 0;
-	}
-	
+	};
+
 	WorldRoster = function() {
 		this.E8S23 = new RoomRoster(
 				0, //harvesters
@@ -38,7 +38,7 @@ module.exports = (function(){
 				0, //remoteUpgraders
 				0 //remoteBuilders
 		);
-		
+
 		this.E9S27 = new RoomRoster(
 				0, //harvesters
 				2, //builders
@@ -55,9 +55,26 @@ module.exports = (function(){
 				0, //remoteUpgraders
 				1 //remoteBuilders
 		);
-		
-	}
-	
+
+		this.E9S28 = new RoomRoster(
+				1, //harvesters
+				0, //builders
+				0, //upgraders
+				0, //explorers
+				0, //remoteMiners
+				0, //remoteCarriers
+				0, //miners
+				0, //carriers
+				0, //linkers
+				0, //reinforcers
+				0, //reservers
+				0, //claimers
+				0, //remoteUpgraders
+				0 //remoteBuilders
+		);
+
+	};
+
 })();
 
 /*
@@ -78,4 +95,3 @@ Memory.roster[roomName] = {
 		remoteBuilders: 0
 };
 */
-
