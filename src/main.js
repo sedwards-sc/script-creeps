@@ -1,3 +1,4 @@
+/* jshint esversion: 6 */
 var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
@@ -53,10 +54,11 @@ module.exports.loop = function () {
 			var mainSpawn = roomSpawns[0];
 
 			if(defenders.length < 1) {
+        var newName;
 				if(Game.rooms[name].energyAvailable >= 1610) {
-					var newName = mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {role: 'defender'});
+					newName = mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {role: 'defender'});
 				} else {
-					var newName = mainSpawn.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {role: 'defender'});
+					newName = mainSpawn.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {role: 'defender'});
 				}
 				console.log('Spawning new defender: ' + newName);
 				mainSpawn.spawnCalled = 1;
@@ -160,47 +162,52 @@ module.exports.loop = function () {
 
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
 		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
+    var currentBody;
+    var currentHarvesterBody;
 		if(carriers.length > 1) {
-			var currentBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
-			var currentHarvesterBody = [WORK,CARRY,MOVE,MOVE];
+			currentBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
+			currentHarvesterBody = [WORK,CARRY,MOVE,MOVE];
 			if(roomEnergy >= 950) {
-				var currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+				currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 			}
 		} else {
 			if(roomEnergy >= 1100) {
-				var currentBody = [WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+				currentBody = [WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 			} else if(roomEnergy >= 950) {
-				var currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+				currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 			} else {
-				var currentBody = [WORK,CARRY,MOVE,MOVE];
+				currentBody = [WORK,CARRY,MOVE,MOVE];
 			}
-			var currentHarvesterBody = currentBody;
+			currentHarvesterBody = currentBody;
 		}
 
+    var carrierBody;
 		if(roomEnergy >= 400) {
-			var carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
+			carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
 		} else {
-			var carrierBody = [CARRY,CARRY,MOVE,MOVE];
+			carrierBody = [CARRY,CARRY,MOVE,MOVE];
 		}
 
 		var minerBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
 
+    var builderBody;
 		if((roomEnergy >= 1800) && (roomStorageEnergy > 500000)) {
-			var builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,MOVE];
+			builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,MOVE];
 		} else if((roomEnergy >= 950) && (roomStorageEnergy > 100000)) {
-			var builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+			builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 		} else if(roomEnergy >= 500) {
-			var builderBody = [WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
+			builderBody = [WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
 		} else {
-			var builderBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
+			builderBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 		}
 
+    var explorerBody;
 		if((roomEnergy >= 1150) && (roomStorageEnergy > 250000)) {
-			var explorerBody = [WORK,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE];
+			explorerBody = [WORK,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE];
 		} else if(roomEnergy >= 950) {
-			var explorerBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+			explorerBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 		} else {
-			var explorerBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
+			explorerBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 		}
 
 		var remoteMinerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE];
