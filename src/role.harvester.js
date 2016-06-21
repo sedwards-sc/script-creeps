@@ -1,3 +1,4 @@
+/* jshint esversion: 6 */
 /*
  * role.harvester
  */
@@ -6,25 +7,25 @@ module.exports = {
 	run(creep) {
 	    // state 0 is harvest
 	    // state 1 is transfer energy
-	    if(creep.memory.state == undefined) {
+	    if(creep.memory.state === undefined) {
 	        creep.memory.state = 0;
 	    }
-	    
+
 	    if(creep.carry.energy == creep.carryCapacity) {
-			if(creep.memory.state == 0) {
+			if(creep.memory.state === 0) {
 				creep.say('I\'m full!');
 			}
 	        creep.memory.state = 1;
 	    }
-	    
-	    if (creep.carry.energy == 0) {
+
+	    if (creep.carry.energy === 0) {
 			if(creep.memory.state == 1) {
 				creep.say('I\'m empty!');
 			}
 	        creep.memory.state = 0;
 	    }
-	    
-	    if(creep.memory.state == 0) {
+
+	    if(creep.memory.state === 0) {
 	        // harvest
 			// TODO: find closest source
 	        //var source = creep.pos.findClosestByPath
@@ -34,7 +35,7 @@ module.exports = {
             }
         } else {
             // transfer energy
-            
+
 			var closestTarget;
 
 			// if room energy is < 300, fill extensions first so spawn can generate energy
@@ -44,7 +45,7 @@ module.exports = {
 							return (structure.structureType == STRUCTURE_EXTENSION) && structure.energy < structure.energyCapacity;
 						}
 				});
-				
+
 				if(!closestTarget) {
 					closestTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
 							filter: (structure) => {
@@ -68,7 +69,7 @@ module.exports = {
 						}
 				});
 			}
-            
+
             if(closestTarget) {
                 if(creep.transfer(closestTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(closestTarget);
@@ -86,7 +87,7 @@ module.exports = {
                     //if(creep.transfer(closestStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                     //    creep.moveTo(closestStorage);
                     //}
-                    
+
                     // else upgrade
                     if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
                         creep.moveTo(creep.room.controller);
