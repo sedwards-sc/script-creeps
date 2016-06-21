@@ -29,10 +29,21 @@ module.exports = {
 	        // harvest
 			// TODO: find closest source
 	        //var source = creep.pos.findClosestByPath
-            var sources = creep.room.find(FIND_SOURCES);
-            if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(sources[0]);
-            }
+            //var sources = creep.room.find(FIND_SOURCES);
+            //if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
+            //    creep.moveTo(sources[0]);
+            //}
+
+			// harvest
+			var mySource;
+			if(creep.memory.hMine === undefined) {
+				mySource = creep.pos.findClosestByPath(FIND_SOURCES);
+			} else {
+				mySource = creep.room.find(FIND_SOURCES)[creep.memory.hMine];
+			}
+			if(creep.harvest(mySource) === ERR_NOT_IN_RANGE) {
+				creep.moveTo(mySource);
+			}
         } else {
             // transfer energy
 
