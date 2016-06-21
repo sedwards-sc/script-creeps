@@ -37,14 +37,14 @@ module.exports = {
                     creep.move(TOP);
                 }
             }
-		} else if(creep.memory.state == 1) {
-			// transfer to storage
-			var closestStorage = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
-			if(creep.transfer(closestStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-				creep.moveTo(closestStorage);
-			}
-        } else {
-			creep.memory.state = 0;
-		}
+  		} else if(creep.memory.state == 1) {
+  			// transfer to storage
+  			var closestStorage = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
+  			if(creep.transfer(closestStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+  				creep.moveTo(closestStorage);
+  			}
+          } else {
+  			creep.memory.state = 0;
+  		}
     }
 };
