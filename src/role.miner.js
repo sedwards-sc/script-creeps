@@ -43,7 +43,7 @@ module.exports = {
   			if(creep.transfer(closestStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
   				creep.moveTo(closestStorage);
   			}
-          } else {
+      } else {
   			creep.memory.state = 0;
   		}
     }
