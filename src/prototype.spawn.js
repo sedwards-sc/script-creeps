@@ -27,3 +27,10 @@ StructureSpawn.prototype.spawnHarvester = function(roomCreeps) {
 		console.log('Spawning new harvester1 (' + this.pos.roomName + '): ' + newName);
 	}
 };
+
+StructureSpawn.prototype.spawnMineralHarvester = function(roomCreeps) {
+	var harvesterBody = [WORK,CARRY,MOVE,MOVE];
+
+	var newName = this.createCreep(harvesterBody, undefined, {role: 'mineralHarvester', spawnRoom: this.pos.roomName});
+	console.log('Spawning new mineral harvester (' + this.pos.roomName + '): ' + newName);
+};
