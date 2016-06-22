@@ -19,7 +19,7 @@ StructureSpawn.prototype.spawnHarvester = function(roomCreeps) {
 	var harvesters0 = _.filter(roomCreeps, (creep) => creep.memory.hMine === 0);
 	var harvesters1 = _.filter(roomCreeps, (creep) => creep.memory.hMine === 1);
 
-	if(harvesters0.length < 2) {
+	if(harvesters0.length < 3) {
 		var newName = this.createCreep(harvesterBody, undefined, {role: 'harvester', hMine: 0, spawnRoom: this.pos.roomName});
 		console.log('Spawning new harvester0 (' + this.pos.roomName + '): ' + newName);
 	} else if(harvesters1.length < 3) {
