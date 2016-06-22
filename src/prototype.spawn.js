@@ -22,7 +22,7 @@ StructureSpawn.prototype.spawnHarvester = function(roomCreeps) {
 	if(harvesters0.length < 2) {
 		var newName = this.createCreep(harvesterBody, undefined, {role: 'harvester', hMine: 0, spawnRoom: this.pos.roomName});
 		console.log('Spawning new harvester0 (' + this.pos.roomName + '): ' + newName);
-	} else if(harvesters1.length < 2) {
+	} else if(harvesters1.length < 3) {
 		var newName = this.createCreep(harvesterBody, undefined, {role: 'harvester', hMine: 1, spawnRoom: this.pos.roomName});
 		console.log('Spawning new harvester1 (' + this.pos.roomName + '): ' + newName);
 	}
