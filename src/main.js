@@ -553,7 +553,7 @@ module.exports.loop = function () {
 		}
     }
 
-}
+};
 
 function defendRoom(roomName) {
 
