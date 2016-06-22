@@ -28,9 +28,9 @@ module.exports = {
 
 	    if(creep.memory.state === 0) {
 	        // find storage
-            var closestStorage = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
-            if(!creep.pos.isNearTo(closestStorage)) {
-                creep.moveTo(closestStorage);
+            var roomStorage = creep.room.storage;
+            if(!creep.pos.isNearTo(roomStorage)) {
+                creep.moveTo(roomStorage);
             }
         } else if(creep.memory.state == 1) {
 			// transfer energy to structures
