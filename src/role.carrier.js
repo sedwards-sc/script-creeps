@@ -1,3 +1,4 @@
+/* jshint esversion: 6 */
 /*
  * role.carrier
  */
@@ -7,25 +8,25 @@ module.exports = {
         //creep.say('carrier');
 		// state 0 is get energy from storage
 	    // state 1 is transfer energy to structures
-	    if(creep.memory.state == undefined) {
+	    if(creep.memory.state === undefined) {
 	        creep.memory.state = 0;
 	    }
-	    
-	    if(creep.carry.energy == creep.carryCapacity) {
-			if(creep.memory.state == 0) {
+
+	    if(creep.carry.energy === creep.carryCapacity) {
+			if(creep.memory.state === 0) {
 				creep.say('I\'m full!');
 			}
 	        creep.memory.state = 1;
 	    }
-	    
-	    if (creep.carry.energy == 0) {
-			if(creep.memory.state == 1) {
+
+	    if (creep.carry.energy === 0) {
+			if(creep.memory.state === 1) {
 				creep.say('I\'m empty!');
 			}
 	        creep.memory.state = 0;
 	    }
-	    
-	    if(creep.memory.state == 0) {
+
+	    if(creep.memory.state === 0) {
 	        // find storage
             var closestStorage = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
             if(!creep.pos.isNearTo(closestStorage)) {
@@ -42,7 +43,7 @@ module.exports = {
 							return (structure.structureType == STRUCTURE_EXTENSION) && structure.energy < structure.energyCapacity;
 						}
 				});
-				
+
 				if(!closestTarget) {
 					closestTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
 							filter: (structure) => {
@@ -66,7 +67,7 @@ module.exports = {
 						}
 				});
 			}
-            
+
             if(closestTarget) {
                 if(creep.transfer(closestTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(closestTarget);
