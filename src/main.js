@@ -15,7 +15,7 @@ var roleClaimer = require('role.claimer');
 var roleRemoteUpgrader = require('role.remoteUpgrader');
 var roleRemoteBuilder = require('role.remoteBuilder');
 //require('prototype.storage');
-//require('prototype.creep');
+require('prototype.creep');
 require('prototype.spawn');
 require('prototype.link');
 require('object.rosters');
@@ -35,7 +35,7 @@ module.exports.loop = function () {
 	// room defence loop
 	for(var name in Game.rooms) {
 		// skip other rooms so it doesn't mess up anything when i claim a new room
-		if(!((name === 'E8S23') || (name === 'E9S27'))) {
+		if(!((name === 'E8S23') || (name === 'E9S27') || (name === 'E9S28'))) {
 		    continue;
 		}
 
@@ -86,7 +86,8 @@ module.exports.loop = function () {
 				reservers: 0,
 				claimers: 0,
 				remoteUpgraders: 0,
-				remoteBuilders: 0
+				remoteBuilders: 0,
+				mineralHarvesters: 0
 		};
 
 		// find room spawns
@@ -154,6 +155,8 @@ module.exports.loop = function () {
 		var remoteUpgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteUpgrader');
 		var remoteBuilders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteBuilder');
 
+		var mineralHarvesters = _.filter(roomCreeps, (creep) => creep.memory.role == 'mineralHarvester');
+
 		//if(roomName === 'E9S27') {
 		//	if(harvesters.length < 3) {
 		//		mainSpawn.spawnHarvester(roomCreeps);
@@ -162,8 +165,8 @@ module.exports.loop = function () {
 
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
 		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
-    var currentBody;
-    var currentHarvesterBody;
+        var currentBody;
+        var currentHarvesterBody;
 		if(carriers.length > 1) {
 			currentBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 			currentHarvesterBody = [WORK,CARRY,MOVE,MOVE];
@@ -181,7 +184,7 @@ module.exports.loop = function () {
 			currentHarvesterBody = currentBody;
 		}
 
-    var carrierBody;
+        var carrierBody;
 		if(roomEnergy >= 400) {
 			carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
 		} else {
@@ -190,7 +193,7 @@ module.exports.loop = function () {
 
 		var minerBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
 
-    var builderBody;
+        var builderBody;
 		if((roomEnergy >= 1800) && (roomStorageEnergy > 500000)) {
 			builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,MOVE];
 		} else if((roomEnergy >= 950) && (roomStorageEnergy > 100000)) {
@@ -201,7 +204,7 @@ module.exports.loop = function () {
 			builderBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 		}
 
-    var explorerBody;
+        var explorerBody;
 		if((roomEnergy >= 1150) && (roomStorageEnergy > 250000)) {
 			explorerBody = [WORK,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE];
 		} else if(roomEnergy >= 950) {
@@ -323,6 +326,8 @@ module.exports.loop = function () {
     		} else if(remoteBuilders.length < roomQuota.remoteBuilders) {
     			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteBuilder', spawnRoom: roomName});
     			console.log('Spawning new remote builder: ' + newName);
+    		} else if(mineralHarvesters.length < roomQuota.mineralHarvesters) {
+    		    mainSpawn.spawnMineralHarvester();
     		}
 		}
 
@@ -460,7 +465,7 @@ module.exports.loop = function () {
 
 		// find non carriers that aren't full of energy
 		var nonCarriers = _.filter(roomCreeps, (creep) => {
-				return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.carry.energy < creep.carryCapacity);
+				return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.memory.role !== 'mineralHarvester') && (creep.carry.energy < creep.carryCapacity);
 		});
 
 		// transfer energy from links to any creeps except carriers
@@ -546,6 +551,10 @@ module.exports.loop = function () {
 				roleRemoteBuilder.run(creep);
 				Memory.roster[creep.pos.roomName].remoteBuilders++;
 			}
+			if(creep.memory.role == 'mineralHarvester') {
+				creep.run();
+				Memory.roster[creep.pos.roomName].mineralHarvesters++;
+			}
 		} else {
 			// this is a test that will break when there are multiple spawns working and will remain when nothing is spawning
 			// TODO fix this to be better
@@ -568,14 +577,14 @@ function defendRoom(roomName) {
     } else {
 		var ramparts = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 1000000;
+					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 100000;
 				}
 		});
 		var sortedRamparts = _.sortBy(ramparts, function(rampart) { return rampart.hits; });
 
 		var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 1000000;
+					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 100000;
 				}
 		});
 		var sortedWalls = _.sortBy(walls, function(wall) { return wall.hits; });
