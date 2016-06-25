@@ -6,9 +6,9 @@ Creep.prototype.run = function() {
     if(this.memory.role === 'mineralHarvester') {
         this.runMineralHarvester();
     } else {
-        console.log('!!!Error: creep ' + this.name + ' has no role function!!!')
+        console.log('!!!Error: creep ' + this.name + ' has no role function!!!');
     }
-}
+};
 
 Creep.prototype.runMineralHarvester = function() {
 	// state 0 is harvest
