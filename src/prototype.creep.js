@@ -70,43 +70,43 @@ Creep.prototype.runCarrier = function () {
 	//creep.say('carrier');
 	// state 0 is get energy from storage
 	// state 1 is transfer energy to structures
-	if(creep.memory.state === undefined) {
-		creep.memory.state = 0;
+	if(this.memory.state === undefined) {
+		this.memory.state = 0;
 	}
 
-	if(creep.carry.energy === creep.carryCapacity) {
-		if(creep.memory.state === 0) {
-			creep.say('I\'m full!');
+	if(this.carry.energy === this.carryCapacity) {
+		if(this.memory.state === 0) {
+			this.say('I\'m full!');
 		}
-		creep.memory.state = 1;
+		this.memory.state = 1;
 	}
 
-	if (creep.carry.energy === 0) {
-		if(creep.memory.state === 1) {
-			creep.say('I\'m empty!');
+	if (this.carry.energy === 0) {
+		if(this.memory.state === 1) {
+			this.say('I\'m empty!');
 		}
-		creep.memory.state = 0;
+		this.memory.state = 0;
 	}
 
-	if(creep.memory.state === 0) {
+	if(this.memory.state === 0) {
 		// find storage
-		var roomStorage = creep.room.storage;
-		if(!creep.pos.isNearTo(roomStorage)) {
-			creep.moveTo(roomStorage);
+		var roomStorage = this.room.storage;
+		if(!this.pos.isNearTo(roomStorage)) {
+			this.moveTo(roomStorage);
 		}
-	} else if(creep.memory.state == 1) {
+	} else if(this.memory.state == 1) {
 		// transfer energy to structures
 		var closestTarget = this.getRefillTarget();
 
 		if(closestTarget) {
-			if(creep.transfer(closestTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-				creep.moveTo(closestTarget);
+			if(this.transfer(closestTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+				this.moveTo(closestTarget);
 			}
 		} else {
-			creep.say('bored');
+			this.say('bored');
 		}
 	} else {
-		creep.memory.state = 0;
+		this.memory.state = 0;
 	}
 };
 
