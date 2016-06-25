@@ -496,7 +496,7 @@ module.exports.loop = function () {
 				Memory.roster[creep.pos.roomName].miners++;
 			}
 			if(creep.memory.role == 'carrier') {
-				roleCarrier.run(creep);
+				creep.run();
 				Memory.roster[creep.pos.roomName].carriers++;
 			}
 			if(creep.memory.role == 'linker') {

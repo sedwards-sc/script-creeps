@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
 /*
- * role.carrier
+ * role.carrier - DEPRECATED
  */
 
 module.exports = {
