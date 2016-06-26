@@ -26,7 +26,7 @@ require('debug').populate(global);
 module.exports.loop = function () {
 
 	// loop to clean dead creeps out of memory
-    for(var name in Memory.creeps) {
+    for(let name in Memory.creeps) {
         if(!Game.creeps[name]) {
             delete Memory.creeps[name];
         }
