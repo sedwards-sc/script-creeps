@@ -35,7 +35,9 @@ module.exports.loop = function () {
 	// run room planning loop occasionally
 	if((Game.time % 100) === 0) {
 		for(let name in Game.rooms) {
-			Game.rooms[name].planRoom();
+			if(Game.rooms[name].isMine()) {
+				Game.rooms[name].planRoom();
+			}
 		}
 	}
 
