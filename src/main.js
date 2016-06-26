@@ -15,6 +15,7 @@ var roleClaimer = require('role.claimer');
 var roleRemoteUpgrader = require('role.remoteUpgrader');
 var roleRemoteBuilder = require('role.remoteBuilder');
 //require('prototype.storage');
+require('protoype.room');
 require('prototype.creep');
 require('prototype.spawn');
 require('prototype.link');
@@ -31,6 +32,12 @@ module.exports.loop = function () {
         }
     }
 
+	// run room planning loop occasionally
+	if((Game.time % 100) === 0) {
+		for(let name in Game.rooms) {
+			Game.rooms[name].planRoom();
+		}
+	}
 
 	// room defence loop
 	for(var name in Game.rooms) {
