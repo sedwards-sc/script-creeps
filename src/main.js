@@ -56,22 +56,22 @@ module.exports.loop = function () {
 
 		//var hostiles = Game.rooms[name].find(FIND_HOSTILE_CREEPS);
 		//if(hostiles.length > 0) {
-		let defenders = _.filter(Game.creeps, (creep) => creep.memory.role == 'defender');
+			let defenders = _.filter(Game.creeps, (creep) => creep.memory.role == 'defender');
 
-		// find room spawns
-		let roomSpawns = Game.rooms[name].find(FIND_MY_SPAWNS);
-		let mainSpawn = roomSpawns[0];
+			// find room spawns
+			let roomSpawns = Game.rooms[name].find(FIND_MY_SPAWNS);
+			let mainSpawn = roomSpawns[0];
 
-		if(defenders.length < 1) {
-        	let newName;
-			if(Game.rooms[name].energyAvailable >= 1610) {
-				newName = mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {role: 'defender'});
-			} else {
-				newName = mainSpawn.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {role: 'defender'});
+			if(defenders.length < 1) {
+	        	let newName;
+				if(Game.rooms[name].energyAvailable >= 1610) {
+					newName = mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {role: 'defender'});
+				} else {
+					newName = mainSpawn.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {role: 'defender'});
+				}
+				console.log('Spawning new defender: ' + newName);
+				mainSpawn.spawnCalled = 1;
 			}
-			console.log('Spawning new defender: ' + newName);
-			mainSpawn.spawnCalled = 1;
-		}
 		//}
 	}
 
