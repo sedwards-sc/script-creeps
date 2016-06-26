@@ -4,7 +4,9 @@
  */
 
 Creep.prototype.run = function() {
-	if(this.memory.role === 'carrier') {
+	if(this.memory.role === 'miner') {
+		this.runMiner();
+	} else if(this.memory.role === 'carrier') {
 		this.runCarrier();
     } else if(this.memory.role === 'mineralHarvester') {
         this.runMineralHarvester();
@@ -147,4 +149,65 @@ Creep.prototype.getRefillTarget = function() {
 	}
 
 	return closestTarget;
+};
+
+Creep.prototype.runMiner = function() {
+	//creep.say('miner');
+	// state 0 is harvest
+	// state 1 is transfer energy
+	if(this.memory.state === undefined) {
+		this.memory.state = 0;
+	}
+
+	if(this.carry.energy == this.carryCapacity) {
+		if(this.memory.state === 0) {
+			this.say('I\'m full!');
+		}
+		this.memory.state = 1;
+	}
+
+	if (this.carry.energy === 0) {
+		if(this.memory.state == 1) {
+			this.say('I\'m empty!');
+		}
+		this.memory.state = 0;
+	}
+
+	if(this.memory.state === 0) {
+		// harvest
+		var mySource;
+
+		if(this.memory.mySourceId === undefined) {
+			mySource = this.pos.findClosestByRange(FIND_SOURCES);
+			this.memory.mySourceId = mySource.id;
+		} else {
+			mySource = Game.getObjectById(this.memory.mySourceId);
+			if(mySource === null) {
+				delete this.memory.mySourceId;
+			}
+		}
+
+		if(mySource) {
+			var harvestReturn = this.harvest(mySource);
+			if (harvestReturn === ERR_NOT_IN_RANGE) {
+				this.moveTo(mySource);
+			} else if(harvestReturn === OK) {
+				if((this.memory.spawnRoom === 'E9S27') && (this.pos.y !== 36) && (this.pos.y !== 35)) {
+					this.move(TOP);
+				}
+			}
+		}
+	} else if(this.memory.state == 1) {
+		// transfer to storage or drop
+		var roomStorage = this.room.storage;
+		if(roomStorage) {
+			if(this.transfer(roomStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+				this.moveTo(roomStorage);
+			}
+		} else {
+			this.drop(RESOURCE_ENERGY);
+		}
+	} else {
+		this.memory.state = 0;
+	}
 };
