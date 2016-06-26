@@ -341,9 +341,8 @@ module.exports.loop = function () {
 		}
 
 		// transfer energy from storage to carriers or reinforcers if they are in range
-		let storages = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
-		if(storages.length > 0) {
-			let mainStorage = storages[0];
+		let mainStorage = Game.rooms[roomName].storage;
+		if(mainStorage) {
 
 			/*
 			var candidates = _.filter(roomCreeps, (creep) => {
