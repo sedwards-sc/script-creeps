@@ -15,7 +15,7 @@ var roleClaimer = require('role.claimer');
 var roleRemoteUpgrader = require('role.remoteUpgrader');
 var roleRemoteBuilder = require('role.remoteBuilder');
 //require('prototype.storage');
-require('protoype.room');
+require('prototype.room');
 require('prototype.creep');
 require('prototype.spawn');
 require('prototype.link');
