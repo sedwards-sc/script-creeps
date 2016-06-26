@@ -76,11 +76,11 @@ module.exports.loop = function () {
 	}
 
 	Memory.roster = {};
-	var roomQuotas = new WorldRoster();
-	var remoteInfo = new RoomRemotes();
+	let roomQuotas = new WorldRoster();
+	let remoteInfo = new RoomRemotes();
 
 	// room spawn loop
-	for(var roomName in Game.rooms) {
+	for(let roomName in Game.rooms) {
 		Memory.roster[roomName] = {
 				harvesters: 0,
 				builders: 0,
@@ -100,11 +100,11 @@ module.exports.loop = function () {
 		};
 
 		// find room spawns
-		var roomSpawns = Game.rooms[roomName].find(FIND_MY_SPAWNS);
+		let roomSpawns = Game.rooms[roomName].find(FIND_MY_SPAWNS);
 
 		// get room creep role quota and remote info for this room
-		var roomQuota = roomQuotas[roomName];
-		var roomRemoteInfo = remoteInfo[roomName];
+		let roomQuota = roomQuotas[roomName];
+		let roomRemoteInfo = remoteInfo[roomName];
 
 		// continue to next room if there are no spawns or no room quota
 		if(roomSpawns.length < 1) {
@@ -117,13 +117,13 @@ module.exports.loop = function () {
 		//if((roomSpawns.length >= 2) && (roomSpawns[0].spawning)) {
 		//    var mainSpawn = roomSpawns[1];
 		//} else {
-		    var mainSpawn = roomSpawns[0];
+		    let mainSpawn = roomSpawns[0];
 		//}
 
-		var controllerProgress = Game.rooms[roomName].controller.progress / Game.rooms[roomName].controller.progressTotal * 100;
-		var roomEnergy = Game.rooms[roomName].energyAvailable;
-		var roomEnergyCapacity = Game.rooms[roomName].energyCapacityAvailable;
-		var roomStorageEnergy;
+		let controllerProgress = Game.rooms[roomName].controller.progress / Game.rooms[roomName].controller.progressTotal * 100;
+		let roomEnergy = Game.rooms[roomName].energyAvailable;
+		let roomEnergyCapacity = Game.rooms[roomName].energyCapacityAvailable;
+		let roomStorageEnergy;
 		if(Game.rooms[roomName].storage) {
 			roomStorageEnergy = Game.rooms[roomName].storage.store[RESOURCE_ENERGY];
 		}
@@ -139,32 +139,32 @@ module.exports.loop = function () {
 		}
 
 		// find room creeps
-		var roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
+		let roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
 
-		var harvesters = _.filter(roomCreeps, (creep) => creep.memory.role == 'harvester');
-		var builders = _.filter(roomCreeps, (creep) => creep.memory.role == 'builder');
-		var upgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'upgrader');
+		let harvesters = _.filter(roomCreeps, (creep) => creep.memory.role == 'harvester');
+		let builders = _.filter(roomCreeps, (creep) => creep.memory.role == 'builder');
+		let upgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'upgrader');
 
-		var explorers = _.filter(roomCreeps, (creep) => creep.memory.role == 'explorer');
+		let explorers = _.filter(roomCreeps, (creep) => creep.memory.role == 'explorer');
 
-		var remoteMiners = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteMiner');
-		var remoteCarriers = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteCarrier');
+		let remoteMiners = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteMiner');
+		let remoteCarriers = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteCarrier');
 
-		var miners = _.filter(roomCreeps, (creep) => creep.memory.role == 'miner');
-		var carriers = _.filter(roomCreeps, (creep) => creep.memory.role == 'carrier');
+		let miners = _.filter(roomCreeps, (creep) => creep.memory.role == 'miner');
+		let carriers = _.filter(roomCreeps, (creep) => creep.memory.role == 'carrier');
 
-		var linkers = _.filter(roomCreeps, (creep) => creep.memory.role == 'linker');
+		let linkers = _.filter(roomCreeps, (creep) => creep.memory.role == 'linker');
 
-		var reinforcers = _.filter(roomCreeps, (creep) => creep.memory.role == 'reinforcer');
+		let reinforcers = _.filter(roomCreeps, (creep) => creep.memory.role == 'reinforcer');
 
-		var reservers = _.filter(roomCreeps, (creep) => creep.memory.role == 'reserver');
+		let reservers = _.filter(roomCreeps, (creep) => creep.memory.role == 'reserver');
 
-		var claimers = _.filter(roomCreeps, (creep) => creep.memory.role == 'claimer');
+		let claimers = _.filter(roomCreeps, (creep) => creep.memory.role == 'claimer');
 
-		var remoteUpgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteUpgrader');
-		var remoteBuilders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteBuilder');
+		let remoteUpgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteUpgrader');
+		let remoteBuilders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteBuilder');
 
-		var mineralHarvesters = _.filter(roomCreeps, (creep) => creep.memory.role == 'mineralHarvester');
+		let mineralHarvesters = _.filter(roomCreeps, (creep) => creep.memory.role == 'mineralHarvester');
 
 		//if(roomName === 'E9S27') {
 		//	if(harvesters.length < 3) {
@@ -174,8 +174,8 @@ module.exports.loop = function () {
 
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
 		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
-        var currentBody;
-        var currentHarvesterBody;
+        let currentBody;
+        let currentHarvesterBody;
 		if(carriers.length > 1) {
 			currentBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 			currentHarvesterBody = [WORK,CARRY,MOVE,MOVE];
@@ -193,16 +193,16 @@ module.exports.loop = function () {
 			currentHarvesterBody = currentBody;
 		}
 
-        var carrierBody;
+        let carrierBody;
 		if(roomEnergy >= 400) {
 			carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
 		} else {
 			carrierBody = [CARRY,CARRY,MOVE,MOVE];
 		}
 
-		var minerBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
+		let minerBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
 
-        var builderBody;
+        let builderBody;
 		if((roomEnergy >= 1800) && (roomStorageEnergy > 500000)) {
 			builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,MOVE];
 		} else if((roomEnergy >= 950) && (roomStorageEnergy > 100000)) {
@@ -213,7 +213,7 @@ module.exports.loop = function () {
 			builderBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 		}
 
-        var explorerBody;
+        let explorerBody;
 		if((roomEnergy >= 1150) && (roomStorageEnergy > 250000)) {
 			explorerBody = [WORK,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE];
 		} else if(roomEnergy >= 950) {
@@ -222,38 +222,38 @@ module.exports.loop = function () {
 			explorerBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 		}
 
-		var remoteMinerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE];
-		var remoteCarrierBody = [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
+		let remoteMinerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE];
+		let remoteCarrierBody = [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
 
 		if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
     		if(carriers.length < roomQuota.carriers) {
-    			var newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
+    			let newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
     			console.log('Spawning new carrier: ' + newName);
     		} else if(miners.length < roomQuota.miners) {
-    			var newName = mainSpawn.createCreep(minerBody, undefined, {role: 'miner', spawnRoom: roomName});
+    			let newName = mainSpawn.createCreep(minerBody, undefined, {role: 'miner', spawnRoom: roomName});
     			console.log('Spawning new miner: ' + newName);
     		} else if(linkers.length < roomQuota.linkers) {
-    			var newName = mainSpawn.createCreep([CARRY,CARRY,MOVE], undefined, {role: 'linker', spawnRoom: roomName});
+    			let newName = mainSpawn.createCreep([CARRY,CARRY,MOVE], undefined, {role: 'linker', spawnRoom: roomName});
     			console.log('Spawning new linker: ' + newName);
     		} else if(harvesters.length < roomQuota.harvesters) {
     			mainSpawn.spawnHarvester(roomCreeps);
     		} else if(builders.length < roomQuota.builders) {
-    			var newName = mainSpawn.createCreep(builderBody, undefined, {role: 'builder', spawnRoom: roomName});
+    			let newName = mainSpawn.createCreep(builderBody, undefined, {role: 'builder', spawnRoom: roomName});
     			console.log('Spawning new builder: ' + newName);
     		} else if(upgraders.length < roomQuota.upgraders) {
-    			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'upgrader', spawnRoom: roomName});
+    			let newName = mainSpawn.createCreep(currentBody, undefined, {role: 'upgrader', spawnRoom: roomName});
     			console.log('Spawning new upgrader: ' + newName);
     		} else if(explorers.length < roomQuota.explorers) {
-    			var newName = mainSpawn.createCreep(explorerBody, undefined, {role: 'explorer', spawnRoom: roomName});
+    			let newName = mainSpawn.createCreep(explorerBody, undefined, {role: 'explorer', spawnRoom: roomName});
     			console.log('Spawning new explorer: ' + newName);
     		} else if(remoteMiners.length < roomQuota.remoteMiners) {
     			if(roomRemoteInfo && (roomRemoteInfo.remoteMiners.length > 0)) {
-    				for(var remoteMinersIndex in roomRemoteInfo.remoteMiners) {
-    					var currentRemoteMiner = roomRemoteInfo.remoteMiners[remoteMinersIndex];
-    					var currentRemoteMinerFilter = _.filter(remoteMiners, (creep) => creep.memory.creepId === currentRemoteMiner.creepId);
+    				for(let remoteMinersIndex in roomRemoteInfo.remoteMiners) {
+    					let currentRemoteMiner = roomRemoteInfo.remoteMiners[remoteMinersIndex];
+    					let currentRemoteMinerFilter = _.filter(remoteMiners, (creep) => creep.memory.creepId === currentRemoteMiner.creepId);
 
     					if(currentRemoteMinerFilter.length < 1) {
-    						var newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', spawnRoom: roomName, creepId: currentRemoteMiner.creepId, rRoomName: currentRemoteMiner.checkPointAway.roomName, rX: currentRemoteMiner.checkPointAway.x, rY: currentRemoteMiner.checkPointAway.y, remoteMine: currentRemoteMiner.sourceIndex});
+    						let newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', spawnRoom: roomName, creepId: currentRemoteMiner.creepId, rRoomName: currentRemoteMiner.checkPointAway.roomName, rX: currentRemoteMiner.checkPointAway.x, rY: currentRemoteMiner.checkPointAway.y, remoteMine: currentRemoteMiner.sourceIndex});
     						console.log('Spawning new remote miner: ' + newName + ' - ' + JSON.stringify(currentRemoteMiner));
     						break;
     					}
@@ -274,12 +274,12 @@ module.exports.loop = function () {
     			//}
     		} else if(remoteCarriers.length < roomQuota.remoteCarriers) {
     			if(roomRemoteInfo && (roomRemoteInfo.remoteCarriers.length > 0)) {
-    				for(var remoteCarriersIndex in roomRemoteInfo.remoteCarriers) {
-    					var currentRemoteCarrier = roomRemoteInfo.remoteCarriers[remoteCarriersIndex];
-    					var currentRemoteCarrierFilter = _.filter(remoteCarriers, (creep) => creep.memory.creepId === currentRemoteCarrier.creepId);
+    				for(let remoteCarriersIndex in roomRemoteInfo.remoteCarriers) {
+    					let currentRemoteCarrier = roomRemoteInfo.remoteCarriers[remoteCarriersIndex];
+    					let currentRemoteCarrierFilter = _.filter(remoteCarriers, (creep) => creep.memory.creepId === currentRemoteCarrier.creepId);
 
     					if(currentRemoteCarrierFilter.length < 1) {
-    						var newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {
+    						let newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {
     							role: 'remoteCarrier',
     							spawnRoom: roomName,
     							creepId: currentRemoteCarrier.creepId,
@@ -302,12 +302,12 @@ module.exports.loop = function () {
     			//console.log('Spawning new remote carrier: ' + newName);
     		} else if(reservers.length < roomQuota.reservers) {
     			if(roomRemoteInfo && (roomRemoteInfo.reservers.length > 0)) {
-    				for(var reserversIndex in roomRemoteInfo.reservers) {
-    					var currentReserver = roomRemoteInfo.reservers[reserversIndex];
-    					var currentReserverFilter = _.filter(reservers, (creep) => creep.memory.creepId === currentReserver.creepId);
+    				for(let reserversIndex in roomRemoteInfo.reservers) {
+    					let currentReserver = roomRemoteInfo.reservers[reserversIndex];
+    					let currentReserverFilter = _.filter(reservers, (creep) => creep.memory.creepId === currentReserver.creepId);
 
     					if(currentReserverFilter.length < 1) {
-    						var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {
+    						let newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {
     							role: 'reserver',
     							spawnRoom: roomName,
     							creepId: currentReserver.creepId,
@@ -324,16 +324,16 @@ module.exports.loop = function () {
     			//var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {role: 'reserver', spawnRoom: roomName});
     			//console.log('Spawning new reserver: ' + newName);
     		} else if(reinforcers.length < roomQuota.reinforcers) {
-    			var newName = mainSpawn.createCreep([WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
+    			let newName = mainSpawn.createCreep([WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
     			console.log('Spawning new reinforcer: ' + newName);
     		} else if(claimers.length < roomQuota.claimers) {
-    			var newName = mainSpawn.createCreep([CLAIM,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
+    			let newName = mainSpawn.createCreep([CLAIM,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
     			console.log('Spawning new claimer: ' + newName);
     		} else if(remoteUpgraders.length < roomQuota.remoteUpgraders) {
-    			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteUpgrader', spawnRoom: roomName});
+    			let newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteUpgrader', spawnRoom: roomName});
     			console.log('Spawning new remote upgrader: ' + newName);
     		} else if(remoteBuilders.length < roomQuota.remoteBuilders) {
-    			var newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteBuilder', spawnRoom: roomName});
+    			let newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteBuilder', spawnRoom: roomName});
     			console.log('Spawning new remote builder: ' + newName);
     		} else if(mineralHarvesters.length < roomQuota.mineralHarvesters) {
     		    mainSpawn.spawnMineralHarvester();
@@ -341,9 +341,9 @@ module.exports.loop = function () {
 		}
 
 		// transfer energy from storage to carriers or reinforcers if they are in range
-		var storages = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
+		let storages = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
 		if(storages.length > 0) {
-			var mainStorage = storages[0];
+			let mainStorage = storages[0];
 
 			/*
 			var candidates = _.filter(roomCreeps, (creep) => {
@@ -359,24 +359,24 @@ module.exports.loop = function () {
 			}
 			*/
 
-			var nonFullCarriers = _.filter(roomCreeps, (creep) => {
+			let nonFullCarriers = _.filter(roomCreeps, (creep) => {
 					return (creep.memory.role === 'carrier') && (creep.carry.energy < creep.carryCapacity);
 			});
 
-			var nonFullBuilders = _.filter(roomCreeps, (creep) => {
+			let nonFullBuilders = _.filter(roomCreeps, (creep) => {
 					return (creep.memory.role === 'builder') && (creep.carry.energy < creep.carryCapacity);
 					//return (creep.memory.role === 'builder') && (creep.carry.energy === 0);
 			});
 
-			var nonFullReinforcers = _.filter(roomCreeps, (creep) => {
+			let nonFullReinforcers = _.filter(roomCreeps, (creep) => {
 					return (creep.memory.role === 'reinforcer') && (creep.carry.energy === 0);
 			});
 
-			var inRangeCarriers = mainStorage.pos.findInRange(nonFullCarriers, 1);
+			let inRangeCarriers = mainStorage.pos.findInRange(nonFullCarriers, 1);
 			// EDITS
-			var inRangeBuildersPreSort = mainStorage.pos.findInRange(nonFullBuilders, 1);
-			var inRangeBuilders = _.sortBy(inRangeBuildersPreSort, function(inRangeBuilder) { return inRangeBuilder.carry.energy; });
-			var inRangeReinforcers = mainStorage.pos.findInRange(nonFullReinforcers, 1);
+			let inRangeBuildersPreSort = mainStorage.pos.findInRange(nonFullBuilders, 1);
+			let inRangeBuilders = _.sortBy(inRangeBuildersPreSort, function(inRangeBuilder) { return inRangeBuilder.carry.energy; });
+			let inRangeReinforcers = mainStorage.pos.findInRange(nonFullReinforcers, 1);
 
 			if(inRangeCarriers.length > 0) {
 				if(mainStorage.transfer(inRangeCarriers[0], RESOURCE_ENERGY) === OK) {
@@ -394,20 +394,20 @@ module.exports.loop = function () {
 		}
 
 		// remote links to storage links transfers
-		var refillers = _.filter(roomCreeps, (creep) => {
+		let refillers = _.filter(roomCreeps, (creep) => {
 				return ((creep.memory.role === 'remoteCarrier') || (creep.memory.role === 'carrier') || (creep.memory.role === 'explorer')) && (creep.carry.energy > 0);
 		});
 
 		if(roomName === 'E8S23') {
 			// transfer energy across room if remote link is full and refillers are in range
-			var storageLink = Game.getObjectById('573a6ed5d32c966b71bd066b');
-			var remoteLink = Game.getObjectById('573a7a3d3f08575071c9c160');
-			var remoteLink2 = Game.getObjectById('57425474d734dbd25194bbc0');
+			let storageLink = Game.getObjectById('573a6ed5d32c966b71bd066b');
+			let remoteLink = Game.getObjectById('573a7a3d3f08575071c9c160');
+			let remoteLink2 = Game.getObjectById('57425474d734dbd25194bbc0');
 
 			// for remote link 1
-			var inRangeRefillers = remoteLink.pos.findInRange(refillers, 3);
+			let inRangeRefillers = remoteLink.pos.findInRange(refillers, 3);
 			if((inRangeRefillers.length > 0) && (remoteLink.energy === remoteLink.energyCapacity)) {
-				var transferReturn = remoteLink.transferEnergyFirstTimeOnly(storageLink);
+				let transferReturn = remoteLink.transferEnergyFirstTimeOnly(storageLink);
 				if(transferReturn === OK) {
 					console.log('remote link energy transferred to storage link - room: ' + roomName);
 					if(Memory.transferCount === undefined) {
@@ -426,9 +426,9 @@ module.exports.loop = function () {
 			}
 
 			// for remote link 2
-			var inRangeRefillers2 = remoteLink2.pos.findInRange(refillers, 3);
+			let inRangeRefillers2 = remoteLink2.pos.findInRange(refillers, 3);
 			if((inRangeRefillers2.length > 0) && (remoteLink2.energy === remoteLink2.energyCapacity)) {
-				var transferReturn2 = remoteLink2.transferEnergyFirstTimeOnly(storageLink);
+				let transferReturn2 = remoteLink2.transferEnergyFirstTimeOnly(storageLink);
 				if(transferReturn2 === OK) {
 					console.log('remote link 2 energy transferred to storage link - room: ' + roomName);
 					if(Memory.transferCount2 === undefined) {
@@ -447,13 +447,13 @@ module.exports.loop = function () {
 			}
 		} else if(roomName === 'E9S27') {
 			// transfer energy across room if remote link is full and refillers are in range
-			var storageLink = Game.getObjectById('574e5c57d719fc5a5b37f24e');
-			var remoteLink = Game.getObjectById('574e6e0c9d9251982714fed9');
+			let storageLink = Game.getObjectById('574e5c57d719fc5a5b37f24e');
+			let remoteLink = Game.getObjectById('574e6e0c9d9251982714fed9');
 
 			// EDITS
-			var inRangeRefillers = remoteLink.pos.findInRange(refillers, 7);
+			let inRangeRefillers = remoteLink.pos.findInRange(refillers, 7);
 			if((inRangeRefillers.length > 0) && (remoteLink.energy >= (remoteLink.energyCapacity * 0.95))) {
-				var transferReturn = remoteLink.transferEnergyFirstTimeOnly(storageLink);
+				let transferReturn = remoteLink.transferEnergyFirstTimeOnly(storageLink);
 				if(transferReturn === OK) {
 					console.log('remote link energy transferred to storage link - room: ' + roomName);
 					if(Memory.transferCount3 === undefined) {
@@ -473,17 +473,17 @@ module.exports.loop = function () {
 		}
 
 		// find non carriers that aren't full of energy
-		var nonCarriers = _.filter(roomCreeps, (creep) => {
+		let nonCarriers = _.filter(roomCreeps, (creep) => {
 				return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.memory.role !== 'mineralHarvester') && (creep.carry.energy < creep.carryCapacity);
 		});
 
 		// transfer energy from links to any creeps except carriers
-		var links = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
-		for(var linkIndex in links) {
-			var currentLink = links[linkIndex];
+		let links = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
+		for(let linkIndex in links) {
+			let currentLink = links[linkIndex];
 
-			var inRangeCreepsPreSort = currentLink.pos.findInRange(nonCarriers, 1);
-			var inRangeCreeps = _.sortBy(inRangeCreepsPreSort, function(inRangeCreep) { return inRangeCreep.carry.energy; });
+			let inRangeCreepsPreSort = currentLink.pos.findInRange(nonCarriers, 1);
+			let inRangeCreeps = _.sortBy(inRangeCreepsPreSort, function(inRangeCreep) { return inRangeCreep.carry.energy; });
 
 			if(inRangeCreeps.length > 0) {
 				if(currentLink.transferEnergyFirstTimeOnly(inRangeCreeps[0]) === OK) {
@@ -494,8 +494,8 @@ module.exports.loop = function () {
 	}
 
 	// run creep loop
-    for(var creepName in Game.creeps) {
-        var creep = Game.creeps[creepName];
+    for(let creepName in Game.creeps) {
+        let creep = Game.creeps[creepName];
 
 		if(!creep.spawning) {
 			if(creep.memory.role == 'miner') {
@@ -573,38 +573,38 @@ module.exports.loop = function () {
 
 function defendRoom(roomName) {
 
-    var hostiles = Game.rooms[roomName].find(FIND_HOSTILE_CREEPS);
+    let hostiles = Game.rooms[roomName].find(FIND_HOSTILE_CREEPS);
 
     if(hostiles.length > 0) {
-        var username = hostiles[0].owner.username;
-		var gameTime = Game.time;
+        let username = hostiles[0].owner.username;
+		let gameTime = Game.time;
         Game.notify(`User ${username} spotted in room ${roomName} at ${gameTime}`);
-        var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
+        let towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
         towers.forEach(tower => tower.attack(hostiles[0]));
     } else {
-		var ramparts = Game.rooms[roomName].find(FIND_STRUCTURES, {
+		let ramparts = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
 					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 100000;
 				}
 		});
-		var sortedRamparts = _.sortBy(ramparts, function(rampart) { return rampart.hits; });
+		let sortedRamparts = _.sortBy(ramparts, function(rampart) { return rampart.hits; });
 
-		var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
+		let walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
 					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 100000;
 				}
 		});
-		var sortedWalls = _.sortBy(walls, function(wall) { return wall.hits; });
+		let sortedWalls = _.sortBy(walls, function(wall) { return wall.hits; });
 
-		var damagedContainersAndRoads = Game.rooms[roomName].find(FIND_STRUCTURES, {
+		let damagedContainersAndRoads = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
 					return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_ROAD) && structure.hits < structure.hitsMax;
 				}
 		});
-		var sortedDamagedContainersAndRoads = _.sortBy(damagedContainersAndRoads, function(damagedContainerOrRoad) { return damagedContainerOrRoad.hits; });
+		let sortedDamagedContainersAndRoads = _.sortBy(damagedContainersAndRoads, function(damagedContainerOrRoad) { return damagedContainerOrRoad.hits; });
 
 		//var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
-		var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {
+		let towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {
 				filter: (tower) => {
 					return (tower.structureType == STRUCTURE_TOWER) && tower.energy > 400;
 				}
