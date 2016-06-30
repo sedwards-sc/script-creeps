@@ -230,8 +230,8 @@ module.exports.loop = function () {
 			explorerBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 		}
 
-		let remoteMinerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE];
-		let remoteCarrierBody = [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
+		let remoteMinerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK];
+		let remoteCarrierBody = [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK];
 
 		if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
     		if(carriers.length < roomQuota.carriers) {
@@ -322,7 +322,7 @@ module.exports.loop = function () {
     					let currentReserverFilter = _.filter(reservers, (creep) => creep.memory.creepId === currentReserver.creepId);
 
     					if(currentReserverFilter.length < 1) {
-    						let newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {
+    						let newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE,MOVE,ATTACK], undefined, {
     							role: 'reserver',
     							spawnRoom: roomName,
     							creepId: currentReserver.creepId,
