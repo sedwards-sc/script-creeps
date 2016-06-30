@@ -5,7 +5,7 @@
 
 Creep.prototype.run = function() {
 	if(this.memory.role === 'miner') {
-		this.runMiner();
+		this.runMiner2();
 	} else if(this.memory.role === 'carrier') {
 		this.runCarrier();
     } else if(this.memory.role === 'mineralHarvester') {
@@ -210,4 +210,48 @@ Creep.prototype.runMiner = function() {
 	} else {
 		this.memory.state = 0;
 	}
+};
+
+Creep.prototype.runMiner2 = function() {
+	let myFlag;
+
+    if(this.memory.flagName === undefined) {
+        console.log('!!!Error: ' + this.name + ' has no flag in memory!!!');
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+    }
+
+    if(this.pos.isEqualTo(myFlag)) {
+        let mySource = Game.getObjectById(this.memory.mySourceId);
+        if(mySource === null) {
+            mySource = myFlag.pos.findClosestByRange(FIND_SOURCES);
+            this.memory.mySourceId = mySource.id;
+        }
+
+        let harvestReturn = this.harvest(mySource);
+        if(harvestReturn != OK) {
+            console.log('!!!Error: ' + this.name + ' could not successfully harvest (' + harvestReturn + ')');
+        }
+
+        if(_.sum(this.carry) === this.carryCapacity) {
+            let myTransferStructure = Game.getObjectById(this.memory.myTransferStructureId);
+            if(myTransferStructure === null) {
+                myTransferStructure = myFlag.pos.findClosestByRange(FIND_MY_STRUCTURES, {
+                        filter: (structure) => {
+                            return (structure.structureType === STRUCTURE_STORAGE) || (structure.structureType === STRUCTURE_LINK);
+                        }
+                });
+                this.memory.myTransferStructureId = myTransferStructure.id;
+            }
+
+            let transferReturn = this.transfer(myTransferStructure, RESOURCE_ENERGY);
+            if(transferReturn != OK) {
+                console.log('!!!Error: ' + this.name + ' could not successfully transfer (' + transferReturn + ')');
+            }
+        }
+
+    } else {
+        this.moveTo(myFlag);
+    }
 };

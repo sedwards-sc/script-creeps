@@ -138,6 +138,14 @@ module.exports.loop = function () {
 			Game.notify(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '% - time: ' + Game.time);
 		}
 
+		// filter for room flags
+		let roomFlagRegex = new RegExp('^' + roomName + '_');
+		let roomFlags = _.filter(Game.flags, (flag) => roomFlagRegex.test(flag.name) === true);
+
+		// filter for miner flags
+		let minerFlags = _.filter(roomFlags, (flag) => /_creep_miner_/.test(flag.name) === true);
+		//console.log('***' + roomName + ' ' + minerFlags.length + ' - ' + minerFlags);
+
 		// find room creeps
 		let roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
 
@@ -229,9 +237,16 @@ module.exports.loop = function () {
     		if(carriers.length < roomQuota.carriers) {
     			let newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
     			console.log('Spawning new carrier: ' + newName);
-    		} else if(miners.length < roomQuota.miners) {
-    			let newName = mainSpawn.createCreep(minerBody, undefined, {role: 'miner', spawnRoom: roomName});
-    			console.log('Spawning new miner: ' + newName);
+    		} else if(miners.length < minerFlags.length) {
+    		    for(let curMinerIndex in minerFlags) {
+    		        let curMinerFlagName = minerFlags[curMinerIndex].name;
+    		        let currentFlagMiners = _.filter(miners, (miner) => miner.memory.flagName === curMinerFlagName);
+    		        if(currentFlagMiners.length < 1) {
+    		            let newName = mainSpawn.createCreep(minerBody, undefined, {spawnRoom: roomName, role: 'miner', flagName: curMinerFlagName});
+    			        console.log('Spawning new miner: ' + newName + ' - ' + curMinerFlagName);
+    			        break;
+    		        }
+    		    }
     		} else if(linkers.length < roomQuota.linkers) {
     			let newName = mainSpawn.createCreep([CARRY,CARRY,MOVE], undefined, {role: 'linker', spawnRoom: roomName});
     			console.log('Spawning new linker: ' + newName);
