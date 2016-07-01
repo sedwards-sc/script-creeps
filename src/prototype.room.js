@@ -21,8 +21,14 @@ Room.prototype.countCreepFlags = function() {
 	let roomFlags = _.filter(Game.flags, (flag) => roomFlagRegex.test(flag.name) === true);
 
 	for(let curFlagIndex in roomFlags) {
-		let flagRole = /_creep_(.+)_/.exec(roomFlags[curFlagIndex].name);
-		console.log('--' + this.name + ' - ' + flagRole);
+		let currentFlag = roomFlags[curFlagIndex];
+
+		let flagRole = /_creep_(.+)_/.exec(currentFlag.name)[1];
+		//console.log('--' + this.name + ' - ' + flagRole);
+
+		this.memory.creepQuotas = this.memory.creepQuotas || {};
+		this.memory.creepQuotas[flagRole] = this.memory.creepQuotas[flagRole] || [];
+		this.memory.creepQuotas[flagRole].push(currentFlag.name);
 	}
 
 	// filter for miner flags
