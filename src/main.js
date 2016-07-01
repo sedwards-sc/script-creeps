@@ -43,6 +43,8 @@ module.exports.loop = function () {
 
 	// room defence loop
 	for(let name in Game.rooms) {
+		Game.rooms[name].assessThreats();
+
 		// skip other rooms so it doesn't mess up anything when i claim a new room
 		if(!((name === 'E8S23') || (name === 'E9S27') || (name === 'E9S28'))) {
 		    continue;

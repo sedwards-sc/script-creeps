@@ -3,6 +3,15 @@
  * prototype.room
  */
 
+Room.prototype.assessThreats = function() {
+	var hostiles = this.find(FIND_HOSTILE_CREEPS);
+	if(hostiles.length > 0) {
+		this.memory.hostiles = true;
+	} else {
+		this.memory.hostiles = false;
+	}
+};
+
 Room.prototype.planRoom = function() {
 	if(this.memory.planned) {
 		return OK;
