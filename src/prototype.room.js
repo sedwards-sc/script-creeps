@@ -6,9 +6,9 @@
 Room.prototype.assessThreats = function() {
 	var hostiles = this.find(FIND_HOSTILE_CREEPS);
 	if(hostiles.length > 0) {
-		this.memory.hostiles = true;
+		this.memory.hostiles = hostiles.length;
 	} else {
-		this.memory.hostiles = false;
+		this.memory.hostiles = undefined;
 	}
 };
 
