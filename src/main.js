@@ -407,92 +407,15 @@ module.exports.loop = function () {
 			}
 		}
 
-		// remote links to storage links transfers
-		let refillers = _.filter(roomCreeps, (creep) => {
-				return ((creep.memory.role === 'remoteCarrier') || (creep.memory.role === 'carrier') || (creep.memory.role === 'explorer')) && (creep.carry.energy > 0);
-		});
-
-		if(roomName === 'E8S23') {
-			// transfer energy across room if remote link is full and refillers are in range
-			let storageLink = Game.getObjectById('573a6ed5d32c966b71bd066b');
-			let remoteLink = Game.getObjectById('573a7a3d3f08575071c9c160');
-			let remoteLink2 = Game.getObjectById('57425474d734dbd25194bbc0');
-
-			// for remote link 1
-			let inRangeRefillers = remoteLink.pos.findInRange(refillers, 3);
-			if((inRangeRefillers.length > 0) && (remoteLink.energy === remoteLink.energyCapacity)) {
-				let transferReturn = remoteLink.transferEnergyFirstTimeOnly(storageLink);
-				if(transferReturn === OK) {
-					console.log('remote link energy transferred to storage link - room: ' + roomName);
-					if(Memory.transferCount === undefined) {
-						Memory.transferCount = 1;
-					} else {
-						Memory.transferCount++;
-					}
-				} else if(transferReturn === ERR_TIRED) {
-					console.log('too tired to transfer remote link energy to storage link - room: ' + roomName);
-					if(Memory.transferTired === undefined) {
-						Memory.transferTired = 1;
-					} else {
-						Memory.transferTired++;
-					}
-				}
-			}
-
-			// for remote link 2
-			let inRangeRefillers2 = remoteLink2.pos.findInRange(refillers, 3);
-			if((inRangeRefillers2.length > 0) && (remoteLink2.energy === remoteLink2.energyCapacity)) {
-				let transferReturn2 = remoteLink2.transferEnergyFirstTimeOnly(storageLink);
-				if(transferReturn2 === OK) {
-					console.log('remote link 2 energy transferred to storage link - room: ' + roomName);
-					if(Memory.transferCount2 === undefined) {
-						Memory.transferCount2 = 1;
-					} else {
-						Memory.transferCount2++;
-					}
-				} else if(transferReturn2 === ERR_TIRED) {
-					console.log('too tired to transfer remote link 2 energy to storage link - room: ' + roomName);
-					if(Memory.transferTired2 === undefined) {
-						Memory.transferTired2 = 1;
-					} else {
-						Memory.transferTired2++;
-					}
-				}
-			}
-		} else if(roomName === 'E9S27') {
-			// transfer energy across room if remote link is full and refillers are in range
-			let storageLink = Game.getObjectById('574e5c57d719fc5a5b37f24e');
-			let remoteLink = Game.getObjectById('574e6e0c9d9251982714fed9');
-
-			// EDITS
-			let inRangeRefillers = remoteLink.pos.findInRange(refillers, 7);
-			if((inRangeRefillers.length > 0) && (remoteLink.energy >= (remoteLink.energyCapacity * 0.95))) {
-				let transferReturn = remoteLink.transferEnergyFirstTimeOnly(storageLink);
-				if(transferReturn === OK) {
-					console.log('remote link energy transferred to storage link - room: ' + roomName);
-					if(Memory.transferCount3 === undefined) {
-						Memory.transferCount3 = 1;
-					} else {
-						Memory.transferCount3++;
-					}
-				} else if(transferReturn === ERR_TIRED) {
-					console.log('too tired to transfer remote link energy to storage link - room: ' + roomName);
-					if(Memory.transferTired3 === undefined) {
-						Memory.transferTired3 = 1;
-					} else {
-						Memory.transferTired3++;
-					}
-				}
-			}
-		}
-
 		// find non carriers that aren't full of energy
 		let nonCarriers = _.filter(roomCreeps, (creep) => {
 				return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.memory.role !== 'mineralHarvester') && (creep.carry.energy < creep.carryCapacity);
 		});
 
-		// transfer energy from links to any creeps except carriers
+		// run links and transfer energy from links to any creeps except carriers
 		let links = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
+		links.forEach(link => link.run());
+
 		for(let linkIndex in links) {
 			let currentLink = links[linkIndex];
 
