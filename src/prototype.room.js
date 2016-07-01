@@ -9,6 +9,9 @@ Room.prototype.assessThreats = function() {
 		this.memory.hostiles = hostiles.length;
 	} else {
 		this.memory.hostiles = undefined;
+		if(_.keys(this.memory).length === 0) {
+			this.memory = undefined;
+		}
 	}
 };
 
