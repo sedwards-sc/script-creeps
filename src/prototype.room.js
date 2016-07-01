@@ -15,6 +15,20 @@ Room.prototype.assessThreats = function() {
 	}
 };
 
+Room.prototype.countCreepFlags = function() {
+	// filter for room flags
+	let roomFlagRegex = new RegExp('^' + this.name + '_');
+	let roomFlags = _.filter(Game.flags, (flag) => roomFlagRegex.test(flag.name) === true);
+
+	for(let curFlagIndex in roomFlags) {
+		let flagRole = /_creep_(.+)_/.exec(roomFlags[curFlagIndex].name);
+		console.log('--' + this.name + ' - ' + flagRole);
+	}
+
+	// filter for miner flags
+	//let minerFlags = _.filter(roomFlags, (flag) => /_creep_miner_/.test(flag.name) === true);
+};
+
 Room.prototype.planRoom = function() {
 	if(this.memory.planned) {
 		return OK;

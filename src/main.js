@@ -41,6 +41,15 @@ module.exports.loop = function () {
 		}
 	}
 
+	// run room quota count loop occasionally
+	if((Game.time % 1) === 0) {
+		for(let name in Game.rooms) {
+			if(Game.rooms[name].isMine()) {
+				Game.rooms[name].countCreepFlags();
+			}
+		}
+	}
+
 	// room defence loop
 	for(let name in Game.rooms) {
 		Game.rooms[name].assessThreats();
