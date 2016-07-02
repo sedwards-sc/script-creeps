@@ -551,6 +551,24 @@ function undefToZero(x) {
 	return x || 0;
 }
 
+var reset_memory = function () {
+	let default_keys = ['creeps', 'spawn', 'rooms', 'flags'];
+	let keys = Object.keys(Memory);
+	for(let key_index in keys) {
+		let key = keys[key_index];
+		delete Memory[key];
+	}
+
+	for(let key_index in default_keys) {
+		let key = default_keys[key_index];
+		Memory[key] = {};
+	}
+
+	return true;
+};
+
+//module.exports = reset_memory;
+
 // ##old ingredients
 // #harvester
         //var newName = Game.spawns.Spawn1.createCreep([WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'harvester'});
