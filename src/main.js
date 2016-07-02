@@ -149,14 +149,6 @@ module.exports.loop = function () {
 			Game.notify(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '% - time: ' + Game.time);
 		}
 
-		// filter for room flags
-		let roomFlagRegex = new RegExp('^' + roomName + '_');
-		let roomFlags = _.filter(Game.flags, (flag) => roomFlagRegex.test(flag.name) === true);
-
-		// filter for miner flags
-		let minerFlags = _.filter(roomFlags, (flag) => /_creep_miner_/.test(flag.name) === true);
-		//console.log('***' + roomName + ' ' + minerFlags.length + ' - ' + minerFlags);
-
 		Game.rooms[roomName].countCreepRoles();
 
 		// find room creeps
