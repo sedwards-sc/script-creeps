@@ -42,7 +42,7 @@ module.exports.loop = function () {
 	}
 
 	// run room quota count loop occasionally
-	if((Game.time % 1) === 0) {
+	if((Game.time % 100) === 5) {
 		for(let name in Game.rooms) {
 			if(Game.rooms[name].isMine()) {
 				Game.rooms[name].countCreepFlags();

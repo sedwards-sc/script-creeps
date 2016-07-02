@@ -26,15 +26,10 @@ Room.prototype.countCreepFlags = function() {
 		let currentFlag = roomFlags[curFlagIndex];
 
 		let flagRole = /_creep_(.+)_/.exec(currentFlag.name)[1];
-		//console.log('--' + this.name + ' - ' + flagRole);
-
-		//this.memory.creepQuotas = this.memory.creepQuotas || {};
+		
 		this.memory.creepQuotas[flagRole] = this.memory.creepQuotas[flagRole] || [];
 		this.memory.creepQuotas[flagRole].push(currentFlag.name);
 	}
-
-	// filter for miner flags
-	//let minerFlags = _.filter(roomFlags, (flag) => /_creep_miner_/.test(flag.name) === true);
 };
 
 Room.prototype.planRoom = function() {
