@@ -254,7 +254,7 @@ module.exports.loop = function () {
     			if(roomRemoteInfo && (roomRemoteInfo.remoteMiners.length > 0)) {
     				for(let remoteMinersIndex in roomRemoteInfo.remoteMiners) {
     					let currentRemoteMiner = roomRemoteInfo.remoteMiners[remoteMinersIndex];
-    					let currentRemoteMinerFilter = _.filter(remoteMiners, (creep) => creep.memory.creepId === currentRemoteMiner.creepId);
+    					let currentRemoteMinerFilter = _.filter(roomCreeps, (creep) => creep.memory.creepId === currentRemoteMiner.creepId);
 
     					if(currentRemoteMinerFilter.length < 1) {
     						let newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', spawnRoom: roomName, creepId: currentRemoteMiner.creepId, rRoomName: currentRemoteMiner.checkPointAway.roomName, rX: currentRemoteMiner.checkPointAway.x, rY: currentRemoteMiner.checkPointAway.y, remoteMine: currentRemoteMiner.sourceIndex});
@@ -280,7 +280,7 @@ module.exports.loop = function () {
     			if(roomRemoteInfo && (roomRemoteInfo.remoteCarriers.length > 0)) {
     				for(let remoteCarriersIndex in roomRemoteInfo.remoteCarriers) {
     					let currentRemoteCarrier = roomRemoteInfo.remoteCarriers[remoteCarriersIndex];
-    					let currentRemoteCarrierFilter = _.filter(remoteCarriers, (creep) => creep.memory.creepId === currentRemoteCarrier.creepId);
+    					let currentRemoteCarrierFilter = _.filter(roomCreeps, (creep) => creep.memory.creepId === currentRemoteCarrier.creepId);
 
     					if(currentRemoteCarrierFilter.length < 1) {
     						let newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {
@@ -308,7 +308,7 @@ module.exports.loop = function () {
     			if(roomRemoteInfo && (roomRemoteInfo.reservers.length > 0)) {
     				for(let reserversIndex in roomRemoteInfo.reservers) {
     					let currentReserver = roomRemoteInfo.reservers[reserversIndex];
-    					let currentReserverFilter = _.filter(reservers, (creep) => creep.memory.creepId === currentReserver.creepId);
+    					let currentReserverFilter = _.filter(roomCreeps, (creep) => creep.memory.creepId === currentReserver.creepId);
 
     					if(currentReserverFilter.length < 1) {
     						let newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE,MOVE,ATTACK], undefined, {
