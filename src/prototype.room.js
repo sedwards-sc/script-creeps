@@ -15,6 +15,10 @@ Room.prototype.assessThreats = function() {
 	}
 };
 
+Room.prototype.countCreepRoles = function() {
+
+};
+
 Room.prototype.countCreepFlags = function() {
 	// filter for room flags
 	let roomFlagRegex = new RegExp('^' + this.name + '_');
@@ -25,8 +29,13 @@ Room.prototype.countCreepFlags = function() {
 	for(let curFlagIndex in roomFlags) {
 		let currentFlag = roomFlags[curFlagIndex];
 
-		let flagRole = /_creep_(.+)_/.exec(currentFlag.name)[1];
-		
+		let flagRoleReturn = /_creep_(.+)_/.exec(currentFlag.name);
+
+		if(flagRoleReturn === null) {
+			continue;
+		}
+
+		let flagRole = flagRoleReturn[1];
 		this.memory.creepQuotas[flagRole] = this.memory.creepQuotas[flagRole] || [];
 		this.memory.creepQuotas[flagRole].push(currentFlag.name);
 	}
