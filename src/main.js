@@ -247,6 +247,8 @@ module.exports.loop = function () {
 		let remoteCarrierBody = [CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK];
 
 		if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
+			let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
+			console.log('--' + roomName + ' ' + zeroIfUndefined(roomCreepRoster.harvester));
     		if(carriers.length < roomQuota.carriers) {
     			let newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
     			console.log('Spawning new carrier: ' + newName);
@@ -568,6 +570,10 @@ function defendRoom(roomName) {
 			towers.forEach(tower => tower.repair(sortedDamagedContainersAndRoads[0]));
 		}
 	}
+}
+
+function zeroIfUndefined(x) {
+	return x || 0;
 }
 
 // ##old ingredients
