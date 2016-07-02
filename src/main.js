@@ -172,7 +172,7 @@ module.exports.loop = function () {
 		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
         let currentBody;
         let currentHarvesterBody;
-		if(carriers.length > 1) {
+		if(undefToZero(Game.rooms[roomName].memory.roomCreepRoster.carrier) > 1) {
 			currentBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 			currentHarvesterBody = [WORK,CARRY,MOVE,MOVE];
 			if(roomEnergy >= 950) {
