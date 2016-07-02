@@ -229,7 +229,7 @@ module.exports.loop = function () {
     		} else if(undefToZero(roomCreepRoster.miner) < minerFlags.length) {
     		    for(let curMinerIndex in minerFlags) {
     		        let curMinerFlagName = minerFlags[curMinerIndex].name;
-    		        let currentFlagMiners = _.filter(miners, (miner) => miner.memory.flagName === curMinerFlagName);
+    		        let currentFlagMiners = _.filter(roomCreeps, (creep) => creep.memory.flagName === curMinerFlagName);
     		        if(currentFlagMiners.length < 1) {
     		            let newName = mainSpawn.createCreep(minerBody, undefined, {spawnRoom: roomName, role: 'miner', flagName: curMinerFlagName});
     			        console.log('Spawning new miner: ' + newName + ' - ' + curMinerFlagName);
