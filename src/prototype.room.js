@@ -20,13 +20,15 @@ Room.prototype.countCreepFlags = function() {
 	let roomFlagRegex = new RegExp('^' + this.name + '_');
 	let roomFlags = _.filter(Game.flags, (flag) => roomFlagRegex.test(flag.name) === true);
 
+	this.memory.creepQuotas = {};
+
 	for(let curFlagIndex in roomFlags) {
 		let currentFlag = roomFlags[curFlagIndex];
 
 		let flagRole = /_creep_(.+)_/.exec(currentFlag.name)[1];
 		//console.log('--' + this.name + ' - ' + flagRole);
 
-		this.memory.creepQuotas = this.memory.creepQuotas || {};
+		//this.memory.creepQuotas = this.memory.creepQuotas || {};
 		this.memory.creepQuotas[flagRole] = this.memory.creepQuotas[flagRole] || [];
 		this.memory.creepQuotas[flagRole].push(currentFlag.name);
 	}
