@@ -248,8 +248,7 @@ module.exports.loop = function () {
 
 		if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
 			let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
-			console.log('--' + roomName + ' ' + zeroIfUndefined(roomCreepRoster.harvester));
-    		if(carriers.length < roomQuota.carriers) {
+    		if(undefToZero(roomCreepRoster.carrier) < roomQuota.carriers) {
     			let newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
     			console.log('Spawning new carrier: ' + newName);
     		} else if(miners.length < minerFlags.length) {
@@ -572,7 +571,7 @@ function defendRoom(roomName) {
 	}
 }
 
-function zeroIfUndefined(x) {
+function undefToZero(x) {
 	return x || 0;
 }
 
