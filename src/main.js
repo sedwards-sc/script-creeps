@@ -162,31 +162,6 @@ module.exports.loop = function () {
 		// find room creeps
 		let roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
 
-		let harvesters = _.filter(roomCreeps, (creep) => creep.memory.role == 'harvester');
-		let builders = _.filter(roomCreeps, (creep) => creep.memory.role == 'builder');
-		let upgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'upgrader');
-
-		let explorers = _.filter(roomCreeps, (creep) => creep.memory.role == 'explorer');
-
-		let remoteMiners = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteMiner');
-		let remoteCarriers = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteCarrier');
-
-		let miners = _.filter(roomCreeps, (creep) => creep.memory.role == 'miner');
-		let carriers = _.filter(roomCreeps, (creep) => creep.memory.role == 'carrier');
-
-		let linkers = _.filter(roomCreeps, (creep) => creep.memory.role == 'linker');
-
-		let reinforcers = _.filter(roomCreeps, (creep) => creep.memory.role == 'reinforcer');
-
-		let reservers = _.filter(roomCreeps, (creep) => creep.memory.role == 'reserver');
-
-		let claimers = _.filter(roomCreeps, (creep) => creep.memory.role == 'claimer');
-
-		let remoteUpgraders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteUpgrader');
-		let remoteBuilders = _.filter(roomCreeps, (creep) => creep.memory.role == 'remoteBuilder');
-
-		let mineralHarvesters = _.filter(roomCreeps, (creep) => creep.memory.role == 'mineralHarvester');
-
 		//if(roomName === 'E9S27') {
 		//	if(harvesters.length < 3) {
 		//		mainSpawn.spawnHarvester(roomCreeps);
