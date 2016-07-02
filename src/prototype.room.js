@@ -16,10 +16,24 @@ Room.prototype.assessThreats = function() {
 };
 
 Room.prototype.countCreepRoles = function() {
+	//console.log('### Counting creep roles for ' + this.name);
 
+	// find room creeps
+	let roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom === this.name);
+
+	this.memory.creepRoster = {};
+
+	for(let curCreepIndex in roomCreeps) {
+		let currentCreepRole = roomCreeps[curCreepIndex].memory.role;
+
+		this.memory.creepRoster[currentCreepRole] = this.memory.creepRoster[currentCreepRole] || 0;
+		this.memory.creepRoster[currentCreepRole]++;
+	}
 };
 
 Room.prototype.countCreepFlags = function() {
+	console.log('### Counting creep flags for ' + this.name);
+
 	// filter for room flags
 	let roomFlagRegex = new RegExp('^' + this.name + '_');
 	let roomFlags = _.filter(Game.flags, (flag) => roomFlagRegex.test(flag.name) === true);

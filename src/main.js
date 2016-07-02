@@ -157,6 +157,8 @@ module.exports.loop = function () {
 		let minerFlags = _.filter(roomFlags, (flag) => /_creep_miner_/.test(flag.name) === true);
 		//console.log('***' + roomName + ' ' + minerFlags.length + ' - ' + minerFlags);
 
+		Game.rooms[roomName].countCreepRoles();
+
 		// find room creeps
 		let roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
 
