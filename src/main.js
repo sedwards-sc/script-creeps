@@ -216,7 +216,7 @@ module.exports.loop = function () {
 		if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
 			let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
 			let roomCreepQuotas = Game.rooms[roomName].memory.creepQuotas;
-    		if(undefToZero(roomCreepRoster.carrier) < roomQuota.carriers) {
+    		if((roomCreepQuotas.carrier) && (undefToZero(roomCreepRoster.carrier) < roomCreepQuotas.carrier.length)) {
     			let newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
     			console.log('Spawning new carrier: ' + newName);
     		} else if((roomCreepQuotas.miner) && (undefToZero(roomCreepRoster.miner) < roomCreepQuotas.miner.length)) {
@@ -229,7 +229,7 @@ module.exports.loop = function () {
     			        break;
     		        }
     		    }
-    		} else if(undefToZero(roomCreepRoster.linker) < roomQuota.linkers) {
+    		} else if((roomCreepQuotas.linker) && (undefToZero(roomCreepRoster.linker) < roomCreepQuotas.linker.length)) {
     			let newName = mainSpawn.createCreep([CARRY,CARRY,MOVE], undefined, {role: 'linker', spawnRoom: roomName});
     			console.log('Spawning new linker: ' + newName);
     		} else if(undefToZero(roomCreepRoster.harvester) < roomQuota.harvesters) {
