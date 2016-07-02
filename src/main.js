@@ -223,12 +223,13 @@ module.exports.loop = function () {
 
 		if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
 			let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
+			let roomCreepQuotas = Game.rooms[roomName].memory.creepQuotas;
     		if(undefToZero(roomCreepRoster.carrier) < roomQuota.carriers) {
     			let newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
     			console.log('Spawning new carrier: ' + newName);
-    		} else if(undefToZero(roomCreepRoster.miner) < minerFlags.length) {
-    		    for(let curMinerIndex in minerFlags) {
-    		        let curMinerFlagName = minerFlags[curMinerIndex].name;
+    		} else if((roomCreepQuotas.miner) && (undefToZero(roomCreepRoster.miner) < roomCreepQuotas.miner.length)) {
+    		    for(let curMinerIndex in roomCreepQuotas.miner) {
+    		        let curMinerFlagName = roomCreepQuotas.miner[curMinerIndex];
     		        let currentFlagMiners = _.filter(roomCreeps, (creep) => creep.memory.flagName === curMinerFlagName);
     		        if(currentFlagMiners.length < 1) {
     		            let newName = mainSpawn.createCreep(minerBody, undefined, {spawnRoom: roomName, role: 'miner', flagName: curMinerFlagName});
