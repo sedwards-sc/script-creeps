@@ -8,6 +8,8 @@ Creep.prototype.run = function() {
 		this.runMiner2();
 	} else if(this.memory.role === 'carrier') {
 		this.runCarrier();
+	} else if(this.memory.role === 'linker') {
+		this.runLinker();
     } else if(this.memory.role === 'mineralHarvester') {
         this.runMineralHarvester();
     } else {
@@ -254,4 +256,53 @@ Creep.prototype.runMiner2 = function() {
     } else {
         this.moveTo(myFlag);
     }
+};
+
+Creep.prototype.runLinker = function() {
+	//creep.say('linker');
+	// state 0 is get energy from link
+	// state 1 is transfer energy to storage
+	if(this.memory.state === undefined) {
+		this.memory.state = 0;
+	}
+
+	if(this.carry.energy === this.carryCapacity) {
+		if(this.memory.state === 0) {
+			this.say('I\'m full!');
+		}
+		this.memory.state = 1;
+	}
+
+	if (this.carry.energy === 0) {
+		if(this.memory.state == 1) {
+			this.say('I\'m empty!');
+		}
+		this.memory.state = 0;
+	}
+
+	if(this.memory.state === 0) {
+		// find link that isn't empty
+		//var closestLink = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+		//		filter: (structure) => {
+		//			return (structure.structureType === STRUCTURE_LINK) && (structure.energy >= creep.carryCapacity);
+		//		}
+		//});
+
+		let closestLink = this.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
+
+		// find storage link
+		//var closestLink = Game.getObjectById('573a6ed5d32c966b71bd066b');
+
+		if(!this.pos.isNearTo(closestLink)) {
+			this.moveTo(closestLink);
+		}
+	} else if(this.memory.state === 1) {
+		// transfer energy to storage
+		let closestStorage = this.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
+		if(this.transfer(closestStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+			this.moveTo(closestStorage);
+		}
+	} else {
+		this.memory.state = 0;
+	}
 };
