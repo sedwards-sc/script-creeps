@@ -1,3 +1,4 @@
+/* jshint esversion: 6 */
 /*
  * role.builder
  */
@@ -6,46 +7,46 @@ module.exports = {
 	run(creep) {
         // state 0 is harvest
         // state 1 is work
-        
-        if(creep.memory.state == undefined) {
+
+        if(creep.memory.state === undefined) {
             creep.memory.state = 0;
         }
-        
-        if(creep.carry.energy == creep.carryCapacity) {
+
+        if(creep.carry.energy === creep.carryCapacity) {
 	        creep.memory.state = 1;
 	    }
-	    
-	    if (creep.carry.energy == 0) {
+
+	    if (creep.carry.energy === 0) {
 	        creep.memory.state = 0;
 	    }
-	    
-	    if(creep.memory.state == 0) {
+
+	    if(creep.memory.state === 0) {
 	        // get energy piles
 			var droppedEnergy = creep.room.find(FIND_DROPPED_ENERGY, {
 					filter: (pile) => {
 						return (pile.energy >= (creep.carryCapacity / 2)) && (pile.pos.roomName === creep.memory.spawnRoom);
 					}
 			});
-            
+
 			//get links with energy or storage with enough surplus energy
 			var structuresWithEnergy = creep.room.find(FIND_MY_STRUCTURES, {
 					filter: (structure) => {
 						return ((structure.structureType === STRUCTURE_LINK) && (structure.energy >= creep.carryCapacity)) || ((structure.structureType === STRUCTURE_STORAGE) && (structure.store[RESOURCE_ENERGY] >= 1000));
 					}
 			});
-			
+
 			var energySources = [];
-			
-			for(var i in droppedEnergy) {
+
+			for(let i in droppedEnergy) {
 				energySources.push(droppedEnergy[i]);
 			}
-			
-			for(var i in structuresWithEnergy) {
+
+			for(let i in structuresWithEnergy) {
 				energySources.push(structuresWithEnergy[i]);
 			}
-			
+
 			var closestEnergy = creep.pos.findClosestByPath(energySources);
-			
+
 			if(closestEnergy) {
 				if((closestEnergy.structureType === STRUCTURE_LINK) || (closestEnergy.structureType === STRUCTURE_STORAGE)) {
 					if(!creep.pos.isNearTo(closestEnergy)) {
@@ -83,7 +84,7 @@ module.exports = {
  * var mod = require('role.builder');
  * mod.thing == 'a thing'; // true
  */
- 
+
  /*
 	    if(creep.memory.building && creep.carry.energy == 0) {
             creep.memory.building = false;
@@ -108,15 +109,15 @@ module.exports = {
 	        if(creep.memory.state == undefined) {
                 creep.memory.state = 0;
 	        }
-	        
+
 	        if(creep.carry.energy == creep.carryCapacity) {
     	        creep.memory.state = 1;
     	    }
-    	    
+
     	    if (creep.carry.energy == 0) {
     	        creep.memory.state = 0;
     	    }
-	        
+
 	        if(creep.memory.state == 0) {
     	        var sources = creep.room.find(FIND_SOURCES);
                 if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
@@ -130,5 +131,3 @@ module.exports = {
 	        }
 	    }
 */
-
-
