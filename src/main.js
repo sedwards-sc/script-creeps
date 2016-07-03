@@ -230,8 +230,15 @@ module.exports.loop = function () {
     		        }
     		    }
     		} else if((roomCreepQuotas.linker) && (undefToZero(roomCreepRoster.linker) < roomCreepQuotas.linker.length)) {
-    			let newName = mainSpawn.createCreep([CARRY,CARRY,MOVE], undefined, {role: 'linker', spawnRoom: roomName});
-    			console.log('Spawning new linker: ' + newName);
+				for(let curLinkerIndex in roomCreepQuotas.linker) {
+    		        let curLinkerFlagName = roomCreepQuotas.linker[curLinkerIndex];
+    		        let currentFlagLinkers = _.filter(roomCreeps, (creep) => creep.memory.flagName === curLinkerFlagName);
+    		        if(currentFlagLinkers.length < 1) {
+    		            let newName = mainSpawn.createCreep([CARRY,CARRY,MOVE], undefined, {spawnRoom: roomName, role: 'linker', flagName: curLinkerFlagName});
+    			        console.log('Spawning new linker: ' + newName + ' - ' + curLinkerFlagName);
+    			        break;
+    		        }
+    		    }
     		} else if(undefToZero(roomCreepRoster.harvester) < roomQuota.harvesters) {
     			mainSpawn.spawnHarvester(roomCreeps);
     		} else if(undefToZero(roomCreepRoster.builder) < roomQuota.builders) {
