@@ -510,14 +510,14 @@ function defendRoom(roomName) {
     } else {
 		let ramparts = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 100000;
+					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 25000;
 				}
 		});
 		let sortedRamparts = _.sortBy(ramparts, function(rampart) { return rampart.hits; });
 
 		let walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 100000;
+					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 25000;
 				}
 		});
 		let sortedWalls = _.sortBy(walls, function(wall) { return wall.hits; });
