@@ -306,3 +306,28 @@ Creep.prototype.runLinker = function() {
 		this.memory.state = 0;
 	}
 };
+
+Creep.prototype.runLinker2 = function() {
+	let myFlag;
+
+    if(this.memory.flagName === undefined) {
+        console.log('!!!Error: ' + this.name + ' has no flag in memory!!!');
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+    }
+
+    if(this.pos.isEqualTo(myFlag)) {
+		if(this.carry.energy > 0) {
+			let roomStorage = this.room.storage;
+			if(roomStorage) {
+				let transferReturn = this.transfer(roomStorage, RESOURCE_ENERGY);
+				if(transferReturn != OK) {
+					console.log('!!!Error: ' + this.name + ' could not successfully transfer (' + transferReturn + ')');
+				}
+			}
+		}
+    } else {
+        this.moveTo(myFlag);
+    }
+};
