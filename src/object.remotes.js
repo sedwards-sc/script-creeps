@@ -1,3 +1,4 @@
+/* jshint esversion: 6 */
 /*
  * object.remotes
  */
@@ -116,5 +117,35 @@ module.exports = (function(){
 		// reservers
 		var reserverInfo2 = new ReserverInfo('reserver2', '55db334aefa8e3fe66e05727');
 		this.E9S27.reservers.push(reserverInfo2);
+
+
+
+		// Room: E9S28
+		this.E9S28 = new RemoteRoster();
+
+		// remote miner for E8S28
+		let remoteMinerCheckPointE8S28 = new RoomPosition(40, 40, 'E8S28');
+
+		let remoteMinerInfo4 = new RemoteMinerInfo('remoteMiner4', remoteMinerCheckPointE8S28, 0);
+		this.E9S28.remoteMiners.push(remoteMinerInfo4);
+
+
+		// remote carriers for E8S28
+		let remoteCarrierCheckPointE9S28HomeLeft = new RoomPosition(5, 35, 'E9S28');
+		let remoteCarrierCheckPointE8S28Away0 = new RoomPosition(42, 42, 'E8S28');
+
+		let remoteCarrierInfo10 = new RemoteCarrierInfo('remoteCarrier10', remoteCarrierCheckPointE8S28Away0, remoteCarrierCheckPointE9S28HomeLeft);
+		this.E9S28.remoteCarriers.push(remoteCarrierInfo10);
+
+		let remoteCarrierInfo11 = new RemoteCarrierInfo('remoteCarrier11', remoteCarrierCheckPointE8S28Away0, remoteCarrierCheckPointE9S28HomeLeft);
+		this.E9S28.remoteCarriers.push(remoteCarrierInfo11);
+
+		//var remoteCarrierInfo9 = new RemoteCarrierInfo('remoteCarrier9', remoteCarrierCheckPointE8S27Away0, remoteCarrierCheckPointE9S27HomeLeft);
+		//this.E9S27.remoteCarriers.push(remoteCarrierInfo9);
+
+
+		// reservers
+		let reserverInfo3 = new ReserverInfo('reserver3', '55db334aefa8e3fe66e05729');
+		this.E9S28.reservers.push(reserverInfo3);
 	};
 })();
