@@ -331,3 +331,37 @@ Creep.prototype.runLinker2 = function() {
         this.moveTo(myFlag);
     }
 };
+
+// take a resource from anything else
+Creep.prototype.takeResource = function(target, resource, amount) {
+    if (typeof target === 'string') {
+        target = Game.getObjectById(target);
+    }
+
+    if (target instanceof Mineral ||
+        target instanceof Source) {
+            return this.harvest(target);
+    }
+
+    if (target instanceof Resource) {
+        return this.pickup(target);
+    }
+
+    if (target instanceof StructureContainer ||
+        target instanceof StructureTerminal ||
+        target instanceof StructureStorage ||
+        target instanceof StructureLab ||
+        target instanceof Creep) {
+            return target.transfer(this, resource, amount);
+    }
+
+    if (target instanceof StructurePowerSpawn ||
+        target instanceof StructureExtension ||
+        target instanceof StructureTower ||
+        target instanceof StructureSpawn ||
+        target instanceof StructureLink) {
+            return target.transferEnergy(this, amount);
+    }
+
+    return ERR_INVALID_TARGET;
+};
