@@ -51,7 +51,7 @@ module.exports = (function(){
 				1, //miners
 				2, //carriers
 				1, //linkers
-				0, //reinforcers
+				1, //reinforcers
 				1, //reservers
 				0, //claimers
 				0, //remoteUpgraders
