@@ -28,8 +28,8 @@ module.exports = (function(){
 				4, //builders
 				0, //upgraders
 				0, //explorers
-				3, //remoteMiners
-				7, //remoteCarriers
+				4, //remoteMiners
+				8, //remoteCarriers
 				1, //miners
 				2, //carriers
 				1, //linkers
@@ -46,7 +46,7 @@ module.exports = (function(){
 				2, //builders
 				0, //upgraders
 				0, //explorers
-				1, //remoteMiners
+				2, //remoteMiners
 				3, //remoteCarriers
 				1, //miners
 				2, //carriers

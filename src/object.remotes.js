@@ -137,10 +137,22 @@ module.exports = (function(){
 		var remoteCarrierInfo9 = new RemoteCarrierInfo('remoteCarrier9', remoteCarrierCheckPointE8S27Away0, remoteCarrierCheckPointE9S27HomeLeft);
 		this.E9S27.remoteCarriers.push(remoteCarrierInfo9);
 
+		// remote carriers for E8S26
+		let remoteCarrierCheckPointE8S26Away0 = new RoomPosition(38, 43, 'E8S26');
+
+		let remoteCarrierInfo14 = new RemoteCarrierInfo('remoteCarrier14', remoteCarrierCheckPointE8S26Away0, remoteCarrierCheckPointE9S27HomeLeft);
+		this.E9S27.remoteCarriers.push(remoteCarrierInfo14);
+
+		let remoteCarrierInfo15 = new RemoteCarrierInfo('remoteCarrier15', remoteCarrierCheckPointE8S26Away0, remoteCarrierCheckPointE9S27HomeLeft);
+		this.E9S27.remoteCarriers.push(remoteCarrierInfo15);
+
 
 		// reservers
 		var reserverInfo2 = new ReserverInfo('reserver2', '55db334aefa8e3fe66e05727');
 		this.E9S27.reservers.push(reserverInfo2);
+
+		let reserverInfo5 = new ReserverInfo('reserver5', '55db3349efa8e3fe66e05723');
+		this.E9S27.reservers.push(reserverInfo5);
 
 
 
