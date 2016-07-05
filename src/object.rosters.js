@@ -55,13 +55,13 @@ module.exports = (function(){
 				1, //reservers
 				0, //claimers
 				0, //remoteUpgraders
-				1, //remoteBuilders
+				3, //remoteBuilders
 				1 //mineralHarvesters
 		);
 
 		this.E9S28 = new RoomRoster(
-				6, //harvesters
-				0, //builders
+				0, //harvesters
+				2, //builders
 				0, //upgraders
 				0, //explorers
 				1, //remoteMiners
@@ -74,13 +74,13 @@ module.exports = (function(){
 				0, //claimers
 				0, //remoteUpgraders
 				0, //remoteBuilders
-				0 //mineralHarvesters
+				1 //mineralHarvesters
 		);
 
 		this.E7S25 = new RoomRoster(
-				6, //harvesters
+				4, //harvesters
 				0, //builders
-				0, //upgraders
+				3, //upgraders
 				0, //explorers
 				0, //remoteMiners
 				0, //remoteCarriers

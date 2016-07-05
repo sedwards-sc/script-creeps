@@ -24,14 +24,14 @@ StructureLink.prototype.run = function() {
             return;
         }
 
-        let refillers = _.filter(Game.creeps, (creep) => {
-				return ((creep.memory.role === 'remoteCarrier') || (creep.memory.role === 'carrier') || (creep.memory.role === 'explorer')) && (creep.carry.energy > 0);
-		});
+        //let refillers = _.filter(Game.creeps, (creep) => {
+		//		return ((creep.memory.role === 'remoteCarrier') || (creep.memory.role === 'carrier') || (creep.memory.role === 'explorer')) && (creep.carry.energy > 0);
+		//});
 
 		// using 7 range for better behaviour in secondary room - was originally using 3
-		let inRangeRefillers = this.pos.findInRange(refillers, 7);
+		//let inRangeRefillers = this.pos.findInRange(refillers, 7);
 
-		if(inRangeRefillers.length > 0) {
+		//if(inRangeRefillers.length > 0) {
 		    let transferReturn = this.transferEnergyFirstTimeOnly(storageLink);
 			if(transferReturn === OK) {
 				console.log('remote link energy transferred to storage link - room: ' + this.room.name + ', link: ' + this.id);
@@ -46,7 +46,7 @@ StructureLink.prototype.run = function() {
 				this.room.memory.transferToStorageCounts[this.id].fail = this.room.memory.transferToStorageCounts[this.id].fail || 0;
 				this.room.memory.transferToStorageCounts[this.id].fail++;
 			}
-		}
+		//}
     }
 };
 

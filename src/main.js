@@ -175,6 +175,11 @@ module.exports.loop = function () {
 				currentBody = [WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 			} else if(roomEnergy >= 950) {
 				currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+			} else if(roomEnergy >= 800) {
+			    // NOTE: this config is really only good for upgraders that can reach the controller from an energy source (e.g. storage)
+			    currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
+			} else if(roomEnergy >= 350) {
+			    currentBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 			} else {
 				currentBody = [WORK,CARRY,MOVE,MOVE];
 			}
@@ -191,8 +196,8 @@ module.exports.loop = function () {
 		let minerBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
 
         let builderBody;
-		if((roomEnergy >= 1800) && (roomStorageEnergy > 500000)) {
-			builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,MOVE];
+		if((roomEnergy >= 1900) && (roomStorageEnergy > 500000)) {
+			builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,MOVE,CARRY,MOVE];
 		} else if((roomEnergy >= 950) && (roomStorageEnergy > 100000)) {
 			builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 		} else if(roomEnergy >= 500) {
@@ -398,7 +403,7 @@ module.exports.loop = function () {
 
 		// find non carriers that aren't full of energy
 		let nonCarriers = _.filter(roomCreeps, (creep) => {
-				return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.memory.role !== 'mineralHarvester') && (creep.carry.energy < creep.carryCapacity);
+				return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.memory.role !== 'mineralHarvester') && (creep.memory.role !== 'miner') && (creep.carry.energy < creep.carryCapacity);
 		});
 
 		// run links and transfer energy from links to any creeps except carriers
