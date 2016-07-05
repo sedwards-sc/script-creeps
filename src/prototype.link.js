@@ -24,6 +24,30 @@ StructureLink.prototype.run = function() {
             return;
         }
 
+		let controllerLink = Game.getObjectById(this.room.memory.controllerLinkId);
+        if(controllerLink === null) {
+            let roomLinks = this.room.find(FIND_MY_STRUCTURES, { filter: { structureType: STRUCTURE_LINK } });
+            let closeLinks = this.room.controller.pos.findInRange(roomLinks, 3);
+            if(closeLinks.length > 0) {
+                controllerLink = closeLinks[0];
+                this.room.memory.controllerLinkId = controllerLink.id;
+            }
+        }
+
+        if((controllerLink) && (this.id === controllerLink.id)) {
+            return;
+        }
+
+		let transferTarget;
+		if((controllerLink) && (controllerLink.energy <= (controllerLink.energyCapacity * 0.25))) {
+			transferTarget = controllerLink;
+		} else if(storageLink) {
+			transferTarget = storageLink;
+		} else {
+			console.log('!!!Error: weirdness in the linker!!!');
+			return;
+		}
+
         //let refillers = _.filter(Game.creeps, (creep) => {
 		//		return ((creep.memory.role === 'remoteCarrier') || (creep.memory.role === 'carrier') || (creep.memory.role === 'explorer')) && (creep.carry.energy > 0);
 		//});
@@ -32,19 +56,21 @@ StructureLink.prototype.run = function() {
 		//let inRangeRefillers = this.pos.findInRange(refillers, 7);
 
 		//if(inRangeRefillers.length > 0) {
-		    let transferReturn = this.transferEnergyFirstTimeOnly(storageLink);
+		    let transferReturn = this.transferEnergyFirstTimeOnly(transferTarget);
 			if(transferReturn === OK) {
-				console.log('remote link energy transferred to storage link - room: ' + this.room.name + ', link: ' + this.id);
+				console.log('remote link energy transferred to storage/controller link - room: ' + this.room.name + ', from: ' + this.id + ', to: ' + transferTarget.id);
 				this.room.memory.transferToStorageCounts = this.room.memory.transferToStorageCounts || {};
 				this.room.memory.transferToStorageCounts[this.id] = this.room.memory.transferToStorageCounts[this.id] || {};
 				this.room.memory.transferToStorageCounts[this.id].success = this.room.memory.transferToStorageCounts[this.id].success || 0;
 				this.room.memory.transferToStorageCounts[this.id].success++;
 			} else if(transferReturn === ERR_TIRED) {
-				console.log('too tired to transfer remote link energy to storage link - room: ' + this.room.name + ', link: ' + this.id);
+				console.log('too tired to transfer remote link energy to storage/controller link - room: ' + this.room.name + ', from: ' + this.id + ', to: ' + transferTarget.id);
 				this.room.memory.transferToStorageCounts = this.room.memory.transferToStorageCounts || {};
 				this.room.memory.transferToStorageCounts[this.id] = this.room.memory.transferToStorageCounts[this.id] || {};
 				this.room.memory.transferToStorageCounts[this.id].fail = this.room.memory.transferToStorageCounts[this.id].fail || 0;
 				this.room.memory.transferToStorageCounts[this.id].fail++;
+			} else {
+				console.log('!!!Error: transferring remote link energy to storage/controller link (' + transferReturn + ') - room: ' + this.room.name + ', from: ' + this.id + ', to: ' + transferTarget.id);
 			}
 		//}
     }
