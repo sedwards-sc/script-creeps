@@ -49,6 +49,12 @@ module.exports = (function(){
 		var remoteMinerInfo2 = new RemoteMinerInfo('remoteMiner2', remoteMinerCheckPointE9S23, 0);
 		this.E8S23.remoteMiners.push(remoteMinerInfo2);
 
+		// remote miner for E9S22
+		let remoteMinerCheckPointE9S22 = new RoomPosition(23, 47, 'E9S22');
+
+		var remoteMinerInfo5 = new RemoteMinerInfo('remoteMiner5', remoteMinerCheckPointE9S22, 0);
+		this.E8S23.remoteMiners.push(remoteMinerInfo5);
+
 
 		// remote carriers for E7S23
 		var remoteCarrierCheckPointE8S23HomeLeft = new RoomPosition(2, 25, 'E8S23');
@@ -79,6 +85,15 @@ module.exports = (function(){
 
 		var remoteCarrierInfo6 = new RemoteCarrierInfo('remoteCarrier6', remoteCarrierCheckPointE9S23Away0, remoteCarrierCheckPointE8S23HomeRight);
 		this.E8S23.remoteCarriers.push(remoteCarrierInfo6);
+
+		// remote carriers for E9S22
+		let remoteCarrierCheckPointE9S22Away0 = new RoomPosition(21, 47, 'E9S22');
+
+		let remoteCarrierInfo12 = new RemoteCarrierInfo('remoteCarrier12', remoteCarrierCheckPointE9S22Away0, remoteCarrierCheckPointE8S23HomeRight);
+		this.E8S23.remoteCarriers.push(remoteCarrierInfo12);
+
+		let remoteCarrierInfo13 = new RemoteCarrierInfo('remoteCarrier13', remoteCarrierCheckPointE9S22Away0, remoteCarrierCheckPointE8S23HomeRight);
+		this.E8S23.remoteCarriers.push(remoteCarrierInfo13);
 
 
 		// reservers
