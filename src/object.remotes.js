@@ -103,6 +103,9 @@ module.exports = (function(){
 		var reserverInfo1 = new ReserverInfo('reserver1', '55db3354efa8e3fe66e05757');
 		this.E8S23.reservers.push(reserverInfo1);
 
+		let reserverInfo4 = new ReserverInfo('reserver4', '55db3353efa8e3fe66e05754');
+		this.E8S23.reservers.push(reserverInfo4);
+
 
 
 		// Room: E9S27
@@ -113,6 +116,12 @@ module.exports = (function(){
 
 		var remoteMinerInfo3 = new RemoteMinerInfo('remoteMiner3', remoteMinerCheckPointE8S27, 0);
 		this.E9S27.remoteMiners.push(remoteMinerInfo3);
+
+		// remote miner for E8S26
+		let remoteMinerCheckPointE8S26 = new RoomPosition(38, 46, 'E8S26');
+
+		let remoteMinerInfo6 = new RemoteMinerInfo('remoteMiner6', remoteMinerCheckPointE8S26, 0);
+		this.E9S27.remoteMiners.push(remoteMinerInfo6);
 
 
 		// remote carriers for E8S27
