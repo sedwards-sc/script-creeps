@@ -29,12 +29,12 @@ module.exports = (function(){
 				0, //upgraders
 				0, //explorers
 				4, //remoteMiners
-				8, //remoteCarriers
+				9, //remoteCarriers
 				1, //miners
 				2, //carriers
 				1, //linkers
 				2, //reinforcers
-				2, //reservers
+				3, //reservers
 				0, //claimers
 				0, //remoteUpgraders
 				0, //remoteBuilders
@@ -47,12 +47,12 @@ module.exports = (function(){
 				0, //upgraders
 				0, //explorers
 				2, //remoteMiners
-				3, //remoteCarriers
+				5, //remoteCarriers
 				1, //miners
 				2, //carriers
 				1, //linkers
 				1, //reinforcers
-				1, //reservers
+				2, //reservers
 				0, //claimers
 				0, //remoteUpgraders
 				3, //remoteBuilders
