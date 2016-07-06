@@ -257,7 +257,7 @@ module.exports.loop = function () {
     			        break;
     		        }
     		    }
-    		} else if(undefToZero(roomCreepRoster.harvester) < roomQuota.harvesters) {
+    		} else if((roomCreepQuotas.harvester) && (undefToZero(roomCreepRoster.harvester) < roomCreepQuotas.harvester.length)) {
     			mainSpawn.spawnHarvester(roomCreeps);
     		} else if(undefToZero(roomCreepRoster.builder) < roomQuota.builders) {
     			let newName = mainSpawn.createCreep(builderBody, undefined, {role: 'builder', spawnRoom: roomName});
