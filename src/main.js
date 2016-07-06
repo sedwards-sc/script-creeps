@@ -55,7 +55,7 @@ module.exports.loop = function () {
 		Game.rooms[name].assessThreats();
 
 		// skip other rooms so it doesn't mess up anything when i claim a new room
-		if(!((name === 'E8S23') || (name === 'E9S27') || (name === 'E9S28'))) {
+		if(!((name === 'E8S23') || (name === 'E9S27') || (name === 'E9S28') || (name === 'E7S25'))) {
 		    continue;
 		}
 
@@ -162,6 +162,7 @@ module.exports.loop = function () {
 
 		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
 		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
+		// TODO: check which of this body code can be deprecated
         let currentBody;
         let currentHarvesterBody;
 		if(undefToZero(Game.rooms[roomName].memory.creepRoster.carrier) > 1) {
@@ -184,6 +185,18 @@ module.exports.loop = function () {
 				currentBody = [WORK,CARRY,MOVE,MOVE];
 			}
 			currentHarvesterBody = currentBody;
+		}
+
+		let upgraderBody;
+		if(roomEnergyCapacity >= 850) {
+			upgraderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
+		} else if(roomEnergyCapacity >= 800) {
+		    // NOTE: this config is really only good for upgraders that can reach the controller from an energy source (e.g. storage)
+		    upgraderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
+		} else if(roomEnergyCapacity >= 350) {
+		    upgraderBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
+		} else {
+			upgraderBody = [WORK,CARRY,MOVE,MOVE];
 		}
 
         let carrierBody;
@@ -228,7 +241,7 @@ module.exports.loop = function () {
     		    for(let curMinerIndex in roomCreepQuotas.miner) {
     		        let curMinerFlagName = roomCreepQuotas.miner[curMinerIndex];
     		        let currentFlagMiners = _.filter(roomCreeps, (creep) => creep.memory.flagName === curMinerFlagName);
-    		        if(currentFlagMiners.length < 1) {
+    		        if((currentFlagMiners.length < 1) || (currentFlagMiners[0].ticksToLive <= 36)) {
     		            let newName = mainSpawn.createCreep(minerBody, undefined, {spawnRoom: roomName, role: 'miner', flagName: curMinerFlagName});
     			        console.log('Spawning new miner: ' + newName + ' - ' + curMinerFlagName);
     			        break;
@@ -238,7 +251,7 @@ module.exports.loop = function () {
 				for(let curLinkerIndex in roomCreepQuotas.linker) {
     		        let curLinkerFlagName = roomCreepQuotas.linker[curLinkerIndex];
     		        let currentFlagLinkers = _.filter(roomCreeps, (creep) => creep.memory.flagName === curLinkerFlagName);
-    		        if(currentFlagLinkers.length < 1) {
+    		        if((currentFlagLinkers.length < 1) || (currentFlagLinkers[0].ticksToLive <= 12)) {
     		            let newName = mainSpawn.createCreep([CARRY,CARRY,MOVE], undefined, {spawnRoom: roomName, role: 'linker', flagName: curLinkerFlagName});
     			        console.log('Spawning new linker: ' + newName + ' - ' + curLinkerFlagName);
     			        break;
@@ -250,7 +263,7 @@ module.exports.loop = function () {
     			let newName = mainSpawn.createCreep(builderBody, undefined, {role: 'builder', spawnRoom: roomName});
     			console.log('Spawning new builder: ' + newName);
     		} else if(undefToZero(roomCreepRoster.upgrader) < roomQuota.upgraders) {
-    			let newName = mainSpawn.createCreep(currentBody, undefined, {role: 'upgrader', spawnRoom: roomName});
+    			let newName = mainSpawn.createCreep(upgraderBody, undefined, {role: 'upgrader', spawnRoom: roomName});
     			console.log('Spawning new upgrader: ' + newName);
     		} else if(undefToZero(roomCreepRoster.explorer) < roomQuota.explorers) {
     			let newName = mainSpawn.createCreep(explorerBody, undefined, {role: 'explorer', spawnRoom: roomName});
@@ -388,15 +401,15 @@ module.exports.loop = function () {
 
 			if(inRangeCarriers.length > 0) {
 				if(mainStorage.transfer(inRangeCarriers[0], RESOURCE_ENERGY) === OK) {
-					console.log('storage energy transferred to: ' + inRangeCarriers[0].name + ' - ' + inRangeCarriers[0].memory.role);
+					//console.log('storage energy transferred to: ' + inRangeCarriers[0].name + ' - ' + inRangeCarriers[0].memory.role);
 				}
 			} else if(inRangeBuilders.length > 0) {
 				if(mainStorage.transfer(inRangeBuilders[0], RESOURCE_ENERGY) === OK) {
-					console.log('storage energy transferred to: ' + inRangeBuilders[0].name + ' - ' + inRangeBuilders[0].memory.role);
+					//console.log('storage energy transferred to: ' + inRangeBuilders[0].name + ' - ' + inRangeBuilders[0].memory.role);
 				}
 			} else if(inRangeReinforcers.length > 0) {
 				if(mainStorage.transfer(inRangeReinforcers[0], RESOURCE_ENERGY) === OK) {
-					console.log('storage energy transferred to: ' + inRangeReinforcers[0].name + ' - ' + inRangeReinforcers[0].memory.role);
+					//console.log('storage energy transferred to: ' + inRangeReinforcers[0].name + ' - ' + inRangeReinforcers[0].memory.role);
 				}
 			}
 		}
@@ -418,7 +431,7 @@ module.exports.loop = function () {
 
 			if(inRangeCreeps.length > 0) {
 				if(currentLink.transferEnergyFirstTimeOnly(inRangeCreeps[0]) === OK) {
-					console.log('link energy transferred to: ' + inRangeCreeps[0].name + ' - ' + inRangeCreeps[0].memory.role);
+					//console.log('link energy transferred to: ' + inRangeCreeps[0].name + ' - ' + inRangeCreeps[0].memory.role);
 				}
 			}
 		}

@@ -25,7 +25,7 @@ module.exports = (function(){
 	WorldRoster = function() {
 		this.E8S23 = new RoomRoster(
 				0, //harvesters
-				4, //builders
+				2, //builders
 				0, //upgraders
 				0, //explorers
 				4, //remoteMiners
@@ -33,7 +33,7 @@ module.exports = (function(){
 				1, //miners
 				2, //carriers
 				1, //linkers
-				2, //reinforcers
+				1, //reinforcers
 				3, //reservers
 				0, //claimers
 				0, //remoteUpgraders
@@ -55,7 +55,7 @@ module.exports = (function(){
 				2, //reservers
 				0, //claimers
 				0, //remoteUpgraders
-				3, //remoteBuilders
+				0, //remoteBuilders
 				1 //mineralHarvesters
 		);
 
@@ -78,7 +78,7 @@ module.exports = (function(){
 		);
 
 		this.E7S25 = new RoomRoster(
-				4, //harvesters
+				6, //harvesters
 				0, //builders
 				3, //upgraders
 				0, //explorers
