@@ -9,7 +9,7 @@ Creep.prototype.run = function() {
 	} else if(this.memory.role === 'carrier') {
 		this.runCarrier();
 	} else if(this.memory.role === 'harvester') {
-		this.runHarvester();
+		this.runHarvester2();
 	} else if(this.memory.role === 'linker') {
 		this.runLinker2();
     } else if(this.memory.role === 'mineralHarvester') {
