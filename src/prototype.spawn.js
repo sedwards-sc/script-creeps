@@ -35,7 +35,9 @@ StructureSpawn.prototype.spawnHarvester2 = function(roomCreeps) {
 
 	let myRoomEnergyCapacity = Game.rooms[this.pos.roomName].energyCapacityAvailable;
 
-	if(roomCreeps && roomCreeps.length > 0) {
+	let roomCreepRoster = this.room.memory.creepRoster;
+
+	if(undefToZero(roomCreepRoster.harvester) > 0) {
 		if(myRoomEnergyCapacity >= 1150) {
 			harvesterBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 		} else if(myRoomEnergyCapacity >= 950) {
@@ -64,3 +66,7 @@ StructureSpawn.prototype.spawnMineralHarvester = function() {
 	let newName = this.createCreep(harvesterBody, undefined, {role: 'mineralHarvester', spawnRoom: this.pos.roomName});
 	console.log('Spawning new mineral harvester (' + this.pos.roomName + '): ' + newName);
 };
+
+function undefToZero(x) {
+	return x || 0;
+}

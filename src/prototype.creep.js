@@ -495,26 +495,28 @@ Creep.prototype.runHarvester2 = function() {
 
 	if(this.memory.state === 0) {
 		// harvest
-		// TODO: find closest source
-		//var source = creep.pos.findClosestByPath
-		//var sources = creep.room.find(FIND_SOURCES);
-		//if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
-		//    creep.moveTo(sources[0]);
-		//}
+		let mySource = Game.getObjectById(this.memory.mySourceId);
+        if(mySource === null) {
+			let myFlag;
 
-		// harvest
-		var mySource;
-		if(this.memory.hMine === undefined) {
-			mySource = this.pos.findClosestByRange(FIND_SOURCES);
-		} else {
-			mySource = this.room.find(FIND_SOURCES)[this.memory.hMine];
-		}
+		    if(this.memory.flagName === undefined) {
+		        console.log('!!!Error: ' + this.name + '(' + this.pos.roomName + ')' + ' has no flag in memory!!!');
+		        return;
+		    } else {
+		        myFlag = Game.flags[this.memory.flagName];
+		    }
+
+			// TODO: assuming lookForAt is cheaper, change to use that instead of findClosestByRange for the source
+            mySource = myFlag.pos.findClosestByRange(FIND_SOURCES);
+            this.memory.mySourceId = mySource.id;
+        }
+
 		if(this.harvest(mySource) === ERR_NOT_IN_RANGE) {
 			this.moveTo(mySource);
 		}
 	} else {
 		// transfer energy
-
+		// TODO: cache targets in memory. check if null or full each tick
 		var closestTarget;
 
 		// if room energy is < 300, fill extensions first so spawn can generate energy
