@@ -504,6 +504,9 @@ Creep.prototype.runHarvester2 = function() {
 		        return;
 		    } else {
 		        myFlag = Game.flags[this.memory.flagName];
+				if(!myFlag) {
+					console.log('!!!Error: ' + this.name + '(' + this.pos.roomName + ')' + ' has no flag in memory that doesn\'t exist!!!');
+				}
 		    }
 
 			// TODO: assuming lookForAt is cheaper, change to use that instead of findClosestByRange for the source
