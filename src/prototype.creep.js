@@ -505,7 +505,7 @@ Creep.prototype.runHarvester2 = function() {
 		    } else {
 		        myFlag = Game.flags[this.memory.flagName];
 				if(!myFlag) {
-					console.log('!!!Error: ' + this.name + '(' + this.pos.roomName + ')' + ' has no flag in memory that doesn\'t exist!!!');
+					console.log('!!!Error: ' + this.name + '(' + this.pos.roomName + ')' + ' has a flag in memory that doesn\'t exist!!!');
 					return;
 				}
 		    }
