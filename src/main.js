@@ -455,7 +455,7 @@ module.exports.loop = function () {
 				Memory.roster[creep.pos.roomName].linkers++;
 			}
 			if(creep.memory.role == 'harvester') {
-				roleHarvester.run(creep);
+				creep.run();
 				Memory.roster[creep.pos.roomName].harvesters++;
 			}
 			if(creep.memory.role == 'upgrader') {
