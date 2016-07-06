@@ -8,6 +8,8 @@ Creep.prototype.run = function() {
 		this.runMiner2();
 	} else if(this.memory.role === 'carrier') {
 		this.runCarrier();
+	} else if(this.memory.role === 'harvester') {
+		this.runHarvester();
 	} else if(this.memory.role === 'linker') {
 		this.runLinker2();
     } else if(this.memory.role === 'mineralHarvester') {
@@ -364,4 +366,108 @@ Creep.prototype.takeResource = function(target, resource, amount) {
     }
 
     return ERR_INVALID_TARGET;
+};
+
+Creep.prototype.runHarvester = function() {
+	// state 0 is harvest
+	// state 1 is transfer energy
+	if(this.memory.state === undefined) {
+		this.memory.state = 0;
+	}
+
+	if(this.carry.energy === this.carryCapacity) {
+		if(this.memory.state === 0) {
+			this.say('I\'m full!');
+		}
+		this.memory.state = 1;
+	}
+
+	if(this.carry.energy === 0) {
+		if(this.memory.state == 1) {
+			this.say('I\'m empty!');
+		}
+		this.memory.state = 0;
+	}
+
+	if(this.memory.state === 0) {
+		// harvest
+		// TODO: find closest source
+		//var source = creep.pos.findClosestByPath
+		//var sources = creep.room.find(FIND_SOURCES);
+		//if(creep.harvest(sources[0]) == ERR_NOT_IN_RANGE) {
+		//    creep.moveTo(sources[0]);
+		//}
+
+		// harvest
+		var mySource;
+		if(this.memory.hMine === undefined) {
+			mySource = this.pos.findClosestByRange(FIND_SOURCES);
+		} else {
+			mySource = this.room.find(FIND_SOURCES)[this.memory.hMine];
+		}
+		if(this.harvest(mySource) === ERR_NOT_IN_RANGE) {
+			this.moveTo(mySource);
+		}
+	} else {
+		// transfer energy
+
+		var closestTarget;
+
+		// if room energy is < 300, fill extensions first so spawn can generate energy
+		if(this.room.energyAvailable < 300) {
+			closestTarget = this.pos.findClosestByRange(FIND_STRUCTURES, {
+					filter: (structure) => {
+						return (structure.structureType === STRUCTURE_EXTENSION) && structure.energy < structure.energyCapacity;
+					}
+			});
+
+			if(!closestTarget) {
+				closestTarget = this.pos.findClosestByRange(FIND_STRUCTURES, {
+						filter: (structure) => {
+							return (structure.structureType === STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
+						}
+				});
+			}
+		} else {
+			closestTarget = this.pos.findClosestByRange(FIND_STRUCTURES, {
+					filter: (structure) => {
+						return (structure.structureType === STRUCTURE_EXTENSION ||
+								structure.structureType === STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
+					}
+			});
+		}
+
+		if(!closestTarget) {
+			closestTarget = this.pos.findClosestByRange(FIND_STRUCTURES, {
+					filter: (structure) => {
+						return (structure.structureType === STRUCTURE_TOWER) && structure.energy < structure.energyCapacity;
+					}
+			});
+		}
+
+		if(closestTarget) {
+			if(this.transfer(closestTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+				this.moveTo(closestTarget);
+			}
+		} else {
+			// build
+			var targets = this.room.find(FIND_CONSTRUCTION_SITES);
+			if(targets.length) {
+				if(this.build(targets[0]) == ERR_NOT_IN_RANGE) {
+					this.moveTo(targets[0]);
+				}
+			} else {
+				//else transfer to storage
+				//var closestStorage = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
+				//if(creep.transfer(closestStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+				//    creep.moveTo(closestStorage);
+				//}
+
+				// else upgrade
+				if(this.upgradeController(this.room.controller) == ERR_NOT_IN_RANGE) {
+					this.moveTo(this.room.controller);
+				}
+			}
+		}
+	}
 };
