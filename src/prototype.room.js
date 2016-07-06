@@ -3,6 +3,10 @@
  * prototype.room
  */
 
+Room.prototype.findSources = function() {
+	return this.find(FIND_SOURCES);
+};
+
 Room.prototype.assessThreats = function() {
 	var hostiles = this.find(FIND_HOSTILE_CREEPS);
 	if(hostiles.length > 0) {
