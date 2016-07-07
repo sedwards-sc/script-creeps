@@ -609,9 +609,9 @@ Creep.prototype.runSpecialCarrier = function () {
 	if(this.memory.state === 0) {
 		// go to pick up storage
 		let pickUpStorage = Game.getObjectById('577502e26a7f9a9b428b4568');
-		for(let resource in pickUpStorage.store) {
-			console.log('--' + resource + ' = ' + pickUpStorage.store[resource]);
-		}
+		//for(let resource in pickUpStorage.store) {
+		//	console.log('--' + resource + ' = ' + pickUpStorage.store[resource]);
+		//}
 		if(this.pos.isNearTo(pickUpStorage)) {
 			let minResourceType = 'energy';
 			for(let resource in pickUpStorage.store) {
@@ -626,10 +626,16 @@ Creep.prototype.runSpecialCarrier = function () {
 	} else if(this.memory.state == 1) {
 		// go to drop off storage
 		let dropOffStorage = Game.getObjectById('574a1a88d8ee13485adf42cd');
-		if(this.pos.isNearTo(pickUpStorage)) {
-			this.takeResource(pickUpStorage, RESOURCE_ENERGY);
+		if(this.pos.isNearTo(dropOffStorage)) {
+			let minResourceType = 'energy';
+			for(let resource in dropOffStorage.store) {
+				if((dropOffStorage.store[resource] > 0) && (dropOffStorage.store[resource] <= dropOffStorage.store[minResourceType])) {
+					minResourceType = resource;
+				}
+			}
+			this.transfer(dropOffStorage, minResourceType);
 		} else {
-			creep.moveTo(closestEnergy);
+			this.moveTo(dropOffStorage);
 		}
 	} else {
 		this.memory.state = 0;
