@@ -506,6 +506,9 @@ module.exports.loop = function () {
 				creep.run();
 				Memory.roster[creep.pos.roomName].mineralHarvesters++;
 			}
+			if(creep.memory.role == 'specialCarrier') {
+				creep.run();
+			}
 		} else {
 			// this is a test that will break when there are multiple spawns working and will remain when nothing is spawning
 			// TODO fix this to be better
