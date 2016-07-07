@@ -592,14 +592,14 @@ Creep.prototype.runSpecialCarrier = function () {
 		this.memory.state = 0;
 	}
 
-	if(this.carry.energy === this.carryCapacity) {
+	if(_.sum(this.carry) === this.carryCapacity) {
 		if(this.memory.state === 0) {
 			this.say('I\'m full!');
 		}
 		this.memory.state = 1;
 	}
 
-	if (this.carry.energy === 0) {
+	if (_.sum(this.carry) === 0) {
 		if(this.memory.state === 1) {
 			this.say('I\'m empty!');
 		}
