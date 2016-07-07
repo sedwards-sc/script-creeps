@@ -613,10 +613,15 @@ Creep.prototype.runSpecialCarrier = function () {
 			console.log('--' + resource + ' = ' + pickUpStorage.store[resource]);
 		}
 		if(this.pos.isNearTo(pickUpStorage)) {
-
-			//this.takeResource(pickUpStorage, RESOURCE_ENERGY);
+			let minResourceType = 'energy';
+			for(let resource in pickUpStorage.store) {
+				if((pickUpStorage.store[resource] > 0) && (pickUpStorage.store[resource] <= pickUpStorage.store[minResourceType])) {
+					minResourceType = resource;
+				}
+			}
+			this.takeResource(pickUpStorage, minResourceType);
 		} else {
-			creep.moveTo(closestEnergy);
+			this.moveTo(pickUpStorage);
 		}
 	} else if(this.memory.state == 1) {
 		// go to drop off storage
