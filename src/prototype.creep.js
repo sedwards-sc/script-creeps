@@ -645,7 +645,18 @@ Creep.prototype.runSpecialCarrier = function () {
 };
 
 Creep.prototype.runDismantler = function() {
-	console.log('dismantler not written yet');
+	console.log('!!!dismantler not finished yet!!!');
 
+	let myFlag;
 
+    if(this.memory.flagName === undefined) {
+        console.log('!!!Error: ' + this.name + ' has no flag in memory!!!');
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+    }
+
+    if(this.pos.isNearTo(myFlag)) {
+		
+	}
 };
