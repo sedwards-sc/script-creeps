@@ -509,6 +509,9 @@ module.exports.loop = function () {
 			if(creep.memory.role == 'specialCarrier') {
 				creep.run();
 			}
+			if(creep.memory.role == 'dismantler') {
+				creep.run();
+			}
 		} else {
 			// this is a test that will break when there are multiple spawns working and will remain when nothing is spawning
 			// TODO fix this to be better

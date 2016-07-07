@@ -16,6 +16,8 @@ Creep.prototype.run = function() {
         this.runMineralHarvester();
 	} else if(this.memory.role === 'specialCarrier') {
 		this.runSpecialCarrier();
+	} else if(this.memory.role === 'dismantler') {
+		this.runDismantler();
     } else {
         console.log('!!!Error: creep ' + this.name + ' has no role function!!!');
     }
@@ -640,4 +642,10 @@ Creep.prototype.runSpecialCarrier = function () {
 	} else {
 		this.memory.state = 0;
 	}
+};
+
+Creep.prototype.runDismantler = function() {
+	console.log('dismantler not written yet');
+
+
 };
