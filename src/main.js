@@ -375,8 +375,8 @@ module.exports.loop = function () {
     		        let currentFlagSoldiers = _.filter(roomCreeps, (creep) => creep.memory.flagName === curSoldierFlagName);
     		        if((currentFlagSoldiers.length < 1) || (currentFlagSoldiers[0].ticksToLive <= 25)) {
 						let soldierBody = [TOUGH,MOVE,ATTACK,MOVE];
-						if(curSoldierFlagName.memory.bodyParts) {
-							soldierBody = curSoldierFlagName.memory.bodyParts;
+						if(Game.flags[curSoldierFlagName].memory.bodyParts) {
+							soldierBody = Game.flags[curSoldierFlagName].memory.bodyParts;
 						}
     		            let newName = mainSpawn.createCreep(soldierBody, undefined, {spawnRoom: roomName, role: 'soldier', flagName: curSoldierFlagName});
     			        console.log('Spawning new soldier: ' + newName + ' - ' + curSoldierFlagName);
