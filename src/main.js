@@ -374,7 +374,7 @@ module.exports.loop = function () {
     		        let curSoldierFlagName = roomCreepQuotas.soldier[curSoldierIndex];
     		        let currentFlagSoldiers = _.filter(roomCreeps, (creep) => creep.memory.flagName === curSoldierFlagName);
     		        if((currentFlagSoldiers.length < 1) || (currentFlagSoldiers[0].ticksToLive <= 25)) {
-						let soldierBody = [TOUGHNESS,MOVE,ATTACK,MOVE];
+						let soldierBody = [TOUGH,MOVE,ATTACK,MOVE];
 						if(curSoldierFlagName.memory.bodyParts) {
 							soldierBody = curSoldierFlagName.memory.bodyParts;
 						}
