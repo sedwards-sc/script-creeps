@@ -20,6 +20,8 @@ Creep.prototype.run = function() {
 		this.runDismantler();
 	} else if(this.memory.role === 'scout') {
 		this.runScout();
+	} else if(this.memory.role === 'soldier') {
+		this.runSoldier();
     } else {
         console.log('!!!Error: creep ' + this.name + ' has no role function!!!');
     }
@@ -741,7 +743,29 @@ Creep.prototype.runScout = function() {
         myFlag = Game.flags[this.memory.flagName];
     }
 
-	let destinationRoom = /_remote_(.+)_/.exec(myFlag.name);
+	let destinationRoom = /_remote_(.+)_/.exec(myFlag.name)[1];
+
+	if(this.room.name === destinationRoom) {
+		if(!this.pos.isEqualTo(myFlag)) {
+			this.moveTo(myFlag);
+		}
+	} else {
+		let destinationRoomPosition = new RoomPosition(25, 25, destinationRoom);
+		this.moveTo(destinationRoomPosition);
+	}
+};
+
+Creep.prototype.runSoldier = function() {
+	let myFlag;
+
+    if(this.memory.flagName === undefined) {
+        console.log('!!!Error: ' + this.name + ' has no flag in memory!!!');
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+    }
+
+	let destinationRoom = /_remote_(.+)_/.exec(myFlag.name)[1];
 
 	if(this.room.name === destinationRoom) {
 		if(!this.pos.isEqualTo(myFlag)) {
