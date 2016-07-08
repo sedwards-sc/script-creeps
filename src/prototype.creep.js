@@ -770,7 +770,7 @@ Creep.prototype.runSoldier = function() {
 	let destinationRoom = /_remote_([EW]\d+[NS]\d+)_/.exec(myFlag.name)[1];
 
 	if(this.room.name === destinationRoom) {
-		let target = this.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+		let target = this.pos.findClosestByPath(FIND_HOSTILE_CREEPS);
 		if(target) {
 			if(this.attack(target) === ERR_NOT_IN_RANGE) {
 				this.moveTo(target);
