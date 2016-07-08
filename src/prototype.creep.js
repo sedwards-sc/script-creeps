@@ -18,6 +18,8 @@ Creep.prototype.run = function() {
 		this.runSpecialCarrier();
 	} else if(this.memory.role === 'dismantler') {
 		this.runDismantler();
+	} else if(this.memory.role === 'scout') {
+		this.runScout();
     } else {
         console.log('!!!Error: creep ' + this.name + ' has no role function!!!');
     }
@@ -726,5 +728,27 @@ Creep.prototype.runDismantler = function() {
 	} else {
 		let attackRoomPosition = new RoomPosition(25, 25, attackRoom);
 		this.moveTo(attackRoomPosition);
+	}
+};
+
+Creep.prototype.runScout = function() {
+	let myFlag;
+
+    if(this.memory.flagName === undefined) {
+        console.log('!!!Error: ' + this.name + ' has no flag in memory!!!');
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+    }
+
+	let destinationRoom = /_remote_(.+)_/.exec(myFlag.name);
+
+	if(this.room.name === destinationRoom) {
+		if(!this.pos.isEqualTo(myFlag)) {
+			this.moveTo(myFlag);
+		}
+	} else {
+		let destinationRoomPosition = new RoomPosition(25, 25, destinationRoom);
+		this.moveTo(destinationRoomPosition);
 	}
 };
