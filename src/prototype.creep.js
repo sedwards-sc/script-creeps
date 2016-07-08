@@ -645,27 +645,86 @@ Creep.prototype.runSpecialCarrier = function () {
 };
 
 Creep.prototype.runDismantler = function() {
-	console.log('!!!dismantler not finished yet!!!');
-
-
-    let attackRoom;
+    let attackRoom = this.memory.attackRoom;
     if(attackRoom === undefined) {
-        attackRoom = this.memory.attackRoom;
-    } else {
         console.log('!!!Error: ' + this.name + ' has no attack room in memory!!!');
         return;
     }
 
-	let myFlag;
+    if(this.pos.roomName === attackRoom) {
+		let goal;
 
-    if(this.memory.flagName === undefined) {
-        console.log('!!!Error: ' + this.name + ' has no flag in memory!!!');
-        return;
-    } else {
-        myFlag = Game.flags[this.memory.flagName];
-    }
+		let hostileSpawns = this.room.find(FIND_HOSTILE_STRUCTURES, {
+				filter: (structure) => {
+					return structure.structureType === STRUCTURE_SPAWN;
+				}
+		});
 
-    if(this.pos.isNearTo(myFlag)) {
+		if(hostileSpawns.length > 0) {
+			goal = { pos: hostileSpawns[0].pos, range: 0 };
+		}
 
+		if(goal === undefined) {
+			let hostileTowers = this.room.find(FIND_HOSTILE_STRUCTURES, {
+					filter: (structure) => {
+						return structure.structureType === STRUCTURE_TOWER;
+					}
+			});
+
+			if(hostileTowers.length > 0) {
+				goal = { pos: hostileTowers[0].pos, range: 0 };
+			}
+		}
+
+		if(goal === undefined) {
+			console.log('***Finished: ' + this.name + ' has no more attack targets***');
+			return;
+		}
+
+		let pathToTarget = PathFinder.search(this.pos, goal, {
+			plainCost: 2,
+			swampCost: 10,
+
+			roomCallback: function(roomName) {
+
+				let room = Game.rooms[roomName];
+				if (!room) return;
+				let costs = new PathFinder.CostMatrix();
+
+				room.find(FIND_STRUCTURES).forEach(function(structure) {
+					if (structure.structureType === STRUCTURE_ROAD) {
+						// Favor roads over plain tiles
+						costs.set(structure.pos.x, structure.pos.y, 1);
+					} else if ((structure.structureType !== STRUCTURE_CONTAINER) && (structure.structureType !== STRUCTURE_RAMPART) && (structure.structureType !== STRUCTURE_WALL) && (structure.structureType !== STRUCTURE_SPAWN) && (structure.structureType !== STRUCTURE_TOWER)) {
+						costs.set(structure.pos.x, structure.pos.y, 0xff);
+					}
+				});
+
+				// Avoid creeps in the room
+				room.find(FIND_CREEPS).forEach(function(creep) {
+					costs.set(creep.pos.x, creep.pos.y, 0xff);
+				});
+
+				return costs;
+			},
+		});
+
+		if(!pathToTarget) {
+			console.log('!!!Error: ' + this.name + ' has no path to target!!!');
+		}
+
+		let nextPos = pathToTarget.path[0];
+
+		let foundStructures = this.room.lookForAt(LOOK_STRUCTURES, nextPos);
+
+		if(foundStructures.length && !foundStructures[0].my) {
+			this.dismantle(foundStructures[0]);
+		} else {
+			this.moveTo(nextPos);
+		}
+
+	} else {
+		let attackRoomPosition = new RoomPosition(25, 25, attackRoom);
+		this.moveTo(attackRoomPosition);
 	}
 };
