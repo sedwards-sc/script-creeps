@@ -647,6 +647,15 @@ Creep.prototype.runSpecialCarrier = function () {
 Creep.prototype.runDismantler = function() {
 	console.log('!!!dismantler not finished yet!!!');
 
+
+    let attackRoom;
+    if(attackRoom === undefined) {
+        attackRoom = this.memory.attackRoom;
+    } else {
+        console.log('!!!Error: ' + this.name + ' has no attack room in memory!!!');
+        return;
+    }
+
 	let myFlag;
 
     if(this.memory.flagName === undefined) {
@@ -657,6 +666,6 @@ Creep.prototype.runDismantler = function() {
     }
 
     if(this.pos.isNearTo(myFlag)) {
-		
+
 	}
 };

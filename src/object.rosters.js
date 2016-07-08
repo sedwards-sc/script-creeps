@@ -80,7 +80,7 @@ module.exports = (function(){
 		this.E7S25 = new RoomRoster(
 				6, //harvesters
 				0, //builders
-				3, //upgraders
+				0, //upgraders
 				0, //explorers
 				0, //remoteMiners
 				0, //remoteCarriers
