@@ -359,6 +359,16 @@ module.exports.loop = function () {
     			console.log('Spawning new remote builder: ' + newName);
     		} else if(undefToZero(roomCreepRoster.mineralHarvester) < roomQuota.mineralHarvesters) {
     		    mainSpawn.spawnMineralHarvester();
+    		}  else if((roomCreepQuotas.scout) && (undefToZero(roomCreepRoster.scout) < roomCreepQuotas.scout.length)) {
+    		    for(let curScoutIndex in roomCreepQuotas.scout) {
+    		        let curScoutFlagName = roomCreepQuotas.scout[curScoutIndex];
+    		        let currentFlagScouts = _.filter(roomCreeps, (creep) => creep.memory.flagName === curScoutFlagName);
+    		        if((currentFlagScouts.length < 1) || (currentFlagScouts[0].ticksToLive <= 20)) {
+    		            let newName = mainSpawn.createCreep([MOVE], undefined, {spawnRoom: roomName, role: 'scout', flagName: curScoutFlagName});
+    			        console.log('Spawning new scout: ' + newName + ' - ' + curScoutFlagName);
+    			        break;
+    		        }
+    		    }
     		}
 		}
 
