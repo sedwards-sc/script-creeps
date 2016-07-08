@@ -743,7 +743,7 @@ Creep.prototype.runScout = function() {
         myFlag = Game.flags[this.memory.flagName];
     }
 
-	let destinationRoom = /_remote_(.+)_/.exec(myFlag.name)[1];
+	let destinationRoom = /_remote_([EW]\d+[NS]\d+)_/.exec(myFlag.name)[1];
 
 	if(this.room.name === destinationRoom) {
 		if(!this.pos.isEqualTo(myFlag)) {
