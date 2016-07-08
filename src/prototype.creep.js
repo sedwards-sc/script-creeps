@@ -743,6 +743,7 @@ Creep.prototype.runScout = function() {
         myFlag = Game.flags[this.memory.flagName];
     }
 
+	// TODO: cache this
 	let destinationRoom = /_remote_([EW]\d+[NS]\d+)_/.exec(myFlag.name)[1];
 
 	if(this.room.name === destinationRoom) {
@@ -765,11 +766,19 @@ Creep.prototype.runSoldier = function() {
         myFlag = Game.flags[this.memory.flagName];
     }
 
+	// TODO: cache this
 	let destinationRoom = /_remote_([EW]\d+[NS]\d+)_/.exec(myFlag.name)[1];
 
 	if(this.room.name === destinationRoom) {
-		if(!this.pos.isEqualTo(myFlag)) {
-			this.moveTo(myFlag);
+		let target = this.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+		if(target) {
+			if(this.attack(target) === ERR_NOT_IN_RANGE) {
+				this.moveTo(target);
+			}
+		} else {
+			if(!this.pos.isEqualTo(myFlag)) {
+				this.moveTo(myFlag);
+			}
 		}
 	} else {
 		let destinationRoomPosition = new RoomPosition(25, 25, destinationRoom);
