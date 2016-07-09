@@ -55,7 +55,7 @@ module.exports.loop = function () {
 		Game.rooms[name].assessThreats();
 
 		// skip other rooms so it doesn't mess up anything when i claim a new room
-		if(!((name === 'E8S23') || (name === 'E9S27') || (name === 'E9S28') || (name === 'E7S25'))) {
+		if(!Game.rooms[name].isMine()) {
 		    continue;
 		}
 
