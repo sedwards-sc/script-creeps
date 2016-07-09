@@ -741,6 +741,10 @@ Creep.prototype.runScout = function() {
         return;
     } else {
         myFlag = Game.flags[this.memory.flagName];
+        if(myFlag === undefined) {
+			console.log('!!!Error: ' + this.name + '\'s flag is missing!!!');
+	        return;
+		}
     }
 
 	// TODO: cache this

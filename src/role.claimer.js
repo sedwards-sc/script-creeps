@@ -9,9 +9,9 @@ module.exports = {
 		// state 0 is head to next room
 
 
-		let checkPoint1 = new RoomPosition(25, 40, 'E7S25');
-		let checkPoint2 = new RoomPosition(25, 40, 'E7S25');
-		let checkPoint3 = new RoomPosition(25, 40, 'E7S25');
+		let checkPoint1 = new RoomPosition(34, 9, 'E7S24');
+		let checkPoint2 = new RoomPosition(34, 9, 'E7S24');
+		let checkPoint3 = new RoomPosition(34, 9, 'E7S24');
 
 
 		if(creep.memory.state === undefined) {

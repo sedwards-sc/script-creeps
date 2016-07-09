@@ -91,6 +91,24 @@ module.exports = (function(){
 				0, //reservers
 				0, //claimers
 				0, //remoteUpgraders
+				2, //remoteBuilders
+				0 //mineralHarvesters
+		);
+
+		this.E7S24 = new RoomRoster(
+				0, //harvesters
+				0, //builders
+				0, //upgraders
+				0, //explorers
+				0, //remoteMiners
+				0, //remoteCarriers
+				0, //miners
+				0, //carriers
+				0, //linkers
+				0, //reinforcers
+				0, //reservers
+				0, //claimers
+				0, //remoteUpgraders
 				0, //remoteBuilders
 				0 //mineralHarvesters
 		);
