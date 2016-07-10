@@ -24,7 +24,7 @@ require('object.remotes');
 require('debug').populate(global);
 var profiler = require('screeps-profiler');
 
-if(Memory.enableProfile === true) {
+if(Memory.enableProfiler === true) {
 	profiler.enable();
 }
 
