@@ -25,7 +25,10 @@ require('object.remotes');
 require('debug').populate(global);
 var profiler = require('screeps-profiler');
 
-profiler.enable();
+if(Memory.enableProfile === true) {
+	profiler.enable();
+}
+
 module.exports.loop = function () {
 	profiler.wrap(function() {
 		// loop to clean dead creeps out of memory
