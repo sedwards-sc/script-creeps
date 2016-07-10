@@ -22,9 +22,10 @@ require('prototype.link');
 require('object.rosters');
 require('object.remotes');
 require('debug').populate(global);
+var profiler = require('screeps-profiler');
 
 module.exports.loop = function () {
-
+	profiler.wrap(function() {
 	// loop to clean dead creeps out of memory
     for(let name in Memory.creeps) {
         if(!Game.creeps[name]) {
@@ -612,6 +613,7 @@ var reset_memory = function () {
 	}
 
 	return true;
+	});
 };
 
 //module.exports = reset_memory;
