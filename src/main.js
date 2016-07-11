@@ -1,5 +1,5 @@
 /* jshint esversion: 6, loopfunc: true */
-require('utils');
+require('utils').populate(global);
 //var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
