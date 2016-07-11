@@ -1,3 +1,4 @@
+/* jshint ignore: start*/
 /**
  * Debug functions for screeps.com console
  *
@@ -18,11 +19,11 @@
  *     m(what)
  *
  * gives you json representation of specified objects memory
- * 
+ *
  * ## Usage sample:
- * 
+ *
  *     o('creep_john').memory.role = 'harvester';
- * 
+ *
  *     o('creep_john').transferEnergy(o('5606b62e2d246b9e31100fb1'))
  */
 function pretty(k, v) {
