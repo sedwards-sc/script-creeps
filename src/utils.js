@@ -1,11 +1,11 @@
 /* jshint esversion: 6 */
 
-module.exports = {
-	undefToZero(x) {
+module.exports = (function(){
+	undefToZero = function(x) {
 		return x || 0;
-	},
+	};
 
-	isNullOrUndefined(theObject) {
+	isNullOrUndefined = function(theObject) {
 	    return (theObject === undefined || theObject === null);
-	}
-};
+	};
+});
