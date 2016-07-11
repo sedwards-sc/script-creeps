@@ -1,4 +1,5 @@
 /* jshint esversion: 6, loopfunc: true */
+require('utils');
 //var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
 var roleBuilder = require('role.builder');
@@ -599,9 +600,9 @@ function defendRoom(roomName) {
 	}
 }
 
-function undefToZero(x) {
-	return x || 0;
-}
+//function undefToZero(x) {
+//	return x || 0;
+//}
 
 var reset_memory = function () {
 	let default_keys = ['creeps', 'spawn', 'rooms', 'flags'];
