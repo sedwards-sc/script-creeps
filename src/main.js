@@ -18,6 +18,7 @@ var roleRemoteBuilder = require('role.remoteBuilder');
 //require('prototype.storage');
 require('prototype.room');
 require('prototype.creep');
+require('prototype.flag');
 require('prototype.spawn');
 require('prototype.link');
 require('object.rosters');
