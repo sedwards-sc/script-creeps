@@ -87,6 +87,7 @@ Room.prototype.isMine = function() {
     return this.controller.my;
 };
 
-function isNullOrUndefined(theObject) {
-    return (theObject === undefined || theObject === null);
-}
+// DEPRECATED - added to global utils
+//function isNullOrUndefined(theObject) {
+//    return (theObject === undefined || theObject === null);
+//}
