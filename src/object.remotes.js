@@ -57,7 +57,7 @@ module.exports = (function(){
 
 
 		// remote carriers for E7S23
-		var remoteCarrierCheckPointE8S23HomeLeft = new RoomPosition(2, 27, 'E8S23');
+		var remoteCarrierCheckPointE8S23HomeLeft = new RoomPosition(3, 26, 'E8S23');
 
 		var remoteCarrierCheckPointE7S23Away0 = new RoomPosition(48, 34, 'E7S23');
 		var remoteCarrierInfo0 = new RemoteCarrierInfo('remoteCarrier0', remoteCarrierCheckPointE7S23Away0, remoteCarrierCheckPointE8S23HomeLeft);
