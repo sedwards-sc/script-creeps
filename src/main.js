@@ -289,7 +289,7 @@ module.exports.loop = function () {
 					for(let curBuilderIndex in roomCreepQuotas.builder) {
 	    		        let curBuilderFlagName = roomCreepQuotas.builder[curBuilderIndex];
 	    		        let currentFlagBuilders = _.filter(roomCreeps, (creep) => creep.memory.flagName === curBuilderFlagName);
-	    		        if((currentFlagBuilders.length < 1) || (currentFlagBuilders[0].ticksToLive <= 110)) {
+	    		        if((currentFlagBuilders.length < 1) || (currentFlagBuilders[0].ticksToLive <= 120)) {
 							if(Game.flags[curBuilderFlagName].memory.bodyParts) {
 								builderBody = Game.flags[curBuilderFlagName].memory.bodyParts;
 							}
