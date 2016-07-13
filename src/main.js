@@ -286,8 +286,18 @@ module.exports.loop = function () {
 	    		} else if((roomCreepQuotas.harvester) && (undefToZero(roomCreepRoster.harvester) < roomCreepQuotas.harvester.length)) {
 	    			mainSpawn.spawnHarvester2(roomCreeps);
 	    		} else if((roomCreepQuotas.builder) && (undefToZero(roomCreepRoster.builder) < roomCreepQuotas.builder.length)) {
-	    			let newName = mainSpawn.createCreep(builderBody, undefined, {role: 'builder', spawnRoom: roomName});
-	    			console.log('Spawning new builder (' + roomName + '): ' + newName);
+					for(let curBuilderIndex in roomCreepQuotas.builder) {
+	    		        let curBuilderFlagName = roomCreepQuotas.builder[curBuilderIndex];
+	    		        let currentFlagBuilders = _.filter(roomCreeps, (creep) => creep.memory.flagName === curBuilderFlagName);
+	    		        if((currentFlagBuilders.length < 1) || (currentFlagBuilders[0].ticksToLive <= 105)) {
+							if(Game.flags[curBuilderFlagName].memory.bodyParts) {
+								builderBody = Game.flags[curBuilderFlagName].memory.bodyParts;
+							}
+	    		            let newName = mainSpawn.createCreep(builderBody, undefined, {spawnRoom: roomName, role: 'builder', flagName: curBuilderFlagName});
+	    			        console.log('Spawning new builder: ' + newName + ' - ' + curBuilderFlagName);
+	    			        break;
+	    		        }
+	    		    }
 	    		} else if(undefToZero(roomCreepRoster.upgrader) < roomQuota.upgraders) {
 	    			let newName = mainSpawn.createCreep(upgraderBody, undefined, {role: 'upgrader', spawnRoom: roomName});
 	    			console.log('Spawning new upgrader (' + roomName + '): ' + newName);
