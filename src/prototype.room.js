@@ -38,6 +38,16 @@ Room.prototype.countCreepRoles = function() {
             continue;
         }
 
+		if(this.name === 'E8S23') {
+			if((currentCreepRole === 'builder') && (roomCreeps[curCreepIndex].ticksToLive <= 140)) {
+	            continue;
+	        }
+		}
+
+		if((currentCreepRole === 'builder') && (roomCreeps[curCreepIndex].ticksToLive <= 42)) {
+            continue;
+        }
+
 		this.memory.creepRoster[currentCreepRole] = this.memory.creepRoster[currentCreepRole] || 0;
 		this.memory.creepRoster[currentCreepRole]++;
 	}
