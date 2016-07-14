@@ -183,5 +183,32 @@ module.exports = (function(){
 		// reservers
 		let reserverInfo3 = new ReserverInfo('reserver3', '55db334aefa8e3fe66e05729');
 		this.E9S28.reservers.push(reserverInfo3);
+
+
+
+		// Room: E7S25
+		this.E7S25 = new RemoteRoster();
+
+		// remote miner for E7S26
+		let remoteMinerCheckPointE7S26 = new RoomPosition(37, 6, 'E7S26');
+
+		let remoteMinerInfo7 = new RemoteMinerInfo('remoteMiner7', remoteMinerCheckPointE7S26, 0);
+		this.E7S25.remoteMiners.push(remoteMinerInfo7);
+
+
+		// remote carriers for E7S26
+		let remoteCarrierCheckPointE7S25HomeBottom = new RoomPosition(32, 44, 'E7S25');
+		let remoteCarrierCheckPointE7S26Away0 = new RoomPosition(38, 4, 'E7S26');
+
+		let remoteCarrierInfo16 = new RemoteCarrierInfo('remoteCarrier16', remoteCarrierCheckPointE7S26Away0, remoteCarrierCheckPointE7S25HomeBottom);
+		this.E7S25.remoteCarriers.push(remoteCarrierInfo16);
+
+		let remoteCarrierInfo17 = new RemoteCarrierInfo('remoteCarrier17', remoteCarrierCheckPointE7S26Away0, remoteCarrierCheckPointE7S25HomeBottom);
+		this.E7S25.remoteCarriers.push(remoteCarrierInfo17);
+
+
+		// reservers
+		let reserverInfo6 = new ReserverInfo('reserver6', '55db333eefa8e3fe66e056e3');
+		this.E7S25.reservers.push(reserverInfo6);
 	};
 })();
