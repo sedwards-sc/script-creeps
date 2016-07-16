@@ -14,6 +14,8 @@ Creep.prototype.run = function() {
 		this.runLinker2();
     } else if(this.memory.role === 'mineralHarvester') {
         this.runMineralHarvester();
+	} else if(this.memory.role === 'remoteMiner') {
+		this.runRemoteMiner();
 	} else if(this.memory.role === 'specialCarrier') {
 		this.runSpecialCarrier();
 	} else if(this.memory.role === 'dismantler') {
@@ -800,5 +802,44 @@ Creep.prototype.runSoldier = function() {
 	} else {
 		let destinationRoomPosition = new RoomPosition(25, 25, destinationRoom);
 		this.moveTo(destinationRoomPosition);
+	}
+};
+
+Creep.prototype.runRemoteMiner = function() {
+	//creep.say('rMiner');
+	// state 0 is head to next room
+	// state 1 harvest
+
+	if((this.memory.rRoomName === undefined) || (this.memory.rX === undefined) || (this.memory.rY === undefined)) {
+		return;
+	}
+
+	//var checkPointAway = new RoomPosition(48, 31, 'E7S23');
+
+	var checkPointAway = new RoomPosition(this.memory.rX, this.memory.rY, this.memory.rRoomName);
+
+	if(this.memory.state === undefined) {
+		this.memory.state = 0;
+	}
+
+	if((this.memory.state === 0) && (JSON.stringify(this.pos) === JSON.stringify(checkPointAway))) {
+		this.say('away pt');
+		this.memory.state = 1;
+	}
+
+
+	if(this.memory.state === 0) {
+		this.moveTo(checkPointAway);
+	} else if(this.memory.state === 1) {
+		// harvest
+		var mySource;
+		if(this.memory.remoteMine === undefined) {
+			mySource = this.pos.findClosestByPath(FIND_SOURCES);
+		} else {
+			mySource = this.room.find(FIND_SOURCES)[this.memory.remoteMine];
+		}
+		if(this.harvest(mySource) === ERR_NOT_IN_RANGE) {
+			this.moveTo(mySource);
+		}
 	}
 };
