@@ -16,6 +16,8 @@ Creep.prototype.run = function() {
         this.runMineralHarvester();
 	} else if(this.memory.role === 'remoteMiner') {
 		this.runRemoteMiner2();
+	} else if(this.memory.role === 'remoteCarrier') {
+		this.runRemoteCarrier();
 	} else if(this.memory.role === 'specialCarrier') {
 		this.runSpecialCarrier();
 	} else if(this.memory.role === 'dismantler') {
@@ -868,4 +870,100 @@ Creep.prototype.runRemoteMiner2 = function() {
     } else {
         this.moveTo(myFlag);
     }
+};
+
+Creep.prototype.runRemoteCarrier = function() {
+	//creep.say('rCarrier');
+	// state 0 is head to next room
+	// state 1 harvest
+	// state 2 is head back to home room
+	// state 3 is upgrade controller
+
+	if((this.memory.rRoomName === undefined) || (this.memory.rX === undefined) || (this.memory.rY === undefined)) {
+		return;
+	}
+
+	if((this.memory.hRoomName === undefined) || (this.memory.hX === undefined) || (this.memory.hY === undefined)) {
+		return;
+	}
+
+	var checkPointAway = new RoomPosition(this.memory.rX, this.memory.rY, this.memory.rRoomName);
+	var checkPointHome = new RoomPosition(this.memory.hX, this.memory.hY, this.memory.hRoomName);
+
+	//if(this.memory.positionState === undefined) {
+	//	this.memory.positionState = 0;
+	//}
+
+	//var checkPointHome = new RoomPosition(13, 11, 'E8S23');
+	//var checkPointHome = new RoomPosition(2, 25, 'E8S23');
+	//var checkPointAway = new RoomPosition(48, 32, 'E7S23');
+
+	//if(this.memory.positionState === 0) {
+	//	checkPointAway = new RoomPosition(45, 28, 'E7S23');
+	//} else {
+	//	checkPointAway = new RoomPosition(48, 34, 'E7S23');
+	//}
+
+	if(this.memory.state === undefined) {
+		this.memory.state = 0;
+	}
+
+	if((this.memory.state === 0) && (JSON.stringify(this.pos) === JSON.stringify(checkPointAway))) {
+		this.say('away pt');
+		this.memory.state = 1;
+	}
+
+	if((this.memory.state === 1) && (this.carry.energy === this.carryCapacity)) {
+		this.say('full');
+		this.memory.state = 2;
+	}
+
+	if((this.memory.state === 2) && (JSON.stringify(this.pos) === JSON.stringify(checkPointHome))) {
+		this.say('home pt');
+		this.memory.state = 3;
+	}
+
+	if ((this.memory.state === 3) && (this.carry.energy === 0)) {
+		this.say('empty');
+		this.memory.state = 0;
+		//if(this.memory.positionState === 0) {
+		//	this.memory.positionState = 1;
+		//} else if(this.memory.positionState === 1) {
+		//	this.memory.positionState = 0;
+		//}
+	}
+
+
+	if(this.memory.state === 0) {
+		this.moveTo(checkPointAway);
+	} else if(this.memory.state === 1) {
+		// harvest
+		var closestEnergy = this.pos.findClosestByPath(FIND_DROPPED_ENERGY, {
+				filter: (pile) => {
+					return pile.energy >= this.carryCapacity;
+				}
+		});
+
+		if(this.pickup(closestEnergy) === ERR_NOT_IN_RANGE) {
+			this.moveTo(closestEnergy);
+		}
+	} else if(this.memory.state === 2) {
+		this.moveTo(checkPointHome);
+	} else if(this.memory.state === 3) {
+		// transfer to link if there is one that isn't full
+		var closestLink = this.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+				filter: (structure) => {
+					return (structure.structureType === STRUCTURE_LINK) && (structure.energy < (structure.energyCapacity * 0.95));
+				}
+		});
+
+		if(closestLink) {
+			if(this.transfer(closestLink, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+				this.moveTo(closestLink);
+			}
+		} else {
+			//drop energy
+			this.drop(RESOURCE_ENERGY);
+		}
+	}
 };
