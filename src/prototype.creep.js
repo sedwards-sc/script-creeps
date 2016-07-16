@@ -160,6 +160,15 @@ Creep.prototype.getRefillTarget = function() {
 		});
 	}
 
+	// refill labs if no spawns or extensions or towers need refilling
+	if(!closestTarget) {
+		closestTarget = this.pos.findClosestByRange(FIND_STRUCTURES, {
+				filter: (structure) => {
+					return (structure.structureType === STRUCTURE_LAB) && structure.energy < structure.energyCapacity;
+				}
+		});
+	}
+
 	return closestTarget;
 };
 
