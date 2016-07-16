@@ -15,7 +15,7 @@ Creep.prototype.run = function() {
     } else if(this.memory.role === 'mineralHarvester') {
         this.runMineralHarvester();
 	} else if(this.memory.role === 'remoteMiner') {
-		this.runRemoteMiner();
+		this.runRemoteMiner2();
 	} else if(this.memory.role === 'specialCarrier') {
 		this.runSpecialCarrier();
 	} else if(this.memory.role === 'dismantler') {
@@ -845,40 +845,27 @@ Creep.prototype.runRemoteMiner = function() {
 };
 
 Creep.prototype.runRemoteMiner2 = function() {
-	//creep.say('rMiner');
-	// state 0 is head to next room
-	// state 1 harvest
+	let myFlag;
 
-	if((this.memory.rRoomName === undefined) || (this.memory.rX === undefined) || (this.memory.rY === undefined)) {
-		return;
-	}
+    if(this.memory.flagName === undefined) {
+        console.log('!!!Error: ' + this.name + ' has no flag in memory!!!');
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+    }
 
-	//var checkPointAway = new RoomPosition(48, 31, 'E7S23');
+    if(this.pos.isEqualTo(myFlag)) {
+        let mySource = Game.getObjectById(this.memory.mySourceId);
+        if(mySource === null) {
+            mySource = myFlag.pos.findClosestByRange(FIND_SOURCES);
+            this.memory.mySourceId = mySource.id;
+        }
 
-	var checkPointAway = new RoomPosition(this.memory.rX, this.memory.rY, this.memory.rRoomName);
-
-	if(this.memory.state === undefined) {
-		this.memory.state = 0;
-	}
-
-	if((this.memory.state === 0) && (JSON.stringify(this.pos) === JSON.stringify(checkPointAway))) {
-		this.say('away pt');
-		this.memory.state = 1;
-	}
-
-
-	if(this.memory.state === 0) {
-		this.moveTo(checkPointAway);
-	} else if(this.memory.state === 1) {
-		// harvest
-		var mySource;
-		if(this.memory.remoteMine === undefined) {
-			mySource = this.pos.findClosestByPath(FIND_SOURCES);
-		} else {
-			mySource = this.room.find(FIND_SOURCES)[this.memory.remoteMine];
-		}
-		if(this.harvest(mySource) === ERR_NOT_IN_RANGE) {
-			this.moveTo(mySource);
-		}
-	}
+        let harvestReturn = this.harvest(mySource);
+        if(harvestReturn != OK) {
+            console.log('!!!Error: ' + this.name + ' could not successfully harvest (' + harvestReturn + ')');
+        }
+    } else {
+        this.moveTo(myFlag);
+    }
 };

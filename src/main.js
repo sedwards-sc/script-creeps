@@ -304,32 +304,19 @@ module.exports.loop = function () {
 	    		} else if(undefToZero(roomCreepRoster.explorer) < roomQuota.explorers) {
 	    			let newName = mainSpawn.createCreep(explorerBody, undefined, {role: 'explorer', spawnRoom: roomName});
 	    			console.log('Spawning new explorer (' + roomName + '): ' + newName);
-	    		} else if(undefToZero(roomCreepRoster.remoteMiner) < roomQuota.remoteMiners) {
-	    			if(roomRemoteInfo && (roomRemoteInfo.remoteMiners.length > 0)) {
-	    				for(let remoteMinersIndex in roomRemoteInfo.remoteMiners) {
-	    					let currentRemoteMiner = roomRemoteInfo.remoteMiners[remoteMinersIndex];
-	    					let currentRemoteMinerFilter = _.filter(roomCreeps, (creep) => creep.memory.creepId === currentRemoteMiner.creepId);
-
-	    					if(currentRemoteMinerFilter.length < 1) {
-	    						let newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', spawnRoom: roomName, creepId: currentRemoteMiner.creepId, rRoomName: currentRemoteMiner.checkPointAway.roomName, rX: currentRemoteMiner.checkPointAway.x, rY: currentRemoteMiner.checkPointAway.y, remoteMine: currentRemoteMiner.sourceIndex});
-	    						console.log('Spawning new remote miner: ' + newName + ' - ' + JSON.stringify(currentRemoteMiner));
-	    						break;
-	    					}
-	    				}
-	    			} else {
-	    				console.log('!!!' + roomName + ' quota has remote miners but there is no remote miner info for this room!!!');
-	    			}
-
-	    			//var remoteMiner0 = _.filter(remoteMiners, (creep) => creep.memory.remoteMine == 0);
-	    			//var remoteMiner1 = _.filter(remoteMiners, (creep) => creep.memory.remoteMine == 1);
-
-	    			//if(remoteMiner0.length < 1) {
-	    			//	var newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', remoteMine: 0, spawnRoom: roomName});
-	    			//	console.log('Spawning new remote miner 0: ' + newName);
-	    			//} else if(remoteMiner1.length < 1) {
-	    			//	var newName = mainSpawn.createCreep(remoteMinerBody, undefined, {role: 'remoteMiner', remoteMine: 1, spawnRoom: roomName});
-	    			//	console.log('Spawning new remote miner 1: ' + newName);
-	    			//}
+	    		} else if((roomCreepQuotas.remoteMiner) && (undefToZero(roomCreepRoster.remoteMiner) < roomCreepQuotas.remoteMiner.length)) {
+					for(let curRemoteMinerIndex in roomCreepQuotas.remoteMiner) {
+	    		        let curRemoteMinerFlagName = roomCreepQuotas.remoteMiner[curRemoteMinerIndex];
+	    		        let currentFlagRemoteMiners = _.filter(roomCreeps, (creep) => creep.memory.flagName === curRemoteMinerFlagName);
+						if(Game.flags[curRemoteMinerFlagName].memory.bodyParts) {
+							remoteMinerBody = Game.flags[curRemoteMinerFlagName].memory.bodyParts;
+						}
+	    		        if((currentFlagRemoteMiners.length < 1) || (currentFlagRemoteMiners[0].ticksToLive <= ((remoteMinerBody.length * 3) + 25))) {
+	    		            let newName = mainSpawn.createCreep(remoteMinerBody, undefined, {spawnRoom: roomName, role: 'remoteMiner', flagName: curRemoteMinerFlagName});
+	    			        console.log('Spawning new remote miner: ' + newName + ' - ' + curRemoteMinerFlagName);
+	    			        break;
+	    		        }
+	    		    }
 	    		} else if(undefToZero(roomCreepRoster.remoteCarrier) < roomQuota.remoteCarriers) {
 	    			if(roomRemoteInfo && (roomRemoteInfo.remoteCarriers.length > 0)) {
 	    				for(let remoteCarriersIndex in roomRemoteInfo.remoteCarriers) {
