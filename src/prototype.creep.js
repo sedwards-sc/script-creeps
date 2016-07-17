@@ -256,7 +256,7 @@ Creep.prototype.runMiner2 = function() {
 
         let harvestReturn = this.harvest(mySource);
         if(harvestReturn != OK) {
-            console.log('!!!Error: ' + this.name + ' could not successfully harvest (' + harvestReturn + ')');
+            console.log('!!!Error: ' + this.name + ' (' + this.room.name + ') could not successfully harvest (' + harvestReturn + ')');
         }
 
         if(_.sum(this.carry) === this.carryCapacity) {
@@ -272,7 +272,7 @@ Creep.prototype.runMiner2 = function() {
 
             let transferReturn = this.transfer(myTransferStructure, RESOURCE_ENERGY);
             if(transferReturn != OK) {
-                console.log('!!!Error: ' + this.name + ' could not successfully transfer (' + transferReturn + ')');
+                console.log('!!!Error: ' + this.name + ' (' + this.room.name + ') could not successfully transfer (' + transferReturn + ')');
             }
         }
 
