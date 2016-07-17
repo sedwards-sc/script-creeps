@@ -12,6 +12,8 @@ Creep.prototype.run = function() {
 		this.runHarvester2();
 	} else if(this.memory.role === 'linker') {
 		this.runLinker2();
+	} else if(this.memory.role === 'reinforcer') {
+		this.runReinforcer();
     } else if(this.memory.role === 'mineralHarvester') {
         this.runMineralHarvester();
 	} else if(this.memory.role === 'remoteMiner') {
@@ -1049,5 +1051,63 @@ Creep.prototype.runRemoteCarrier2 = function() {
 				this.say('bored');
 			}
 		}
+	}
+};
+
+Creep.prototype.runReinforcer = function() {
+	//this.say('reinforcer');
+	// state 0 is get energy from storage
+	// state 1 is repair a wall/rampart
+	if(this.memory.state === undefined) {
+		this.memory.state = 0;
+	}
+
+	if(this.carry.energy === this.carryCapacity) {
+		if(this.memory.state === 0) {
+			this.say('I\'m full!');
+
+			let defences = this.room.find(FIND_STRUCTURES, {
+					filter: (structure) => {
+						return ((structure.structureType === STRUCTURE_WALL) || (structure.structureType === STRUCTURE_RAMPART)) && structure.hits < structure.hitsMax;
+					}
+			});
+			let sortedDefences = _.sortBy(defences, function(defence) { return defence.hits; });
+			this.memory.repairId = sortedDefences[0].id;
+		}
+		this.memory.state = 1;
+	}
+
+	if(this.carry.energy === 0) {
+		if(this.memory.state === 1) {
+			this.say('I\'m empty!');
+		}
+		this.memory.state = 0;
+	}
+
+	if(this.memory.state === 0) {
+		// find storage
+		let roomStorage = this.room.storage;
+		if(this.withdraw(roomStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+			this.moveTo(roomStorage);
+		}
+	} else if(this.memory.state === 1) {
+		// repair walls/ramparts
+		if(this.memory.repairId === undefined) {
+			let defences = this.room.find(FIND_STRUCTURES, {
+					filter: (structure) => {
+						return ((structure.structureType === STRUCTURE_WALL) || (structure.structureType === STRUCTURE_RAMPART)) && structure.hits < structure.hitsMax;
+					}
+			});
+			let sortedDefences = _.sortBy(defences, function(defence) { return defence.hits; });
+			this.memory.repairId = sortedDefences[0].id;
+		}
+
+		var currentDefence = Game.getObjectById(this.memory.repairId);
+
+		if(this.repair(currentDefence) === ERR_NOT_IN_RANGE) {
+			this.moveTo(currentDefence);
+		}
+	} else {
+		this.memory.state = 0;
 	}
 };

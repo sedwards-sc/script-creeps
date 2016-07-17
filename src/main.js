@@ -11,7 +11,7 @@ var roleExplorer = require('role.explorer');
 //var roleCarrier = require('role.carrier');
 var roleReserver = require('role.reserver');
 //var roleLinker = require('role.linker');
-var roleReinforcer = require('role.reinforcer');
+//var roleReinforcer = require('role.reinforcer');
 var roleClaimer = require('role.claimer');
 var roleRemoteUpgrader = require('role.remoteUpgrader');
 var roleRemoteBuilder = require('role.remoteBuilder');
@@ -421,15 +421,15 @@ module.exports.loop = function () {
 						//return (creep.memory.role === 'builder') && (creep.carry.energy === 0);
 				});
 
-				let nonFullReinforcers = _.filter(roomCreeps, (creep) => {
-						return (creep.memory.role === 'reinforcer') && (creep.carry.energy === 0);
-				});
+				//let nonFullReinforcers = _.filter(roomCreeps, (creep) => {
+				//		return (creep.memory.role === 'reinforcer') && (creep.carry.energy === 0);
+				//});
 
 				//let inRangeCarriers = mainStorage.pos.findInRange(nonFullCarriers, 1);
 				// EDITS
 				let inRangeBuildersPreSort = mainStorage.pos.findInRange(nonFullBuilders, 1);
 				let inRangeBuilders = _.sortBy(inRangeBuildersPreSort, function(inRangeBuilder) { return inRangeBuilder.carry.energy; });
-				let inRangeReinforcers = mainStorage.pos.findInRange(nonFullReinforcers, 1);
+				//let inRangeReinforcers = mainStorage.pos.findInRange(nonFullReinforcers, 1);
 
 				//if(inRangeCarriers.length > 0) {
 				//	if(mainStorage.transfer(inRangeCarriers[0], RESOURCE_ENERGY) === OK) {
@@ -440,11 +440,11 @@ module.exports.loop = function () {
 					if(mainStorage.transfer(inRangeBuilders[0], RESOURCE_ENERGY) === OK) {
 						//console.log('storage energy transferred to: ' + inRangeBuilders[0].name + ' - ' + inRangeBuilders[0].memory.role);
 					}
-				} else if(inRangeReinforcers.length > 0) {
-					if(mainStorage.transfer(inRangeReinforcers[0], RESOURCE_ENERGY) === OK) {
+				}// else if(inRangeReinforcers.length > 0) {
+				//	if(mainStorage.transfer(inRangeReinforcers[0], RESOURCE_ENERGY) === OK) {
 						//console.log('storage energy transferred to: ' + inRangeReinforcers[0].name + ' - ' + inRangeReinforcers[0].memory.role);
-					}
-				}
+				//	}
+				//}
 			}
 
 			// find non carriers that aren't full of energy
@@ -509,7 +509,7 @@ module.exports.loop = function () {
 					roleReserver.run(creep);
 					Memory.roster[creep.pos.roomName].reservers++;
 				} else if(creep.memory.role == 'reinforcer') {
-					roleReinforcer.run(creep);
+					creep.run();
 					Memory.roster[creep.pos.roomName].reinforcers++;
 				} else if(creep.memory.role == 'claimer') {
 					roleClaimer.run(creep);
