@@ -308,10 +308,10 @@ module.exports.loop = function () {
 					for(let curRemoteMinerIndex in roomCreepQuotas.remoteMiner) {
 	    		        let curRemoteMinerFlagName = roomCreepQuotas.remoteMiner[curRemoteMinerIndex];
 	    		        let currentFlagRemoteMiners = _.filter(roomCreeps, (creep) => creep.memory.flagName === curRemoteMinerFlagName);
-						if(Game.flags[curRemoteMinerFlagName].memory.bodyParts) {
-							remoteMinerBody = Game.flags[curRemoteMinerFlagName].memory.bodyParts;
-						}
 	    		        if((currentFlagRemoteMiners.length < 1) || (currentFlagRemoteMiners[0].ticksToLive <= ((remoteMinerBody.length * 3) + 25))) {
+							if(Game.flags[curRemoteMinerFlagName].memory.bodyParts) {
+								remoteMinerBody = Game.flags[curRemoteMinerFlagName].memory.bodyParts;
+							}
 	    		            let newName = mainSpawn.createCreep(remoteMinerBody, undefined, {spawnRoom: roomName, role: 'remoteMiner', flagName: curRemoteMinerFlagName});
 	    			        console.log('Spawning new remote miner: ' + newName + ' - ' + curRemoteMinerFlagName);
 	    			        break;
