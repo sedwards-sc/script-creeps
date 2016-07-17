@@ -41,10 +41,10 @@ StructureLink.prototype.run = function() {
 		let transferTarget;
 		if((controllerLink) && (controllerLink.energy <= (controllerLink.energyCapacity * 0.25))) {
 			transferTarget = controllerLink;
-		} else if(storageLink) {
+		} else if((storageLink) && (storageLink.energy <= (storageLink.energyCapacity * 0.8))) {
 			transferTarget = storageLink;
 		} else {
-			console.log('!!!Error: weirdness in the linker!!!');
+			console.log('linker is full enough but targets aren\'t empty enough - room: ' + this.room.name + ', linker: ' + this.id);
 			return;
 		}
 
