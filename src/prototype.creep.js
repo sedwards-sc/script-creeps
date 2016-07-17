@@ -1031,7 +1031,7 @@ Creep.prototype.runRemoteCarrier2 = function() {
 			// transfer to closest link or storage
 			let closestDropOff = this.pos.findClosestByRange(FIND_MY_STRUCTURES, {
 				filter: (structure) => {
-					return ((structure.structureType === STRUCTURE_LINK) && (structure.energy < (structure.energyCapacity * 0.95))) || (structure.structureType === STRUCTURE_LINK);
+					return ((structure.structureType === STRUCTURE_LINK) && (structure.energy < (structure.energyCapacity * 0.95))) || (structure.structureType === STRUCTURE_STORAGE);
 				}
 			});
 
