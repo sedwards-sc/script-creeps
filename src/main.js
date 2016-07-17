@@ -321,10 +321,10 @@ module.exports.loop = function () {
 					for(let curRemoteCarrierIndex in roomCreepQuotas.remoteCarrier) {
 	    		        let curRemoteCarrierFlagName = roomCreepQuotas.remoteCarrier[curRemoteCarrierIndex];
 	    		        let currentFlagRemoteCarriers = _.filter(roomCreeps, (creep) => creep.memory.flagName === curRemoteCarrierFlagName);
-						if(Game.flags[curRemoteCarrierFlagName].memory.bodyParts) {
-							remoteCarrierBody = Game.flags[curRemoteCarrierFlagName].memory.bodyParts;
-						}
 	    		        if((currentFlagRemoteCarriers.length < 1) || (currentFlagRemoteCarriers[0].ticksToLive <= ((remoteCarrierBody.length * 3) + 25))) {
+							if(Game.flags[curRemoteCarrierFlagName].memory.bodyParts) {
+								remoteCarrierBody = Game.flags[curRemoteCarrierFlagName].memory.bodyParts;
+							}
 	    		            let newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {spawnRoom: roomName, role: 'remoteCarrier', flagName: curRemoteCarrierFlagName});
 	    			        console.log('Spawning new remote carrier: ' + newName + ' - ' + curRemoteCarrierFlagName);
 	    			        break;
