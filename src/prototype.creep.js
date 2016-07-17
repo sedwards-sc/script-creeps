@@ -967,3 +967,82 @@ Creep.prototype.runRemoteCarrier = function() {
 		}
 	}
 };
+
+Creep.prototype.runRemoteCarrier2 = function() {
+	//creep.say('rCarrier');
+	// state 0 is head to next room
+	// state 1 harvest
+	// state 2 is head back to home room
+	// state 3 is upgrade controller
+
+	let myFlag;
+
+    if(this.memory.flagName === undefined) {
+        console.log('!!!Error: ' + this.name + ' has no flag in memory!!!');
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+    }
+
+	if(this.memory.state === undefined) {
+		this.memory.state = 0;
+	}
+
+	if((this.memory.state === 0) && (this.pos.isEqualTo(myFlag))) {
+		this.say('away pt');
+		this.memory.state = 1;
+	}
+
+	if((this.memory.state === 1) && (this.carry.energy === this.carryCapacity)) {
+		this.say('full');
+		this.memory.state = 2;
+	}
+
+	if((this.memory.state === 2) && (this.room.name === this.memory.spawnRoom)) {
+		this.say('home pt');
+		this.memory.state = 3;
+	}
+
+	if ((this.memory.state === 3) && (this.carry.energy === 0)) {
+		this.say('empty');
+		this.memory.state = 0;
+	}
+
+
+	if(this.memory.state === 0) {
+		this.moveTo(myFlag);
+	} else if(this.memory.state === 1) {
+		// find energy pile
+		let closestEnergy = this.pos.findClosestByPath(FIND_DROPPED_ENERGY, {
+				filter: (pile) => {
+					return pile.energy >= (this.carryCapacity / 2);
+				}
+		});
+
+		if(this.pickup(closestEnergy) === ERR_NOT_IN_RANGE) {
+			this.moveTo(closestEnergy);
+		}
+	} else if(this.memory.state === 2) {
+		this.moveTo(new RoomPosition(25, 25, this.memory.spawnRoom));
+	} else if(this.memory.state === 3) {
+		if(this.room.name != this.memory.spawnRoom) {
+			this.moveTo(new RoomPosition(25, 25, this.memory.spawnRoom));
+		} else {
+			// transfer to closest link or storage
+			let closestDropOff = this.pos.findClosestByRange(FIND_MY_STRUCTURES, {
+				filter: (structure) => {
+					return ((structure.structureType === STRUCTURE_LINK) && (structure.energy < (structure.energyCapacity * 0.95))) || (structure.structureType === STRUCTURE_LINK);
+				}
+			});
+
+			if(closestDropOff) {
+				if(this.transfer(closestDropOff, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+					this.moveTo(closestDropOff);
+				}
+			} else {
+				//drop energy
+				this.drop(RESOURCE_ENERGY);
+			}
+		}
+	}
+};
