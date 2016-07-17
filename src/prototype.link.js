@@ -4,7 +4,7 @@
  */
 
 StructureLink.prototype.run = function() {
-    if(this.energy >= (this.energyCapacity * 0.95)) {
+    if(this.energy >= (this.energyCapacity * 0.8)) {
         let storageLink = Game.getObjectById(this.room.memory.storageLinkId);
         if(storageLink === null) {
             if(this.room.storage === undefined) {
