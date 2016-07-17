@@ -395,8 +395,8 @@ module.exports.loop = function () {
 			}
 
 			// transfer energy from storage to carriers or reinforcers if they are in range
-			let mainStorage = Game.rooms[roomName].storage;
-			if(mainStorage) {
+			//let mainStorage = Game.rooms[roomName].storage;
+			//if(mainStorage) {
 
 				/*
 				var candidates = _.filter(roomCreeps, (creep) => {
@@ -416,10 +416,10 @@ module.exports.loop = function () {
 				//		return (creep.memory.role === 'carrier') && (creep.carry.energy < creep.carryCapacity);
 				//});
 
-				let nonFullBuilders = _.filter(roomCreeps, (creep) => {
-						return (creep.memory.role === 'builder') && (creep.carry.energy < creep.carryCapacity);
+				//let nonFullBuilders = _.filter(roomCreeps, (creep) => {
+				//		return (creep.memory.role === 'builder') && (creep.carry.energy < creep.carryCapacity);
 						//return (creep.memory.role === 'builder') && (creep.carry.energy === 0);
-				});
+				//});
 
 				//let nonFullReinforcers = _.filter(roomCreeps, (creep) => {
 				//		return (creep.memory.role === 'reinforcer') && (creep.carry.energy === 0);
@@ -427,8 +427,8 @@ module.exports.loop = function () {
 
 				//let inRangeCarriers = mainStorage.pos.findInRange(nonFullCarriers, 1);
 				// EDITS
-				let inRangeBuildersPreSort = mainStorage.pos.findInRange(nonFullBuilders, 1);
-				let inRangeBuilders = _.sortBy(inRangeBuildersPreSort, function(inRangeBuilder) { return inRangeBuilder.carry.energy; });
+				//let inRangeBuildersPreSort = mainStorage.pos.findInRange(nonFullBuilders, 1);
+				//let inRangeBuilders = _.sortBy(inRangeBuildersPreSort, function(inRangeBuilder) { return inRangeBuilder.carry.energy; });
 				//let inRangeReinforcers = mainStorage.pos.findInRange(nonFullReinforcers, 1);
 
 				//if(inRangeCarriers.length > 0) {
@@ -436,16 +436,16 @@ module.exports.loop = function () {
 				//		//console.log('storage energy transferred to: ' + inRangeCarriers[0].name + ' - ' + inRangeCarriers[0].memory.role);
 				//	}
 				//} else
-				if(inRangeBuilders.length > 0) {
-					if(mainStorage.transfer(inRangeBuilders[0], RESOURCE_ENERGY) === OK) {
+				//if(inRangeBuilders.length > 0) {
+				//	if(mainStorage.transfer(inRangeBuilders[0], RESOURCE_ENERGY) === OK) {
 						//console.log('storage energy transferred to: ' + inRangeBuilders[0].name + ' - ' + inRangeBuilders[0].memory.role);
-					}
-				}// else if(inRangeReinforcers.length > 0) {
+				//	}
+				//}// else if(inRangeReinforcers.length > 0) {
 				//	if(mainStorage.transfer(inRangeReinforcers[0], RESOURCE_ENERGY) === OK) {
 						//console.log('storage energy transferred to: ' + inRangeReinforcers[0].name + ' - ' + inRangeReinforcers[0].memory.role);
 				//	}
 				//}
-			}
+			//}
 
 			// find non carriers that aren't full of energy
 			let nonCarriers = _.filter(roomCreeps, (creep) => {

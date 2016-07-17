@@ -1157,14 +1157,8 @@ Creep.prototype.runBuilder = function() {
 		var closestEnergy = this.pos.findClosestByPath(energySources);
 
 		if(closestEnergy) {
-			if((closestEnergy.structureType === STRUCTURE_LINK) || (closestEnergy.structureType === STRUCTURE_STORAGE)) {
-				if(!this.pos.isNearTo(closestEnergy)) {
-					this.moveTo(closestEnergy);
-				}
-			} else {
-				if(this.pickup(closestEnergy) === ERR_NOT_IN_RANGE) {
-					this.moveTo(closestEnergy);
-				}
+			if(this.takeResource(closestEnergy, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+				this.moveTo(closestEnergy);
 			}
 		} else {
 			this.say('no energy');
