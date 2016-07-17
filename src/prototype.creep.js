@@ -869,7 +869,7 @@ Creep.prototype.runRemoteMiner2 = function() {
 
         let harvestReturn = this.harvest(mySource);
         if(harvestReturn != OK) {
-            console.log('!!!Error: ' + this.name + ' could not successfully harvest (' + harvestReturn + ')');
+            console.log('!!!Error: ' + this.name + ' (' + this.pos.roomName + ') could not successfully harvest (' + harvestReturn + ')');
         }
     } else {
         this.moveTo(myFlag);
