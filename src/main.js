@@ -2,7 +2,7 @@
 require('utils').populateUtils(global);
 //var roleHarvester = require('role.harvester');
 var roleUpgrader = require('role.upgrader');
-var roleBuilder = require('role.builder');
+//var roleBuilder = require('role.builder');
 var roleDefender = require('role.defender');
 var roleExplorer = require('role.explorer');
 //var roleRemoteMiner = require('role.remoteMiner');
@@ -491,7 +491,7 @@ module.exports.loop = function () {
 					roleUpgrader.run(creep);
 					Memory.roster[creep.pos.roomName].upgraders++;
 				} else if(creep.memory.role == 'builder') {
-					roleBuilder.run(creep);
+					creep.run();
 					Memory.roster[creep.pos.roomName].builders++;
 				} else if(creep.memory.role == 'defender') {
 					roleDefender.run(creep);
