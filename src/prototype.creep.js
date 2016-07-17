@@ -1035,13 +1035,16 @@ Creep.prototype.runRemoteCarrier2 = function() {
 				}
 			});
 
+			if(!closestDropOff) {
+				closestDropOff = this.getRefillTarget();
+			}
+
 			if(closestDropOff) {
 				if(this.transfer(closestDropOff, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
 					this.moveTo(closestDropOff);
 				}
 			} else {
-				//drop energy
-				this.drop(RESOURCE_ENERGY);
+				this.say('bored');
 			}
 		}
 	}
