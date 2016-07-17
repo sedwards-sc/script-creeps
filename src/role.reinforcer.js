@@ -16,12 +16,12 @@ module.exports = {
 			if(creep.memory.state === 0) {
 				creep.say('I\'m full!');
 
-				var defences = creep.room.find(FIND_STRUCTURES, {
+				let defences = creep.room.find(FIND_STRUCTURES, {
 						filter: (structure) => {
 							return ((structure.structureType === STRUCTURE_WALL) || (structure.structureType === STRUCTURE_RAMPART)) && structure.hits < structure.hitsMax;
 						}
 				});
-				var sortedDefences = _.sortBy(defences, function(defence) { return defence.hits; });
+				let sortedDefences = _.sortBy(defences, function(defence) { return defence.hits; });
 				creep.memory.repairId = sortedDefences[0].id;
 			}
 	        creep.memory.state = 1;
@@ -43,12 +43,12 @@ module.exports = {
         } else if(creep.memory.state === 1) {
 			// repair walls/ramparts
 			if(creep.memory.repairId === undefined) {
-				var defences = creep.room.find(FIND_STRUCTURES, {
+				let defences = creep.room.find(FIND_STRUCTURES, {
 						filter: (structure) => {
 							return ((structure.structureType === STRUCTURE_WALL) || (structure.structureType === STRUCTURE_RAMPART)) && structure.hits < structure.hitsMax;
 						}
 				});
-				var sortedDefences = _.sortBy(defences, function(defence) { return defence.hits; });
+				let sortedDefences = _.sortBy(defences, function(defence) { return defence.hits; });
 				creep.memory.repairId = sortedDefences[0].id;
 			}
 
