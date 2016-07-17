@@ -412,9 +412,9 @@ module.exports.loop = function () {
 				}
 				*/
 
-				let nonFullCarriers = _.filter(roomCreeps, (creep) => {
-						return (creep.memory.role === 'carrier') && (creep.carry.energy < creep.carryCapacity);
-				});
+				//let nonFullCarriers = _.filter(roomCreeps, (creep) => {
+				//		return (creep.memory.role === 'carrier') && (creep.carry.energy < creep.carryCapacity);
+				//});
 
 				let nonFullBuilders = _.filter(roomCreeps, (creep) => {
 						return (creep.memory.role === 'builder') && (creep.carry.energy < creep.carryCapacity);
@@ -425,17 +425,18 @@ module.exports.loop = function () {
 						return (creep.memory.role === 'reinforcer') && (creep.carry.energy === 0);
 				});
 
-				let inRangeCarriers = mainStorage.pos.findInRange(nonFullCarriers, 1);
+				//let inRangeCarriers = mainStorage.pos.findInRange(nonFullCarriers, 1);
 				// EDITS
 				let inRangeBuildersPreSort = mainStorage.pos.findInRange(nonFullBuilders, 1);
 				let inRangeBuilders = _.sortBy(inRangeBuildersPreSort, function(inRangeBuilder) { return inRangeBuilder.carry.energy; });
 				let inRangeReinforcers = mainStorage.pos.findInRange(nonFullReinforcers, 1);
 
-				if(inRangeCarriers.length > 0) {
-					if(mainStorage.transfer(inRangeCarriers[0], RESOURCE_ENERGY) === OK) {
-						//console.log('storage energy transferred to: ' + inRangeCarriers[0].name + ' - ' + inRangeCarriers[0].memory.role);
-					}
-				} else if(inRangeBuilders.length > 0) {
+				//if(inRangeCarriers.length > 0) {
+				//	if(mainStorage.transfer(inRangeCarriers[0], RESOURCE_ENERGY) === OK) {
+				//		//console.log('storage energy transferred to: ' + inRangeCarriers[0].name + ' - ' + inRangeCarriers[0].memory.role);
+				//	}
+				//} else
+				if(inRangeBuilders.length > 0) {
 					if(mainStorage.transfer(inRangeBuilders[0], RESOURCE_ENERGY) === OK) {
 						//console.log('storage energy transferred to: ' + inRangeBuilders[0].name + ' - ' + inRangeBuilders[0].memory.role);
 					}

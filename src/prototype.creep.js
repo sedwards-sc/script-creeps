@@ -108,13 +108,13 @@ Creep.prototype.runCarrier = function () {
 
 	if(this.memory.state === 0) {
 		// find storage
-		var roomStorage = this.room.storage;
-		if(!this.pos.isNearTo(roomStorage)) {
+		let roomStorage = this.room.storage;
+		if(this.withdraw(roomStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
 			this.moveTo(roomStorage);
 		}
 	} else if(this.memory.state == 1) {
 		// transfer energy to structures
-		var closestTarget = this.getRefillTarget();
+		let closestTarget = this.getRefillTarget();
 
 		if(closestTarget) {
 			if(this.transfer(closestTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
@@ -129,7 +129,7 @@ Creep.prototype.runCarrier = function () {
 };
 
 Creep.prototype.getRefillTarget = function() {
-	var closestTarget;
+	let closestTarget;
 
 	// if room energy is < 300, fill extensions first so spawn can generate energy
 	if(this.room.energyAvailable < 300) {
@@ -375,7 +375,8 @@ Creep.prototype.takeResource = function(target, resource, amount) {
         target instanceof StructureStorage ||
         target instanceof StructureLab ||
         target instanceof Creep) {
-            return target.transfer(this, resource, amount);
+            //return target.transfer(this, resource, amount);
+			return this.withdraw(target, resource, amount);
     }
 
     if (target instanceof StructurePowerSpawn ||
@@ -383,7 +384,8 @@ Creep.prototype.takeResource = function(target, resource, amount) {
         target instanceof StructureTower ||
         target instanceof StructureSpawn ||
         target instanceof StructureLink) {
-            return target.transferEnergy(this, amount);
+            //return target.transferEnergy(this, amount);
+			return this.withdraw(target, resource, amount);
     }
 
     return ERR_INVALID_TARGET;
