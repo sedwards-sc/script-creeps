@@ -448,26 +448,26 @@ module.exports.loop = function () {
 			//}
 
 			// find non carriers that aren't full of energy
-			let nonCarriers = _.filter(roomCreeps, (creep) => {
-					return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.memory.role !== 'mineralHarvester') && (creep.memory.role !== 'miner') && (creep.carry.energy < creep.carryCapacity);
-			});
+			//let nonCarriers = _.filter(roomCreeps, (creep) => {
+			//		return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.memory.role !== 'mineralHarvester') && (creep.memory.role !== 'miner') && (creep.carry.energy < creep.carryCapacity);
+			//});
 
 			// run links and transfer energy from links to any creeps except carriers
 			let links = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
 			links.forEach(link => link.run());
 
-			for(let linkIndex in links) {
-				let currentLink = links[linkIndex];
+			//for(let linkIndex in links) {
+			//	let currentLink = links[linkIndex];
 
-				let inRangeCreepsPreSort = currentLink.pos.findInRange(nonCarriers, 1);
-				let inRangeCreeps = _.sortBy(inRangeCreepsPreSort, function(inRangeCreep) { return inRangeCreep.carry.energy; });
+			//	let inRangeCreepsPreSort = currentLink.pos.findInRange(nonCarriers, 1);
+			//	let inRangeCreeps = _.sortBy(inRangeCreepsPreSort, function(inRangeCreep) { return inRangeCreep.carry.energy; });
 
-				if(inRangeCreeps.length > 0) {
-					if(currentLink.transferEnergyFirstTimeOnly(inRangeCreeps[0]) === OK) {
+			//	if(inRangeCreeps.length > 0) {
+			//		if(currentLink.transferEnergyFirstTimeOnly(inRangeCreeps[0]) === OK) {
 						//console.log('link energy transferred to: ' + inRangeCreeps[0].name + ' - ' + inRangeCreeps[0].memory.role);
-					}
-				}
-			}
+			//		}
+			//	}
+			//}
 		}
 
 		// run creep loop
