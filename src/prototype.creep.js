@@ -17,7 +17,7 @@ Creep.prototype.run = function() {
 	} else if(this.memory.role === 'remoteMiner') {
 		this.runRemoteMiner2();
 	} else if(this.memory.role === 'remoteCarrier') {
-		this.runRemoteCarrier();
+		this.runRemoteCarrier2();
 	} else if(this.memory.role === 'specialCarrier') {
 		this.runSpecialCarrier();
 	} else if(this.memory.role === 'dismantler') {

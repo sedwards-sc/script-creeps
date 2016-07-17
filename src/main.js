@@ -317,34 +317,19 @@ module.exports.loop = function () {
 	    			        break;
 	    		        }
 	    		    }
-	    		} else if(undefToZero(roomCreepRoster.remoteCarrier) < roomQuota.remoteCarriers) {
-	    			if(roomRemoteInfo && (roomRemoteInfo.remoteCarriers.length > 0)) {
-	    				for(let remoteCarriersIndex in roomRemoteInfo.remoteCarriers) {
-	    					let currentRemoteCarrier = roomRemoteInfo.remoteCarriers[remoteCarriersIndex];
-	    					let currentRemoteCarrierFilter = _.filter(roomCreeps, (creep) => creep.memory.creepId === currentRemoteCarrier.creepId);
-
-	    					if(currentRemoteCarrierFilter.length < 1) {
-	    						let newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {
-	    							role: 'remoteCarrier',
-	    							spawnRoom: roomName,
-	    							creepId: currentRemoteCarrier.creepId,
-	    							rRoomName: currentRemoteCarrier.checkPointAway.roomName,
-	    							rX: currentRemoteCarrier.checkPointAway.x,
-	    							rY: currentRemoteCarrier.checkPointAway.y,
-	    							hRoomName: currentRemoteCarrier.checkPointHome.roomName,
-	    							hX: currentRemoteCarrier.checkPointHome.x,
-	    							hY: currentRemoteCarrier.checkPointHome.y
-	    						});
-	    						console.log('Spawning new remote carrier: ' + newName + ' - ' + JSON.stringify(currentRemoteCarrier));
-	    						break;
-	    					}
-	    				}
-	    			} else {
-	    				console.log('!!!' + roomName + ' quota has remote carriers but there is no remote carrier info for this room!!!');
-	    			}
-
-	    			//var newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {role: 'remoteCarrier', spawnRoom: roomName});
-	    			//console.log('Spawning new remote carrier: ' + newName);
+	    		} else if((roomCreepQuotas.remoteCarrier) && (undefToZero(roomCreepRoster.remoteCarrier) < roomCreepQuotas.remoteCarrier.length)) {
+					for(let curRemoteCarrierIndex in roomCreepQuotas.remoteCarrier) {
+	    		        let curRemoteCarrierFlagName = roomCreepQuotas.remoteCarrier[curRemoteCarrierIndex];
+	    		        let currentFlagRemoteCarriers = _.filter(roomCreeps, (creep) => creep.memory.flagName === curRemoteCarrierFlagName);
+						if(Game.flags[curRemoteCarrierFlagName].memory.bodyParts) {
+							remoteCarrierBody = Game.flags[curRemoteCarrierFlagName].memory.bodyParts;
+						}
+	    		        if((currentFlagRemoteCarriers.length < 1) || (currentFlagRemoteCarriers[0].ticksToLive <= ((remoteCarrierBody.length * 3) + 25))) {
+	    		            let newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {spawnRoom: roomName, role: 'remoteCarrier', flagName: curRemoteCarrierFlagName});
+	    			        console.log('Spawning new remote carrier: ' + newName + ' - ' + curRemoteCarrierFlagName);
+	    			        break;
+	    		        }
+	    		    }
 	    		} else if(undefToZero(roomCreepRoster.reserver) < roomQuota.reservers) {
 	    			if(roomRemoteInfo && (roomRemoteInfo.reservers.length > 0)) {
 	    				for(let reserversIndex in roomRemoteInfo.reservers) {

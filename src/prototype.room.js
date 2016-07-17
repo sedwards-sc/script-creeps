@@ -48,6 +48,14 @@ Room.prototype.countCreepRoles = function() {
             continue;
         }
 
+		if((currentCreepRole === 'remoteMiner') && (roomCreeps[curCreepIndex].ticksToLive <= 55)) {
+            continue;
+        }
+
+		if((currentCreepRole === 'remoteCarrier') && (roomCreeps[curCreepIndex].ticksToLive <= 55)) {
+            continue;
+        }
+
 		this.memory.creepRoster[currentCreepRole] = this.memory.creepRoster[currentCreepRole] || 0;
 		this.memory.creepRoster[currentCreepRole]++;
 	}
