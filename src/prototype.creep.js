@@ -1177,3 +1177,11 @@ Creep.prototype.runBuilder = function() {
 		}
 	}
 };
+
+Creep.prototype.log = function(msg) {
+	return console.log('creep: ' + this.name + ' (' + this.room.name + '), msg: ' + msg);
+};
+
+Creep.prototype.errorLog = function(msg, errCode) {
+	return console.log('!!!Error!!! creep: ' + this.name + ' (' + this.room.name + '), msg: ' + msg + ' (' + errCode + ')');
+};
