@@ -235,11 +235,11 @@ module.exports.loop = function () {
 			let minerBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
 
 	        let builderBody;
-			if((roomEnergy >= 1900) && (roomStorageEnergy > 500000)) {
+			if((roomEnergyCapacity >= 1900) && (roomStorageEnergy > 500000)) {
 				builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,MOVE,CARRY,MOVE];
-			} else if((roomEnergy >= 950) && (roomStorageEnergy > 100000)) {
+			} else if((roomEnergyCapacity >= 950) && (roomStorageEnergy > 100000)) {
 				builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
-			} else if(roomEnergy >= 500) {
+			} else if(roomEnergyCapacity >= 500) {
 				builderBody = [WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
 			} else {
 				builderBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
