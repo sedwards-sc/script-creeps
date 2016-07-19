@@ -26,6 +26,8 @@ Creep.prototype.run = function() {
 		this.runRemoteMiner2();
 	} else if(this.memory.role === 'remoteCarrier') {
 		this.runRemoteCarrier2();
+	} else if(this.memory.role === 'reserver') {
+		this.runReserver();
 	} else if(this.memory.role === 'specialCarrier') {
 		this.runSpecialCarrier();
 	} else if(this.memory.role === 'dismantler') {
@@ -1258,6 +1260,17 @@ Creep.prototype.runDefender = function() {
 		if(this.attack(target) === ERR_NOT_IN_RANGE) {
 			this.moveTo(target);
 		}
+	}
+};
+
+Creep.prototype.runReserver = function() {
+	if(this.memory.controllerId === undefined) {
+		return;
+	}
+
+	let controllerToReserve = Game.getObjectById(this.memory.controllerId);
+	if(this.reserveController(controllerToReserve) === ERR_NOT_IN_RANGE) {
+		this.moveTo(controllerToReserve);
 	}
 };
 

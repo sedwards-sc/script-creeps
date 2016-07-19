@@ -9,7 +9,7 @@ var roleExplorer = require('role.explorer');
 //var roleRemoteCarrier = require('role.remoteCarrier');
 //var roleMiner = require('role.miner');
 //var roleCarrier = require('role.carrier');
-var roleReserver = require('role.reserver');
+//var roleReserver = require('role.reserver');
 //var roleLinker = require('role.linker');
 //var roleReinforcer = require('role.reinforcer');
 var roleClaimer = require('role.claimer');
@@ -497,7 +497,7 @@ module.exports.loop = function () {
 					creep.run();
 					Memory.roster[creep.pos.roomName].remoteCarriers++;
 				} else if(creep.memory.role == 'reserver') {
-					roleReserver.run(creep);
+					creep.run();
 					Memory.roster[creep.pos.roomName].reservers++;
 				} else if(creep.memory.role == 'reinforcer') {
 					creep.run();
