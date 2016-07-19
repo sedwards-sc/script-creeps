@@ -12,7 +12,7 @@ var roleExplorer = require('role.explorer');
 //var roleReserver = require('role.reserver');
 //var roleLinker = require('role.linker');
 //var roleReinforcer = require('role.reinforcer');
-var roleClaimer = require('role.claimer');
+//var roleClaimer = require('role.claimer');
 var roleRemoteUpgrader = require('role.remoteUpgrader');
 var roleRemoteBuilder = require('role.remoteBuilder');
 //require('prototype.storage');
@@ -503,7 +503,7 @@ module.exports.loop = function () {
 					creep.run();
 					Memory.roster[creep.pos.roomName].reinforcers++;
 				} else if(creep.memory.role == 'claimer') {
-					roleClaimer.run(creep);
+					creep.run();
 					Memory.roster[creep.pos.roomName].claimers++;
 				} else if(creep.memory.role == 'remoteUpgrader') {
 					roleRemoteUpgrader.run(creep);
