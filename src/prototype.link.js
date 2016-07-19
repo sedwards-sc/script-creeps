@@ -76,6 +76,14 @@ StructureLink.prototype.run = function() {
     }
 };
 
+StructureLink.prototype.refillCreeps = function(candidateCreeps) {
+	let inRangeCreeps = this.pos.findInRange(candidateCreeps, 1);
+
+	for(let creepIndex in inRangeCreeps) {
+		inRangeCreeps[creepIndex].withdraw(this, RESOURCE_ENERGY);
+	}
+};
+
 StructureLink.prototype.transferEnergyFirstTimeOnly = function(transferTarget) {
     var transferReturnVal = ERR_BUSY;
 
