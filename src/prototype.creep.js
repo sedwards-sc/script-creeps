@@ -14,6 +14,8 @@ Creep.prototype.run = function() {
 		this.runLinker2();
 	} else if(this.memory.role === 'builder') {
 		this.runBuilder();
+	} else if(this.memory.role === 'upgrader') {
+		this.runUpgrader();
 	} else if(this.memory.role === 'reinforcer') {
 		this.runReinforcer();
     } else if(this.memory.role === 'mineralHarvester') {
@@ -1174,6 +1176,76 @@ Creep.prototype.runBuilder = function() {
 			if(this.upgradeController(this.room.controller) == ERR_NOT_IN_RANGE) {
 				this.moveTo(this.room.controller);
 			}
+		}
+	}
+};
+
+Creep.prototype.runUpgrader = function() {
+	// state 0 is harvest
+	// state 1 is upgrade
+
+	if(this.memory.state === undefined) {
+		this.memory.state = 0;
+	}
+
+	if(this.carry.energy === this.carryCapacity) {
+		this.memory.state = 1;
+	}
+
+	if(this.carry.energy === 0) {
+		this.memory.state = 0;
+	}
+
+	if(this.memory.state === 0) {
+		// get energy piles
+		let droppedEnergy = this.room.find(FIND_DROPPED_ENERGY, {
+				filter: (pile) => {
+					return (pile.energy >= (this.carryCapacity / 2)) && (pile.pos.roomName === this.memory.spawnRoom);
+				}
+		});
+
+		//get links with energy or storage with enough surplus energy
+		let structuresWithEnergy = this.room.find(FIND_STRUCTURES, {
+				filter: (structure) => {
+					return ((structure.structureType === STRUCTURE_LINK) && (structure.energy >= this.carryCapacity)) || ((structure.structureType === STRUCTURE_STORAGE) && (structure.store[RESOURCE_ENERGY] >= 1000));
+				}
+		});
+
+		let energySources = [];
+
+		for(let i in droppedEnergy) {
+			energySources.push(droppedEnergy[i]);
+		}
+
+		for(let i in structuresWithEnergy) {
+			energySources.push(structuresWithEnergy[i]);
+		}
+
+		let closestEnergy = this.pos.findClosestByPath(energySources);
+
+		if(closestEnergy) {
+			//if((closestEnergy.structureType === STRUCTURE_LINK) || (closestEnergy.structureType === STRUCTURE_STORAGE)) {
+			//	if(!this.pos.isNearTo(closestEnergy)) {
+			//		this.moveTo(closestEnergy);
+			//	}
+			//} else {
+			//	if(this.pickup(closestEnergy) === ERR_NOT_IN_RANGE) {
+			//		this.moveTo(closestEnergy);
+			//	}
+			//}
+
+			if(this.pos.isNearTo(closestEnergy)) {
+				this.takeResource(closestEnergy, RESOURCE_ENERGY);
+			} else {
+				this.moveTo(closestEnergy);
+			}
+		} else {
+			this.say('no energy');
+		}
+	} else {
+		// upgrade
+		if(this.upgradeController(this.room.controller) == ERR_NOT_IN_RANGE) {
+			this.moveTo(this.room.controller);
 		}
 	}
 };

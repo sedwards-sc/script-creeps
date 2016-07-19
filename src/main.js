@@ -1,7 +1,7 @@
 /* jshint esversion: 6, loopfunc: true */
 require('utils').populateUtils(global);
 //var roleHarvester = require('role.harvester');
-var roleUpgrader = require('role.upgrader');
+//var roleUpgrader = require('role.upgrader');
 //var roleBuilder = require('role.builder');
 var roleDefender = require('role.defender');
 var roleExplorer = require('role.explorer');
@@ -479,7 +479,7 @@ module.exports.loop = function () {
 					creep.run();
 					Memory.roster[creep.pos.roomName].harvesters++;
 				} else if(creep.memory.role == 'upgrader') {
-					roleUpgrader.run(creep);
+					creep.run();
 					Memory.roster[creep.pos.roomName].upgraders++;
 				} else if(creep.memory.role == 'builder') {
 					creep.run();
