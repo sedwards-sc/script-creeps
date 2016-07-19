@@ -289,11 +289,14 @@ module.exports.loop = function () {
 					for(let curBuilderIndex in roomCreepQuotas.builder) {
 	    		        let curBuilderFlagName = roomCreepQuotas.builder[curBuilderIndex];
 	    		        let currentFlagBuilders = _.filter(roomCreeps, (creep) => creep.memory.flagName === curBuilderFlagName);
+						let currentBody;
 						if(Game.flags[curBuilderFlagName].memory.bodyParts) {
-							builderBody = Game.flags[curBuilderFlagName].memory.bodyParts;
+							currentBody = Game.flags[curBuilderFlagName].memory.bodyParts;
+						} else {
+							currentBody = builderBody;
 						}
-	    		        if((currentFlagBuilders.length < 1) || (currentFlagBuilders[0].ticksToLive <= (builderBody.length * 3))) {
-	    		            let newName = mainSpawn.createCreep(builderBody, undefined, {spawnRoom: roomName, role: 'builder', flagName: curBuilderFlagName});
+	    		        if((currentFlagBuilders.length < 1) || (currentFlagBuilders[0].ticksToLive <= (currentBody.length * 3))) {
+	    		            let newName = mainSpawn.createCreep(currentBody, undefined, {spawnRoom: roomName, role: 'builder', flagName: curBuilderFlagName});
 	    			        console.log('Spawning new builder: ' + newName + ' - ' + curBuilderFlagName);
 	    			        break;
 	    		        }
