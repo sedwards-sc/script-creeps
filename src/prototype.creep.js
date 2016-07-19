@@ -20,6 +20,8 @@ Creep.prototype.run = function() {
 		this.runReinforcer();
     } else if(this.memory.role === 'mineralHarvester') {
         this.runMineralHarvester();
+	} else if(this.memory.role === 'defender') {
+		this.runDefender();
 	} else if(this.memory.role === 'remoteMiner') {
 		this.runRemoteMiner2();
 	} else if(this.memory.role === 'remoteCarrier') {
@@ -1246,6 +1248,15 @@ Creep.prototype.runUpgrader = function() {
 		// upgrade
 		if(this.upgradeController(this.room.controller) == ERR_NOT_IN_RANGE) {
 			this.moveTo(this.room.controller);
+		}
+	}
+};
+
+Creep.prototype.runDefender = function() {
+	let target = this.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+	if(target) {
+		if(this.attack(target) === ERR_NOT_IN_RANGE) {
+			this.moveTo(target);
 		}
 	}
 };
