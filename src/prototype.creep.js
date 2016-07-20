@@ -187,7 +187,7 @@ Creep.prototype.getRefillTarget = function() {
 
 	// top up terminal if no spawns or extensions or towers or labs need refilling
 	if(!closestTarget) {
-		if(this.room.terminal && (this.room.terminal.store.energy < 1000)) {
+		if(this.room.terminal && (this.room.terminal.store.energy < 10000)) {
 			closestTarget = this.room.terminal;
 		}
 	}
