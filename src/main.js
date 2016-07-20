@@ -320,9 +320,6 @@ module.exports.loop = function () {
 	    			} else {
 	    				console.log('!!!' + roomName + ' quota has reservers but there is no reserver info for this room!!!');
 	    			}
-
-	    			//var newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE], undefined, {role: 'reserver', spawnRoom: roomName});
-	    			//console.log('Spawning new reserver: ' + newName);
 	    		} else if(undefToZero(roomCreepRoster.reinforcer) < roomQuota.reinforcers) {
 	    			let newName = mainSpawn.createCreep([WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
 	    			console.log('Spawning new reinforcer (' + roomName + '): ' + newName);
