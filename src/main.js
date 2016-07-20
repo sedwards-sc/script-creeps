@@ -454,6 +454,8 @@ module.exports.loop = function () {
 
 		}
 
+		Memory.roster = {};
+
 		// run creep loop
 	    for(let creepName in Game.creeps) {
 	        let creep = Game.creeps[creepName];
@@ -509,7 +511,6 @@ module.exports.loop = function () {
 					Memory.roster[creep.pos.roomName].mineralHarvesters++;
 				} else {*/
 					creep.run();
-					Memory.roster = Memory.roster || {};
 					Memory.roster[creep.pos.roomName] = Memory.roster[creep.pos.roomName] || {};
 					Memory.roster[creep.pos.roomName][creep.memory.role] = Memory.roster[creep.pos.roomName][creep.memory.role] || 0;
 					Memory.roster[creep.pos.roomName][creep.memory.role]++;
