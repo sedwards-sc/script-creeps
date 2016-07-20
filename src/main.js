@@ -100,13 +100,13 @@ module.exports.loop = function () {
 			}
 		}
 
-		Memory.roster = {};
+		//Memory.roster = {};
 		let roomQuotas = new WorldRoster();
 		let remoteInfo = new RoomRemotes();
 
 		// room spawn loop
 		for(let roomName in Game.rooms) {
-			Memory.roster[roomName] = {
+			/*Memory.roster[roomName] = {
 					harvesters: 0,
 					builders: 0,
 					upgraders: 0,
@@ -122,7 +122,7 @@ module.exports.loop = function () {
 					remoteUpgraders: 0,
 					remoteBuilders: 0,
 					mineralHarvesters: 0
-			};
+			};*/
 
 			// find room spawns
 			let roomSpawns = Game.rooms[roomName].find(FIND_MY_SPAWNS);
@@ -459,7 +459,7 @@ module.exports.loop = function () {
 	        let creep = Game.creeps[creepName];
 
 			if(!creep.spawning) {
-				if(creep.memory.role == 'miner') {
+				/*if(creep.memory.role == 'miner') {
 					creep.run();
 					Memory.roster[creep.pos.roomName].miners++;
 				} else if(creep.memory.role == 'carrier') {
@@ -507,9 +507,13 @@ module.exports.loop = function () {
 				} else if(creep.memory.role == 'mineralHarvester') {
 					creep.run();
 					Memory.roster[creep.pos.roomName].mineralHarvesters++;
-				} else {
+				} else {*/
 					creep.run();
-				}
+					Memory.roster = Memory.roster || {};
+					Memory.roster[creep.pos.roomName] = Memory.roster[creep.pos.roomName] || {};
+					Memory.roster[creep.pos.roomName][creep.memory.role] = Memory.roster[creep.pos.roomName][creep.memory.role] || 0;
+					Memory.roster[creep.pos.roomName][creep.memory.role]++;
+				//}
 			} else {
 				// this is a test that will break when there are multiple spawns working and will remain when nothing is spawning
 				// TODO fix this to be better
