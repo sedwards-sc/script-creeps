@@ -437,15 +437,15 @@ module.exports.loop = function () {
 	    for(let creepName in Game.creeps) {
 	        let creep = Game.creeps[creepName];
 
+			Memory.roster[creep.pos.roomName] = Memory.roster[creep.pos.roomName] || {};
+
 			if(!creep.spawning) {
 				creep.run();
-				Memory.roster[creep.pos.roomName] = Memory.roster[creep.pos.roomName] || {};
 				Memory.roster[creep.pos.roomName][creep.memory.role] = Memory.roster[creep.pos.roomName][creep.memory.role] || 0;
 				Memory.roster[creep.pos.roomName][creep.memory.role]++;
 			} else {
-				// this is a test that will break when there are multiple spawns working and will remain when nothing is spawning
-				// TODO fix this to be better
-				Memory.creepSpawning = creep.memory.role;
+				Memory.roster[creep.pos.roomName].spawning = Memory.roster[creep.pos.roomName].spawning || [];
+				Memory.roster[creep.pos.roomName].spawning.push(creep.memory.role);
 			}
 	    }
 	});
