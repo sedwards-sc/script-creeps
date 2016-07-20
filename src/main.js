@@ -226,7 +226,9 @@ module.exports.loop = function () {
 			}
 
 	        let carrierBody;
-			if(roomEnergy >= 400) {
+			if(Game.rooms[roomName].controller.level === 8) {
+				carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
+			} else if(roomEnergy >= 400) {
 				carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
 			} else {
 				carrierBody = [CARRY,CARRY,MOVE,MOVE];
