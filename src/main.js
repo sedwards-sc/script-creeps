@@ -1,29 +1,17 @@
 /* jshint esversion: 6, loopfunc: true */
 require('utils').populateUtils(global);
-//var roleHarvester = require('role.harvester');
-//var roleUpgrader = require('role.upgrader');
-//var roleBuilder = require('role.builder');
-//var roleDefender = require('role.defender');
-//var roleExplorer = require('role.explorer');
-//var roleRemoteMiner = require('role.remoteMiner');
-//var roleRemoteCarrier = require('role.remoteCarrier');
-//var roleMiner = require('role.miner');
-//var roleCarrier = require('role.carrier');
-//var roleReserver = require('role.reserver');
-//var roleLinker = require('role.linker');
-//var roleReinforcer = require('role.reinforcer');
-//var roleClaimer = require('role.claimer');
-//var roleRemoteUpgrader = require('role.remoteUpgrader');
-//var roleRemoteBuilder = require('role.remoteBuilder');
-//require('prototype.storage');
+
 require('prototype.room');
 require('prototype.creep');
 require('prototype.flag');
 require('prototype.spawn');
 require('prototype.link');
+
 require('object.rosters');
 require('object.remotes');
+
 require('debug').populate(global);
+
 var profiler = require('screeps-profiler');
 
 if(Memory.enableProfiler === true) {
