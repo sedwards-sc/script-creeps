@@ -100,30 +100,11 @@ module.exports.loop = function () {
 			}
 		}
 
-		//Memory.roster = {};
 		let roomQuotas = new WorldRoster();
 		let remoteInfo = new RoomRemotes();
 
 		// room spawn loop
 		for(let roomName in Game.rooms) {
-			/*Memory.roster[roomName] = {
-					harvesters: 0,
-					builders: 0,
-					upgraders: 0,
-					explorers: 0,
-					remoteMiners: 0,
-					remoteCarriers: 0,
-					miners: 0,
-					carriers: 0,
-					linkers: 0,
-					reinforcers: 0,
-					reservers: 0,
-					claimers: 0,
-					remoteUpgraders: 0,
-					remoteBuilders: 0,
-					mineralHarvesters: 0
-			};*/
-
 			// find room spawns
 			let roomSpawns = Game.rooms[roomName].find(FIND_MY_SPAWNS);
 
@@ -145,6 +126,7 @@ module.exports.loop = function () {
 			    let mainSpawn = roomSpawns[0];
 			//}
 
+			// gather room info
 			let controllerProgress = Game.rooms[roomName].controller.progress / Game.rooms[roomName].controller.progressTotal * 100;
 			let roomEnergy = Game.rooms[roomName].energyAvailable;
 			let roomEnergyCapacity = Game.rooms[roomName].energyCapacityAvailable;
@@ -163,16 +145,11 @@ module.exports.loop = function () {
 				Game.notify(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '% - time: ' + Game.time);
 			}
 
+			// get the roster of creeps for the current room
 			Game.rooms[roomName].countCreepRoles();
 
 			// find room creeps
 			let roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
-
-			//if(roomName === 'E9S27') {
-			//	if(harvesters.length < 3) {
-			//		mainSpawn.spawnHarvester(roomCreeps);
-			//	}
-			//}
 
 			// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
 			// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
@@ -461,60 +438,10 @@ module.exports.loop = function () {
 	        let creep = Game.creeps[creepName];
 
 			if(!creep.spawning) {
-				/*if(creep.memory.role == 'miner') {
-					creep.run();
-					Memory.roster[creep.pos.roomName].miners++;
-				} else if(creep.memory.role == 'carrier') {
-					creep.run();
-					Memory.roster[creep.pos.roomName].carriers++;
-				} else if(creep.memory.role == 'linker') {
-					creep.run();
-					Memory.roster[creep.pos.roomName].linkers++;
-				} else if(creep.memory.role == 'harvester') {
-					creep.run();
-					Memory.roster[creep.pos.roomName].harvesters++;
-				} else if(creep.memory.role == 'upgrader') {
-					creep.run();
-					Memory.roster[creep.pos.roomName].upgraders++;
-				} else if(creep.memory.role == 'builder') {
-					creep.run();
-					Memory.roster[creep.pos.roomName].builders++;
-				} else if(creep.memory.role == 'defender') {
-					creep.run();
-					Memory.roster[creep.pos.roomName].defenders++;
-				} else if(creep.memory.role == 'explorer') {
-					creep.run();
-					Memory.roster[creep.pos.roomName].explorers++;
-				} else if(creep.memory.role == 'remoteMiner') {
-					creep.run();
-					Memory.roster[creep.pos.roomName].remoteMiners++;
-				} else if(creep.memory.role == 'remoteCarrier') {
-					creep.run();
-					Memory.roster[creep.pos.roomName].remoteCarriers++;
-				} else if(creep.memory.role == 'reserver') {
-					creep.run();
-					Memory.roster[creep.pos.roomName].reservers++;
-				} else if(creep.memory.role == 'reinforcer') {
-					creep.run();
-					Memory.roster[creep.pos.roomName].reinforcers++;
-				} else if(creep.memory.role == 'claimer') {
-					creep.run();
-					Memory.roster[creep.pos.roomName].claimers++;
-				} else if(creep.memory.role == 'remoteUpgrader') {
-					creep.run();
-					Memory.roster[creep.pos.roomName].remoteUpgraders++;
-				} else if(creep.memory.role == 'remoteBuilder') {
-					creep.run();
-					Memory.roster[creep.pos.roomName].remoteBuilders++;
-				} else if(creep.memory.role == 'mineralHarvester') {
-					creep.run();
-					Memory.roster[creep.pos.roomName].mineralHarvesters++;
-				} else {*/
-					creep.run();
-					Memory.roster[creep.pos.roomName] = Memory.roster[creep.pos.roomName] || {};
-					Memory.roster[creep.pos.roomName][creep.memory.role] = Memory.roster[creep.pos.roomName][creep.memory.role] || 0;
-					Memory.roster[creep.pos.roomName][creep.memory.role]++;
-				//}
+				creep.run();
+				Memory.roster[creep.pos.roomName] = Memory.roster[creep.pos.roomName] || {};
+				Memory.roster[creep.pos.roomName][creep.memory.role] = Memory.roster[creep.pos.roomName][creep.memory.role] || 0;
+				Memory.roster[creep.pos.roomName][creep.memory.role]++;
 			} else {
 				// this is a test that will break when there are multiple spawns working and will remain when nothing is spawning
 				// TODO fix this to be better
