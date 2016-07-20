@@ -32,6 +32,8 @@ Creep.prototype.run = function() {
 		this.runClaimer();
 	} else if(this.memory.role === 'explorer') {
 		this.runExplorer();
+	} else if(this.memory.role === 'remoteUpgrader') {
+		this.runRemoteUpgrader();
 	} else if(this.memory.role === 'specialCarrier') {
 		this.runSpecialCarrier();
 	} else if(this.memory.role === 'dismantler') {
@@ -1388,6 +1390,63 @@ Creep.prototype.runExplorer = function() {
 		} else {
 			//drop energy
 			this.drop(RESOURCE_ENERGY);
+		}
+	}
+};
+
+Creep.prototype.runRemoteUpgrader = function() {
+	//this.say('remoteUpgrader');
+	// state 0 is head to next room
+
+
+	var checkPoint1 = new RoomPosition(4, 46, 'E10S23');
+	var checkPoint2 = new RoomPosition(15, 3, 'E10S26');
+	var checkPoint3 = new RoomPosition(13, 4, 'E9S27');
+
+
+	if(this.memory.state === undefined) {
+		this.memory.state = 0;
+	}
+
+	if((this.memory.state === 0) && (JSON.stringify(this.pos) === JSON.stringify(checkPoint1))) {
+		this.say('chkpt 1');
+		this.memory.state = 1;
+	}
+
+	if((this.memory.state === 1) && (JSON.stringify(this.pos) === JSON.stringify(checkPoint2))) {
+		this.say('chkpt 2');
+		this.memory.state = 2;
+	}
+
+	if((this.memory.state === 2) && (JSON.stringify(this.pos) === JSON.stringify(checkPoint3))) {
+		this.say('chkpt 3');
+		this.memory.state = 3;
+	}
+
+	if((this.memory.state === 3) && (this.carry.energy === this.carryCapacity)) {
+		this.memory.state = 4;
+	}
+
+	if ((this.memory.state === 4) && (this.carry.energy === 0)) {
+		this.memory.state = 3;
+	}
+
+	if(this.memory.state === 0) {
+		this.moveTo(checkPoint1);
+	} else if(this.memory.state === 1) {
+		this.moveTo(checkPoint2);
+	} else if(this.memory.state === 2) {
+		this.moveTo(checkPoint3);
+	} else if(this.memory.state === 3) {
+		// harvest
+		var sources = this.room.find(FIND_SOURCES);
+		if(this.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
+			this.moveTo(sources[0]);
+		}
+	} else if(this.memory.state === 4) {
+		// upgrade
+		if(this.upgradeController(this.room.controller) === ERR_NOT_IN_RANGE) {
+			this.moveTo(this.room.controller);
 		}
 	}
 };
