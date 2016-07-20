@@ -30,6 +30,8 @@ Creep.prototype.run = function() {
 		this.runReserver();
 	} else if(this.memory.role === 'claimer') {
 		this.runClaimer();
+	} else if(this.memory.role === 'explorer') {
+		this.runExplorer();
 	} else if(this.memory.role === 'specialCarrier') {
 		this.runSpecialCarrier();
 	} else if(this.memory.role === 'dismantler') {
@@ -1322,6 +1324,70 @@ Creep.prototype.runClaimer = function() {
 		var controllerToClaim = this.room.controller;
 		if(this.claimController(controllerToClaim) === ERR_NOT_IN_RANGE) {
 			this.moveTo(controllerToClaim);
+		}
+	}
+};
+
+Creep.prototype.runExplorer = function() {
+	//this.say('explorer');
+	// state 0 is head to next room
+	// state 1 harvest
+	// state 2 is head back to home room
+	// state 3 is upgrade controller
+
+	var checkPointAway = new RoomPosition(31, 29, 'E9S23');
+	var checkPointHome = new RoomPosition(47, 9, 'E8S23');
+
+	if(this.memory.state === undefined) {
+		this.memory.state = 0;
+	}
+
+	if((this.memory.state === 0) && (JSON.stringify(this.pos) === JSON.stringify(checkPointAway))) {
+		this.say('away pt');
+		this.memory.state = 1;
+	}
+
+	if((this.memory.state === 1) && (this.carry.energy === this.carryCapacity)) {
+		this.say('full');
+		this.memory.state = 2;
+	}
+
+	if((this.memory.state === 2) && (JSON.stringify(this.pos) === JSON.stringify(checkPointHome))) {
+		this.say('home pt');
+		this.memory.state = 3;
+	}
+
+	if ((this.memory.state === 3) && (this.carry.energy === 0)) {
+		this.say('empty');
+		this.memory.state = 0;
+	}
+
+
+	if(this.memory.state === 0) {
+		this.moveTo(checkPointAway);
+	} else if(this.memory.state === 1) {
+		// harvest
+		var closestSource = this.pos.findClosestByPath(FIND_SOURCES);
+		if(this.harvest(closestSource) === ERR_NOT_IN_RANGE) {
+			this.moveTo(closestSource);
+		}
+	} else if(this.memory.state === 2) {
+		this.moveTo(checkPointHome);
+	} else if(this.memory.state === 3) {
+		// transfer to link if there is one that isn't full
+		var closestLink = this.pos.findClosestByPath(FIND_MY_STRUCTURES, {
+				filter: (structure) => {
+					return (structure.structureType === STRUCTURE_LINK) && (structure.energy < structure.energyCapacity);
+				}
+		});
+
+		if(closestLink) {
+			if(this.transfer(closestLink, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+				this.moveTo(closestLink);
+			}
+		} else {
+			//drop energy
+			this.drop(RESOURCE_ENERGY);
 		}
 	}
 };
