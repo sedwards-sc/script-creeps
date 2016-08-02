@@ -46,11 +46,11 @@ var statsConsole = {
 
 
             if (!Memory.stats.__cpu && Memory.stats.__cpu === undefined) {
-                Memory.stats["__cpu"] = new Array(0);
+                Memory.stats.__cpu = new Array(0);
             }
             Memory.stats.__cpu.unshift(Game.cpu.getUsed());
-            if (Memory.stats["__cpu"].length > max - 6) {
-                Memory.stats["__cpu"].pop();
+            if (Memory.stats.__cpu.length > max - 6) {
+                Memory.stats.__cpu.pop();
             }
 
             if (Memory.stats.logs === undefined) {
@@ -128,7 +128,7 @@ var statsConsole = {
         let cpuTotal = Game.cpu.getUsed();
 
         let addSpace = 0;
-        if (!(boxWidth % 2 === 0)) {
+        if (!(boxWidth % 2 === 0)) { // jshint ignore:line
             addSpace = 1;
         }
 
@@ -256,7 +256,7 @@ var statsConsole = {
     },
     geohash: function () { // Get creep location and save as geohash
         var geohash = require("geohash");
-        var geohashArray = undefined;
+        var geohashArray;
         for (let creep in Game.creeps) {
             if (creep !== undefined) {
                 let thisRoom = Game.creeps[creep].pos.roomName;
@@ -329,7 +329,7 @@ var statsConsole = {
         let borderWidth = 5;
 
         let addSpace = 0;
-        if (!(boxWidth % 2 === 0)) {
+        if (!(boxWidth % 2 === 0)) { // jshint ignore:line
             addSpace = 1;
         }
         var colors = {
@@ -345,9 +345,9 @@ var statsConsole = {
 
         var outputLog = leftTopCorner + hBar.repeat(((boxWidth - title.length) / 2)) + title + hBar.repeat(((boxWidth - title.length) / 2) + addSpace) + rightTopCorner + "\n";
         for (let i = 0; i < boxHeight; i++) { // Y coordinate |
-            let severity = Memory.stats.logs[i][0, 1];
-            let message = Memory.stats.logs[i][0, 0];
-            let htmlFontStartHighlight = "<font color='" + colors['highlight'] + "' type='highlight'>";
+            let severity = Memory.stats.logs[i][1];
+            let message = Memory.stats.logs[i][0];
+            let htmlFontStartHighlight = "<font color='" + colors.highlight + "' type='highlight'>";
             let htmlFontStart = "<font color='" + colors[severity] + "' severity='" + severity + "'>";
             let htmlStart = "";
             let htmlEnd = "</font>";
