@@ -1,3 +1,5 @@
+/* jshint esversion: 6 */
+
 var statsConsole = {
 
     /**
@@ -13,7 +15,7 @@ var statsConsole = {
      */
     run: function (data, logCpu = true, opts = {}) {
 
-        if (Memory.stats == undefined){
+        if (Memory.stats === undefined){
             Memory.stats = {};
         }
         Memory.stats.cpu = data;
@@ -43,7 +45,7 @@ var statsConsole = {
         if (logCpu) {
 
 
-            if (!Memory.stats.__cpu && Memory.stats.__cpu == undefined) {
+            if (!Memory.stats.__cpu && Memory.stats.__cpu === undefined) {
                 Memory.stats["__cpu"] = new Array(0);
             }
             Memory.stats.__cpu.unshift(Game.cpu.getUsed());
@@ -51,7 +53,7 @@ var statsConsole = {
                 Memory.stats["__cpu"].pop();
             }
 
-            if (Memory.stats.logs == undefined) {
+            if (Memory.stats.logs === undefined) {
                 Memory.stats.logs = [["Logging Initialized!", 3]];
             }
 
@@ -66,7 +68,7 @@ var statsConsole = {
     //TODO: allow passing data to it.
     displayHistogram: function () {
         var asciiChart = require("ascii-chart");
-        let output = asciiChart.chart(Memory.stats.__cpu.slice(0, 50).reverse(), {width: 100, height: 20})
+        let output = asciiChart.chart(Memory.stats.__cpu.slice(0, 50).reverse(), {width: 100, height: 20});
         let style = {
             lineHeight: '1'
         };
@@ -168,7 +170,7 @@ var statsConsole = {
         title = statsTitle;            // Name of Stats block
         let gclProgress = Game.gcl.progress;
         if (gclProgress < 10) {
-            gclProgress = 2
+            gclProgress = 2;
         }
         let secondLineName = ["GCL"];
         let secondLineStat = [((gclProgress / Game.gcl.progressTotal) * 100).toFixed(2) + percent];
@@ -256,7 +258,7 @@ var statsConsole = {
         var geohash = require("geohash");
         var geohashArray = undefined;
         for (let creep in Game.creeps) {
-            if (creep != undefined) {
+            if (creep !== undefined) {
                 let thisRoom = Game.creeps[creep].pos.roomName;
                 let strBuild = "";
                 for (let i = 0, len = thisRoom.length; i < len; i++) {
