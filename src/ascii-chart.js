@@ -107,13 +107,13 @@ var chart = {
 
         // y-axis
         for (let y = 0; y < h; y++) {
-            out[y][labelw + labelp] = '.';
+            out[y][labelw + labelp] = '-';
         }
 
         // x-axis
         let x = labelw + labelp;
         while (x < w) {
-            out[h - 1][x++] = '.';
+            out[h - 1][x++] = '-';
             out[h - 1][x++] = ' ';
         }
 
