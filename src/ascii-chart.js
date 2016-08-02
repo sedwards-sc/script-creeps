@@ -1,13 +1,9 @@
-
+/* jshint esversion: 6 */
 //From: https://raw.githubusercontent.com/jstrace/chart/master/index.js
 
 /**
- * Module dependencies.
+ * Apply padding.
  */
-
-//var matrix = require('array-matrix'); // https://github.com/segmentio/array-matrix/blob/master/index.js
-
-
 function padding(str, n)
 {
     var linew = str.split('\n')[0].length;
@@ -25,7 +21,6 @@ function padding(str, n)
 /**
  * Convert matrix to a string.
  */
-
 function string(out) {
     var buf = [];
 
@@ -39,7 +34,6 @@ function string(out) {
 /**
  * Return max in array.
  */
-
 function max(data) {
     var n = data[0];
 
@@ -59,7 +53,6 @@ function matrix(x, y) { //var matrix = require('array-matrix'); // https://githu
 
     return arr;
 }
-
 
 
 /**
@@ -99,28 +92,28 @@ var chart = {
         var cw = w - labelw - labelp;
 
         // fill
-        for (var y = 0; y < h; y++) {
-            for (var x = 0; x < w; x++) {
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
                 out[y][x] = ' ';
             }
         }
 
         // y-axis labels
-        for (var i = 0; i < labelw; i++) {
+        for (let i = 0; i < labelw; i++) {
             out[0][i] = label[i];
         }
 
         out[h - 1][labelw - labelp] = '0';
 
         // y-axis
-        for (var y = 0; y < h; y++) {
-            out[y][labelw + labelp] = '�';
+        for (let y = 0; y < h; y++) {
+            out[y][labelw + labelp] = '.';
         }
 
         // x-axis
-        var x = labelw + labelp;
+        let x = labelw + labelp;
         while (x < w) {
-            out[h - 1][x++] = '�';
+            out[h - 1][x++] = '.';
             out[h - 1][x++] = ' ';
         }
 
@@ -131,12 +124,12 @@ var chart = {
         if (excess) data = data.slice(excess);
 
         // plot data
-        var x = labelw + labelp + 2;
+        x = labelw + labelp + 2;
         for (var i = 0; i < data.length; i++) {
             var d = data[i];
             var p = d / m;
             var y = Math.round((h - 2) * p);
-            var c = y < 0 ? '�' : '�';
+            var c = y < 0 ? '|' : '|';
             if (y < 0) y = -y;
 
             while (y--) {
@@ -148,12 +141,6 @@ var chart = {
 
         return padding(string(out, h), pad);
     }
-
-    /**
-     * Apply padding.
-     */
-
-
-
 };
+
 module.exports = chart;
