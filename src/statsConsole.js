@@ -109,13 +109,22 @@ var statsConsole = {
         let cpuAvgCount = opts.cpuHistory || 10;
         let title = opts.cpuTitle || "CPU";
         let statsTitle = opts.statsTitle || "Stats";
-        let leftTopCorner = opts.leftTopCorner || "╔";
-        let rightTopCorner = opts.rightTopCorner || "╗";
-        let leftBottomCorner = opts.leftBottomCorner || "╚";
-        let rightBottomCorner = opts.rightBottomCorner || "╝";
-        let hBar = opts.hBar || "═";
-        let vbar = opts.vBar || "║";
-        let percent = opts.percent || "%";
+
+        //let leftTopCorner = opts.leftTopCorner || "╔";
+        //let rightTopCorner = opts.rightTopCorner || "╗";
+        //let leftBottomCorner = opts.leftBottomCorner || "╚";
+        //let rightBottomCorner = opts.rightBottomCorner || "╝";
+        //let hBar = opts.hBar || "═";
+        //let vbar = opts.vBar || "║";
+
+		let leftTopCorner = opts.leftTopCorner || "-";
+        let rightTopCorner = opts.rightTopCorner || "-";
+        let leftBottomCorner = opts.leftBottomCorner || "-";
+        let rightBottomCorner = opts.rightBottomCorner || "-";
+        let hBar = opts.hBar || "-";
+        let vbar = opts.vBar || "|";
+
+		let percent = opts.percent || "%";
         let useProgressBar = opts.useProgressBar || true;
         let progrssBar = opts.progrssBar || "#";
         let spacing = opts.spacing || " ";
