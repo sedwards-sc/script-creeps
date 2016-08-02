@@ -1,4 +1,4 @@
-/* jshint esversion: 6 */
+
 //From: https://raw.githubusercontent.com/jstrace/chart/master/index.js
 
 /**
@@ -99,28 +99,28 @@ var chart = {
         var cw = w - labelw - labelp;
 
         // fill
-        for (let y = 0; y < h; y++) {
-            for (let x = 0; x < w; x++) {
+        for (var y = 0; y < h; y++) {
+            for (var x = 0; x < w; x++) {
                 out[y][x] = ' ';
             }
         }
 
         // y-axis labels
-        for (let i = 0; i < labelw; i++) {
+        for (var i = 0; i < labelw; i++) {
             out[0][i] = label[i];
         }
 
         out[h - 1][labelw - labelp] = '0';
 
         // y-axis
-        for (let y = 0; y < h; y++) {
-            out[y][labelw + labelp] = '·';
+        for (var y = 0; y < h; y++) {
+            out[y][labelw + labelp] = '�';
         }
 
         // x-axis
-        let x = labelw + labelp;
+        var x = labelw + labelp;
         while (x < w) {
-            out[h - 1][x++] = '·';
+            out[h - 1][x++] = '�';
             out[h - 1][x++] = ' ';
         }
 
@@ -131,12 +131,12 @@ var chart = {
         if (excess) data = data.slice(excess);
 
         // plot data
-        x = labelw + labelp + 2;
+        var x = labelw + labelp + 2;
         for (var i = 0; i < data.length; i++) {
             var d = data[i];
             var p = d / m;
             var y = Math.round((h - 2) * p);
-            var c = y < 0 ? '¦' : '¦';
+            var c = y < 0 ? '�' : '�';
             if (y < 0) y = -y;
 
             while (y--) {
@@ -149,6 +149,11 @@ var chart = {
         return padding(string(out, h), pad);
     }
 
-};
+    /**
+     * Apply padding.
+     */
 
+
+
+};
 module.exports = chart;

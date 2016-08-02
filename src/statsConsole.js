@@ -1,5 +1,3 @@
-/* jshint esversion: 6 */
-
 var statsConsole = {
 
     /**
@@ -15,7 +13,7 @@ var statsConsole = {
      */
     run: function (data, logCpu = true, opts = {}) {
 
-        if (Memory.stats === undefined){
+        if (Memory.stats == undefined){
             Memory.stats = {};
         }
         Memory.stats.cpu = data;
@@ -45,15 +43,15 @@ var statsConsole = {
         if (logCpu) {
 
 
-            if (!Memory.stats.__cpu && Memory.stats.__cpu === undefined) {
-                Memory.stats.__cpu = new Array(0);
+            if (!Memory.stats.__cpu && Memory.stats.__cpu == undefined) {
+                Memory.stats["__cpu"] = new Array(0);
             }
             Memory.stats.__cpu.unshift(Game.cpu.getUsed());
-            if (Memory.stats.__cpu.length > max - 6) {
-                Memory.stats.__cpu.pop();
+            if (Memory.stats["__cpu"].length > max - 6) {
+                Memory.stats["__cpu"].pop();
             }
 
-            if (Memory.stats.logs === undefined) {
+            if (Memory.stats.logs == undefined) {
                 Memory.stats.logs = [["Logging Initialized!", 3]];
             }
 
@@ -68,7 +66,7 @@ var statsConsole = {
     //TODO: allow passing data to it.
     displayHistogram: function () {
         var asciiChart = require("ascii-chart");
-        let output = asciiChart.chart(Memory.stats.__cpu.slice(0, 50).reverse(), {width: 100, height: 20});
+        let output = asciiChart.chart(Memory.stats.__cpu.slice(0, 50).reverse(), {width: 100, height: 20})
         let style = {
             lineHeight: '1'
         };
@@ -128,7 +126,7 @@ var statsConsole = {
         let cpuTotal = Game.cpu.getUsed();
 
         let addSpace = 0;
-        if (!(boxWidth % 2 === 0)) { // jshint ignore:line
+        if (!(boxWidth % 2 === 0)) {
             addSpace = 1;
         }
 
@@ -170,7 +168,7 @@ var statsConsole = {
         title = statsTitle;            // Name of Stats block
         let gclProgress = Game.gcl.progress;
         if (gclProgress < 10) {
-            gclProgress = 2;
+            gclProgress = 2
         }
         let secondLineName = ["GCL"];
         let secondLineStat = [((gclProgress / Game.gcl.progressTotal) * 100).toFixed(2) + percent];
@@ -256,9 +254,9 @@ var statsConsole = {
     },
     geohash: function () { // Get creep location and save as geohash
         var geohash = require("geohash");
-        var geohashArray;
+        var geohashArray = undefined;
         for (let creep in Game.creeps) {
-            if (creep !== undefined) {
+            if (creep != undefined) {
                 let thisRoom = Game.creeps[creep].pos.roomName;
                 let strBuild = "";
                 for (let i = 0, len = thisRoom.length; i < len; i++) {
@@ -329,7 +327,7 @@ var statsConsole = {
         let borderWidth = 5;
 
         let addSpace = 0;
-        if (!(boxWidth % 2 === 0)) { //jshint ignore:line
+        if (!(boxWidth % 2 === 0)) {
             addSpace = 1;
         }
         var colors = {
@@ -345,9 +343,9 @@ var statsConsole = {
 
         var outputLog = leftTopCorner + hBar.repeat(((boxWidth - title.length) / 2)) + title + hBar.repeat(((boxWidth - title.length) / 2) + addSpace) + rightTopCorner + "\n";
         for (let i = 0; i < boxHeight; i++) { // Y coordinate |
-            let severity = Memory.stats.logs[i][1];
-            let message = Memory.stats.logs[i][0];
-            let htmlFontStartHighlight = "<font color='" + colors.highlight + "' type='highlight'>";
+            let severity = Memory.stats.logs[i][0, 1];
+            let message = Memory.stats.logs[i][0, 0];
+            let htmlFontStartHighlight = "<font color='" + colors['highlight'] + "' type='highlight'>";
             let htmlFontStart = "<font color='" + colors[severity] + "' severity='" + severity + "'>";
             let htmlStart = "";
             let htmlEnd = "</font>";
