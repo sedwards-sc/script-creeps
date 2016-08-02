@@ -325,13 +325,22 @@ var statsConsole = {
 
         let totalWidth = opts.width || 100;
         let title = opts.title || " Logs ";
-        let leftTopCorner = opts.leftTopCorner || "╔";
-        let rightTopCorner = opts.rightTopCorner || "╗";
-        let leftBottomCorner = opts.leftBottomCorner || "╚";
-        let rightBottomCorner = opts.rightBottomCorner || "╝";
-        let hBar = opts.hBar || "═";
-        let vbar = opts.vBar || "║";
-        let spacing = opts.spacing || " ";
+
+        //let leftTopCorner = opts.leftTopCorner || "╔";
+        //let rightTopCorner = opts.rightTopCorner || "╗";
+        //let leftBottomCorner = opts.leftBottomCorner || "╚";
+        //let rightBottomCorner = opts.rightBottomCorner || "╝";
+        //let hBar = opts.hBar || "═";
+        //let vbar = opts.vBar || "║";
+
+		let leftTopCorner = opts.leftTopCorner || "-";
+        let rightTopCorner = opts.rightTopCorner || "-";
+        let leftBottomCorner = opts.leftBottomCorner || "-";
+        let rightBottomCorner = opts.rightBottomCorner || "-";
+        let hBar = opts.hBar || "-";
+        let vbar = opts.vBar || "|";
+
+		let spacing = opts.spacing || " ";
 
         let boxHeight = logs.length - 1;
         let boxWidth = totalWidth - 3; // Inside of the box
