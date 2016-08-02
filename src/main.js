@@ -445,6 +445,38 @@ module.exports.loop = function () {
 				Memory.roster[creep.pos.roomName].spawning.push(creep.memory.role);
 			}
 	    }
+
+	    var statsConsole = require("statsConsole");
+
+        // sample data format ["Name for Stat", variableForStat]
+        let myStats = [];
+        /*let myStats = [
+        	["Creep Managers", CreepManagersCPUUsage],
+        	["Towers", towersCPUUsage],
+        	["Links", linksCPUUsage],
+        	["Setup Roles", SetupRolesCPUUsage],
+        	["Creeps", CreepsCPUUsage],
+        	["Init", initCPUUsage],
+        	["Stats", statsCPUUsage],
+        	["Total", totalCPUUsage]
+        ];*/
+
+        statsConsole.run(myStats); // Run Stats collection
+
+        if (Game.cpu.getUsed() > Game.cpu.limit) {
+        	statsConsole.log("Tick: " + Game.time + "  CPU OVERRUN: " + Game.cpu.getUsed().toFixed(2) + "  Bucket:" + Game.cpu.bucket, 5);
+        }
+
+        if ((Game.time % 5) === 0) {
+            let timeBeforeDisplay = Game.cpu.getUsed();
+        	console.log(statsConsole.displayHistogram());
+        	console.log(statsConsole.displayStats());
+        	console.log(statsConsole.displayLogs());
+        	//console.log(statsConsole.displayMaps()); // Don't use as it will consume ~30-40 CPU
+        	totalTimeToDisplay = (Game.cpu.getUsed() - timeBeforeDisplay);
+        	console.log("Time to Draw: " + totalTimeToDisplay.toFixed(2));
+        }
+
 	});
 };
 
