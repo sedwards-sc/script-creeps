@@ -901,6 +901,7 @@ Creep.prototype.runMedic = function() {
 			this.memory.leader = creepLeader.name;
 		} else {
 			this.log('could not find leader');
+			// TODO: flee from room if hostile
 			return;
 		}
 	}
@@ -919,10 +920,10 @@ Creep.prototype.runMedic = function() {
  	let sortedInRangeHurtCreeps = _.sortBy(inRangeHurtCreeps, function(creep) { return creep.hits; });
 
 	if(sortedInRangeHurtCreeps.length > 0) {
-		this.rangedHeal(sortedInRangeHurtCreeps[0]);
+		if(this.heal(sortedInRangeHurtCreeps[0]) !== OK) {
+			this.rangedHeal(sortedInRangeHurtCreeps[0]);
+		}
 	}
-
-	// TODO: add regular healing (i.e. range 1)
 };
 
 Creep.prototype.runScout = function() {
