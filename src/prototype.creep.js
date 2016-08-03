@@ -49,6 +49,14 @@ Creep.prototype.run = function() {
     }
 };
 
+Creep.prototype.log = function(msg) {
+	return console.log('creep: ' + this.name + ' (' + this.room.name + '), msg: ' + msg);
+};
+
+Creep.prototype.errorLog = function(msg, errCode) {
+	return console.log('!!!Error!!! creep: ' + this.name + ' (' + this.room.name + '), msg: ' + msg + ' (' + errCode + ')');
+};
+
 Creep.prototype.runMineralHarvester = function() {
 	// state 0 is harvest
 	// state 1 is transfer minerals
@@ -374,6 +382,8 @@ Creep.prototype.runLinker2 = function() {
 					console.log('!!!Error: ' + this.name + ' could not successfully transfer (' + transferReturn + ')');
 				}
 			}
+		} else {
+
 		}
     } else {
         this.moveTo(myFlag);
@@ -770,6 +780,101 @@ Creep.prototype.runDismantler = function() {
 		let attackRoomPosition = new RoomPosition(25, 25, attackRoom);
 		this.moveTo(attackRoomPosition);
 	}
+};
+
+Creep.prototype.runDismantler2 = function() {
+	let myFlag;
+
+	if(this.memory.flagName === undefined) {
+        this.errorLog('no flag in memory', ERR_NOT_FOUND);
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+        if(myFlag === undefined) {
+			this.errorLog('flag is missing', ERR_NOT_FOUND);
+	        return;
+		}
+    }
+
+    if(this.pos.roomName === myFlag.pos.roomName) {
+		let goal;
+
+		let hostileSpawns = this.room.find(FIND_HOSTILE_STRUCTURES, {
+				filter: (structure) => {
+					return structure.structureType === STRUCTURE_SPAWN;
+				}
+		});
+
+		if(hostileSpawns.length > 0) {
+			goal = { pos: hostileSpawns[0].pos, range: 0 };
+		}
+
+		if(goal === undefined) {
+			let hostileTowers = this.room.find(FIND_HOSTILE_STRUCTURES, {
+					filter: (structure) => {
+						return structure.structureType === STRUCTURE_TOWER;
+					}
+			});
+
+			if(hostileTowers.length > 0) {
+				goal = { pos: hostileTowers[0].pos, range: 0 };
+			}
+		}
+
+		if(goal === undefined) {
+			this.log('no more attack targets');
+			return;
+		}
+
+		let pathToTarget = PathFinder.search(this.pos, goal, {
+			plainCost: 2,
+			swampCost: 10,
+
+			roomCallback: function(roomName) {
+
+				let room = Game.rooms[roomName];
+				if (!room) return;
+				let costs = new PathFinder.CostMatrix();
+
+				room.find(FIND_STRUCTURES).forEach(function(structure) {
+					if (structure.structureType === STRUCTURE_ROAD) {
+						// Favor roads over plain tiles
+						costs.set(structure.pos.x, structure.pos.y, 1);
+					} else if ((structure.structureType !== STRUCTURE_CONTAINER) && (structure.structureType !== STRUCTURE_RAMPART) && (structure.structureType !== STRUCTURE_WALL) && (structure.structureType !== STRUCTURE_SPAWN) && (structure.structureType !== STRUCTURE_TOWER)) {
+						costs.set(structure.pos.x, structure.pos.y, 0xff);
+					}
+				});
+
+				// Avoid creeps in the room
+				room.find(FIND_CREEPS).forEach(function(creep) {
+					costs.set(creep.pos.x, creep.pos.y, 0xff);
+				});
+
+				return costs;
+			},
+		});
+
+		if(!pathToTarget) {
+			this.errorLog('no path to target', ERR_NO_PATH);
+		}
+
+		let nextPos = pathToTarget.path[0];
+
+		let foundStructures = this.room.lookForAt(LOOK_STRUCTURES, nextPos);
+
+		if(foundStructures.length && !foundStructures[0].my) {
+			this.dismantle(foundStructures[0]);
+		} else {
+			this.moveTo(nextPos);
+		}
+
+	} else {
+		this.moveTo(myFlag);
+	}
+};
+
+Creep.prototype.runMedic = function() {
+
 };
 
 Creep.prototype.runScout = function() {
@@ -1515,12 +1620,4 @@ Creep.prototype.runRemoteBuilder = function() {
 			}
 		}
 	}
-};
-
-Creep.prototype.log = function(msg) {
-	return console.log('creep: ' + this.name + ' (' + this.room.name + '), msg: ' + msg);
-};
-
-Creep.prototype.errorLog = function(msg, errCode) {
-	return console.log('!!!Error!!! creep: ' + this.name + ' (' + this.room.name + '), msg: ' + msg + ' (' + errCode + ')');
 };
