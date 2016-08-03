@@ -874,7 +874,55 @@ Creep.prototype.runDismantler2 = function() {
 };
 
 Creep.prototype.runMedic = function() {
+	let myFlag;
 
+	if(this.memory.flagName === undefined) {
+        this.errorLog('no flag in memory', ERR_NOT_FOUND);
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+        if(myFlag === undefined) {
+			this.errorLog('flag is missing', ERR_NOT_FOUND);
+	        return;
+		}
+    }
+
+	let creepLeader = Game.creeps[this.memory.leader];
+
+	if(!creepLeader) {
+		let creepLeaders = _.filter(Game.creeps,
+				(creep) => {
+					return ((creep.memory.flagName === this.memory.flagName) && (creep.memory.role === 'dismantler'));
+				}
+		);
+
+		if(creepLeaders.length > 0) {
+			creepLeader = creepLeaders[0];
+			this.memory.leader = creepLeader.name;
+		} else {
+			this.log('could not find leader');
+			return;
+		}
+	}
+
+	if(!this.pos.isNearTo(creepLeader)) {
+		this.moveTo(creepLeader);
+	}
+
+	let hurtSameRoomCreeps = this.room.find(FIND_MY_CREEPS, {
+			filter: (creep) => {
+				return creep.hits < creep.hitsMax;
+			}
+	});
+
+	let inRangeHurtCreeps = this.pos.findInRange(hurtSameRoomCreeps, 3);
+ 	let sortedInRangeHurtCreeps = _.sortBy(inRangeHurtCreeps, function(creep) { return creep.hits; });
+
+	if(sortedInRangeHurtCreeps.length > 0) {
+		this.rangedHeal(sortedInRangeHurtCreeps[0]);
+	}
+
+	// TODO: add regular healing (i.e. range 1)
 };
 
 Creep.prototype.runScout = function() {
