@@ -361,6 +361,47 @@ module.exports.loop = function () {
 	    		}
 			}
 
+			if(roomSpawns.length >= 2) {
+			    mainSpawn = roomSpawns[1];
+			}
+
+			let numMedics = 3;
+
+			if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
+				let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
+				let roomCreepQuotas = Game.rooms[roomName].memory.creepQuotas;
+				if((roomCreepQuotas.dismantler) && (undefToZero(roomCreepRoster.medic) < (roomCreepQuotas.dismantler.length * numMedics))) {
+	    		    for(let curQuotaIndex in roomCreepQuotas.dismantler) {
+	    		        let curFlagName = roomCreepQuotas.dismantler[curQuotaIndex];
+	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === 'medic'));
+	    		        if(currentFlagCreeps.length < numMedics) {
+							let medicBody = [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL];
+							if(Game.flags[curFlagName].memory.medicBodyParts) {
+								medicBody = Game.flags[curFlagName].memory.medicBodyParts;
+							}
+	    		            let newName = mainSpawn.createCreep(medicBody, undefined, {spawnRoom: roomName, role: 'medic', flagName: curFlagName});
+	    			        console.log('Spawning new medic: ' + newName + ' - ' + curFlagName);
+	    			        break;
+	    		        }
+	    		    }
+	    		}  else if((roomCreepQuotas.dismantler) && (undefToZero(roomCreepRoster.dismantler) < roomCreepQuotas.dismantler.length)) {
+					let curRole = 'dismantler';
+	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+	    		        if(currentFlagCreeps.length < 1) {
+							let curCreepBody = [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK];
+							if(Game.flags[curFlagName].memory.dismantlerBodyParts) {
+								curCreepBody = Game.flags[curFlagName].memory.dismantlerBodyParts;
+							}
+	    		            let newName = mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+	    			        console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
+	    			        break;
+	    		        }
+	    		    }
+	    		}
+			}
+
 			// run links
 			let links = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
 			links.forEach(link => link.run());
