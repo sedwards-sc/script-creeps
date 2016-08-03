@@ -39,7 +39,9 @@ Creep.prototype.run = function() {
 	} else if(this.memory.role === 'specialCarrier') {
 		this.runSpecialCarrier();
 	} else if(this.memory.role === 'dismantler') {
-		this.runDismantler();
+		this.runDismantler2();
+	} else if(this.memory.role === 'medic') {
+		this.runMedic();
 	} else if(this.memory.role === 'scout') {
 		this.runScout();
 	} else if(this.memory.role === 'soldier') {
