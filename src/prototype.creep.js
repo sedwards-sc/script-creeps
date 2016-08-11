@@ -392,6 +392,94 @@ Creep.prototype.runLinker2 = function() {
     }
 };
 
+Creep.prototype.runLinker3 = function() {
+	let myFlag;
+
+	if(this.memory.flagName === undefined) {
+        this.errorLog('no flag in memory', ERR_NOT_FOUND);
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+        if(myFlag === undefined) {
+			this.errorLog('flag is missing', ERR_NOT_FOUND);
+	        return;
+		}
+    }
+
+    if(this.pos.isEqualTo(myFlag)) {
+		if(_.sum(this.carry) > 0) {
+			let highestQuantityResourceType = this.getHighestQuantityResourceType();
+			let transferTarget;
+
+			let roomTerminal = this.room.terminal;
+			if(roomTerminal) {
+				if(roomTerminal.store[highestQuantityResourceType] < roomTerminal.getResourceQuota(highestQuantityResourceType)) {
+					transferTarget = roomTerminal;
+				}
+			}
+
+			let roomStorage = this.room.storage;
+			if(roomStorage) {
+				if((highestQuantityResourceType === RESOURCE_ENERGY) && (roomStorage.store.energy < 10000)) {
+					transferTarget = roomStorage;
+				}
+				if(!transferTarget) {
+					transferTarget = roomStorage;
+				}
+			}
+
+
+			if(transferTarget) {
+				let transferReturn = this.transfer(transferTarget, highestQuantityResourceType);
+				if(transferReturn != OK) {
+					this.errorLog('could not successfully transfer', transferReturn);
+				}
+			}
+		} else {
+			let myLink = Game.getObjectById(this.memory.myLinkId);
+	        if(myLink === null) {
+	            myLink = myFlag.pos.findClosestRange(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
+	            this.memory.myLinkId = myLink.id;
+	        }
+
+			if(!myLink) {
+				this.errorLog('could not find link', ERR_NOT_FOUND);
+				return;
+			}
+
+			if(myLink.energy > 0) {
+				this.withdraw(myLink, RESOURCE_ENERGY);
+			} else {
+				if(this.room.storage && this.room.terminal) {
+					for(let curResourceType in this.room.storage.store) {
+						if((this.room.storage.store[curResourceType] > 0) && (this.room.terminal.store[curResourceType] < this.room.terminal.getResourceQuota(curResourceType))) {
+							if(this.withdraw(this.room.storage, curResourceType) === OK) {
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+    } else {
+        this.moveTo(myFlag);
+    }
+};
+
+Creep.prototype.getHighestQuantityResourceType = function() {
+	let maxResourceType = RESOURCE_ENERGY;
+	let maxResourceQuantity = 0;
+
+	for(let curResourceType in this.carry) {
+		if(this.carry[curResourceType] > maxResourceQuantity) {
+			maxResourceQuantity = this.carry[curResourceType];
+			maxResourceType = curResourceType;
+		}
+	}
+
+	return maxResourceType;
+};
+
 // take a resource from anything else
 Creep.prototype.takeResource = function(target, resource, amount) {
     if (typeof target === 'string') {
