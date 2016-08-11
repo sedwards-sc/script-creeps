@@ -6,6 +6,7 @@ require('prototype.creep');
 require('prototype.flag');
 require('prototype.spawn');
 require('prototype.link');
+require('prototype.terminal');
 
 require('object.rosters');
 require('object.remotes');
