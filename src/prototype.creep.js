@@ -438,7 +438,7 @@ Creep.prototype.runLinker3 = function() {
 		} else {
 			let myLink = Game.getObjectById(this.memory.myLinkId);
 	        if(myLink === null) {
-	            myLink = myFlag.pos.findClosestRange(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
+	            myLink = myFlag.pos.findClosestByRange(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
 	            this.memory.myLinkId = myLink.id;
 	        }
 
