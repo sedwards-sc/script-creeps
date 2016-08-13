@@ -4,6 +4,7 @@ require('utils').populateUtils(global);
 require('prototype.room');
 require('prototype.creep');
 require('prototype.flag');
+require('prototype.structure');
 require('prototype.spawn');
 require('prototype.link');
 require('prototype.terminal');
