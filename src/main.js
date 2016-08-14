@@ -13,6 +13,9 @@ require('prototype.terminal');
 require('object.rosters');
 require('object.remotes');
 
+var ScreepsStats = require('screepsstats');
+global.Stats = new ScreepsStats();
+
 require('debug').populate(global);
 
 var profiler = require('screeps-profiler');
@@ -469,6 +472,9 @@ module.exports.loop = function () {
         	totalTimeToDisplay = (Game.cpu.getUsed() - timeBeforeDisplay);
         	console.log("Time to Draw: " + totalTimeToDisplay.toFixed(2));
         }
+
+
+		Stats.runBuiltinStats(); // for screeps-stats
 
 	});
 };
