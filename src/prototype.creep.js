@@ -413,7 +413,7 @@ Creep.prototype.runLinker3 = function() {
 
 			let roomTerminal = this.room.terminal;
 			if(roomTerminal) {
-				if(roomTerminal.store[highestQuantityResourceType] < roomTerminal.getResourceQuota(highestQuantityResourceType)) {
+				if(undefToZero(roomTerminal.store[highestQuantityResourceType]) < roomTerminal.getResourceQuota(highestQuantityResourceType)) {
 					transferTarget = roomTerminal;
 				}
 			}
