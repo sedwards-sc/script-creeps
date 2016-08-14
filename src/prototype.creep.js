@@ -452,7 +452,7 @@ Creep.prototype.runLinker3 = function() {
 			} else {
 				if(this.room.storage && this.room.terminal) {
 					for(let curResourceType in this.room.storage.store) {
-						if((this.room.storage.store[curResourceType] > 0) && (this.room.terminal.store[curResourceType] < this.room.terminal.getResourceQuota(curResourceType))) {
+						if((this.room.storage.store[curResourceType] > 0) && (undefToZero(this.room.terminal.store[curResourceType]) < this.room.terminal.getResourceQuota(curResourceType))) {
 							if(this.withdraw(this.room.storage, curResourceType) === OK) {
 								break;
 							}
