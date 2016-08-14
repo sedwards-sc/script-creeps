@@ -11,7 +11,7 @@ Creep.prototype.run = function() {
 	} else if(this.memory.role === 'harvester') {
 		this.runHarvester2();
 	} else if(this.memory.role === 'linker') {
-		this.runLinker2();
+		this.runLinker3();
 	} else if(this.memory.role === 'builder') {
 		this.runBuilder();
 	} else if(this.memory.role === 'upgrader') {
