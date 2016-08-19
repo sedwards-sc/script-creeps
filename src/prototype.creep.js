@@ -135,10 +135,18 @@ Creep.prototype.runCarrier = function () {
 	}
 
 	if(this.memory.state === 0) {
-		// find storage
-		let roomStorage = this.room.storage;
-		if(this.withdraw(roomStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-			this.moveTo(roomStorage);
+		if(this.room.terminal && (this.room.terminal.store.energy > this.room.terminal.getResourceQuota(RESOURCE_ENERGY))) {
+			let excessEnergy = this.room.terminal.store.energy - this.room.terminal.getResourceQuota(RESOURCE_ENERGY);
+			let transferAmount = Math.min(excessEnergy, this.carryCapacity);
+			if(this.withdraw(this.room.terminal, RESOURCE_ENERGY, transferAmount) === ERR_NOT_IN_RANGE) {
+				this.moveTo(this.room.terminal);
+			}
+		} else {
+			// find storage
+			let roomStorage = this.room.storage;
+			if(this.withdraw(roomStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+				this.moveTo(roomStorage);
+			}
 		}
 	} else if(this.memory.state == 1) {
 		// transfer energy to structures
