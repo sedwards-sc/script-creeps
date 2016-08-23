@@ -457,6 +457,11 @@ Creep.prototype.runLinker3 = function() {
 
 			if(myLink.energy > 0) {
 				this.withdraw(myLink, RESOURCE_ENERGY);
+			} else if(this.room.terminal && (undefToZero(this.room.terminal.store.energy) > this.room.terminal.getResourceQuota(RESOURCE_ENERGY))) {
+				// TODO: upgrade to have linkers remove excess of other resource types as well
+				let excessEnergy = this.room.terminal.store.energy - this.room.terminal.getResourceQuota(RESOURCE_ENERGY);
+				let withdrawEnergy = Math.min(this.carryCapacity, excessEnergy);
+				this.withdraw(this.room.terminal, RESOURCE_ENERGY);
 			} else {
 				if(this.room.storage && this.room.terminal) {
 					for(let curResourceType in this.room.storage.store) {
