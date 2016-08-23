@@ -111,6 +111,8 @@ module.exports.loop = function () {
 
 		// room spawn loop
 		for(let roomName in Game.rooms) {
+			let curRoom = Game.rooms[roomName];
+
 			// find room spawns
 			let roomSpawns = Game.rooms[roomName].find(FIND_MY_SPAWNS);
 
@@ -422,6 +424,9 @@ module.exports.loop = function () {
 
 			links.forEach(link => link.refillCreeps(linkTransferCandidates));
 
+			if(curRoom.terminal) {
+				curRoom.terminal.run();
+			}
 		}
 
 		Memory.roster = {};
