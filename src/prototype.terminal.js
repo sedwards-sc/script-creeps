@@ -18,14 +18,14 @@ StructureTerminal.prototype.run = function() {
 	for(let i in this.room.memory.distributionList) {
 		let curDistObj = this.room.memory.distributionList[i];
 
-		if(this.store[curDistObj.mineral] < this.getResourceQuota(curDistObj.mineral)) {
+		if(undefToZero(this.store[curDistObj.mineral]) < this.getResourceQuota(curDistObj.mineral)) {
 			continue;
 		}
 
 		let destinationTerminal = Game.rooms[curDistObj.room].terminal;
 
-		if(destinationTerminal.store[curDistObj.mineral] < destinationTerminal.getResourceQuota(curDistObj.mineral)) {
-			let resourceDeficit = destinationTerminal.getResourceQuota(curDistObj.mineral) - destinationTerminal.store[curDistObj.mineral];
+		if(undefToZero(destinationTerminal.store[curDistObj.mineral]) < destinationTerminal.getResourceQuota(curDistObj.mineral)) {
+			let resourceDeficit = destinationTerminal.getResourceQuota(curDistObj.mineral) - undefToZero(destinationTerminal.store[curDistObj.mineral]);
 			let transferAmount = Math.min(resourceDeficit, 1000);
 			if(this.send(curDistObj.mineral, transferAmount, curDistObj.room, 'empire distribution') === OK) {
 				break;
