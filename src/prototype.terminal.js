@@ -11,12 +11,12 @@ StructureTerminal.prototype.getResourceQuota = function(resourceType) {
 };
 
 StructureTerminal.prototype.run = function() {
-	if(typeof this.memory.distributionList === 'undefined') {
+	if(typeof this.room.memory.distributionList === 'undefined') {
 		return;
 	}
 
-	for(let i in this.memory.distributionList) {
-		let curDistObj = this.memory.distributionList[i];
+	for(let i in this.room.memory.distributionList) {
+		let curDistObj = this.room.memory.distributionList[i];
 
 		if(this.store[curDistObj.mineral] < this.getResourceQuota(curDistObj.mineral)) {
 			continue;
