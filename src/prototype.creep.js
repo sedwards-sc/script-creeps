@@ -919,6 +919,14 @@ Creep.prototype.runDismantler2 = function() {
 			}
 		}
 
+		if(typeof goal === 'undefined') {
+			let foundStructures = this.room.lookForAt(LOOK_STRUCTURES, myFlag.pos);
+
+			if(foundStructures.length && !foundStructures[0].my) {
+				goal = foundStructures[0];
+			}
+		}
+
 		if(goal === undefined) {
 			this.log('no more attack targets');
 			return;
