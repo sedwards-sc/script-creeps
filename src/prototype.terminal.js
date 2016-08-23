@@ -5,7 +5,7 @@
 
 StructureTerminal.prototype.getResourceQuota = function(resourceType) {
 	if(resourceType === RESOURCE_ENERGY) {
-		return 25000;
+		return 50000;
 	}
-	return 5000;
+	return 6000;
 };
