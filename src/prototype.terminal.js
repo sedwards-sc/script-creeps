@@ -33,8 +33,8 @@ StructureTerminal.prototype.run = function() {
 		}
 
 		if(curDistObj.override === true) {
-			// protect against draining a room
-			if(this.room.storage.store.energy > 500000) {
+			// protect against draining a room or overfilling the other room
+			if((this.room.storage.store.energy > 500000) && (undefToZero(destinationTerminal.store[curDistObj.mineral]) < (destinationTerminal.getResourceQuota(curDistObj.mineral) * 2)) {
 				if(this.send(curDistObj.mineral, 1000, curDistObj.room, 'empire distribution (override)') === OK) {
 					break;
 				}
