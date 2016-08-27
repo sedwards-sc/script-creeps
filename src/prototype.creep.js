@@ -1559,9 +1559,9 @@ Creep.prototype.runClaimer = function() {
 	// state 0 is head to next room
 
 
-	let checkPoint1 = new RoomPosition(34, 9, 'E7S24');
-	let checkPoint2 = new RoomPosition(34, 9, 'E7S24');
-	let checkPoint3 = new RoomPosition(34, 9, 'E7S24');
+	let checkPoint1 = new RoomPosition(21, 5, 'E9S24');
+	let checkPoint2 = new RoomPosition(21, 5, 'E9S24');
+	let checkPoint3 = new RoomPosition(21, 5, 'E9S24');
 
 
 	if(this.memory.state === undefined) {
@@ -1592,6 +1592,49 @@ Creep.prototype.runClaimer = function() {
 	} else if(this.memory.state === 3) {
 		var controllerToClaim = this.room.controller;
 		if(this.claimController(controllerToClaim) === ERR_NOT_IN_RANGE) {
+			this.moveTo(controllerToClaim);
+		}
+	}
+};
+
+Creep.prototype.runAttackClaimer = function() {
+	this.say('claimer');
+	// state 0 is head to next room
+
+
+	let checkPoint1 = new RoomPosition(21, 5, 'E9S24');
+	let checkPoint2 = new RoomPosition(21, 5, 'E9S24');
+	let checkPoint3 = new RoomPosition(21, 5, 'E9S24');
+
+
+	if(this.memory.state === undefined) {
+		this.memory.state = 0;
+	}
+
+	if((this.memory.state === 0) && (JSON.stringify(this.pos) === JSON.stringify(checkPoint1))) {
+		this.say('chkpt 1');
+		this.memory.state = 1;
+	}
+
+	if((this.memory.state === 1) && (JSON.stringify(this.pos) === JSON.stringify(checkPoint2))) {
+		this.say('chkpt 2');
+		this.memory.state = 2;
+	}
+
+	if((this.memory.state === 2) && (JSON.stringify(this.pos) === JSON.stringify(checkPoint3))) {
+		this.say('chkpt 3');
+		this.memory.state = 3;
+	}
+
+	if(this.memory.state === 0) {
+		this.moveTo(checkPoint1);
+	} else if(this.memory.state === 1) {
+		this.moveTo(checkPoint2);
+	} else if(this.memory.state === 2) {
+		this.moveTo(checkPoint3);
+	} else if(this.memory.state === 3) {
+		var controllerToClaim = this.room.controller;
+		if(this.attackController(controllerToClaim) === ERR_NOT_IN_RANGE) {
 			this.moveTo(controllerToClaim);
 		}
 	}
