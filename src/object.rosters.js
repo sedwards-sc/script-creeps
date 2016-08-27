@@ -33,7 +33,7 @@ module.exports = (function(){
 				1, //miners
 				2, //carriers
 				1, //linkers
-				1, //reinforcers
+				0, //reinforcers
 				3, //reservers
 				0, //claimers
 				0, //remoteUpgraders
@@ -51,7 +51,7 @@ module.exports = (function(){
 				1, //miners
 				2, //carriers
 				1, //linkers
-				1, //reinforcers
+				0, //reinforcers
 				2, //reservers
 				0, //claimers
 				0, //remoteUpgraders
@@ -69,7 +69,7 @@ module.exports = (function(){
 				0, //miners
 				0, //carriers
 				0, //linkers
-				1, //reinforcers
+				0, //reinforcers
 				1, //reservers
 				0, //claimers
 				0, //remoteUpgraders
@@ -87,7 +87,7 @@ module.exports = (function(){
 				0, //miners
 				0, //carriers
 				0, //linkers
-				1, //reinforcers
+				0, //reinforcers
 				1, //reservers
 				0, //claimers
 				0, //remoteUpgraders
@@ -105,7 +105,7 @@ module.exports = (function(){
 				0, //miners
 				0, //carriers
 				0, //linkers
-				1, //reinforcers
+				0, //reinforcers
 				0, //reservers
 				0, //claimers
 				0, //remoteUpgraders
