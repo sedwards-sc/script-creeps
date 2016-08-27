@@ -1766,9 +1766,9 @@ Creep.prototype.runRemoteBuilder = function() {
 	// state 0 is head to next room
 
 
-	let checkPoint1 = new RoomPosition(25, 40, 'E7S24');
-	let checkPoint2 = new RoomPosition(25, 40, 'E7S24');
-	let checkPoint3 = new RoomPosition(25, 40, 'E7S24');
+	let checkPoint1 = new RoomPosition(21, 5, 'E9S24');
+	let checkPoint2 = new RoomPosition(21, 5, 'E9S24');
+	let checkPoint3 = new RoomPosition(21, 5, 'E9S24');
 
 
 	if(this.memory.state === undefined) {
