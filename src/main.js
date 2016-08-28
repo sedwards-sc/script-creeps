@@ -1,5 +1,5 @@
 /* jshint esversion: 6, loopfunc: true */
-// comment
+
 require('utils').populateUtils(global);
 
 require('prototype.room');
