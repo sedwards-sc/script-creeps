@@ -42,7 +42,7 @@ StructureSpawn.prototype.spawnHarvester2 = function(roomCreeps) {
 			harvesterBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 		} else if(myRoomEnergyCapacity >= 950) {
 			harvesterBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
-		} else if (myRoomEnergyCapacity >= 350) {
+		} else if (myRoomEnergyCapacity >= 400) {
 			harvesterBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 		}
 	}
