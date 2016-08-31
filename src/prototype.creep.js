@@ -20,6 +20,8 @@ Creep.prototype.run = function() {
 		this.runReinforcer();
     } else if(this.memory.role === 'mineralHarvester') {
         this.runMineralHarvester();
+	} else if(this.memory.role === 'mineralCarrier') {
+		this.runMineralCarrier();
 	} else if(this.memory.role === 'defender') {
 		this.runDefender();
 	} else if(this.memory.role === 'remoteMiner') {
@@ -1844,7 +1846,7 @@ Creep.prototype.runMineralCarrier = function() {
 	let roomTransferFlagRegex = new RegExp('^' + this.memory.spawnRoom + '_mineralTransfer_');
 	let roomTransferFlags = _.filter(Game.flags, (flag) => roomTransferFlagRegex.test(flag.name) === true);
 
-	if(roomTransferFlags.length < 1) {
+	if(!roomTransferFlags.length) {
 		this.log('no mineral flags left in room');
 		return;
 	}
@@ -1860,6 +1862,44 @@ Creep.prototype.runMineralCarrier = function() {
 
 	let flagMineral = flagMineralReturn[1];
 
+	let flagPosStructures = this.room.lookForAt(LOOK_STRUCTURES, firstTransferFlag);
 
+	if(!flagPosStructures.length) {
+		this.errorLog('no lab found under flag (' + firstTransferFlag.name + ')', ERR_NOT_FOUND);
+		return;
+	}
+
+	// TODO: make this work if a rampart is on top
+	let lab = flagPosStructures[0];
+
+	if(lab.structureType !== STRUCTURE_LAB) {
+		this.errorLog('found non-lab structure under flag', ERR_NOT_FOUND);
+		return;
+	}
+
+	if(lab.mineralAmount === lab.mineralCapacity) {
+		this.log('lab full, removing flag(' + firstTransferFlag.name + ')');
+		firstTransferFlag.remove();
+		return;
+	}
+
+	if(_.sum(this.carry) > 0) {
+		//drop off minerals at lab
+		if(this.transfer(lab, flagMineral) === ERR_NOT_IN_RANGE) {
+			this.moveTo(lab);
+		}
+	} else {
+		// get minerals from terminal
+		if(typeof this.room.terminal === 'undefined') {
+			this.errorLog('no terminal', ERR_NOT_FOUND);
+			return;
+		}
+
+		let transferAmount = Math.min(lab.mineralCapacity - lab.mineralAmount, this.carryCapacity);
+
+		if(this.withdraw(this.room.terminal, flagMineral, transferAmount) === ERR_NOT_IN_RANGE) {
+			this.moveTo(this.room.terminal);
+		}
+	}
 
 };

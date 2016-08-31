@@ -368,7 +368,19 @@ module.exports.loop = function () {
 	    			        break;
 	    		        }
 	    		    }
-	    		}
+	    		} else {
+					// filter for room mineral transfer flags
+					let roomTransferFlagRegex = new RegExp('^' + roomName + '_mineralTransfer_');
+					let roomTransferFlags = _.filter(Game.flags, (flag) => roomTransferFlagRegex.test(flag.name) === true);
+
+					if(roomTransferFlags.length) {
+						let creepName = roomName + '_mineralCarrier';
+						if(!Game.creeps[creepName]) {
+							let newName = mainSpawn.createCreep([CARRY,CARRY,MOVE,MOVE], creepName, {spawnRoom: roomName, role: 'mineralCarrier'});
+	    			        console.log('Spawning new mineral carrier: ' + newName + ' (' + roomName + ')');
+						}
+					}
+				}
 			}
 
 			if(roomSpawns.length >= 2) {
@@ -419,7 +431,7 @@ module.exports.loop = function () {
 			// transfer energy from links to any creeps except carriers, miners, and various special roles
 			// find non carriers that aren't full of energy
 			let linkTransferCandidates = _.filter(roomCreeps, (creep) => {
-					return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.memory.role !== 'mineralHarvester') && (creep.memory.role !== 'miner') && (creep.carry.energy < creep.carryCapacity);
+					return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.memory.role !== 'mineralHarvester') && (creep.memory.role !== 'miner') && (creep.memory.role !== 'mineralCarrier') && (creep.carry.energy < creep.carryCapacity);
 			});
 
 			links.forEach(link => link.refillCreeps(linkTransferCandidates));
