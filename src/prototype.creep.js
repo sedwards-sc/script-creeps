@@ -116,6 +116,12 @@ Creep.prototype.runCarrier = function () {
 	//creep.say('carrier');
 	// state 0 is get energy from storage
 	// state 1 is transfer energy to structures
+
+	if(this.pos.roomName !== this.memory.spawnRoom) {
+		this.moveTo(new RoomPosition(25, 25, this.memory.spawnRoom));
+		return;
+	}
+
 	if(this.memory.state === undefined) {
 		this.memory.state = 0;
 	}
@@ -1848,6 +1854,6 @@ Creep.prototype.runMineralCarrier = function() {
 
 	let flagMineral = flagMineralReturn[1];
 
-	
+
 
 };
