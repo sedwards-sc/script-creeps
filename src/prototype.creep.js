@@ -1824,3 +1824,30 @@ Creep.prototype.runRemoteBuilder = function() {
 		}
 	}
 };
+
+Creep.prototype.runMineralCarrier = function() {
+	// find mineral transfer job flag for current task
+
+	// filter for room mineral transfer flags
+	let roomTransferFlagRegex = new RegExp('^' + this.memory.spawnRoom + '_mineralTransfer_');
+	let roomTransferFlags = _.filter(Game.flags, (flag) => roomTransferFlagRegex.test(flag.name) === true);
+
+	if(roomTransferFlags.length < 1) {
+		this.log('no mineral flags left in room');
+		return;
+	}
+
+	let firstTransferFlag = roomTransferFlags[0];
+
+	let flagMineralReturn = /_mineralTransfer_(.+)/.exec(firstTransferFlag.name);
+
+	if(flagMineralReturn === null) {
+		this.errorLog('found mineral transfer flag with no mineral', ERR_NOT_FOUND);
+		return;
+	}
+
+	let flagMineral = flagMineralReturn[1];
+
+	
+
+};
