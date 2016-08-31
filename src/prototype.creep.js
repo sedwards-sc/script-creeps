@@ -641,6 +641,12 @@ Creep.prototype.runHarvester = function() {
 Creep.prototype.runHarvester2 = function() {
 	// state 0 is harvest
 	// state 1 is transfer energy
+
+	if(this.pos.roomName !== this.memory.spawnRoom) {
+		this.moveTo(new RoomPosition(25, 25, this.memory.spawnRoom));
+		return;
+	}
+
 	if(this.memory.state === undefined) {
 		this.memory.state = 0;
 	}
