@@ -340,7 +340,8 @@ module.exports.loop = function () {
 	    			let newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteUpgrader', spawnRoom: roomName});
 	    			console.log('Spawning new remote upgrader (' + roomName + '): ' + newName);
 	    		} else if(undefToZero(roomCreepRoster.remoteBuilder) < roomQuota.remoteBuilders) {
-	    			let newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteBuilder', spawnRoom: roomName});
+	    			//let newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteBuilder', spawnRoom: roomName});
+	    			let newName = mainSpawn.createCreep([MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY], undefined, {role: 'remoteBuilder', spawnRoom: roomName});
 	    			console.log('Spawning new remote builder (' + roomName + '): ' + newName);
 	    		} else if(undefToZero(roomCreepRoster.mineralHarvester) < roomQuota.mineralHarvesters) {
 	    		    mainSpawn.spawnMineralHarvester();
@@ -424,6 +425,7 @@ module.exports.loop = function () {
 	    		}
 			}
 
+
 			// run links
 			let links = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
 			links.forEach(link => link.run());
@@ -439,6 +441,61 @@ module.exports.loop = function () {
 			if(curRoom.terminal) {
 				curRoom.terminal.run();
 			}
+
+
+			if(typeof curRoom.memory.reactors !== 'undefined') {
+			    for(let reactorIndex in curRoom.memory.reactors) {
+			        let curReactorGroup = curRoom.memory.reactors[reactorIndex];
+
+			        let curReactor = Game.getObjectById(curReactorGroup.reactorId);
+			        if(curReactor === null) {
+			            //TODO: make this work if there are ramparts on top
+			            curReactor = curRoom.lookForAt(LOOK_STRUCTURES, Game.flags[curReactorGroup.reactorFlagName].pos)[0];
+			            if(curReactor.structureType === STRUCTURE_LAB) {
+			                curReactorGroup.reactorId = curReactor.id;
+			            } else {
+			                console.log('!!!Error: non-lab building under flag: ' + curReactorGroup.reactorFlagName);
+			                continue;
+			            }
+			        }
+
+			        if((curReactor.cooldown === 0) && (curReactor.mineralAmount < curReactor.mineralCapacity)) {
+			            curReactorGroup.reactorSiloIds = curReactorGroup.reactorSiloIds || [];
+
+			            let curReactorSilo0 = Game.getObjectById(curReactorGroup.reactorSiloIds[0]);
+			            if(curReactorSilo0 === null) {
+			                //TODO: make this work if there are ramparts on top
+    			            curReactorSilo0 = curRoom.lookForAt(LOOK_STRUCTURES, Game.flags[curReactorGroup.reactorSiloFlagNames[0]].pos)[0];
+    			            if(curReactorSilo0.structureType === STRUCTURE_LAB) {
+    			                curReactorGroup.reactorSiloIds[0] = curReactorSilo0.id;
+    			            } else {
+    			                console.log('!!!Error: non-lab building under flag: ' + curReactorGroup.reactorSiloFlagNames[0]);
+    			                continue;
+    			            }
+			            }
+
+			            let curReactorSilo1 = Game.getObjectById(curReactorGroup.reactorSiloIds[1]);
+			            if(curReactorSilo1 === null) {
+			                //TODO: make this work if there are ramparts on top
+    			            curReactorSilo1 = curRoom.lookForAt(LOOK_STRUCTURES, Game.flags[curReactorGroup.reactorSiloFlagNames[1]].pos)[0];
+    			            if(curReactorSilo1.structureType === STRUCTURE_LAB) {
+    			                curReactorGroup.reactorSiloIds[1] = curReactorSilo1.id;
+    			            } else {
+    			                console.log('!!!Error: non-lab building under flag: ' + curReactorGroup.reactorSiloFlagNames[1]);
+    			                continue;
+    			            }
+			            }
+
+			            if((curReactorSilo0.mineralAmount > 0) && (curReactorSilo1.mineralAmount > 0)) {
+			                let reactionReturn = curReactor.runReaction(curReactorSilo0, curReactorSilo1);
+			                if(reactionReturn !== OK) {
+			                    console.log('***Reaction Error: ' + reactionReturn + ', ' + roomName + ', ' + curReactorGroup.reactorFlagName);
+			                }
+			            }
+			        }
+			    }
+			}
+
 		}
 
 		Memory.roster = {};
