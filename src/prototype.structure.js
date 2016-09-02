@@ -4,5 +4,5 @@
  */
 
 Structure.prototype.descriptionString = function() {
-	return this.structureType + '(id#' + this.id + ')';
+	return this.structureType + '(' + this.pos.roomName + ', id#' + this.id + ')';
 };
