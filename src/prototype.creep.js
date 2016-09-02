@@ -1573,7 +1573,7 @@ Creep.prototype.runClaimer = function() {
 	// state 0 is head to next room
 
 
-	let checkPoint1 = new RoomPosition(35, 40, 'E4S26');
+	let checkPoint1 = new RoomPosition(34, 40, 'E4S26');
 	let checkPoint2 = new RoomPosition(46, 47, 'E3S26');
 	let checkPoint3 = new RoomPosition(26, 12, 'E2S29');
 
