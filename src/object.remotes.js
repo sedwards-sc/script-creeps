@@ -210,5 +210,15 @@ module.exports = (function(){
 		// reservers
 		let reserverInfo6 = new ReserverInfo('reserver6', '55db333eefa8e3fe66e056e3');
 		this.E7S25.reservers.push(reserverInfo6);
+
+
+
+		// Room: E9S24
+		this.E9S24 = new RemoteRoster();
+
+		// reservers
+		let reserverInfo7 = new ReserverInfo('reserver7', '55db3355efa8e3fe66e0575f');
+		this.E9S24.reservers.push(reserverInfo7);
+
 	};
 })();
