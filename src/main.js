@@ -370,9 +370,12 @@ module.exports.loop = function () {
 	    		        }
 	    		    }
 	    		} else {
-					// filter for room mineral transfer flags
+					// filter for room mineral transfer or return flags
 					let roomTransferFlagRegex = new RegExp('^' + roomName + '_mineralTransfer_');
-					let roomTransferFlags = _.filter(Game.flags, (flag) => roomTransferFlagRegex.test(flag.name) === true);
+					let roomReturnFlagRegex = new RegExp('^' + roomName + '_mineralReturn_');
+					let roomTransferFlags = _.filter(Game.flags, (flag) => {
+						return (roomTransferFlagRegex.test(flag.name) === true) || (roomReturnFlagRegex.test(flag.name) === true);
+					});
 
 					if(roomTransferFlags.length) {
 						let creepName = roomName + '_mineralCarrier';
