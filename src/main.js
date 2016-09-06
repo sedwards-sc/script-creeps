@@ -436,7 +436,7 @@ module.exports.loop = function () {
 			// transfer energy from links to any creeps except carriers, miners, and various special roles
 			// find non carriers that aren't full of energy
 			let linkTransferCandidates = _.filter(roomCreeps, (creep) => {
-					return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.memory.role !== 'mineralHarvester') && (creep.memory.role !== 'miner') && (creep.memory.role !== 'mineralCarrier') && (creep.carry.energy < creep.carryCapacity);
+					return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.memory.role !== 'mineralHarvester') && (creep.memory.role !== 'miner') && (creep.memory.role !== 'mineralCarrier') && (creep.memory.role !== 'harvester') && (creep.carry.energy < creep.carryCapacity);
 			});
 
 			links.forEach(link => link.refillCreeps(linkTransferCandidates));
