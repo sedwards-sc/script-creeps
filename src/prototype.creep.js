@@ -1843,6 +1843,20 @@ Creep.prototype.runRemoteBuilder = function() {
 };
 
 Creep.prototype.runMineralCarrier = function() {
+	if(typeof this.memory.task === 'undefined') {
+		this.memory.task = 'transfer';
+	}
+
+	if(this.memory.task === 'transfer') {
+		this.runMineralTransfer();
+	} else if(this.memory.task === 'return') {
+		this.runMineralReturn();
+	} else {
+		this.errorLog('unknown task: ' + this.memory.task, ERR_INVALID_TARGET);
+	}
+};
+
+Creep.prototype.runMineralTransfer = function() {
 	// find mineral transfer job flag for current task
 
 	// filter for room mineral transfer flags
@@ -1850,7 +1864,8 @@ Creep.prototype.runMineralCarrier = function() {
 	let roomTransferFlags = _.filter(Game.flags, (flag) => roomTransferFlagRegex.test(flag.name) === true);
 
 	if(!roomTransferFlags.length) {
-		this.log('no mineral flags left in room');
+		this.log('no mineral transfer flags left in room; switching task to mineral return');
+		this.memory.task = 'return';
 		return;
 	}
 
@@ -1868,7 +1883,7 @@ Creep.prototype.runMineralCarrier = function() {
 	let flagPosStructures = this.room.lookForAt(LOOK_STRUCTURES, firstTransferFlag);
 
 	if(!flagPosStructures.length) {
-		this.errorLog('no lab found under flag (' + firstTransferFlag.name + ')', ERR_NOT_FOUND);
+		this.errorLog('no structure found under flag (' + firstTransferFlag.name + ')', ERR_NOT_FOUND);
 		return;
 	}
 
@@ -1902,6 +1917,71 @@ Creep.prototype.runMineralCarrier = function() {
 
 		if(this.withdraw(this.room.terminal, flagMineral, transferAmount) === ERR_NOT_IN_RANGE) {
 			this.moveTo(this.room.terminal);
+		}
+	}
+
+};
+
+Creep.prototype.runMineralReturn = function() {
+	// find mineral return job flag for current task
+
+	// filter for room mineral return flags
+	let roomTransferFlagRegex = new RegExp('^' + this.memory.spawnRoom + '_mineralReturn_');
+	let roomTransferFlags = _.filter(Game.flags, (flag) => roomTransferFlagRegex.test(flag.name) === true);
+
+	if(!roomTransferFlags.length) {
+		this.log('no mineral return flags left in room; switching task to mineral transfer');
+		this.memory.task = 'transfer';
+		return;
+	}
+
+	let firstTransferFlag = roomTransferFlags[0];
+
+	let flagMineralReturn = /_mineralReturn_(.+)/.exec(firstTransferFlag.name);
+
+	if(flagMineralReturn === null) {
+		this.errorLog('found mineral return flag with no mineral', ERR_NOT_FOUND);
+		return;
+	}
+
+	let flagMineral = flagMineralReturn[1];
+
+	let flagPosStructures = this.room.lookForAt(LOOK_STRUCTURES, firstTransferFlag);
+
+	if(!flagPosStructures.length) {
+		this.errorLog('no structure found under flag (' + firstTransferFlag.name + ')', ERR_NOT_FOUND);
+		return;
+	}
+
+	// TODO: make this work if a rampart is on top
+	let lab = flagPosStructures[0];
+
+	if(lab.structureType !== STRUCTURE_LAB) {
+		this.errorLog('found non-lab structure under flag', ERR_NOT_FOUND);
+		return;
+	}
+
+	if(lab.mineralAmount === 0) {
+		this.log('lab empty, removing flag(' + firstTransferFlag.name + ')');
+		firstTransferFlag.remove();
+		return;
+	}
+
+	if(_.sum(this.carry) > 0) {
+		// drop off minerals at terminal
+
+		if(typeof this.room.terminal === 'undefined') {
+			this.errorLog('no terminal', ERR_NOT_FOUND);
+			return;
+		}
+
+		if(this.transfer(this.room.terminal, flagMineral) === ERR_NOT_IN_RANGE) {
+			this.moveTo(this.room.terminal);
+		}
+	} else {
+		// get minerals from lab
+		if(this.withdraw(lab, flagMineral) === ERR_NOT_IN_RANGE) {
+			this.moveTo(lab);
 		}
 	}
 
