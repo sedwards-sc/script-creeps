@@ -1961,7 +1961,7 @@ Creep.prototype.runMineralReturn = function() {
 		return;
 	}
 
-	if(lab.mineralAmount === 0) {
+	if((lab.mineralAmount === 0) && (_.sum(this.carry) === 0)) {
 		this.log('lab empty, removing flag(' + firstTransferFlag.name + ')');
 		firstTransferFlag.remove();
 		return;
