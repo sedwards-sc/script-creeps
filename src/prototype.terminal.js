@@ -28,6 +28,7 @@ StructureTerminal.prototype.run = function() {
 			let resourceDeficit = destinationTerminal.getResourceQuota(curDistObj.mineral) - undefToZero(destinationTerminal.store[curDistObj.mineral]);
 			let transferAmount = Math.min(resourceDeficit, 1000);
 			if(this.send(curDistObj.mineral, transferAmount, curDistObj.room, 'empire distribution') === OK) {
+			    console.log('normal, ' + curDistObj.room);
 				break;
 			}
 		}
@@ -36,6 +37,7 @@ StructureTerminal.prototype.run = function() {
 			// protect against draining a room or overfilling the other room
 			if((this.room.storage.store.energy > 500000) && (undefToZero(destinationTerminal.store[curDistObj.mineral]) < (destinationTerminal.getResourceQuota(curDistObj.mineral) * 2))) {
 				if(this.send(curDistObj.mineral, 1000, curDistObj.room, 'empire distribution (override)') === OK) {
+				    console.log('normal, ' + curDistObj.room);
 					break;
 				}
 			}

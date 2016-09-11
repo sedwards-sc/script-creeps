@@ -218,11 +218,11 @@ Creep.prototype.getRefillTarget = function() {
 	}
 
 	// top up terminal if no spawns or extensions or towers or labs need refilling
-	if(!closestTarget) {
-		if(this.room.terminal && (this.room.terminal.store.energy < this.room.terminal.getResourceQuota(RESOURCE_ENERGY))) {
-			closestTarget = this.room.terminal;
-		}
-	}
+	//if(!closestTarget) {
+	//	if(this.room.terminal && (this.room.terminal.store.energy < this.room.terminal.getResourceQuota(RESOURCE_ENERGY))) {
+	//		closestTarget = this.room.terminal;
+	//	}
+	//}
 
 	return closestTarget;
 };
@@ -469,7 +469,7 @@ Creep.prototype.runLinker3 = function() {
 				// TODO: upgrade to have linkers remove excess of other resource types as well
 				let excessEnergy = this.room.terminal.store.energy - this.room.terminal.getResourceQuota(RESOURCE_ENERGY);
 				let withdrawEnergy = Math.min(this.carryCapacity, excessEnergy);
-				this.withdraw(this.room.terminal, RESOURCE_ENERGY);
+				this.withdraw(this.room.terminal, RESOURCE_ENERGY, withdrawEnergy);
 			} else {
 				if(this.room.storage && this.room.terminal) {
 					for(let curResourceType in this.room.storage.store) {
@@ -1573,9 +1573,9 @@ Creep.prototype.runClaimer = function() {
 	// state 0 is head to next room
 
 
-	let checkPoint1 = new RoomPosition(30, 48, 'E5S28');
-	let checkPoint2 = new RoomPosition(24, 29, 'E6S32');
-	let checkPoint3 = new RoomPosition(24, 29, 'E6S32');
+	let checkPoint1 = new RoomPosition(46, 34, 'E7S30');
+	let checkPoint2 = new RoomPosition(8, 16, 'E8S32');
+	let checkPoint3 = new RoomPosition(8, 16, 'E8S32');
 
 
 	if(this.memory.state === undefined) {
@@ -1784,9 +1784,13 @@ Creep.prototype.runRemoteBuilder = function() {
 	//let checkPoint2 = new RoomPosition(21, 5, 'E9S24');
 	//let checkPoint3 = new RoomPosition(21, 5, 'E9S24');
 
-    let checkPoint1 = new RoomPosition(30, 48, 'E5S28');
-	let checkPoint2 = new RoomPosition(24, 29, 'E6S32');
-	let checkPoint3 = new RoomPosition(24, 29, 'E6S32');
+    //let checkPoint1 = new RoomPosition(30, 48, 'E5S28');
+	//let checkPoint2 = new RoomPosition(24, 29, 'E6S32');
+	//let checkPoint3 = new RoomPosition(24, 29, 'E6S32');
+
+	let checkPoint1 = new RoomPosition(46, 34, 'E7S30');
+	let checkPoint2 = new RoomPosition(27, 4, 'E8S32');
+	let checkPoint3 = new RoomPosition(27, 4, 'E8S32');
 
 	if(this.memory.state === undefined) {
 		this.memory.state = 0;
@@ -1844,7 +1848,7 @@ Creep.prototype.runRemoteBuilder = function() {
 
 Creep.prototype.runMineralCarrier = function() {
 	if(typeof this.memory.task === 'undefined') {
-		this.memory.task = 'transfer';
+		this.memory.task = 'return';
 	}
 
 	if(this.memory.task === 'transfer') {

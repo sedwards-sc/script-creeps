@@ -340,8 +340,8 @@ module.exports.loop = function () {
 	    			let newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteUpgrader', spawnRoom: roomName});
 	    			console.log('Spawning new remote upgrader (' + roomName + '): ' + newName);
 	    		} else if(undefToZero(roomCreepRoster.remoteBuilder) < roomQuota.remoteBuilders) {
-	    			//let newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteBuilder', spawnRoom: roomName});
-	    			let newName = mainSpawn.createCreep([MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY], undefined, {role: 'remoteBuilder', spawnRoom: roomName});
+	    			let newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteBuilder', spawnRoom: roomName});
+	    			//let newName = mainSpawn.createCreep([MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY], undefined, {role: 'remoteBuilder', spawnRoom: roomName});
 	    			console.log('Spawning new remote builder (' + roomName + '): ' + newName);
 	    		} else if(undefToZero(roomCreepRoster.mineralHarvester) < roomQuota.mineralHarvesters) {
 	    		    mainSpawn.spawnMineralHarvester();
