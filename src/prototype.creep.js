@@ -914,6 +914,10 @@ Creep.prototype.runDismantler2 = function() {
     }
 
     if(this.pos.roomName === myFlag.pos.roomName) {
+		if((Game.time % 3) !== 0) {
+			return;
+		}
+
 		let goal;
 
 		let hostileSpawns = this.room.find(FIND_HOSTILE_STRUCTURES, {
