@@ -920,14 +920,10 @@ Creep.prototype.runDismantler2 = function() {
 
 		let goal;
 
-		let hostileSpawns = this.room.find(FIND_HOSTILE_STRUCTURES, {
-				filter: (structure) => {
-					return structure.structureType === STRUCTURE_SPAWN;
-				}
-		});
+		let foundStructures = this.room.lookForAt(LOOK_STRUCTURES, myFlag.pos);
 
-		if(hostileSpawns.length > 0) {
-			goal = { pos: hostileSpawns[0].pos, range: 0 };
+		if(foundStructures.length && !foundStructures[0].my) {
+			goal = foundStructures[0];
 		}
 
 		if(goal === undefined) {
@@ -943,10 +939,14 @@ Creep.prototype.runDismantler2 = function() {
 		}
 
 		if(typeof goal === 'undefined') {
-			let foundStructures = this.room.lookForAt(LOOK_STRUCTURES, myFlag.pos);
+			let hostileSpawns = this.room.find(FIND_HOSTILE_STRUCTURES, {
+					filter: (structure) => {
+						return structure.structureType === STRUCTURE_SPAWN;
+					}
+			});
 
-			if(foundStructures.length && !foundStructures[0].my) {
-				goal = foundStructures[0];
+			if(hostileSpawns.length > 0) {
+				goal = { pos: hostileSpawns[0].pos, range: 0 };
 			}
 		}
 
