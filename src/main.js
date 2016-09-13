@@ -393,7 +393,7 @@ module.exports.loop = function () {
 			    mainSpawn = roomSpawns[1];
 			}
 
-			let numMedics = 2;
+			let numMedics = 3;
 
 			if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
 				let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
