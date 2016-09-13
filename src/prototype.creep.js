@@ -914,10 +914,6 @@ Creep.prototype.runDismantler2 = function() {
     }
 
     if(this.pos.roomName === myFlag.pos.roomName) {
-		if((Game.time % 3) !== 0) {
-			return;
-		}
-
 		let goal;
 
 		let foundFlagStructures = this.room.lookForAt(LOOK_STRUCTURES, myFlag.pos);
@@ -994,6 +990,9 @@ Creep.prototype.runDismantler2 = function() {
 		if(foundStructures.length && !foundStructures[0].my) {
 			this.dismantle(foundStructures[0]);
 		} else {
+			if((Game.time % 3) !== 0) {
+				return;
+			}
 			this.moveTo(nextPos);
 		}
 
