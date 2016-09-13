@@ -920,10 +920,10 @@ Creep.prototype.runDismantler2 = function() {
 
 		let goal;
 
-		let foundStructures = this.room.lookForAt(LOOK_STRUCTURES, myFlag.pos);
+		let foundFlagStructures = this.room.lookForAt(LOOK_STRUCTURES, myFlag.pos);
 
-		if(foundStructures.length && !foundStructures[0].my) {
-			goal = foundStructures[0];
+		if(foundFlagStructures.length && !foundFlagStructures[0].my) {
+			goal = foundFlagStructures[0];
 		}
 
 		if(goal === undefined) {
