@@ -229,5 +229,21 @@ module.exports = (function(){
 		let reserverInfo8 = new ReserverInfo('reserver8', '576a9c3c57110ab231d88b98');
 		this.E6S32.reservers.push(reserverInfo8);
 
+		// reservers
+		let reserverInfo9 = new ReserverInfo('reserver9', '576a9c4057110ab231d88bf3');
+		this.E6S32.reservers.push(reserverInfo9);
+
+
+
+		// Room: E8S32
+		this.E8S32 = new RemoteRoster();
+
+		// reservers
+		let reserverInfo10 = new ReserverInfo('reserver10', '576a9c4257110ab231d88c48');
+		this.E8S32.reservers.push(reserverInfo10);
+
+		let reserverInfo11 = new ReserverInfo('reserver11', '576a9c4557110ab231d88c87');
+		this.E8S32.reservers.push(reserverInfo11);
+
 	};
 })();

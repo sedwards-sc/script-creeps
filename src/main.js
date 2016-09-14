@@ -351,8 +351,8 @@ module.exports.loop = function () {
 	    		        let curScoutFlagName = roomCreepQuotas.scout[curScoutIndex];
 	    		        let currentFlagScouts = _.filter(roomCreeps, (creep) => creep.memory.flagName === curScoutFlagName);
 	    		        if((currentFlagScouts.length < 1) || (currentFlagScouts[0].ticksToLive <= 20)) {
-	    		            let newName = mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {spawnRoom: roomName, role: 'scout', flagName: curScoutFlagName});
-	    		            //let newName = mainSpawn.createCreep([MOVE], undefined, {spawnRoom: roomName, role: 'scout', flagName: curScoutFlagName});
+	    		            //let newName = mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {spawnRoom: roomName, role: 'scout', flagName: curScoutFlagName});
+	    		            let newName = mainSpawn.createCreep([MOVE], undefined, {spawnRoom: roomName, role: 'scout', flagName: curScoutFlagName});
 	    			        console.log('Spawning new scout: ' + newName + ' - ' + curScoutFlagName);
 	    			        break;
 	    		        }
@@ -393,7 +393,7 @@ module.exports.loop = function () {
 			    mainSpawn = roomSpawns[1];
 			}
 
-			let numMedics = 3;
+			let numMedics = 0;
 
 			if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
 				let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
