@@ -144,12 +144,12 @@ module.exports.loop = function () {
 			}
 
 			// print update but not every tick so console doesn't scroll as fast
-			if((Game.time % 5) === 0) {
+			if((Game.time % 5) === 1) {
 				console.log(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '%');
 			}
 
 			// send update email occasionally
-			if((Game.time % 1500) === 0) {
+			if((Game.time % 1500) === 1) {
 				Game.notify(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '% - time: ' + Game.time);
 			}
 
