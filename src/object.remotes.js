@@ -248,11 +248,12 @@ module.exports = (function(){
 
 
 		// Room: E7S34
-		this.E7S34 = new RemoteRoster();
+		//this.E7S34 = new RemoteRoster();
 
 		// reservers
 		let reserverInfo12 = new ReserverInfo('reserver12', '576a9c4557110ab231d88c92');
-		this.E7S34.reservers.push(reserverInfo12);
+		//this.E7S34.reservers.push(reserverInfo12);
+		this.E8S32.reservers.push(reserverInfo12);
 
 	};
 })();
