@@ -26,6 +26,8 @@ if(Memory.enableProfiler === true) {
 
 module.exports.loop = function () {
 	profiler.wrap(function() {
+	    console.log(Game.time);
+
 		// loop to clean dead creeps out of memory
 	    for(let name in Memory.creeps) {
 	        if(!Game.creeps[name]) {
@@ -167,7 +169,9 @@ module.exports.loop = function () {
 			if(undefToZero(Game.rooms[roomName].memory.creepRoster.carrier) > 1) {
 				currentBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 				currentHarvesterBody = [WORK,CARRY,MOVE,MOVE];
-				if(roomEnergy >= 950) {
+				if(roomEnergy >= 1350) {
+				    currentBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY];
+				} else if(roomEnergy >= 950) {
 					currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 				}
 			} else {
@@ -187,7 +191,9 @@ module.exports.loop = function () {
 			}
 
 			let upgraderBody;
-			if(roomEnergyCapacity >= 850) {
+			if(roomEnergyCapacity >= 950) {
+			    upgraderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+			} else if(roomEnergyCapacity >= 850) {
 				upgraderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
 			} else if(roomEnergyCapacity >= 800) {
 			    // NOTE: this config is really only good for upgraders that can reach the controller from an energy source (e.g. storage)

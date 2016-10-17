@@ -211,6 +211,9 @@ module.exports = (function(){
 		let reserverInfo6 = new ReserverInfo('reserver6', '55db333eefa8e3fe66e056e3');
 		this.E7S25.reservers.push(reserverInfo6);
 
+		let reserverInfo13 = new ReserverInfo('reserver13', '55db3348efa8e3fe66e0571f');
+		this.E7S25.reservers.push(reserverInfo13);
+
 
 
 		// Room: E9S24
@@ -219,6 +222,9 @@ module.exports = (function(){
 		// reservers
 		let reserverInfo7 = new ReserverInfo('reserver7', '55db3355efa8e3fe66e0575f');
 		this.E9S24.reservers.push(reserverInfo7);
+
+		let reserverInfo14 = new ReserverInfo('reserver14', '55db3348efa8e3fe66e0571c');
+		this.E9S24.reservers.push(reserverInfo14);
 
 
 
@@ -248,12 +254,14 @@ module.exports = (function(){
 
 
 		// Room: E7S34
-		//this.E7S34 = new RemoteRoster();
+		this.E7S34 = new RemoteRoster();
 
 		// reservers
 		let reserverInfo12 = new ReserverInfo('reserver12', '576a9c4557110ab231d88c92');
-		//this.E7S34.reservers.push(reserverInfo12);
-		this.E8S32.reservers.push(reserverInfo12);
+		this.E7S34.reservers.push(reserverInfo12);
+
+		let reserverInfo15 = new ReserverInfo('reserver15', '576a9c4257110ab231d88c4b');
+		this.E7S34.reservers.push(reserverInfo15);
 
 	};
 })();

@@ -780,7 +780,7 @@ Creep.prototype.runSpecialCarrier = function () {
 
 	if(this.memory.state === 0) {
 		// go to pick up storage
-		let pickUpStorage = Game.getObjectById('577502e26a7f9a9b428b4568');
+		let pickUpStorage = Game.getObjectById('5737ae2c1c63804f2a51e480');
 		//for(let resource in pickUpStorage.store) {
 		//	console.log('--' + resource + ' = ' + pickUpStorage.store[resource]);
 		//}
@@ -797,7 +797,7 @@ Creep.prototype.runSpecialCarrier = function () {
 		}
 	} else if(this.memory.state == 1) {
 		// go to drop off storage
-		let dropOffStorage = Game.getObjectById('574a1a88d8ee13485adf42cd');
+		let dropOffStorage = Game.getObjectById('57c672a3bd87d4c163315dc6');
 		if(this.pos.isNearTo(dropOffStorage)) {
 			let minResourceType = 'energy';
 			for(let resource in dropOffStorage.store) {
@@ -1508,7 +1508,7 @@ Creep.prototype.runUpgrader = function() {
 		//get links with energy or storage with enough surplus energy
 		let structuresWithEnergy = this.room.find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return ((structure.structureType === STRUCTURE_LINK) && (structure.energy >= this.carryCapacity)) || ((structure.structureType === STRUCTURE_STORAGE) && (structure.store[RESOURCE_ENERGY] >= 1000));
+					return ((structure.structureType === STRUCTURE_LINK) && (structure.energy >= this.carryCapacity)) || ((structure.structureType === STRUCTURE_STORAGE) && (structure.store[RESOURCE_ENERGY] >= 1000)) || ((structure.structureType === STRUCTURE_TERMINAL) && (structure.store[RESOURCE_ENERGY] > 0));
 				}
 		});
 
@@ -1576,9 +1576,9 @@ Creep.prototype.runClaimer = function() {
 	// state 0 is head to next room
 
 
-	let checkPoint1 = new RoomPosition(34, 30, 'E7S34');
-	let checkPoint2 = new RoomPosition(34, 30, 'E7S34');
-	let checkPoint3 = new RoomPosition(34, 30, 'E7S34');
+	let checkPoint1 = new RoomPosition(20, 39, 'E7S35');
+	let checkPoint2 = new RoomPosition(20, 39, 'E7S35');
+	let checkPoint3 = new RoomPosition(20, 39, 'E7S35');
 
 
 	if(this.memory.state === undefined) {
@@ -1726,9 +1726,9 @@ Creep.prototype.runRemoteUpgrader = function() {
 	// state 0 is head to next room
 
 
-	var checkPoint1 = new RoomPosition(4, 46, 'E10S23');
-	var checkPoint2 = new RoomPosition(15, 3, 'E10S26');
-	var checkPoint3 = new RoomPosition(13, 4, 'E9S27');
+	var checkPoint1 = new RoomPosition(35, 35, 'E7S35');
+	var checkPoint2 = new RoomPosition(35, 35, 'E7S35');
+	var checkPoint3 = new RoomPosition(35, 35, 'E7S35');
 
 
 	if(this.memory.state === undefined) {
@@ -1766,9 +1766,19 @@ Creep.prototype.runRemoteUpgrader = function() {
 		this.moveTo(checkPoint3);
 	} else if(this.memory.state === 3) {
 		// harvest
-		var sources = this.room.find(FIND_SOURCES);
-		if(this.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
-			this.moveTo(sources[0]);
+		//var sources = this.room.find(FIND_SOURCES);
+		//if(this.harvest(sources[0]) === ERR_NOT_IN_RANGE) {
+		//	this.moveTo(sources[0]);
+		//}
+
+		//let roomStorage = this.room.storage;
+		//if(this.withdraw(roomStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+		//    this.moveTo(roomStorage);
+		//}
+
+		let roomTerminal = this.room.terminal;
+		if(this.withdraw(roomTerminal, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+		    this.moveTo(roomTerminal);
 		}
 	} else if(this.memory.state === 4) {
 		// upgrade
@@ -1795,9 +1805,13 @@ Creep.prototype.runRemoteBuilder = function() {
 	//let checkPoint2 = new RoomPosition(27, 4, 'E8S32');
 	//let checkPoint3 = new RoomPosition(27, 4, 'E8S32');
 
-    let checkPoint1 = new RoomPosition(34, 30, 'E7S34');
-	let checkPoint2 = new RoomPosition(34, 30, 'E7S34');
-	let checkPoint3 = new RoomPosition(34, 30, 'E7S34');
+    //let checkPoint1 = new RoomPosition(34, 30, 'E7S34');
+	//let checkPoint2 = new RoomPosition(34, 30, 'E7S34');
+	//let checkPoint3 = new RoomPosition(34, 30, 'E7S34');
+
+	let checkPoint1 = new RoomPosition(43, 34, 'E7S35');
+	let checkPoint2 = new RoomPosition(43, 34, 'E7S35');
+	let checkPoint3 = new RoomPosition(43, 34, 'E7S35');
 
 	if(this.memory.state === undefined) {
 		this.memory.state = 0;
