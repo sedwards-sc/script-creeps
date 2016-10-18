@@ -1155,12 +1155,14 @@ Creep.prototype.runRemoteMiner = function() {
 };
 
 Creep.prototype.runRemoteMiner2 = function() {
-	let reqParts = _.filter(this.body, function(bodyPart) { return (bodyPart.type === WORK) && (bodyPart.hits > 0); });
+	if((Game.time % 50) === 1) {
+		let reqParts = _.filter(this.body, function(bodyPart) { return (bodyPart.type === WORK) && (bodyPart.hits > 0); });
 
-	if(typeof reqParts === 'undefined' || reqParts.length === 0) {
-        this.errorLog('missing required body parts; attempting suicide', ERR_NO_BODYPART);
-		this.suicide();
-    }
+		if(typeof reqParts === 'undefined' || reqParts.length === 0) {
+	        this.errorLog('missing required body parts; attempting suicide', ERR_NO_BODYPART);
+			this.suicide();
+	    }
+	}
 
 	let myFlag;
 
