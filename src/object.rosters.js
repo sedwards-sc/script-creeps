@@ -177,7 +177,7 @@ module.exports = (function(){
 				0, //miners
 				0, //carriers
 				0, //linkers
-				2, //reinforcers
+				3, //reinforcers
 				2, //reservers
 				0, //claimers
 				0, //remoteUpgraders
@@ -196,7 +196,7 @@ module.exports = (function(){
 				0, //carriers
 				0, //linkers
 				0, //reinforcers
-				0, //reservers
+				2, //reservers
 				0, //claimers
 				0, //remoteUpgraders
 				0, //remoteBuilders
@@ -214,7 +214,7 @@ module.exports = (function(){
 				0, //carriers
 				0, //linkers
 				0, //reinforcers
-				0, //reservers
+				2, //reservers
 				0, //claimers
 				0, //remoteUpgraders
 				0, //remoteBuilders

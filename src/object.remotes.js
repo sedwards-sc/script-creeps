@@ -263,5 +263,29 @@ module.exports = (function(){
 		let reserverInfo15 = new ReserverInfo('reserver15', '576a9c4257110ab231d88c4b');
 		this.E7S34.reservers.push(reserverInfo15);
 
+
+
+		// Room: E9S33
+		this.E9S33 = new RemoteRoster();
+
+		// reservers
+		let reserverInfo16 = new ReserverInfo('reserver16', '576a9c4557110ab231d88c8e');
+		this.E9S33.reservers.push(reserverInfo16);
+
+		let reserverInfo17 = new ReserverInfo('reserver17', '576a9c4757110ab231d88cd4');
+		this.E9S33.reservers.push(reserverInfo17);
+
+
+
+		// Room: E7S35
+		this.E7S35 = new RemoteRoster();
+
+		// reservers
+		let reserverInfo18 = new ReserverInfo('reserver18', '576a9c4557110ab231d88c96');
+		this.E7S35.reservers.push(reserverInfo18);
+
+		let reserverInfo19 = new ReserverInfo('reserver19', '576a9c4357110ab231d88c57');
+		this.E7S35.reservers.push(reserverInfo19);
+
 	};
 })();
