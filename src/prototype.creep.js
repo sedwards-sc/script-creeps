@@ -58,7 +58,7 @@ Creep.prototype.log = function(msg) {
 };
 
 Creep.prototype.errorLog = function(msg, errCode) {
-	return console.log('!!!Error!!! creep: ' + this.name + ' (' + this.room.name + '), msg: ' + msg + ' (' + errCode + ')');
+	return console.log('!!!Error!!! creep: ' + this.name + ' (' + this.room.name + ', ' + this.memory.role + '), msg: ' + msg + ' (' + errCode + ')');
 };
 
 Creep.prototype.runMineralHarvester = function() {
@@ -1157,7 +1157,10 @@ Creep.prototype.runRemoteMiner = function() {
 Creep.prototype.runRemoteMiner2 = function() {
 	let reqParts = _.filter(this.body, function(bodyPart) { return (bodyPart.type === WORK) && (bodyPart.hits > 0); });
 
-	this.log(reqParts);
+	if(typeof reqParts === 'undefined' || reqParts.length === 0) {
+        this.errorLog('missing required body parts; attempting suicide', ERR_NO_BODYPART);
+		this.suicide();
+    }
 
 	let myFlag;
 
