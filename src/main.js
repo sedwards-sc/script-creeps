@@ -614,6 +614,15 @@ function defendRoom(roomName) {
 	}
 }
 
+function countAllCreepFlags() {
+	for(let name in Game.rooms) {
+		if(Game.rooms[name].isMine()) {
+			Game.rooms[name].countCreepFlags();
+		}
+	}
+}
+global.countAllCreepFlags = countAllCreepFlags;
+
 var reset_memory = function () {
 	let default_keys = ['creeps', 'spawn', 'rooms', 'flags'];
 	let keys = Object.keys(Memory);
