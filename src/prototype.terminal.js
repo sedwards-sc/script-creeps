@@ -81,6 +81,7 @@ StructureTerminal.prototype.getRoomNeedsEnergyMost = function () {
 
 		if(curRoom.storage && curRoom.terminal && (curRoom.storage.store.energy < roomStorageEnergy) && (curRoom.terminal.store.energy < 100000)) {
 			roomInNeed = curRoomName;
+			roomStorageEnergy = curRoom.storage.store.energy;
 		}
 	}
 
