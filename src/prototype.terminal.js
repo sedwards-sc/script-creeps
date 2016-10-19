@@ -54,7 +54,11 @@ StructureTerminal.prototype.run = function() {
 		let roomNeedingEnergy;
 
 		if(roomNameNeedingEnergy) {
-			roomNeedingEnergy = Game.rooms[roomNameNeedingEnergy];
+			if(roomNameNeedingEnergy === this.room.name) {
+				return;
+			} else {
+				roomNeedingEnergy = Game.rooms[roomNameNeedingEnergy];
+			}
 		} else {
 			return;
 		}
