@@ -63,7 +63,7 @@ StructureTerminal.prototype.run = function() {
 			return;
 		}
 
-		if(undefToZero(roomNeedingEnergy.terminal.store.energy) < (roomNeedingEnergy.terminal.getResourceQuota(RESOURCE_ENERGY) * 2)) {
+		if(undefToZero(roomNeedingEnergy.terminal.store.energy) < 75000) {
 			if(this.send(RESOURCE_ENERGY, 5000, roomNameNeedingEnergy, 'empire distribution (room requires energy most)') === OK) {
 				console.log('room ' + this.room.name + ' sending energy to room ' + roomNameNeedingEnergy);
 			}
