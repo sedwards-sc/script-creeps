@@ -45,8 +45,11 @@ StructureTerminal.prototype.run = function() {
 			}
 		}
 	}
-	return;
-	if(!successfulTransfer) {
+
+	if( (!successfulTransfer) &&
+		(undefToZero(this.store[RESOURCE_ENERGY]) >= this.getResourceQuota(RESOURCE_ENERGY)) &&
+		(undefToZero(this.room.storage.store.energy) > 500000) ) {
+
 		let roomNameNeedingEnergy = this.getRoomNeedsEnergyMost();
 		let roomNeedingEnergy;
 
@@ -56,7 +59,7 @@ StructureTerminal.prototype.run = function() {
 			return;
 		}
 
-		if((this.room.storage.store.energy > 500000) && (undefToZero(roomNeedingEnergy.terminal.store.energy) < (roomNeedingEnergy.terminal.getResourceQuota(RESOURCE_ENERGY) * 2))) {
+		if(undefToZero(roomNeedingEnergy.terminal.store.energy) < (roomNeedingEnergy.terminal.getResourceQuota(RESOURCE_ENERGY) * 2)) {
 			if(this.send(RESOURCE_ENERGY, 5000, roomNameNeedingEnergy, 'empire distribution (room requires energy most)') === OK) {
 				console.log('room ' + this.room.name + ' sending energy to room ' + roomNameNeedingEnergy);
 			}
