@@ -71,7 +71,7 @@ StructureTerminal.prototype.run = function() {
 	}
 };
 
-// will return room with lowest energy in storage (must have terminal)
+// will return name of room with lowest energy in storage (must have terminal)
 StructureTerminal.prototype.getRoomNeedsEnergyMost = function () {
 	let roomInNeed;
 	let roomStorageEnergy = STORAGE_CAPACITY;
