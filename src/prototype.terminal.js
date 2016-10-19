@@ -45,7 +45,7 @@ StructureTerminal.prototype.run = function() {
 			}
 		}
 	}
-
+	return;
 	if(!successfulTransfer) {
 		let roomNameNeedingEnergy = this.getRoomNeedsEnergyMost();
 		let roomNeedingEnergy;
