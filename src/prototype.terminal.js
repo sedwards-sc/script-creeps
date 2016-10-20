@@ -48,7 +48,7 @@ StructureTerminal.prototype.run = function() {
 
 	if( (!successfulTransfer) &&
 		(undefToZero(this.store[RESOURCE_ENERGY]) >= this.getResourceQuota(RESOURCE_ENERGY)) &&
-		(undefToZero(this.room.storage.store.energy) > 500000) ) {
+		(undefToZero(this.room.storage.store.energy) > 550000) ) {
 
 		let roomNameNeedingEnergy = this.getRoomNeedsEnergyMost();
 		let roomNeedingEnergy;
