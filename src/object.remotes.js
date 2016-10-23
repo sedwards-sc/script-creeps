@@ -287,7 +287,7 @@ module.exports = (function(){
 		let reserverInfo19 = new ReserverInfo('reserver19', '576a9c4357110ab231d88c57');
 		this.E7S35.reservers.push(reserverInfo19);
 
-		let reserverInfo20 = new ReserverInfo('reserver20', '576a9c4857110ab231d88cdb');
+		let reserverInfo20 = new ReserverInfo('reserver20', '576a9c4857110ab231d88cdf');
 		this.E7S35.reservers.push(reserverInfo20);
 
 	};
