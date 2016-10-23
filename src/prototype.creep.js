@@ -1588,7 +1588,17 @@ Creep.prototype.runReserver = function() {
 
 	let controllerToReserve = Game.getObjectById(this.memory.controllerId);
 	if(this.reserveController(controllerToReserve) === ERR_NOT_IN_RANGE) {
-		this.moveTo(controllerToReserve);
+		this.moveTo(controllerToReserve, {
+            costCallback: function(roomName, costMatrix) {
+        	    if(roomName === 'E7S37') {
+        		    for(i = 0; i < 50; i++) {
+        		        for(j = 0; j < 50; j++) {
+        		            costMatrix.set(i, j, 0xff);
+        		        }
+        		    }
+        		}
+        	}
+        });
 	}
 };
 
