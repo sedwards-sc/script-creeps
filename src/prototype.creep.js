@@ -1055,6 +1055,8 @@ Creep.prototype.runMedic = function() {
 };
 
 Creep.prototype.runScout = function() {
+    this.say('scout');
+
 	let myFlag;
 
     if(this.memory.flagName === undefined) {
@@ -1077,7 +1079,17 @@ Creep.prototype.runScout = function() {
 		}
 	} else {
 		let destinationRoomPosition = new RoomPosition(25, 25, destinationRoom);
-		this.moveTo(destinationRoomPosition);
+		this.moveTo(destinationRoomPosition, {
+            costCallback: function(roomName, costMatrix) {
+        	    if(roomName === 'E7S37') {
+        		    for(i = 0; i < 50; i++) {
+        		        for(j = 0; j < 50; j++) {
+        		            costMatrix.set(i, j, 0xff);
+        		        }
+        		    }
+        		}
+        	}
+        });
 	}
 };
 
