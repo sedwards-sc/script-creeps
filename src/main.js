@@ -621,6 +621,23 @@ function countAllCreepFlags() {
 }
 global.countAllCreepFlags = countAllCreepFlags;
 
+function marketSell(room_name, resource, amt = Infinity) {
+    // 9-30-2016 patch makes this way faster I guess?
+    let orders = Game.market.getAllOrders({type: ORDER_BUY, resourceType: resource});
+    orders = _.filter(orders, o => o.price > 0.25);
+    let order = _.max(orders, o => o.price / Game.market.calcTransactionCost(amt, room_name, o.roomName));
+    console.log('Chosen order:', JSON.stringify(order));
+    console.log('Transaction cost:', Game.market.calcTransactionCost(amt, room_name, order.roomName));
+    if (!order || order == Infinity)
+        return;
+
+    let retval = Game.market.deal(order.id, amt, room_name);
+    console.log('Deal return value:', retval);
+
+    return retval;
+}
+global.marketSell = marketSell;
+
 var reset_memory = function () {
 	let default_keys = ['creeps', 'spawn', 'rooms', 'flags'];
 	let keys = Object.keys(Memory);
