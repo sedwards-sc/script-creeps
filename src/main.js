@@ -568,8 +568,10 @@ function defendRoom(roomName) {
     if(hostiles.length > 0) {
         let username = hostiles[0].owner.username;
 		let gameTime = Game.time;
-        Game.notify(`User ${username} spotted in room ${roomName} at ${gameTime}`);
-        let towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
+		if(username !== 'Invader') {
+        	Game.notify(`User ${username} spotted in room ${roomName} at ${gameTime}`);
+		}
+		let towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
         towers.forEach(tower => tower.attack(hostiles[0]));
     } else {
 		let ramparts = Game.rooms[roomName].find(FIND_STRUCTURES, {
