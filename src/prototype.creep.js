@@ -1616,7 +1616,7 @@ Creep.prototype.runClaimer = function() {
 		this.memory.state = 0;
 	}
 
-	if((this.memory.state === 0) && (JSON.stringify(this.pos) === JSON.stringify(checkPoint1))) {
+	if((this.memory.state === 0) && ((JSON.stringify(this.pos) === JSON.stringify(checkPoint1)) || (this.room.name === 'W35S35'))) {
 		this.say('chkpt 1');
 		this.memory.state = 1;
 	}
