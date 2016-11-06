@@ -88,7 +88,7 @@ module.exports = (function(){
 				0, //carriers
 				0, //linkers
 				1, //reinforcers
-				2, //reservers
+				3, //reservers
 				0, //claimers
 				0, //remoteUpgraders
 				0, //remoteBuilders

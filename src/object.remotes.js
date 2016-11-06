@@ -214,6 +214,9 @@ module.exports = (function(){
 		let reserverInfo13 = new ReserverInfo('reserver13', '55db3348efa8e3fe66e0571f');
 		this.E7S25.reservers.push(reserverInfo13);
 
+		let reserverInfo22 = new ReserverInfo('reserver22', '55db3334efa8e3fe66e056ae');
+		this.E7S25.reservers.push(reserverInfo22);
+
 
 
 		// Room: E9S24
