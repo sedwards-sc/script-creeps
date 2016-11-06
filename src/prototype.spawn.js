@@ -69,7 +69,7 @@ StructureSpawn.prototype.spawnMineralHarvester = function() {
 };
 
 StructureSpawn.prototype.updateSpawnFlag = function() {
-	let flagsAtCurPos = this.room.lookForAt(LOOK_FLAGS, this.room);
+	let flagsAtCurPos = this.room.lookForAt(LOOK_FLAGS, this.room.pos);
 
 	this.log(JSON.stringify(flagsAtCurPos));
 };
