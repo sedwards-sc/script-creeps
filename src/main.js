@@ -530,6 +530,12 @@ module.exports.loop = function () {
 			}
 	    }
 
+		// run spawn loop
+		for(let spawnName in Game.spawns) {
+			Game.spawns[spawnName].updateSpawnFlag();
+		}
+
+
 	    var statsConsole = require("statsConsole");
 
         // sample data format ["Name for Stat", variableForStat]
