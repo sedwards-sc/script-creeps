@@ -49,6 +49,11 @@ module.exports.loop = function () {
 			countAllCreepFlags();
 		}
 
+		// report gcl progress occasionally
+		if((Game.time % 1500) === 1) {
+		    Game.notify('GCL - level: ' + Game.gcl.level + ' - progress: ' + (Game.gcl.progress / 1000000).toFixed(2) + 'M - required: ' + (Game.gcl.progressTotal / 1000000).toFixed(2) + 'M - ' + ((Game.gcl.progress / Game.gcl.progressTotal) * 100).toFixed(1) + '%');
+		}
+
 		// room defence loop
 		for(let name in Game.rooms) {
 			Game.rooms[name].assessThreats();
@@ -133,7 +138,7 @@ module.exports.loop = function () {
 			//}
 
 			// gather room info
-			let controllerProgress = Game.rooms[roomName].controller.progress / Game.rooms[roomName].controller.progressTotal * 100;
+			let controllerProgress = (Game.rooms[roomName].controller.progress / Game.rooms[roomName].controller.progressTotal * 100).toFixed(2);
 			let roomEnergy = Game.rooms[roomName].energyAvailable;
 			let roomEnergyCapacity = Game.rooms[roomName].energyCapacityAvailable;
 			let roomStorageEnergy;
@@ -337,7 +342,8 @@ module.exports.loop = function () {
 	    			let newName = mainSpawn.createCreep([WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
 	    			console.log('Spawning new reinforcer (' + roomName + '): ' + newName);
 	    		} else if(undefToZero(roomCreepRoster.claimer) < roomQuota.claimers) {
-	    			let newName = mainSpawn.createCreep([CLAIM,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
+	    			let newName = mainSpawn.createCreep([CLAIM,CLAIM,CLAIM,CLAIM,CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
+	    			//let newName = mainSpawn.createCreep([CLAIM,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
 	    			console.log('Spawning new claimer (' + roomName + '): ' + newName);
 	    		} else if(undefToZero(roomCreepRoster.remoteUpgrader) < roomQuota.remoteUpgraders) {
 	    			let newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteUpgrader', spawnRoom: roomName});

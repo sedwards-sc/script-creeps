@@ -4,6 +4,10 @@
  */
 
 StructureTerminal.prototype.getResourceQuota = function(resourceType) {
+    if((resourceType === RESOURCE_UTRIUM) && (this.room.name === 'E7S24')) {
+        return 30000;
+    }
+
 	if(resourceType === RESOURCE_ENERGY) {
 		return 50000;
 	}
