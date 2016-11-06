@@ -68,6 +68,12 @@ StructureSpawn.prototype.spawnMineralHarvester = function() {
 	console.log('Spawning new mineral harvester (' + this.pos.roomName + '): ' + newName);
 };
 
+StructureSpawn.prototype.updateSpawnFlag = function() {
+	let flagsAtCurPos = this.room.lookForAt(LOOK_FLAGS, this.room);
+
+	this.log(JSON.stringify(flagsAtCurPos));
+};
+
 function undefToZero(x) {
 	return x || 0;
 }

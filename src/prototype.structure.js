@@ -6,3 +6,7 @@
 Structure.prototype.descriptionString = function() {
 	return this.structureType + '(' + this.pos.roomName + ', id#' + this.id + ')';
 };
+
+Structure.prototype.log = function(msg) {
+	return console.log('structure: ' + this.descriptionString + ', msg: ' + msg);
+};
