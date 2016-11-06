@@ -8,5 +8,5 @@ Structure.prototype.descriptionString = function() {
 };
 
 Structure.prototype.log = function(msg) {
-	return console.log('structure: ' + this.descriptionString + ', msg: ' + msg);
+	return console.log('structure: ' + this.descriptionString() + ', msg: ' + msg);
 };
