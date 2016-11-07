@@ -74,9 +74,11 @@ StructureSpawn.prototype.updateSpawnFlag = function() {
 	let spawningFlagRegex = new RegExp('^' + this.name + '_spawningRole_');
 	let spawningFlags = _.filter(flagsAtCurPos, (flag) => spawningFlagRegex.test(flag.name) === true);
 
+	/*
 	if(isArrayWithContents(spawningFlags)) {
 		this.log(JSON.stringify(spawningFlags));
 	}
+	*/
 
 	if(spawningFlags.length > 0) {
 		let foundFlag = false;
