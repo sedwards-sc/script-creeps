@@ -175,28 +175,30 @@ Creep.prototype.runCarrier = function () {
 Creep.prototype.getRefillTarget = function() {
 	let closestTarget;
 
-	// if room energy is < 300, fill extensions first so spawn can generate energy
-	if(this.room.energyAvailable < 300) {
-		closestTarget = this.pos.findClosestByRange(FIND_STRUCTURES, {
-				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_EXTENSION) && structure.energy < structure.energyCapacity;
-				}
-		});
-
-		if(!closestTarget) {
+	if(this.room.energyAvailable < this.room.energyCapacityAvailable) {
+		// if room energy is < 300, fill extensions first so spawn can generate energy
+		if(this.room.energyAvailable < 300) {
 			closestTarget = this.pos.findClosestByRange(FIND_STRUCTURES, {
 					filter: (structure) => {
-						return (structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
+						return (structure.structureType == STRUCTURE_EXTENSION) && structure.energy < structure.energyCapacity;
+					}
+			});
+
+			if(!closestTarget) {
+				closestTarget = this.pos.findClosestByRange(FIND_STRUCTURES, {
+						filter: (structure) => {
+							return (structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
+						}
+				});
+			}
+		} else {
+			closestTarget = this.pos.findClosestByRange(FIND_STRUCTURES, {
+					filter: (structure) => {
+						return (structure.structureType == STRUCTURE_EXTENSION ||
+								structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
 					}
 			});
 		}
-	} else {
-		closestTarget = this.pos.findClosestByRange(FIND_STRUCTURES, {
-				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_EXTENSION ||
-							structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
-				}
-		});
 	}
 
 	// refill towers if no spawns or extensions need refilling
