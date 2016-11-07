@@ -105,14 +105,16 @@ StructureSpawn.prototype.updateSpawnFlag = function() {
 		}
 	}
 
-	// else create flag for the currently spawning role
-	let flagName = this.name + '_spawningRole_' + Memory.creeps[this.spawning.name].role;
-	let flagCreateReturn = this.pos.createFlag(flagName, COLOR_CYAN, COLOR_WHITE);
+	// create flag for the currently spawning role
+	if(!(isNullOrUndefined(this.spawning))) {
+		let flagName = this.name + '_spawningRole_' + Memory.creeps[this.spawning.name].role;
+		let flagCreateReturn = this.pos.createFlag(flagName, COLOR_CYAN, COLOR_WHITE);
 
-	this.errorLog('problem creating spawningRole flag: ' + flagName, flagCreateReturn);
+		this.errorLog('problem creating spawningRole flag: ' + flagName, flagCreateReturn);
 
-	if(flagCreateReturn === ERR_NAME_EXISTS) {
-		Game.flags[flagName].remove();
+		if(flagCreateReturn === ERR_NAME_EXISTS) {
+			Game.flags[flagName].remove();
+		}
 	}
 };
 
