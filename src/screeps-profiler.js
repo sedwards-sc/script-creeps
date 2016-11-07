@@ -68,7 +68,7 @@ function getFilter() {
 }
 
 function wrapFunction(name, originalFunction) {
-  return function wrappedFunction() {
+  let wrappedFunction = function() {
     if (Profiler.isProfiling()) {
       const nameMatchesFilter = name === getFilter();
       const start = Game.cpu.getUsed();
@@ -88,6 +88,14 @@ function wrapFunction(name, originalFunction) {
 
     return originalFunction.apply(this, arguments);
   };
+
+  wrappedFunction.toString = function() {
+    return "// screeps-profiler wrapped function:\n" +
+      originalFunction.toString();
+  };
+
+  return wrappedFunction;
+
 }
 
 function hookUpPrototypes() {
