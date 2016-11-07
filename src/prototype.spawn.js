@@ -72,6 +72,47 @@ StructureSpawn.prototype.updateSpawnFlag = function() {
 	let flagsAtCurPos = this.room.lookForAt(LOOK_FLAGS, this.pos);
 
 	this.log(JSON.stringify(flagsAtCurPos));
+
+	let spawningFlagRegex = new RegExp('^' + this.name + '_spawningRole_');
+	let spawningFlags = _.filter(flagsAtCurPos, (flag) => spawningFlagRegex.test(flag.name) === true);
+
+	if(spawningFlags.length > 0) {
+		let foundFlag = false;
+
+		for(let i in spawningFlags) {
+			let spawningFlag = spawningFlags[i];
+
+			let flagSpawningRoleReturn = /_spawningRole_(.+)/.exec(spawningFlag.name);
+
+			if(flagSpawningRoleReturn === null) {
+				console.log('!!!!ERROR: spawningRole flag with no role: ' + spawningFlag);
+				continue;
+			}
+
+			let flagSpawningRole = flagSpawningRoleReturn[1];
+
+			if((this.spawning !== null) && (this.spawning !== undefined) && (Memory.creeps[this.spawning.name].role === flagSpawningRole)) {
+				foundFlag = true;
+				continue;
+			} else {
+				Game.flags[spawningFlag].remove();
+			}
+		}
+
+		if(foundFlag === true) {
+			return;
+		}
+	}
+
+	// else create flag for the currently spawning role
+	let flagName = this.name + '_spawningRole_' + Memory.creeps[this.spawning.name].role;
+	let flagCreateReturn = this.pos.createFlag(flagName, COLOR_CYAN, COLOR_WHITE);
+
+	this.errorLog('problem creating spawningRole flag: ' + flagName, flagCreateReturn);
+
+	if(flagCreateReturn === ERR_NAME_EXISTS) {
+		Game.flags[flagName].remove();
+	}
 };
 
 function undefToZero(x) {
