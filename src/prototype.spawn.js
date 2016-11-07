@@ -95,7 +95,7 @@ StructureSpawn.prototype.updateSpawnFlag = function() {
 				foundFlag = true;
 				continue;
 			} else {
-				Game.flags[spawningFlag].remove();
+				spawningFlag.remove();
 			}
 		}
 
