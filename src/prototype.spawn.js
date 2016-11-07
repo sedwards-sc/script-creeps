@@ -89,7 +89,7 @@ StructureSpawn.prototype.updateSpawnFlag = function() {
 			let flagSpawningRoleReturn = /_spawningRole_(.+)/.exec(spawningFlag.name);
 
 			if(flagSpawningRoleReturn === null) {
-				console.log('!!!!ERROR: spawningRole flag with no role: ' + spawningFlag);
+				console.log('!!!!ERROR: spawningRole flag with no role: ' + spawningFlag.name);
 				continue;
 			}
 
