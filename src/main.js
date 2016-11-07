@@ -530,11 +530,9 @@ module.exports.loop = function () {
 			}
 	    }
 
-		// run spawn loop every other tick to allow flag updates between
-		if((Game.time % 2) === 0) {
-			for(let spawnName in Game.spawns) {
-				Game.spawns[spawnName].updateSpawnFlag();
-			}
+		// run spawn loop
+		for(let spawnName in Game.spawns) {
+			Game.spawns[spawnName].updateSpawnFlag();
 		}
 
 
