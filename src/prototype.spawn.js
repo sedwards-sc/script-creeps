@@ -114,7 +114,9 @@ StructureSpawn.prototype.updateSpawnFlag = function() {
 		let flagName = this.name + '_spawningRole_' + Memory.creeps[this.spawning.name].role;
 		let flagCreateReturn = this.pos.createFlag(flagName, COLOR_CYAN, COLOR_WHITE);
 
-		this.errorLog('problem creating spawningRole flag: ' + flagName, flagCreateReturn);
+		if(flagCreateReturn !== flagName) {
+			this.errorLog('problem creating spawningRole flag: ' + flagName, flagCreateReturn);
+		}
 
 		if(flagCreateReturn === ERR_NAME_EXISTS) {
 			Game.flags[flagName].remove();
