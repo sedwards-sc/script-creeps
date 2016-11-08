@@ -31,7 +31,7 @@ Creep.prototype.run = function() {
 	} else if(this.memory.role === 'reserver') {
 		this.runReserver();
 	} else if(this.memory.role === 'claimer') {
-		this.runAttackClaimer();
+		this.runClaimer();
 	} else if(this.memory.role === 'explorer') {
 		this.runExplorer();
 	} else if(this.memory.role === 'remoteUpgrader') {
@@ -1627,9 +1627,9 @@ Creep.prototype.runClaimer = function() {
 	//let checkPoint2 = new RoomPosition(44, 2, 'W35S35');
 	//let checkPoint3 = new RoomPosition(33, 33, 'W35S33');
 
-	let checkPoint1 = new RoomPosition(2, 34, 'E9S36');
-	let checkPoint2 = new RoomPosition(2, 34, 'E9S36');
-	let checkPoint3 = new RoomPosition(26, 45, 'E9S38');
+	let checkPoint1 = new RoomPosition(18, 4, 'E6S29');
+	let checkPoint2 = new RoomPosition(18, 4, 'E6S29');
+	let checkPoint3 = new RoomPosition(18, 4, 'E6S29');
 
 
 	if(this.memory.state === undefined) {
