@@ -79,7 +79,7 @@ Creep.prototype.getBoosted = function(bodyPartToBoost, resourceToBoost) {
 
 	this.errorLog('not all body parts boosted', ERR_NO_BODYPART);
 
-	let labsWithBoost = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {
+	let labsWithBoost = Game.rooms[this.room.name].find(FIND_MY_STRUCTURES, {
 		filter: (structure) => {
 			return (structure.structureType === STRUCTURE_LAB) && (structure.mineralType === resourceToBoost);
 		}
