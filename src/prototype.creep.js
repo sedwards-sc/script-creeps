@@ -1495,8 +1495,8 @@ Creep.prototype.runBuilder = function() {
 	// state 0 is harvest
 	// state 1 is work
 
-	if(this.memory.flagName && Game.flags[this.memory.flagName] && Game.flags[this.memory.flagName].memory.boost && !this.memory.boosted) {
-		if(this.getBoosted(WORK, Game.flags[this.memory.flagName].memory.boost) !== OK) {
+	if(!this.memory.boosted && this.memory.flagName && Game.flags[this.memory.flagName] && Game.flags[this.memory.flagName].memory.boostPart && Game.flags[this.memory.flagName].memory.boostResource) {
+		if(this.getBoosted(Game.flags[this.memory.flagName].memory.boostPart, Game.flags[this.memory.flagName].memory.boostResource) !== OK) {
 			return;
 		}
 	}
