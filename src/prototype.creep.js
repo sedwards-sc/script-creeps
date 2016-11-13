@@ -67,18 +67,36 @@ Creep.prototype.getBoosted = function(bodyPartToBoost, resourceToBoost) {
 	let allBoosted = true;
 
 	for(let i in this.body) {
-		if(typeof this.body[i].boost === 'undefined') {
+		if(this.body[i].type === bodyPartToBoost && typeof this.body[i].boost === 'undefined') {
 			allBoosted = false;
 		}
 	}
 
 	if(allBoosted === true) {
+		this.memory.boosted = true;
 		return OK;
 	}
 
 	this.errorLog('not all body parts boosted', ERR_NO_BODYPART);
 
+	let labsWithBoost = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {
+		filter: (structure) => {
+			return (structure.structureType === STRUCTURE_LAB) && (structure.mineralType === resourceToBoost);
+		}
+	});
 
+	if(!isArrayWithContents(labsWithBoost)) {
+		this.errorLog('could not find lab with required boost resource', ERR_NOT_FOUND);
+		return OK;
+	}
+
+	let boostReturn = labsWithBoost[0].boostCreep(this);
+
+	if(boostReturn === ERR_NOT_IN_RANGE) {
+		this.moveTo(labsWithBoost[0]);
+	}
+
+	return boostReturn;
 };
 
 Creep.prototype.runMineralHarvester = function() {
