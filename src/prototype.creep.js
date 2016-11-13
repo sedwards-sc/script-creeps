@@ -61,6 +61,26 @@ Creep.prototype.errorLog = function(msg, errCode) {
 	return console.log('!!!Error!!! creep: ' + this.name + ' (' + this.room.name + ', ' + this.memory.role + '), msg: ' + msg + ' (' + errCode + ')');
 };
 
+Creep.prototype.getBoosted = function(bodyPartToBoost, resourceToBoost) {
+	this.log('getting boosted');
+
+	let allBoosted = true;
+
+	for(let i in this.body) {
+		if(typeof this.body[i].boost === 'undefined') {
+			allBoosted = false;
+		}
+	}
+
+	if(allBoosted === true) {
+		return OK;
+	}
+
+	this.errorlog('not all body parts boosted', ERR_NO_BODYPART);
+
+
+};
+
 Creep.prototype.runMineralHarvester = function() {
 	// state 0 is harvest
 	// state 1 is transfer minerals
@@ -1456,6 +1476,12 @@ Creep.prototype.runReinforcer = function() {
 Creep.prototype.runBuilder = function() {
 	// state 0 is harvest
 	// state 1 is work
+
+	if(this.memory.flagName && Game.flags[this.memory.flagName] && Game.flags[this.memory.flagName].memory.boost) {
+		if(this.getBoosted(WORK, Game.flags[this.memory.flagName].memory.boost) !== OK) {
+			return;
+		}
+	}
 
 	if(this.memory.state === undefined) {
 		this.memory.state = 0;
