@@ -78,14 +78,18 @@ StructureTerminal.prototype.run = function() {
 // will return name of room with lowest energy in storage (must have terminal)
 StructureTerminal.prototype.getRoomNeedsEnergyMost = function () {
 	let roomInNeed;
-	let roomStorageEnergy = STORAGE_CAPACITY;
+	let roomEnergy = STORAGE_CAPACITY + TERMINAL_CAPACITY;
 
 	for(let curRoomName in Game.rooms) {
 		let curRoom = Game.rooms[curRoomName];
 
-		if(curRoom.storage && curRoom.terminal && (curRoom.storage.store.energy < roomStorageEnergy) && (curRoom.terminal.store.energy < 100000)) {
-			roomInNeed = curRoomName;
-			roomStorageEnergy = curRoom.storage.store.energy;
+		if(curRoom.storage && curRoom.terminal) {
+			let curRoomEnergy = curRoom.storage.store.energy + curRoom.terminal.store.energy;
+
+			if(curRoomEnergy < roomEnergy) {
+				roomInNeed = curRoomName;
+				roomEnergy = curRoomEnergy;
+			}
 		}
 	}
 
