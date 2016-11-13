@@ -398,7 +398,8 @@ module.exports.loop = function () {
 					if(roomTransferFlags.length) {
 						let creepName = roomName + '_mineralCarrier';
 						if(!Game.creeps[creepName]) {
-							let newName = mainSpawn.createCreep([CARRY,CARRY,MOVE,MOVE], creepName, {spawnRoom: roomName, role: 'mineralCarrier'});
+							//let newName = mainSpawn.createCreep([CARRY,CARRY,MOVE,MOVE], creepName, {spawnRoom: roomName, role: 'mineralCarrier'});
+							let newName = mainSpawn.createCreep([CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE], creepName, {spawnRoom: roomName, role: 'mineralCarrier'});
 	    			        console.log('Spawning new mineral carrier: ' + newName + ' (' + roomName + ')');
 						}
 					}
