@@ -76,7 +76,7 @@ Creep.prototype.getBoosted = function(bodyPartToBoost, resourceToBoost) {
 		return OK;
 	}
 
-	this.errorlog('not all body parts boosted', ERR_NO_BODYPART);
+	this.errorLog('not all body parts boosted', ERR_NO_BODYPART);
 
 
 };
