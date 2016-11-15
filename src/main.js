@@ -461,11 +461,18 @@ module.exports.loop = function () {
 
 			links.forEach(link => link.refillCreeps(linkTransferCandidates));
 
+
+			// run terminals
 			if(curRoom.terminal) {
 				curRoom.terminal.run();
 			}
 
 
+			// run labs (new flower style)
+			curRoom.runLabs();
+
+			// run labs (old style)
+			/*
 			if(typeof curRoom.memory.reactors !== 'undefined') {
 			    for(let reactorIndex in curRoom.memory.reactors) {
 			        let curReactorGroup = curRoom.memory.reactors[reactorIndex];
@@ -518,12 +525,13 @@ module.exports.loop = function () {
 			        }
 			    }
 			}
+			*/
 
 		}
 
-		Memory.roster = {};
 
 		// run creep loop
+		Memory.roster = {};
 	    for(let creepName in Game.creeps) {
 	        let creep = Game.creeps[creepName];
 
@@ -538,6 +546,7 @@ module.exports.loop = function () {
 				Memory.roster[creep.pos.roomName].spawning.push(creep.memory.role);
 			}
 	    }
+
 
 		// run spawn loop
 		for(let spawnName in Game.spawns) {
