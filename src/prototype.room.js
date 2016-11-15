@@ -123,7 +123,14 @@ Room.prototype.registerLabs = function() {
 			continue;
 		}
 
-		let flagLabNum = flagReturn[1];
+		let flagLabNum = parseInt(flagReturn[1], 10);
+
+		if(isNaN(flagLabNum)) {
+			let errString = '!!!!ERROR: lab flag with NaN: ' + labFlag.name;
+			console.log(errString);
+			Game.notify(errString);
+			continue;
+		}
 
 		let structuresAtFlag = this.lookForAt(LOOK_STRUCTURES, labFlag.pos);
 
