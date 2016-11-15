@@ -150,6 +150,42 @@ Room.prototype.registerLabs = function() {
 	return OK;
 };
 
+Room.prototype.runLabs = function() {
+	if(!isArrayWithContents(this.memory.labIds)) {
+		return ERR_NOT_FOUND;
+	}
+
+	let outLabIndex = Game.time % 10;
+
+	if(outLabIndex === 2 || outLabIndex === 7) {
+		// skip ticks for inLabs indices
+		return OK;
+	}
+
+	let inLabA = Game.getObjectById(this.memory.labIds[2]);
+	let inLabB = Game.getObjectById(this.memory.labIds[7]);
+
+	if(inLabA === null || inLabB === null) {
+		console.log('!!!!ERROR: labIds is defined but cannot find inLabs');
+		return ERR_NOT_FOUND;
+	}
+
+	if(inLabA.mineralAmount === 0 || inLabB.mineralAmount === 0) {
+		// one or more inLabs are empty
+		return OK;
+	}
+
+	let outLab = Game.getObjectById(this.memory.labIds[outLabIndex]);
+
+	if(outLab === null) {
+		// not necessarily a problem
+		// not all labs built
+		return ERR_NOT_FOUND;
+	}
+
+	return outLab.runReaction(inLabA, inLabB);
+};
+
 function getLab(structuresArray) {
 	for(let i in structuresArray) {
 		if(structuresArray[i].structureType === STRUCTURE_LAB) {
