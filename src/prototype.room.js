@@ -106,6 +106,8 @@ Room.prototype.isMine = function() {
 };
 
 Room.prototype.registerLabs = function() {
+	console.log('Registering labs for room ' + this.name);
+
 	let labFlagRegex = new RegExp('^' + this.name + '_structure_lab_');
 	let labFlags = _.filter(Game.flags, (flag) => labFlagRegex.test(flag.name) === true);
 
