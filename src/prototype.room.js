@@ -146,6 +146,8 @@ Room.prototype.registerLabs = function() {
 		this.memory.labIds = this.memory.labIds || [];
 		this.memory.labIds[flagLabNum] = lab.id;
 	}
+
+	return OK;
 };
 
 function getLab(structuresArray) {
