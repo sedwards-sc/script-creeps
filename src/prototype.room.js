@@ -105,6 +105,48 @@ Room.prototype.isMine = function() {
     return this.controller.my;
 };
 
+Room.prototype.registerLabs = function() {
+	let labFlagRegex = new RegExp('^' + this.name + '_structure_lab_');
+	let labFlags = _.filter(Game.flags, (flag) => labFlagRegex.test(flag.name) === true);
+
+	for(let i in labFlags) {
+		let labFlag = labFlags[i];
+
+		let flagReturn = /_structure_lab_(\d)/.exec(labFlag.name);
+
+		if(flagReturn === null) {
+			let errString = '!!!!ERROR: lab flag with invalid number: ' + labFlag.name;
+			console.log(errString);
+			Game.notify(errString);
+			continue;
+		}
+
+		let flagLabNum = flagReturn[1];
+
+		let structuresAtFlag = this.lookForAt(LOOK_STRUCTURES, labFlag.pos);
+
+		let lab = getLab(structuresAtFlag);
+
+		if(!lab) {
+			let errString = '!!!!ERROR: lab flag with no lab: ' + labFlag.name;
+			console.log(errString);
+			Game.notify(errString);
+			continue;
+		}
+
+		this.memory.labIds = this.memory.labIds || [];
+		this.memory.labsIds[flagLabNum] = lab.id;
+	}
+};
+
+function getLab(structuresArray) {
+	for(let i in structuresArray) {
+		if(structuresArray[i].structureType === STRUCTURE_LAB) {
+			return structuresArray[i];
+		}
+	}
+}
+
 // DEPRECATED - added to global utils
 //function isNullOrUndefined(theObject) {
 //    return (theObject === undefined || theObject === null);
