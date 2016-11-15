@@ -144,7 +144,7 @@ Room.prototype.registerLabs = function() {
 		}
 
 		this.memory.labIds = this.memory.labIds || [];
-		this.memory.labsIds[flagLabNum] = lab.id;
+		this.memory.labIds[flagLabNum] = lab.id;
 	}
 };
 
