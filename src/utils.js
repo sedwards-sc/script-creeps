@@ -15,6 +15,14 @@ function isArrayWithContents(arrayToCheck) {
 	return false;
 }
 
+function getStructure(structuresArray, structType) {
+	for(let i in structuresArray) {
+		if(structuresArray[i].structureType === structType) {
+			return structuresArray[i];
+		}
+	}
+}
+
 function calculateCreepCost(bodyParts) {
 	let cost = 0;
 	bodyParts.forEach((bodyPart) => {
@@ -29,6 +37,7 @@ function populateUtils(g) {
     g.undefToZero = undefToZero;
     g.isNullOrUndefined = isNullOrUndefined;
 	g.isArrayWithContents = isArrayWithContents;
+	g.getStructure = getStructure;
 	g.calculateCreepCost = calculateCreepCost;
 }
 
