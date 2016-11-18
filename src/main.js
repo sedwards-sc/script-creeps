@@ -467,6 +467,10 @@ module.exports.loop = function () {
 				curRoom.terminal.run();
 			}
 
+			// run compound production manager for current room
+			if((curRoom.memory.produceCompounds === true) && (Game.time % 10 === 1)) {
+			    curRoom.runCompoundProductionManagment();
+			}
 
 			// run labs (new flower style)
 			curRoom.runLabs();

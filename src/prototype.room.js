@@ -194,6 +194,97 @@ function getLab(structuresArray) {
 	}
 }
 
+Room.prototype.runCompoundProductionManagment = function() {
+    //console.log('~Running compound production management for room ' + this.name);
+
+    // filter for room mineral transfer and return flags
+	let roomMineralFlagRegex = new RegExp('^' + this.memory.spawnRoom + '_mineral(?:Transfer|Return)_');
+	let roomMineralFlags = _.filter(Game.flags, (flag) => roomMineralFlagRegex.test(flag.name) === true);
+
+	if(isArrayWithContents(roomMineralFlags)) {
+	    // transfer or return phase occuring
+	    return OK;
+	}
+
+	if(!isArrayWithContents(this.memory.labIds)) {
+	    console.log('!!!!ERROR: compound production activated but labs are not registered');
+		return ERR_NOT_FOUND;
+	}
+
+	if(typeof this.memory.labIds[2] === 'undefined' || typeof this.memory.labIds[7] === 'undefined') {
+	    console.log('!!!ERROR: inLabs are not registered, cannot run compound production');
+	    return ERR_NOT_FOUND;
+	}
+
+	let labs = this.find(FIND_MY_STRUCTURES, {
+	    filter: (structure) => {
+	        return structure.structureType === STRUCTURE_LAB;
+	    }
+	});
+
+	let inLabsEmpty = true;
+	let outLabsEmpty = true;
+
+	for(let i in labs) {
+	    if(labs[i].mineralAmount > 0) {
+	        if(labs[i].id === this.memory.labIds[2] || labs[i].id === this.memory.labIds[7]) {
+	            inLabsEmpty = false;
+	        } else {
+	            outLabsEmpty = false;
+	        }
+	    }
+	}
+
+	if(inLabsEmpty === true && outLabsEmpty === false) {
+	    console.log('Clearing finished reaction run in room ' + this.name);
+	    // add mineral return all flag
+	    let flagPos = new RoomPosition(2, 2, this.name);
+	    flagPos.createFlag(this.name + '_mineralReturn_all', COLOR_BLUE, COLOR_BLUE);
+	} else if(inLabsEmpty === true && outLabsEmpty === true) {
+	    // add reactant flags to inLabs (choose and run reaction)
+
+	    if(typeof this.terminal === 'undefined') {
+	        console.log('!!!ERROR: no terminal in this room, cannot manage compound production');
+	        return ERR_NOT_FOUND;
+	    }
+
+	    // choose reaction
+	    for(let reactantA in REACTIONS) {
+	       for(let reactantB in REACTIONS[reactantA]) {
+	           let compound = REACTIONS[reactantA][reactantB];
+
+	            if((undefToZero(this.terminal.store[reactantA]) >= LAB_MINERAL_CAPACITY) &&
+	                (undefToZero(this.terminal.store[reactantB]) >= LAB_MINERAL_CAPACITY) &&
+	                (undefToZero(this.terminal.store[compound]) < (this.terminal.getResourceQuota(compound) - 500))) {
+
+	                // run this reaction (add reactant transfer flags on inLabs)
+	                console.log('Starting ' + compound + ' reaction run in room ' + this.name);
+
+	                let inLabA = Game.getObjectById(this.memory.labIds[2]);
+                	let inLabB = Game.getObjectById(this.memory.labIds[7]);
+
+                	if(inLabA === null || inLabB === null) {
+                		console.log('!!!!ERROR: labIds is defined but cannot find inLabs');
+                		return ERR_NOT_FOUND;
+                	}
+
+                	inLabA.pos.createFlag(this.name + '_mineralTransfer_' + reactantA, COLOR_CYAN, COLOR_BLUE);
+                	inLabB.pos.createFlag(this.name + '_mineralTransfer_' + reactantB, COLOR_CYAN, COLOR_GREEN);
+
+                	return OK;
+	            }
+	        }
+	    }
+
+	}
+
+	//console.log('no compounds under quota for room ' + this.name);
+
+	// else if inLabsEmpty === false && outLabsEmpty === false then a reaction is running
+	// else if inLabsEmpty === false && outLabsEmpty === true then the second inLab just got filled and the first reaction hasn't occured yet (or stuck if it keeps happening)
+	return OK;
+};
+
 // DEPRECATED - added to global utils
 //function isNullOrUndefined(theObject) {
 //    return (theObject === undefined || theObject === null);

@@ -4,14 +4,83 @@
  */
 
 StructureTerminal.prototype.getResourceQuota = function(resourceType) {
-    if((resourceType === RESOURCE_UTRIUM) && (this.room.name === 'E7S24')) {
-        return 30000;
-    }
+    //if((resourceType === RESOURCE_UTRIUM) && (this.room.name === 'E7S24')) {
+    //    return 30000;
+    //}
 
 	if(resourceType === RESOURCE_ENERGY) {
 		return 50000;
 	}
-	return 6000;
+
+	if(resourceType === RESOURCE_HYDROGEN ||
+	    resourceType === RESOURCE_OXYGEN ||
+	    resourceType === RESOURCE_UTRIUM ||
+	    resourceType === RESOURCE_LEMERGIUM ||
+	    resourceType === RESOURCE_KEANIUM ||
+	    resourceType === RESOURCE_ZYNTHIUM) {
+
+	    return 6000;
+	}
+
+	if(resourceType === RESOURCE_CATALYST) {
+	    return 6000;
+	}
+
+	if(resourceType === RESOURCE_GHODIUM) {
+	    return 6000;
+	}
+
+	if(resourceType === RESOURCE_HYDROXIDE) {
+	    return 9000;
+	}
+
+	if(resourceType === RESOURCE_ZYNTHIUM_KEANITE || resourceType === RESOURCE_UTRIUM_LEMERGITE) {
+	    return 6000;
+	}
+
+	if(resourceType === RESOURCE_UTRIUM_HYDRIDE ||
+	    resourceType === RESOURCE_UTRIUM_OXIDE ||
+	    resourceType === RESOURCE_KEANIUM_HYDRIDE ||
+	    resourceType === RESOURCE_KEANIUM_OXIDE ||
+	    resourceType === RESOURCE_LEMERGIUM_HYDRIDE ||
+	    resourceType === RESOURCE_LEMERGIUM_OXIDE ||
+	    resourceType === RESOURCE_ZYNTHIUM_HYDRIDE ||
+	    resourceType === RESOURCE_ZYNTHIUM_OXIDE ||
+	    resourceType === RESOURCE_GHODIUM_HYDRIDE ||
+	    resourceType === RESOURCE_GHODIUM_OXIDE) {
+
+        return 3000;
+	}
+
+	if(resourceType === RESOURCE_UTRIUM_ACID ||
+	    resourceType === RESOURCE_UTRIUM_ALKALIDE ||
+	    resourceType === RESOURCE_KEANIUM_ACID ||
+	    resourceType === RESOURCE_KEANIUM_ALKALIDE ||
+	    resourceType === RESOURCE_LEMERGIUM_ACID ||
+	    resourceType === RESOURCE_LEMERGIUM_ALKALIDE ||
+	    resourceType === RESOURCE_ZYNTHIUM_ACID ||
+	    resourceType === RESOURCE_ZYNTHIUM_ALKALIDE ||
+	    resourceType === RESOURCE_GHODIUM_ACID ||
+	    resourceType === RESOURCE_GHODIUM_ALKALIDE) {
+
+        return 3000;
+    }
+
+    if(resourceType === RESOURCE_CATALYZED_UTRIUM_ACID ||
+	    resourceType === RESOURCE_CATALYZED_UTRIUM_ALKALIDE ||
+	    resourceType === RESOURCE_CATALYZED_KEANIUM_ACID ||
+	    resourceType === RESOURCE_CATALYZED_KEANIUM_ALKALIDE ||
+	    resourceType === RESOURCE_CATALYZED_LEMERGIUM_ACID ||
+	    resourceType === RESOURCE_CATALYZED_LEMERGIUM_ALKALIDE ||
+	    resourceType === RESOURCE_CATALYZED_ZYNTHIUM_ACID ||
+	    resourceType === RESOURCE_CATALYZED_ZYNTHIUM_ALKALIDE ||
+	    resourceType === RESOURCE_CATALYZED_GHODIUM_ACID ||
+	    resourceType === RESOURCE_CATALYZED_GHODIUM_ALKALIDE) {
+
+        return 3000;
+    }
+
+	return 3000;
 };
 
 StructureTerminal.prototype.run = function() {
