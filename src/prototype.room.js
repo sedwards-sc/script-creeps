@@ -198,7 +198,7 @@ Room.prototype.runCompoundProductionManagment = function() {
     //console.log('~Running compound production management for room ' + this.name);
 
     // filter for room mineral transfer and return flags
-	let roomMineralFlagRegex = new RegExp('^' + this.memory.spawnRoom + '_mineral(?:Transfer|Return)_');
+	let roomMineralFlagRegex = new RegExp('^' + this.name + '_mineral(?:Transfer|Return)_');
 	let roomMineralFlags = _.filter(Game.flags, (flag) => roomMineralFlagRegex.test(flag.name) === true);
 
 	if(isArrayWithContents(roomMineralFlags)) {
@@ -275,12 +275,32 @@ Room.prototype.runCompoundProductionManagment = function() {
 	            }
 	        }
 	    }
+		//console.log('no compounds under quota for room ' + this.name);
+	} else if(inLabsEmpty === false && outLabsEmpty === false) {
+		// then a reaction is running (or could be stuck)
+		let outLab0 = Game.getObjectById(this.memory.labIds[0]);
+		let inLabA = Game.getObjectById(this.memory.labIds[2]);
+		let inLabB = Game.getObjectById(this.memory.labIds[7]);
 
+		if(outLab0 === null || inLabA === null || inLabB === null) {
+			console.log('!!!!ERROR: Cannot find inLabs and outLab0 for checking reaction progress');
+			return ERR_NOT_FOUND;
+		}
+
+		let reactantA = inLabA.mineralType;
+		let reactantB = inLabB.mineralType;
+		let compound = outLab0.mineralType;
+
+		if(REACTIONS[reactantA][reactantB] !== compound) {
+			console.log('!!!!ERROR: Problem with reaction run in room ' + this.name);
+		    // add mineral return all flag
+		    let flagPos = new RoomPosition(2, 2, this.name);
+		    flagPos.createFlag(this.name + '_mineralReturn_all', COLOR_BLUE, COLOR_BLUE);
+		}
+
+		// else reaction is running fine
 	}
 
-	//console.log('no compounds under quota for room ' + this.name);
-
-	// else if inLabsEmpty === false && outLabsEmpty === false then a reaction is running
 	// else if inLabsEmpty === false && outLabsEmpty === true then the second inLab just got filled and the first reaction hasn't occured yet (or stuck if it keeps happening)
 	return OK;
 };
