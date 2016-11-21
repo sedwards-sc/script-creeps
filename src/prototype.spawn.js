@@ -64,6 +64,10 @@ StructureSpawn.prototype.spawnMineralHarvester = function() {
 	let harvesterBody = [WORK,WORK,CARRY,CARRY,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 	//let harvesterBody = [WORK,CARRY,MOVE,MOVE];
 
+	if(this.room.controller.level === 8) {
+		harvesterBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY];
+	}
+
 	let newName = this.createCreep(harvesterBody, undefined, {role: 'mineralHarvester', spawnRoom: this.pos.roomName});
 	console.log('Spawning new mineral harvester (' + this.pos.roomName + '): ' + newName);
 };
