@@ -253,12 +253,24 @@ Room.prototype.runCompoundProductionManagment = function() {
 	       for(let reactantB in REACTIONS[reactantA]) {
 	           let compound = REACTIONS[reactantA][reactantB];
 
+			   let compoundAmount = undefToZero(this.terminal.store[compound]);
+
+			   if(Game.creeps[this.name + '_mineralCarrier']) {
+				   compoundAmount += undefToZero(Game.creeps[this.name + '_mineralCarrier'].carry[compound]);
+			   }
+
+			   let quotaAmount = this.terminal.getResourceQuota(compound);
+
 	            if((undefToZero(this.terminal.store[reactantA]) >= LAB_MINERAL_CAPACITY) &&
 	                (undefToZero(this.terminal.store[reactantB]) >= LAB_MINERAL_CAPACITY) &&
-	                (undefToZero(this.terminal.store[compound]) < (this.terminal.getResourceQuota(compound) - 500))) {
+	                (compoundAmount < quotaAmount)) {
+
+					let amountMissing = quotaAmount - compoundAmount;
+
+					let amountToProduce = Math.min(amountMissing, LAB_MINERAL_CAPACITY);
 
 	                // run this reaction (add reactant transfer flags on inLabs)
-	                console.log('Starting ' + compound + ' reaction run in room ' + this.name);
+	                console.log('Starting ' + compound + ' reaction run in room ' + this.name + ' - deficit: ' + amountMissing + ', production qty: ' + amountToProduce);
 
 	                let inLabA = Game.getObjectById(this.memory.labIds[2]);
                 	let inLabB = Game.getObjectById(this.memory.labIds[7]);
@@ -268,8 +280,11 @@ Room.prototype.runCompoundProductionManagment = function() {
                 		return ERR_NOT_FOUND;
                 	}
 
-                	inLabA.pos.createFlag(this.name + '_mineralTransfer_' + reactantA, COLOR_CYAN, COLOR_BLUE);
-                	inLabB.pos.createFlag(this.name + '_mineralTransfer_' + reactantB, COLOR_CYAN, COLOR_GREEN);
+                	let flagNameA = inLabA.pos.createFlag(this.name + '_mineralTransfer_' + reactantA, COLOR_CYAN, COLOR_BLUE);
+                	let flagNameB = inLabB.pos.createFlag(this.name + '_mineralTransfer_' + reactantB, COLOR_CYAN, COLOR_GREEN);
+
+					Memory.flags[flagNameA] = {minerals: amountToProduce};
+					Memory.flags[flagNameB] = {minerals: amountToProduce};
 
                 	return OK;
 	            }
