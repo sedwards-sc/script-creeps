@@ -1078,7 +1078,7 @@ Creep.prototype.runMedic = function() {
 	if(!creepLeader) {
 		let creepLeaders = _.filter(Game.creeps,
 				(creep) => {
-					return ((creep.memory.flagName === this.memory.flagName) && (creep.memory.role === 'dismantler'));
+					return ((creep.memory.flagName === this.memory.flagName) && ((creep.memory.role === 'dismantler') || (creep.memory.role === 'powerBankAttacker')));
 				}
 		);
 
