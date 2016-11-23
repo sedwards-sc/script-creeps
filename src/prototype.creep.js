@@ -2176,6 +2176,9 @@ Creep.prototype.runPowerBankAttacker = function() {
 			return;
 		}
 		if(this.attack(powerBank) === ERR_NOT_IN_RANGE) {
+			if((Game.time % 3) !== 0) {
+				return;
+			}
 			this.moveTo(powerBank);
 		}
 	} else {
