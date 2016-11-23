@@ -23,6 +23,16 @@ function getStructure(structuresArray, structType) {
 	}
 }
 
+function getResourcesOfType(resourcesArray, resType) {
+	let resourceReturnArray = [];
+	for(let i in resourcesArray) {
+		if(resourcesArray[i].resourceType === resType) {
+			resourceReturnArray.push(resourcesArray[i]);
+		}
+	}
+	return resourceReturnArray;
+}
+
 function calculateCreepCost(bodyParts) {
 	let cost = 0;
 	bodyParts.forEach((bodyPart) => {
@@ -38,6 +48,7 @@ function populateUtils(g) {
     g.isNullOrUndefined = isNullOrUndefined;
 	g.isArrayWithContents = isArrayWithContents;
 	g.getStructure = getStructure;
+	g.getResourcesOfType = getResourcesOfType;
 	g.calculateCreepCost = calculateCreepCost;
 }
 

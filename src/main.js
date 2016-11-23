@@ -410,6 +410,7 @@ module.exports.loop = function () {
 			    mainSpawn = roomSpawns[1];
 			}
 
+			// for dismantlers
 			let numMedics = 0;
 
 			if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
@@ -439,6 +440,64 @@ module.exports.loop = function () {
 							let curCreepBody = [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK];
 							if(Game.flags[curFlagName].memory.dismantlerBodyParts) {
 								curCreepBody = Game.flags[curFlagName].memory.dismantlerBodyParts;
+							}
+	    		            let newName = mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+	    			        console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
+	    			        break;
+	    		        }
+	    		    }
+	    		}
+			}
+
+
+			if(roomSpawns.length >= 3) {
+			    mainSpawn = roomSpawns[2];
+			}
+
+			// for powerBankAttackers
+			numMedics = 2;
+
+			if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
+				let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
+				let roomCreepQuotas = Game.rooms[roomName].memory.creepQuotas;
+				if((roomCreepQuotas.powerBankAttacker) && (undefToZero(roomCreepRoster.medic) < (roomCreepQuotas.powerBankAttacker.length * numMedics))) {
+	    		    for(let curQuotaIndex in roomCreepQuotas.powerBankAttacker) {
+	    		        let curFlagName = roomCreepQuotas.powerBankAttacker[curQuotaIndex];
+	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === 'medic'));
+	    		        if(currentFlagCreeps.length < numMedics) {
+							let medicBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL];
+							if(Game.flags[curFlagName].memory.medicBodyParts) {
+								medicBody = Game.flags[curFlagName].memory.medicBodyParts;
+							}
+	    		            let newName = mainSpawn.createCreep(medicBody, undefined, {spawnRoom: roomName, role: 'medic', flagName: curFlagName});
+	    			        console.log('Spawning new medic: ' + newName + ' - ' + curFlagName);
+	    			        break;
+	    		        }
+	    		    }
+	    		}  else if((roomCreepQuotas.powerBankAttacker) && (undefToZero(roomCreepRoster.powerBankAttacker) < roomCreepQuotas.powerBankAttacker.length)) {
+					let curRole = 'powerBankAttacker';
+	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+	    		        if(currentFlagCreeps.length < 1) {
+							let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK];
+							if(Game.flags[curFlagName].memory.powerBankAttackerBodyParts) {
+								curCreepBody = Game.flags[curFlagName].memory.powerBankAttackerBodyParts;
+							}
+	    		            let newName = mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+	    			        console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
+	    			        break;
+	    		        }
+	    		    }
+	    		}  else if((roomCreepQuotas.powerCollector) && (undefToZero(roomCreepRoster.powerCollector) < roomCreepQuotas.powerCollector.length)) {
+					let curRole = 'powerCollector';
+	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+	    		        if(currentFlagCreeps.length < 1) {
+							let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY];
+							if(Game.flags[curFlagName].memory.bodyParts) {
+								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
 							}
 	    		            let newName = mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
 	    			        console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);

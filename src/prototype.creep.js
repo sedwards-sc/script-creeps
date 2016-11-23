@@ -48,6 +48,10 @@ Creep.prototype.run = function() {
 		this.runScout();
 	} else if(this.memory.role === 'soldier') {
 		this.runSoldier();
+	} else if(this.memory.role === 'powerBankAttacker') {
+		this.runPowerBankAttacker();
+	} else if(this.memory.role === 'powerCollector') {
+		this.runPowerCollector();
     } else {
         console.log('!!!Error: creep ' + this.name + ' has no role function!!!');
     }
@@ -2148,4 +2152,77 @@ Creep.prototype.runMineralReturn = function() {
 		}
 	}
 
+};
+
+Creep.prototype.runPowerBankAttacker = function() {
+	let myFlag;
+
+	if(this.memory.flagName === undefined) {
+        this.errorLog('no flag in memory', ERR_NOT_FOUND);
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+        if(myFlag === undefined) {
+			this.errorLog('flag is missing', ERR_NOT_FOUND);
+	        return;
+		}
+    }
+
+    if(this.pos.roomName === myFlag.pos.roomName) {
+		let roomStructures = this.room.find(FIND_STRUCTURES);
+		let powerBank = getStructure(roomStructures, STRUCTURE_POWER_BANK);
+		if(!powerBank) {
+			this.log('no power bank in my flag\'s room');
+			return;
+		}
+		if(this.attack(powerBank) === ERR_NOT_IN_RANGE) {
+			this.moveTo(powerBank);
+		}
+	} else {
+		this.moveTo(myFlag);
+	}
+};
+
+Creep.prototype.runPowerCollector = function() {
+	let myFlag;
+
+	if(this.memory.flagName === undefined) {
+        this.errorLog('no flag in memory', ERR_NOT_FOUND);
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+        if(myFlag === undefined) {
+			this.errorLog('flag is missing', ERR_NOT_FOUND);
+	        return;
+		}
+    }
+
+	let carrySum = _.sum(this.carry);
+	if(carrySum > 0) {
+		// return power
+		let spawnRoomStorage = Game.rooms[this.memory.spawnRoom].storage;
+		if(!spawnRoomStorage) {
+			this.errorLog('could not find spawn room storage', ERR_NOT_FOUND);
+			return;
+		}
+		if(this.transfer(spawnRoomStorage, RESOURCE_POWER) === ERR_NOT_IN_RANGE) {
+			this.moveTo(spawnRoomStorage);
+		}
+	} else {
+		// get power
+    	if(this.pos.roomName === myFlag.pos.roomName) {
+			let roomResources = this.room.find(FIND_DROPPED_RESOURCES);
+			let powerPiles = getResourcesOfType(roomResources, RESOURCE_POWER);
+			if(!isArrayWithContents(powerPiles)) {
+				this.log('no power in my flag\'s room');
+				return;
+			}
+			let closestPowerPile = this.pos.findClosestByRange(powerPiles);
+			if(this.pickUp(closestPowerPile) === ERR_NOT_IN_RANGE) {
+				this.moveTo(closestPowerPile);
+			}
+		} else {
+			this.moveTo(myFlag);
+		}
+	}
 };
