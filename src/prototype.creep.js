@@ -1096,6 +1096,22 @@ Creep.prototype.runMedic = function() {
 		this.moveTo(creepLeader);
 	}
 
+	if(creepLeader.memory.role === 'powerBankAttacker') {
+	    if(creepLeader.hits < creepLeader.hitsMax) {
+	        let rangeToLeader = this.pos.getRangeTo(creepLeader);
+
+	        if(rangeToLeader <= 3) {
+	            let healReturn = this.heal(creepLeader);
+	            if(healReturn === ERR_NOT_IN_RANGE) {
+        			healReturn = this.rangedHeal(creepLeader);
+        		}
+        		if(healReturn === OK) {
+    			    return;
+    			}
+	        }
+	    }
+	}
+
 	let hurtSameRoomCreeps = this.room.find(FIND_MY_CREEPS, {
 			filter: (creep) => {
 				return creep.hits < creep.hitsMax;
@@ -2173,6 +2189,7 @@ Creep.prototype.runPowerBankAttacker = function() {
 		let powerBank = getStructure(roomStructures, STRUCTURE_POWER_BANK);
 		if(!powerBank) {
 			this.log('no power bank in my flag\'s room');
+			this.moveTo(myFlag);
 			return;
 		}
 		if(this.attack(powerBank) === ERR_NOT_IN_RANGE) {
@@ -2209,7 +2226,17 @@ Creep.prototype.runPowerCollector = function() {
 			return;
 		}
 		if(this.transfer(spawnRoomStorage, RESOURCE_POWER) === ERR_NOT_IN_RANGE) {
-			this.moveTo(spawnRoomStorage);
+			this.moveTo(spawnRoomStorage, {
+                costCallback: function(roomName, costMatrix) {
+            	    if(roomName === 'E4S31') {
+            		    for(i = 0; i < 50; i++) {
+            		        for(j = 0; j < 50; j++) {
+            		            costMatrix.set(i, j, 0xff);
+            		        }
+            		    }
+            		}
+            	}
+            });
 		}
 	} else {
 		// get power
@@ -2218,14 +2245,25 @@ Creep.prototype.runPowerCollector = function() {
 			let powerPiles = getResourcesOfType(roomResources, RESOURCE_POWER);
 			if(!isArrayWithContents(powerPiles)) {
 				this.log('no power in my flag\'s room');
+				this.moveTo(myFlag);
 				return;
 			}
 			let closestPowerPile = this.pos.findClosestByRange(powerPiles);
-			if(this.pickUp(closestPowerPile) === ERR_NOT_IN_RANGE) {
+			if(this.pickup(closestPowerPile) === ERR_NOT_IN_RANGE) {
 				this.moveTo(closestPowerPile);
 			}
 		} else {
-			this.moveTo(myFlag);
+			this.moveTo(myFlag, {
+                costCallback: function(roomName, costMatrix) {
+            	    if(roomName === 'E4S31') {
+            		    for(i = 0; i < 50; i++) {
+            		        for(j = 0; j < 50; j++) {
+            		            costMatrix.set(i, j, 0xff);
+            		        }
+            		    }
+            		}
+            	}
+            });
 		}
 	}
 };

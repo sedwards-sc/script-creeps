@@ -450,9 +450,11 @@ module.exports.loop = function () {
 			}
 
 
-			if(roomSpawns.length >= 3) {
-			    mainSpawn = roomSpawns[2];
-			}
+            if(mainSpawn.spawnCalled || mainSpawn.spawning) {
+    			if(roomSpawns.length >= 3) {
+    			    mainSpawn = roomSpawns[2];
+    			}
+		    }
 
 			// for powerBankAttackers
 			numMedics = 2;
@@ -465,7 +467,7 @@ module.exports.loop = function () {
 	    		        let curFlagName = roomCreepQuotas.powerBankAttacker[curQuotaIndex];
 	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === 'medic'));
 	    		        if(currentFlagCreeps.length < numMedics) {
-							let medicBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL];
+							let medicBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL];
 							if(Game.flags[curFlagName].memory.medicBodyParts) {
 								medicBody = Game.flags[curFlagName].memory.medicBodyParts;
 							}
@@ -515,7 +517,7 @@ module.exports.loop = function () {
 			// transfer energy from links to any creeps except carriers, miners, and various special roles
 			// find non carriers that aren't full of energy
 			let linkTransferCandidates = _.filter(roomCreeps, (creep) => {
-					return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.memory.role !== 'mineralHarvester') && (creep.memory.role !== 'miner') && (creep.memory.role !== 'mineralCarrier') && (creep.memory.role !== 'harvester') && (creep.carry.energy < creep.carryCapacity);
+					return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.memory.role !== 'mineralHarvester') && (creep.memory.role !== 'miner') && (creep.memory.role !== 'mineralCarrier') && (creep.memory.role !== 'harvester') && (creep.memory.role !== 'powerCollector') && (creep.carry.energy < creep.carryCapacity);
 			});
 
 			links.forEach(link => link.refillCreeps(linkTransferCandidates));
