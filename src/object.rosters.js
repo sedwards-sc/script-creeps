@@ -250,7 +250,7 @@ module.exports = (function(){
 				0, //carriers
 				0, //linkers
 				0, //reinforcers
-				0, //reservers
+				1, //reservers
 				0, //claimers
 				0, //remoteUpgraders
 				0, //remoteBuilders

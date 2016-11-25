@@ -301,5 +301,14 @@ module.exports = (function(){
 		let reserverInfo20 = new ReserverInfo('reserver20', '576a9c4857110ab231d88cdf');
 		this.E9S38.reservers.push(reserverInfo20);
 
+
+
+		// Room: E6S29
+		this.E6S29 = new RemoteRoster();
+
+		// reservers
+		let reserverInfo23 = new ReserverInfo('reserver23', '55db3328efa8e3fe66e0564b');
+		this.E6S29.reservers.push(reserverInfo23);
+
 	};
 })();
