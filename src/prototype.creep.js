@@ -2267,3 +2267,46 @@ Creep.prototype.runPowerCollector = function() {
 		}
 	}
 };
+
+Creep.prototype.runPowerCarrier = function() {
+	let myRoomStructures = this.room.find(FIND_MY_STRUCTURES);
+	let powerSpawn = getStructure(myRoomStructures, STRUCTURE_POWER_SPAWN);
+	if(!powerSpawn) {
+		this.errorLog('could not find power spawn', ERR_NOT_FOUND);
+		return ERR_NOT_FOUND;
+	}
+
+	let carrySum = _.sum(this.carry);
+
+	if(powerSpawn.power > 0) {
+		if(carrySum > 0) {
+			// drop off anything extra
+			let resource = this.getHighestQuantityResourceType();
+			if(this.transfer(this.room.terminal, resource) === ERR_NOT_IN_RANGE) {
+				this.moveTo(this.room.terminal);
+			}
+		}
+		return OK;
+	}
+
+	if(carrySum > 0) {
+		if(this.carry[RESOURCE_POWER] > 0) {
+			// drop off power at power spawn
+			if(this.transfer(powerSpawn, RESOURCE_POWER) === ERR_NOT_IN_RANGE) {
+				this.moveTo(powerSpawn);
+			}
+		} else {
+			// carrying some other resource for some reason
+			let resource = this.getHighestQuantityResourceType();
+			if(this.transfer(this.room.terminal, resource) === ERR_NOT_IN_RANGE) {
+				this.moveTo(this.room.terminal);
+			}
+		}
+	} else {
+		// get power from terminal
+		let powerAmount = Math.min(this.carryCapacity, POWER_SPAWN_POWER_CAPACITY);
+		if(this.withdraw(this.room.terminal, RESOURCE_POWER, powerAmount) === ERR_NOT_IN_RANGE) {
+			this.moveTo(this.room.terminal);
+		}
+	}
+};
