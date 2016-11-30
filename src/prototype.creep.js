@@ -1073,6 +1073,21 @@ Creep.prototype.runMedic = function() {
 		}
     }
 
+	if(isArrayWithContents(myFlag.memory.boosts)) {
+		this.memory.boostedArray = this.memory.boostedArray || [];
+        for(let i in myFlag.memory.boosts) {
+			if(this.memory.boostedArray[i] !== true) {
+	            let boostObj = myFlag.memory.boosts[i];
+				let boostReturn = this.getBoosted(boostObj.part, boostObj.resource);
+	    		if(boostReturn === OK) {
+	    			this.memory.boostedArray[i] = true;
+	    		} else {
+					return;
+				}
+			}
+        }
+	}
+
 	let creepLeader = Game.creeps[this.memory.leader];
 
 	if(!creepLeader) {
