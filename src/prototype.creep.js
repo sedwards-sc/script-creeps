@@ -263,6 +263,15 @@ Creep.prototype.getRefillTarget = function() {
 		});
 	}
 
+	// refill power spawns
+	if(!closestTarget) {
+		closestTarget = this.pos.findClosestByRange(FIND_STRUCTURES, {
+				filter: (structure) => {
+					return (structure.structureType === STRUCTURE_POWER_SPAWN) && structure.energy < structure.energyCapacity;
+				}
+		});
+	}
+
 	// top up terminal if no spawns or extensions or towers or labs need refilling
 	//if(!closestTarget) {
 	//	if(this.room.terminal && (this.room.terminal.store.energy < this.room.terminal.getResourceQuota(RESOURCE_ENERGY))) {
