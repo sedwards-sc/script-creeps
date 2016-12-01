@@ -617,7 +617,9 @@ module.exports.loop = function () {
 				let myRoomStructures = curRoom.find(FIND_MY_STRUCTURES);
 				let powerSpawn = getStructure(myRoomStructures, STRUCTURE_POWER_SPAWN);
 				if(powerSpawn) {
-					powerSpawn.processPower();
+					if(powerSpawn.power >= 1 && powerSpawn.energy >= 50) {
+						powerSpawn.processPower();
+					}
 				} else {
 					console.log('!!!!Error: could not find power spawn in room ' + curRoom.name);
 				}
