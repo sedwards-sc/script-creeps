@@ -612,6 +612,17 @@ module.exports.loop = function () {
 			}
 			*/
 
+			// run power spawns
+			if(curRoom.memory.processPower === true) {
+				let myRoomStructures = curRoom.find(FIND_MY_STRUCTURES);
+				let powerSpawn = getStructure(myRoomStructures, STRUCTURE_POWER_SPAWN);
+				if(powerSpawn) {
+					powerSpawn.processPower();
+				} else {
+					console.log('!!!!Error: could not find power spawn in room ' + curRoom.name);
+				}
+			}
+
 		}
 
 
