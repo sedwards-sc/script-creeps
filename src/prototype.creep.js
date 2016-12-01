@@ -52,6 +52,8 @@ Creep.prototype.run = function() {
 		this.runPowerBankAttacker();
 	} else if(this.memory.role === 'powerCollector') {
 		this.runPowerCollector();
+	} else if(this.memory.role === 'powerCarrier') {
+		this.runPowerCarrier();
     } else {
         console.log('!!!Error: creep ' + this.name + ' has no role function!!!');
     }
