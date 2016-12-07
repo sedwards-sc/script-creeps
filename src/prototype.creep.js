@@ -68,7 +68,7 @@ Creep.prototype.errorLog = function(msg, errCode) {
 };
 
 Creep.prototype.getBoosted = function(bodyPartToBoost, resourceToBoost) {
-	this.log('getting boosted');
+	//this.log('getting boosted');
 
 	let allBoosted = true;
 
