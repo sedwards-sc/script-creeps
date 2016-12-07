@@ -83,7 +83,7 @@ Creep.prototype.getBoosted = function(bodyPartToBoost, resourceToBoost) {
 		return OK;
 	}
 
-	this.errorLog('not all body parts boosted', ERR_NO_BODYPART);
+	//this.errorLog('not all body parts boosted', ERR_NO_BODYPART);
 
 	let labsWithBoost = Game.rooms[this.room.name].find(FIND_MY_STRUCTURES, {
 		filter: (structure) => {
@@ -92,7 +92,7 @@ Creep.prototype.getBoosted = function(bodyPartToBoost, resourceToBoost) {
 	});
 
 	if(!isArrayWithContents(labsWithBoost)) {
-		this.errorLog('could not find lab with required boost resource', ERR_NOT_FOUND);
+		//this.errorLog('could not find lab with required boost resource', ERR_NOT_FOUND);
 		return OK;
 	}
 
