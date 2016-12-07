@@ -2100,7 +2100,16 @@ Creep.prototype.runMineralTransfer = function() {
 			return;
 		}
 
-		let transferAmount = Math.min(firstTransferFlag.memory.minerals, this.carryCapacity);
+		let terminalAmount = undefToZero(this.terminal.store[flagMineral]);
+
+		let transferAmount = Math.min(firstTransferFlag.memory.minerals, this.carryCapacity, terminalAmount);
+
+		if(transferAmount === 0) {
+			this.errorLog('transfer amount is 0; removing flag', ERR_NOT_ENOUGH_RESOURCES);
+			delete Memory.flags[firstTransferFlag.name];
+			firstTransferFlag.remove();
+			return;
+		}
 
 		if(this.withdraw(this.room.terminal, flagMineral, transferAmount) === ERR_NOT_IN_RANGE) {
 			this.moveTo(this.room.terminal);
