@@ -2100,7 +2100,7 @@ Creep.prototype.runMineralTransfer = function() {
 			return;
 		}
 
-		let terminalAmount = undefToZero(this.terminal.store[flagMineral]);
+		let terminalAmount = undefToZero(this.room.terminal.store[flagMineral]);
 
 		let transferAmount = Math.min(firstTransferFlag.memory.minerals, this.carryCapacity, terminalAmount);
 
