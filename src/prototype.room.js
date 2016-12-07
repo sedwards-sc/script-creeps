@@ -302,7 +302,7 @@ Room.prototype.runCompoundProductionManagment = function() {
 			console.log('Laying out boost compounds in room ' + this.name);
 
 			for(let i in labs) {
-				let secondaryColour = i || 10;
+				let secondaryColour = parseInt(i || 10);
 				labs[i].pos.createFlag(this.name + '_mineralTransfer_' + boostCompounds[i], COLOR_GREEN, secondaryColour);
 			}
 		}
