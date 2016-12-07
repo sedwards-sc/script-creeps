@@ -291,8 +291,38 @@ Room.prototype.runCompoundProductionManagment = function() {
 	        }
 	    }
 		//console.log('no compounds under quota for room ' + this.name);
+
+		// lay out boost compound flags
+		if(typeof this.memory.boostTier !== 'undefined' && labs.length === 10) {
+			let boostCompounds = getTierCompounds(this.memory.boostTier);
+			if(!isArrayWithContents(boostCompounds)) {
+				return ERR_INVALID_ARGS;
+			}
+
+			for(let i in labs) {
+				let secondaryColour = i || 10;
+				labs[i].pos.createFlag(this.name + '_mineralTransfer_' + boostCompounds[i], COLOR_GREEN, secondaryColour);
+			}
+		}
 	} else if(inLabsEmpty === false && outLabsEmpty === false) {
-		// then a reaction is running (or could be stuck)
+		// then a reaction is running, could be stuck, or is currently boosting
+
+		// check if boosting
+		let validBoostState = false;
+		if(typeof this.memory.boostTier !== 'undefined' && labs.length === 10) {
+			validBoostState = true;
+			let boostCompounds = getTierCompounds(this.memory.boostTier);
+			if(!isArrayWithContents(boostCompounds)) {
+				return ERR_INVALID_ARGS;
+			}
+
+			for(let i in labs) {
+				if(labs[i].mineralType !== boostCompounds[i]) {
+					validBoostState = false;
+				}
+			}
+		}
+
 		let outLab0 = Game.getObjectById(this.memory.labIds[0]);
 		let inLabA = Game.getObjectById(this.memory.labIds[2]);
 		let inLabB = Game.getObjectById(this.memory.labIds[7]);
@@ -306,7 +336,7 @@ Room.prototype.runCompoundProductionManagment = function() {
 		let reactantB = inLabB.mineralType;
 		let compound = outLab0.mineralType;
 
-		if(REACTIONS[reactantA][reactantB] !== compound) {
+		if(REACTIONS[reactantA][reactantB] !== compound && !validBoostState) {
 			console.log('!!!!ERROR: Problem with reaction run in room ' + this.name);
 		    // add mineral return all flag
 		    let flagPos = new RoomPosition(2, 2, this.name);
