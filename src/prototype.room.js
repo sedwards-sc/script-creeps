@@ -299,6 +299,8 @@ Room.prototype.runCompoundProductionManagment = function() {
 				return ERR_INVALID_ARGS;
 			}
 
+			console.log('Laying out boost compounds in room ' + this.name);
+
 			for(let i in labs) {
 				let secondaryColour = i || 10;
 				labs[i].pos.createFlag(this.name + '_mineralTransfer_' + boostCompounds[i], COLOR_GREEN, secondaryColour);
