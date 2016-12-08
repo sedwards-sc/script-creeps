@@ -2234,7 +2234,17 @@ Creep.prototype.runPowerBankAttacker = function() {
 			this.moveTo(powerBank);
 		}
 	} else {
-		this.moveTo(myFlag);
+		this.moveTo(myFlag, {
+			costCallback: function(roomName, costMatrix) {
+				if(roomName === 'E7S37') {
+					for(i = 0; i < 50; i++) {
+						for(j = 0; j < 50; j++) {
+							costMatrix.set(i, j, 0xff);
+						}
+					}
+				}
+			}
+		});
 	}
 };
 
@@ -2263,7 +2273,7 @@ Creep.prototype.runPowerCollector = function() {
 		if(this.transfer(spawnRoomStorage, RESOURCE_POWER) === ERR_NOT_IN_RANGE) {
 			this.moveTo(spawnRoomStorage, {
                 costCallback: function(roomName, costMatrix) {
-            	    if(roomName === 'E4S31') {
+            	    if(roomName === 'E7S37') {
             		    for(i = 0; i < 50; i++) {
             		        for(j = 0; j < 50; j++) {
             		            costMatrix.set(i, j, 0xff);
@@ -2290,7 +2300,7 @@ Creep.prototype.runPowerCollector = function() {
 		} else {
 			this.moveTo(myFlag, {
                 costCallback: function(roomName, costMatrix) {
-            	    if(roomName === 'E4S31') {
+            	    if(roomName === 'E7S37') {
             		    for(i = 0; i < 50; i++) {
             		        for(j = 0; j < 50; j++) {
             		            costMatrix.set(i, j, 0xff);
