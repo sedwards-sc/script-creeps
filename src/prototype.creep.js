@@ -2227,6 +2227,12 @@ Creep.prototype.runPowerBankAttacker = function() {
 			this.moveTo(myFlag);
 			return;
 		}
+
+		if(powerBank.hits <= 10000 && myFlag.memory.destroy !== true) {
+			// don't destroy until collectors are available
+			return;
+		}
+
 		if(this.attack(powerBank) === ERR_NOT_IN_RANGE) {
 			if((Game.time % 3) !== 0) {
 				return;
