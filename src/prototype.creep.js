@@ -1541,6 +1541,11 @@ Creep.prototype.runBuilder = function() {
 	// state 0 is harvest
 	// state 1 is work
 
+	if(this.pos.roomName !== this.memory.spawnRoom) {
+		this.moveTo(new RoomPosition(25, 25, this.memory.spawnRoom));
+		return;
+	}
+
 	if(!this.memory.boosted && this.memory.flagName && Game.flags[this.memory.flagName] && Game.flags[this.memory.flagName].memory.boostPart && Game.flags[this.memory.flagName].memory.boostResource) {
 		if(this.getBoosted(Game.flags[this.memory.flagName].memory.boostPart, Game.flags[this.memory.flagName].memory.boostResource) !== OK) {
 			return;
