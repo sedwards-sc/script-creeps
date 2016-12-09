@@ -236,7 +236,7 @@ module.exports = (function(){
 				0, //claimers
 				0, //remoteUpgraders
 				0, //remoteBuilders
-				1 //mineralHarvesters
+				0 //mineralHarvesters
 		);
 
 		this.E6S29 = new RoomRoster(
