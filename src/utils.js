@@ -96,6 +96,7 @@ function runRoomMineralReports() {
 			Game.rooms[i].mineralReport();
 		}
 	}
+	return OK;
 }
 
 function populateUtils(g) {
