@@ -366,6 +366,7 @@ Room.prototype.mineralReport = function() {
 	reportString += "\nAmount: " + mineral.mineralAmount;
 	reportString += "\nDensity: " + mineral.density;
 	reportString += "\nTicks to Regeneration: " + mineral.ticksToRegeneration;
+	reportString += "\nStorage Amount: " + this.storage.store[mineral.mineralType];
 
 	console.log(reportString);
 };
