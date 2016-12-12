@@ -352,6 +352,24 @@ Room.prototype.runCompoundProductionManagment = function() {
 	return OK;
 };
 
+Room.prototype.mineralReport = function() {
+	let mineral = this.find(FIND_MINERALS)[0];
+	if(!mineral) {
+		console.log('!!!!Error: could not find room mineral');
+		return ERR_NOT_FOUND;
+	}
+
+	let reportString = "";
+	reportString += "Room Mineral Report";
+	reportString += "\nRoom: " + this.name;
+	reportString += "\nType: " + mineral.mineralType;
+	reportString += "\nAmount: " + mineral.mineralAmount;
+	reportString += "\nDensity: " + mineral.density;
+	reportString += "\nTicks to Regeneration: " + mineral.ticksToRegeneration;
+
+	console.log(reportString);
+};
+
 // DEPRECATED - added to global utils
 //function isNullOrUndefined(theObject) {
 //    return (theObject === undefined || theObject === null);

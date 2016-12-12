@@ -90,6 +90,14 @@ function getTierCompounds(tier) {
 	return compounds;
 }
 
+function runRoomMineralReports() {
+	for(let i in Game.rooms) {
+		if(Game.rooms.isMine()) {
+			Gmae.rooms[i].mineralReport();
+		}
+	}
+}
+
 function populateUtils(g) {
     g.undefToZero = undefToZero;
     g.isNullOrUndefined = isNullOrUndefined;
@@ -98,6 +106,7 @@ function populateUtils(g) {
 	g.getResourcesOfType = getResourcesOfType;
 	g.calculateCreepCost = calculateCreepCost;
 	g.getTierCompounds = getTierCompounds;
+	g.runRoomMineralReports = runRoomMineralReports;
 }
 
 exports.populateUtils = populateUtils;
