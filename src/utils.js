@@ -92,7 +92,7 @@ function getTierCompounds(tier) {
 
 function runRoomMineralReports() {
 	for(let i in Game.rooms) {
-		if(Game.rooms.isMine()) {
+		if(Game.rooms[i].isMine()) {
 			Gmae.rooms[i].mineralReport();
 		}
 	}
