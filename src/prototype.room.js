@@ -366,7 +366,15 @@ Room.prototype.mineralReport = function() {
 	reportString += "\nAmount: " + mineral.mineralAmount;
 	reportString += "\nDensity: " + mineral.density;
 	reportString += "\nTicks to Regeneration: " + mineral.ticksToRegeneration;
-	reportString += "\nStorage Amount: " + this.storage.store[mineral.mineralType];
+
+	if(this.storage) {
+		reportString += "\nStorage Amount: " + this.storage.store[mineral.mineralType];
+		let shouldMine = "no";
+		if(this.storage.store[mineral.mineralType] < 150000) {
+			shouldMine = "yes";
+		}
+		reportString += "\nShould mine?: " + shouldMine;
+	}
 
 	console.log(reportString);
 };
