@@ -338,7 +338,7 @@ Room.prototype.runCompoundProductionManagment = function() {
 		let reactantB = inLabB.mineralType;
 		let compound = outLab0.mineralType;
 
-		if(REACTIONS[reactantA][reactantB] !== compound && !validBoostState) {
+		if((typeof REACTIONS[reactantA] === 'undefined' || typeof REACTIONS[reactantA][reactantB] === 'undefined' || REACTIONS[reactantA][reactantB] !== compound) && !validBoostState) {
 			console.log('!!!!ERROR: Problem with reaction run in room ' + this.name);
 		    // add mineral return all flag
 		    let flagPos = new RoomPosition(2, 2, this.name);
