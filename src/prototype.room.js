@@ -319,7 +319,7 @@ Room.prototype.runCompoundProductionManagment = function() {
 			}
 
 			for(let i in labs) {
-				if(labs[i].mineralType !== boostCompounds[i]) {
+				if(labs[i].mineralType !== boostCompounds[i] || undefToZero(labs[i].mineralAmount) < 30) {
 					validBoostState = false;
 				}
 			}
