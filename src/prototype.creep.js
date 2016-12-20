@@ -1885,9 +1885,13 @@ Creep.prototype.runRemoteUpgrader = function() {
 	// state 0 is head to next room
 
 
-	var checkPoint1 = new RoomPosition(35, 35, 'E7S35');
-	var checkPoint2 = new RoomPosition(35, 35, 'E7S35');
-	var checkPoint3 = new RoomPosition(35, 35, 'E7S35');
+	//var checkPoint1 = new RoomPosition(35, 35, 'E7S35');
+	//var checkPoint2 = new RoomPosition(35, 35, 'E7S35');
+	//var checkPoint3 = new RoomPosition(35, 35, 'E7S35');
+
+	let checkPoint1 = new RoomPosition(14, 42, 'E5S30');
+	let checkPoint2 = new RoomPosition(34, 24, 'E4S31');
+	let checkPoint3 = new RoomPosition(34, 24, 'E4S31');
 
 
 	if(this.memory.state === undefined) {
@@ -1930,15 +1934,15 @@ Creep.prototype.runRemoteUpgrader = function() {
 		//	this.moveTo(sources[0]);
 		//}
 
-		//let roomStorage = this.room.storage;
-		//if(this.withdraw(roomStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-		//    this.moveTo(roomStorage);
-		//}
-
-		let roomTerminal = this.room.terminal;
-		if(this.withdraw(roomTerminal, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-		    this.moveTo(roomTerminal);
+		let roomStorage = this.room.storage;
+		if(this.withdraw(roomStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+		    this.moveTo(roomStorage);
 		}
+
+		//let roomTerminal = this.room.terminal;
+		//if(this.withdraw(roomTerminal, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+		//    this.moveTo(roomTerminal);
+		//}
 	} else if(this.memory.state === 4) {
 		// upgrade
 		if(this.upgradeController(this.room.controller) === ERR_NOT_IN_RANGE) {
