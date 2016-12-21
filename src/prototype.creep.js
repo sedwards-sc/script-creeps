@@ -1037,6 +1037,8 @@ Creep.prototype.runDismantler2 = function() {
 					} else if ((structure.structureType !== STRUCTURE_CONTAINER) && (structure.structureType !== STRUCTURE_RAMPART) && (structure.structureType !== STRUCTURE_WALL) && (structure.structureType !== STRUCTURE_SPAWN) && (structure.structureType !== STRUCTURE_TOWER) && (structure.structureType !== goal.structureType)) {
 						costs.set(structure.pos.x, structure.pos.y, 0xff);
 					}
+					// TODO: have cost of walls related to their hp. more costly than swamps but still walkabale
+					// this way if there is a clear path it will take it. if there isn't a clear path, it will favour dismantling low hp walls
 				});
 
 				// Avoid creeps in the room
