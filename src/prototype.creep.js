@@ -1575,7 +1575,7 @@ Creep.prototype.runBuilder = function() {
 		});
 
 		//get links with energy or storage with enough surplus energy
-		var structuresWithEnergy = this.room.find(FIND_MY_STRUCTURES, {
+		var structuresWithEnergy = this.room.find(FIND_STRUCTURES, {
 				filter: (structure) => {
 					return ((structure.structureType === STRUCTURE_LINK) && (structure.energy >= (this.carryCapacity / 4))) || ((structure.structureType === STRUCTURE_STORAGE) && (structure.store[RESOURCE_ENERGY] >= 1000));
 				}
