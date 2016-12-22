@@ -750,7 +750,6 @@ function countAllCreepFlags() {
 	return OK;
 }
 global.countAllCreepFlags = countAllCreepFlags;
-global.countAllC = countAllCreepFlags;
 
 function marketSell(room_name, resource, amt = Infinity) {
     // 9-30-2016 patch makes this way faster I guess?
