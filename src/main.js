@@ -216,6 +216,13 @@ module.exports.loop = function () {
 	        let carrierBody;
 			if(Game.rooms[roomName].controller.level === 8) {
 				carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
+				if(undefToZero(Game.rooms[roomName].memory.creepRoster.carrier) === 0 && roomEnergy < 800) {
+					if(roomEnergy >= 400) {
+						carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
+					} else {
+						carrierBody = [CARRY,CARRY,MOVE,MOVE];
+					}
+				}
 			} else if(roomEnergy >= 400) {
 				carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
 			} else {
