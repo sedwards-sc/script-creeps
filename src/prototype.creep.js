@@ -87,7 +87,7 @@ Creep.prototype.getBoosted = function(bodyPartToBoost, resourceToBoost) {
 
 	let labsWithBoost = Game.rooms[this.room.name].find(FIND_MY_STRUCTURES, {
 		filter: (structure) => {
-			return (structure.structureType === STRUCTURE_LAB) && (structure.mineralType === resourceToBoost);
+			return (structure.structureType === STRUCTURE_LAB) && (structure.mineralType === resourceToBoost) && (structure.mineralAmount >= LAB_BOOST_MINERAL);
 		}
 	});
 
