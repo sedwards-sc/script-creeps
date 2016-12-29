@@ -1726,6 +1726,39 @@ Creep.prototype.runReserver = function() {
 	}
 };
 
+Creep.prototype.runReserver2 = function() {
+	let myFlag;
+
+	if(this.memory.flagName === undefined) {
+        this.errorLog('no flag in memory', ERR_NOT_FOUND);
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+        if(myFlag === undefined) {
+			this.errorLog('flag is missing', ERR_NOT_FOUND);
+	        return;
+		}
+    }
+
+	if(this.pos.roomName === myFlag.pos.roomName) {
+		if(this.reserveController(this.room.controller) === ERR_NOT_IN_RANGE) {
+			this.moveTo(this.room.controller);
+		}
+	} else {
+		this.moveTo(myFlag, {
+            costCallback: function(roomName, costMatrix) {
+        	    if(roomName === 'E7S37') {
+        		    for(i = 0; i < 50; i++) {
+        		        for(j = 0; j < 50; j++) {
+        		            costMatrix.set(i, j, 0xff);
+        		        }
+        		    }
+        		}
+        	}
+        });
+	}
+};
+
 Creep.prototype.runClaimer = function() {
 	this.say('claimer');
 	// state 0 is head to next room
