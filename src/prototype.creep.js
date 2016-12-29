@@ -1740,7 +1740,7 @@ Creep.prototype.runReserver2 = function() {
 		}
     }
 
-	if(this.pos.roomName === myFlag.pos.roomName) {
+	if(this.pos.isEqualTo(myFlag)) {
 		if(this.reserveController(this.room.controller) === ERR_NOT_IN_RANGE) {
 			this.moveTo(this.room.controller);
 		}
