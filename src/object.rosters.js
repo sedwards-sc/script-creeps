@@ -144,8 +144,8 @@ module.exports = (function(){
 				1, //reinforcers
 				3, //reservers
 				0, //claimers
-				4, //remoteUpgraders
-				2, //remoteBuilders
+				0, //remoteUpgraders
+				0, //remoteBuilders
 				1 //mineralHarvesters
 		);
 
