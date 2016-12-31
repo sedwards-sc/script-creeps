@@ -1744,9 +1744,10 @@ Creep.prototype.runReserver2 = function() {
     }
 
 	if(this.pos.isEqualTo(myFlag)) {
-		if(this.reserveController(this.room.controller) === ERR_NOT_IN_RANGE) {
-			this.moveTo(this.room.controller);
-		}
+		let reserveReturn = this.reserveController(this.room.controller);
+        if(reserveReturn !== OK) {
+			this.errorLog('could not successfully reserve controller', reserveReturn);
+        }
 	} else {
 		this.moveTo(myFlag, {
             costCallback: function(roomName, costMatrix) {
