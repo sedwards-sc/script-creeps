@@ -1031,7 +1031,10 @@ Creep.prototype.runDismantler2 = function() {
 				let costs = new PathFinder.CostMatrix();
 
 				room.find(FIND_STRUCTURES).forEach(function(structure) {
-					if (structure.structureType === STRUCTURE_ROAD) {
+					if (structure.pos.isEqualTo(goal.pos)) {
+				        // goal should always be walkable to dismantle it
+				        costs.set(structure.pos.x, structure.pos.y, 1);
+				    } else if (structure.structureType === STRUCTURE_ROAD) {
 						// Favor roads over plain tiles
 						costs.set(structure.pos.x, structure.pos.y, 1);
 					} else if (structure.structureType === STRUCTURE_WALL || structure.structureType === STRUCTURE_RAMPART) {
