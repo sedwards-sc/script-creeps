@@ -333,8 +333,10 @@ module.exports.loop = function () {
 	    			        break;
 	    		        }
 	    		    }
+				} else if((roomCreepQuotas.reserver) && (undefToZero(roomCreepRoster.reserver) < roomCreepQuotas.reserver.length)) {
+				/*
 	    		} else if(undefToZero(roomCreepRoster.reserver) < roomQuota.reservers) {
-	    			if(roomRemoteInfo && (roomRemoteInfo.reservers.length > 0)) {
+					if(roomRemoteInfo && (roomRemoteInfo.reservers.length > 0)) {
 	    				for(let reserversIndex in roomRemoteInfo.reservers) {
 	    					let currentReserver = roomRemoteInfo.reservers[reserversIndex];
 	    					let currentReserverFilter = _.filter(roomCreeps, (creep) => creep.memory.creepId === currentReserver.creepId);
@@ -353,6 +355,22 @@ module.exports.loop = function () {
 	    			} else {
 	    				console.log('!!!' + roomName + ' quota has reservers but there is no reserver info for this room!!!');
 	    			}
+					*/
+
+					let curRole = 'reserver';
+	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+	    		        if(currentFlagCreeps.length < 1) {
+							let curCreepBody = [CLAIM,CLAIM,MOVE,MOVE,MOVE,ATTACK];
+							if(Game.flags[curFlagName].memory.bodyParts) {
+								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+							}
+	    		            let newName = mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+	    			        console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
+	    			        break;
+	    		        }
+	    		    }
 	    		} else if(undefToZero(roomCreepRoster.reinforcer) < roomQuota.reinforcers) {
 	    			let newName = mainSpawn.createCreep([WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
 	    			console.log('Spawning new reinforcer (' + roomName + '): ' + newName);

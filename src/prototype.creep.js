@@ -29,7 +29,11 @@ Creep.prototype.run = function() {
 	} else if(this.memory.role === 'remoteCarrier') {
 		this.runRemoteCarrier2();
 	} else if(this.memory.role === 'reserver') {
-		this.runReserver();
+		if(this.memory.controllerId !== 'undefined') {
+			this.runReserver();
+		} else {
+			this.runReserver2();
+		}
 	} else if(this.memory.role === 'claimer') {
 		this.runClaimer();
 	} else if(this.memory.role === 'explorer') {
