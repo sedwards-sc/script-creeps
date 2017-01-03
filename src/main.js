@@ -781,7 +781,7 @@ global.countAllCreepFlags = countAllCreepFlags;
 global.countAllC = countAllCreepFlags;
 
 function calcMineralDistribution() {
-	Memory.roomMinerals = Memory.roomMinerals || {};
+	Memory.roomMinerals = {};
 
 	for(let i in Game.rooms) {
 		let curRoom = Game.rooms[i];
