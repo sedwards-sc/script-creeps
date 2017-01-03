@@ -390,9 +390,9 @@ Room.prototype.checkMineralStatus = function() {
 		return ERR_NOT_FOUND;
 	}
 
-	if(mineral.mineralAmount === 0 || (this.storage && this.storage.store[mineral.mineralType] > 300000)) {
+	if(mineral.mineralAmount === 0 || (this.storage && undefToZero(this.storage.store[mineral.mineralType]) > 300000)) {
 		this.memory.shouldMine = false;
-	} else if(mineral.mineralAmount > 0 && this.storage && this.storage.store[mineral.mineralType] < 150000) {
+	} else if(mineral.mineralAmount > 0 && this.storage && undefToZero(this.storage.store[mineral.mineralType]) < 150000) {
 		this.memory.shouldMine = true;
 	}
 
