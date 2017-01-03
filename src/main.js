@@ -803,6 +803,8 @@ function calcMineralDistribution() {
 		Memory.roomMinerals[mineral.mineralType] = Memory.roomMinerals[mineral.mineralType] || [];
 		Memory.roomMinerals[mineral.mineralType].push(curRoom.name);
 	}
+
+	return OK;
 }
 global.calcMineralDistribution = calcMineralDistribution;
 
