@@ -806,6 +806,9 @@ function calcMineralDistribution() {
 		// mineral distribution network would reorient if a room ran out of a mineral
 		// but this could get expensive if too many rooms are transferring across the whole empire
 
+		// reset current distribution settings
+		delete curRoom.memory.mineralDistribution;
+
 		roomList.push({ room: curRoom, mineral: mineral});
 	}
 
