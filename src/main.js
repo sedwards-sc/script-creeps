@@ -781,10 +781,12 @@ global.countAllCreepFlags = countAllCreepFlags;
 global.countAllC = countAllCreepFlags;
 
 function calcMineralDistribution() {
-	Memory.roomMinerals = {};
+	let roomList = [];
 
+	// get list of rooms available for mineral distribution
 	for(let i in Game.rooms) {
 		let curRoom = Game.rooms[i];
+
 		if(!curRoom.isMine() || !curRoom.storage) {
 			continue;
 		}
@@ -800,9 +802,34 @@ function calcMineralDistribution() {
 			continue;
 		}
 
+		roomList.push({ room: curRoom, mineral: mineral});
+	}
+
+	// record the rooms available for each mineral type
+	Memory.roomMinerals = {};
+	for(let i in roomList) {
+		let curRoom = roomList[i].room;
+		let mineral = roomList[i].mineral;
+
 		Memory.roomMinerals[mineral.mineralType] = Memory.roomMinerals[mineral.mineralType] || [];
 		Memory.roomMinerals[mineral.mineralType].push(curRoom.name);
 	}
+
+	// get the distance between available rooms
+	let roomDistances = {};
+	for(let i in roomList) {
+		let roomName1 = roomList[i].room.name;
+
+		roomDistances[roomName1] = roomDistances[roomName1] || {};
+
+		for(let j in roomList) {
+			let roomName2 = roomList[j].room.name;
+
+			roomDistances[roomName1][roomName2] = Game.map.getRoomLinearDistance(roomName1, roomName2, true);
+		}
+	}
+
+	
 
 	return OK;
 }
