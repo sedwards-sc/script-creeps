@@ -392,7 +392,7 @@ Room.prototype.checkMineralStatus = function() {
 
 	let retStructs = this.lookForAt(LOOK_STRUCTURES, mineral.pos);
 	let extractor = getStructure(retStructs, STRUCTURE_EXTRACTOR);
-	if(typeof extractor === 'undefined') {
+	if(!extractor) {
 		this.memory.shouldMine = false;
 		return OK;
 	}
