@@ -852,7 +852,7 @@ function calcMineralDistribution() {
 
 			if(typeof closestRoom !== 'undefined') {
 				Memory.rooms[closestRoom].mineralDistribution = Memory.rooms[closestRoom].mineralDistribution || {};
-				Memory.rooms[closestRoom].mineralDistribution.mineral = roomMinerals[curMineral];
+				Memory.rooms[closestRoom].mineralDistribution.mineral = Memory.rooms[closestRoom].mineralDistribution.mineral || curMineral;
 				Memory.rooms[closestRoom].mineralDistribution.list = Memory.rooms[closestRoom].mineralDistribution.list || [];
 				Memory.rooms[closestRoom].mineralDistribution.list.push(curRoom.name);
 			}
