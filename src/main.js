@@ -780,6 +780,32 @@ function countAllCreepFlags() {
 global.countAllCreepFlags = countAllCreepFlags;
 global.countAllC = countAllCreepFlags;
 
+function calcMineralDistribution() {
+	Memory.roomMinerals = Memory.roomMinerals || {};
+
+	for(let i in Game.rooms) {
+		let curRoom = Game.rooms[i];
+		if(!curRoom.isMine() || !curRoom.storage) {
+			continue;
+		}
+
+		let mineral = curRoom.find(FIND_MINERALS)[0];
+		if(!mineral) {
+			continue;
+		}
+
+		let retStructs = this.lookForAt(LOOK_STRUCTURES, mineral.pos);
+		let extractor = getStructure(retStructs, STRUCTURE_EXTRACTOR);
+		if(!extractor) {
+			continue;
+		}
+
+		Memory.roomMinerals[mineral.mineralType] = Memory.roomMinerals[mineral.mineralType] || [];
+		Memory.roomMinerals[mineral.mineralType].push(curRoom.name);
+	}
+}
+global.calcMineralDistribution = calcMineralDistribution;
+
 function marketSell(room_name, resource, amt = Infinity) {
     // 9-30-2016 patch makes this way faster I guess?
     let orders = Game.market.getAllOrders({type: ORDER_BUY, resourceType: resource});
