@@ -818,6 +818,7 @@ function calcMineralDistribution() {
 		Memory.roomMinerals[mineral.mineralType] = Memory.roomMinerals[mineral.mineralType] || [];
 		Memory.roomMinerals[mineral.mineralType].push(curRoom.name);
 	}
+	let roomMinerals = Memory.roomMinerals;
 
 	// get the distance between available rooms
 	let roomDistances = {};
