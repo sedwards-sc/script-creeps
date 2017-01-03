@@ -390,6 +390,13 @@ Room.prototype.checkMineralStatus = function() {
 		return ERR_NOT_FOUND;
 	}
 
+	let retStructs = this.lookForAt(LOOK_STRUCTURES, mineral.pos);
+	let extractor = getStructure(retStructs, STRUCTURE_EXTRACTOR);
+	if(typeof extractor === 'undefined') {
+		this.memory.shouldMine = false;
+		return OK;
+	}
+
 	if(mineral.mineralAmount === 0 || (this.storage && undefToZero(this.storage.store[mineral.mineralType]) > 300000)) {
 		this.memory.shouldMine = false;
 	} else if(mineral.mineralAmount > 0 && this.storage && undefToZero(this.storage.store[mineral.mineralType]) < 150000) {
