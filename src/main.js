@@ -794,7 +794,7 @@ function calcMineralDistribution() {
 			continue;
 		}
 
-		let retStructs = this.lookForAt(LOOK_STRUCTURES, mineral.pos);
+		let retStructs = curRoom.lookForAt(LOOK_STRUCTURES, mineral.pos);
 		let extractor = getStructure(retStructs, STRUCTURE_EXTRACTOR);
 		if(!extractor) {
 			continue;
