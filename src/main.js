@@ -833,7 +833,30 @@ function calcMineralDistribution() {
 		}
 	}
 
+	for(let i in roomList) {
+		let curRoom = roomList[i].room;
 
+		for(let curMineral in roomMinerals) {
+			let shortestDist = Number.MAX_SAFE_INTEGER;
+			let closestRoom;
+
+			for(let j in roomMinerals[curMineral]) {
+				let mineralRoomName = roomMinerals[curMineral][j];
+				let roomDistance = roomDistances[curRoom.name][mineralRoomName];
+				if(roomDistance < shortestDist) {
+					shortestDist = roomDistance;
+					closestRoom = mineralRoomName;
+				}
+			}
+
+			if(typeof closestRoom !== 'undefined') {
+				Memory.rooms[closestRoom].mineralDistribution = Memory.rooms[closestRoom].mineralDistribution || {};
+				Memory.rooms[closestRoom].mineralDistribution.mineral = roomMinerals[curMineral];
+				Memory.rooms[closestRoom].mineralDistribution.list = Memory.rooms[closestRoom].mineralDistribution.list || [];
+				Memory.rooms[closestRoom].mineralDistribution.list.push(curRoom.name);
+			}
+		}
+	}
 
 	return OK;
 }
