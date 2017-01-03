@@ -802,6 +802,10 @@ function calcMineralDistribution() {
 			continue;
 		}
 
+		// could also check for presence in storage as well to determine room availability
+		// mineral distribution network would reorient if a room ran out of a mineral
+		// but this could get expensive if too many rooms are transferring across the whole empire
+
 		roomList.push({ room: curRoom, mineral: mineral});
 	}
 
@@ -829,7 +833,7 @@ function calcMineralDistribution() {
 		}
 	}
 
-	
+
 
 	return OK;
 }
