@@ -388,7 +388,7 @@ module.exports.loop = function () {
 	    			let newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteBuilder', spawnRoom: roomName});
 	    			//let newName = mainSpawn.createCreep([MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY], undefined, {role: 'remoteBuilder', spawnRoom: roomName});
 	    			console.log('Spawning new remote builder (' + roomName + '): ' + newName);
-	    		} else if(curRoom.shouldMine === true && undefToZero(roomCreepRoster.mineralHarvester) < 1) {
+	    		} else if(curRoom.memory.shouldMine === true && undefToZero(roomCreepRoster.mineralHarvester) < 1) {
 	    		    mainSpawn.spawnMineralHarvester();
 	    		} else if((roomCreepQuotas.scout) && (undefToZero(roomCreepRoster.scout) < roomCreepQuotas.scout.length)) {
 	    		    for(let curScoutIndex in roomCreepQuotas.scout) {
