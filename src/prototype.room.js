@@ -379,6 +379,26 @@ Room.prototype.mineralReport = function() {
 	console.log(reportString);
 };
 
+Room.prototype.checkMineralStatus = function() {
+	if(typeof this.memory.shouldMine === 'undefined') {
+		this.memory.shouldMine = false;
+	}
+
+	let mineral = this.find(FIND_MINERALS)[0];
+	if(!mineral) {
+		console.log('!!!!Error: could not find room mineral - ' + this.name);
+		return ERR_NOT_FOUND;
+	}
+
+	if(mineral.mineralAmount === 0 || (this.storage && this.storage.store[mineral.mineralType] > 300000)) {
+		this.memory.shouldMine = false;
+	} else if(mineral.mineralAmount > 0 && this.storage && this.storage.store[mineral.mineralType] < 150000) {
+		this.memory.shouldMine = true;
+	}
+
+	return OK;
+};
+
 // DEPRECATED - added to global utils
 //function isNullOrUndefined(theObject) {
 //    return (theObject === undefined || theObject === null);

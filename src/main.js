@@ -145,6 +145,9 @@ module.exports.loop = function () {
 			    let mainSpawn = roomSpawns[0];
 			//}
 
+			// check the mineral status of the room and if it should be mined (based on storage amount)
+			curRoom.checkMineralStatus();
+
 			// gather room info
 			let controllerProgress = (Game.rooms[roomName].controller.progress / Game.rooms[roomName].controller.progressTotal * 100).toFixed(2);
 			let roomEnergy = Game.rooms[roomName].energyAvailable;
