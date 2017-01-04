@@ -802,6 +802,8 @@ function calcMineralDistribution() {
 			continue;
 		}
 
+		// TODO: check for presence of storage and terminal in room for eligibility
+
 		// could also check for presence in storage as well to determine room availability
 		// mineral distribution network would reorient if a room ran out of a mineral
 		// but this could get expensive if too many rooms are transferring across the whole empire

@@ -267,7 +267,7 @@ module.exports = (function(){
 				0, //miners
 				0, //carriers
 				0, //linkers
-				0, //reinforcers
+				1, //reinforcers
 				1, //reservers
 				0, //claimers
 				0, //remoteUpgraders
@@ -285,7 +285,7 @@ module.exports = (function(){
 				0, //miners
 				0, //carriers
 				0, //linkers
-				0, //reinforcers
+				1, //reinforcers
 				1, //reservers
 				0, //claimers
 				0, //remoteUpgraders
