@@ -787,7 +787,7 @@ function calcMineralDistribution() {
 	for(let i in Game.rooms) {
 		let curRoom = Game.rooms[i];
 
-		if(!curRoom.isMine() || !curRoom.storage) {
+		if(!curRoom.isMine() || !curRoom.storage || !curRoom.terminal) {
 			continue;
 		}
 
@@ -801,8 +801,6 @@ function calcMineralDistribution() {
 		if(!extractor) {
 			continue;
 		}
-
-		// TODO: check for presence of storage and terminal in room for eligibility
 
 		// could also check for presence in storage as well to determine room availability
 		// mineral distribution network would reorient if a room ran out of a mineral
