@@ -849,6 +849,10 @@ function calcMineralDistribution() {
 		let curRoom = roomList[i].room;
 
 		for(let curMineral in roomMinerals) {
+			if(curMineral === roomList[i].mineral.mineralType) {
+				continue;
+			}
+
 			let shortestDist = Number.MAX_SAFE_INTEGER;
 			let closestRoom;
 
