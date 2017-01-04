@@ -571,6 +571,11 @@ module.exports.loop = function () {
 			links.forEach(link => link.refillCreeps(linkTransferCandidates));
 
 
+			// calculate mineral distribution network
+			if(Game.time % 500 === 0) {
+				calcMineralDistribution();
+			}
+
 			// run terminals
 			if(curRoom.terminal) {
 				curRoom.terminal.run();
@@ -807,7 +812,10 @@ function calcMineralDistribution() {
 		// but this could get expensive if too many rooms are transferring across the whole empire
 
 		// reset current distribution settings
+		// new method
 		delete curRoom.memory.mineralDistribution;
+		// old method
+		curRoom.memory.distributionList = [];
 
 		roomList.push({ room: curRoom, mineral: mineral});
 	}
@@ -854,10 +862,14 @@ function calcMineralDistribution() {
 			}
 
 			if(typeof closestRoom !== 'undefined') {
+				// new method
 				Memory.rooms[closestRoom].mineralDistribution = Memory.rooms[closestRoom].mineralDistribution || {};
 				Memory.rooms[closestRoom].mineralDistribution.mineral = Memory.rooms[closestRoom].mineralDistribution.mineral || curMineral;
 				Memory.rooms[closestRoom].mineralDistribution.list = Memory.rooms[closestRoom].mineralDistribution.list || [];
 				Memory.rooms[closestRoom].mineralDistribution.list.push(curRoom.name);
+
+				// old method
+				Memory.rooms[closestRoom].distributionList.push({ room: curRoom.name, mineral: curMineral});
 			}
 		}
 	}
