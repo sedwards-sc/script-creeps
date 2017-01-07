@@ -859,6 +859,18 @@ function calcMineralDistribution() {
 			for(let j in roomMinerals[curMineral]) {
 				let mineralRoomName = roomMinerals[curMineral][j];
 				let roomDistance = roomDistances[curRoom.name][mineralRoomName];
+
+				if(roomDistance > 15) {
+				    continue;
+				}
+
+				if( !Game.rooms[mineralRoomName].storage.store[curMineral] &&
+				    (!Game.rooms[mineralRoomName].terminal.store[curMineral] ||
+				    Game.rooms[mineralRoomName].terminal.store[curMineral] < Game.rooms[mineralRoomName].terminal.getResourceQuota(curMineral)) &&
+				    !Game.rooms[mineralRoomName].memory.shouldMine) {
+				    continue;
+				}
+
 				if(roomDistance < shortestDist) {
 					shortestDist = roomDistance;
 					closestRoom = mineralRoomName;
