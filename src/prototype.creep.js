@@ -2418,21 +2418,29 @@ Creep.prototype.runPowerCollector = function() {
             });
 		}
 	} else {
-		// get power
+		// get power and energy
     	if(this.pos.roomName === myFlag.pos.roomName) {
 			let roomResources = this.room.find(FIND_DROPPED_RESOURCES);
-			let powerPiles = getResourcesOfType(roomResources, RESOURCE_POWER);
-			if(!isArrayWithContents(powerPiles)) {
-				this.log('no power in my flag\'s room');
+
+			// look for power piles first
+			let resourcePiles = getResourcesOfType(roomResources, RESOURCE_POWER);
+
+			// look for energy piles if there are no power piles
+			if(!isArrayWithContents(resourcePiles)) {
+				resourcePiles = getResourcesOfType(roomResources, RESOURCE_ENERGY);
+			}
+
+			if(!isArrayWithContents(resourcePiles)) {
+				this.log('no power or energy in my flag\'s room');
 				// if position is equal to my flag
 				    // check if there are any power banks in the room
 				    // if not, room has been cleared so clear flag
 				this.moveTo(myFlag);
 				return;
 			}
-			let closestPowerPile = this.pos.findClosestByRange(powerPiles);
-			if(this.pickup(closestPowerPile) === ERR_NOT_IN_RANGE) {
-				this.moveTo(closestPowerPile);
+			let closestResourcePile = this.pos.findClosestByRange(resourcePiles);
+			if(this.pickup(closestResourcePile) === ERR_NOT_IN_RANGE) {
+				this.moveTo(closestResourcePile);
 			}
 		} else {
 			this.moveTo(myFlag, {
