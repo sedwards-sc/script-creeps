@@ -2290,6 +2290,29 @@ Creep.prototype.runPowerBankAttacker = function() {
         myFlag = Game.flags[this.memory.flagName];
         if(myFlag === undefined) {
 			this.errorLog('flag is missing', ERR_NOT_FOUND);
+			// start suicide
+			this.memory.suicideCounter = this.memory.suicideCounter || 5;
+			if(this.memory.suicideCounter === 4) {
+			    countAllC();
+			} else if(this.memory.suicideCounter <= 1) {
+			    delete Memory.creeps[this.name].suicideCounter;
+
+			    let flagCreeps = _.filter(Game.creeps, (creep) => {
+			        return (creep.memory.flagName === this.memory.flagName);
+			    });
+
+			    if(isArrayWithContents(flagCreeps)) {
+			        for(let i in flagCreeps) {
+			            // this should get them all
+			            // if this creep can't do thing after calling suicide
+			            // then call separately after and avoid calling here
+			            flagCreeps[i].suicide();
+			        }
+			    }
+			}
+			if(typeof this.memory.suicideCounter !== 'undefined') {
+			    this.memory.suicideCounter--;
+			}
 	        return;
 		}
     }
@@ -2299,11 +2322,41 @@ Creep.prototype.runPowerBankAttacker = function() {
 		let powerBank = getStructure(roomStructures, STRUCTURE_POWER_BANK);
 		if(!powerBank) {
 			this.log('no power bank in my flag\'s room');
-			this.moveTo(myFlag);
+			if(this.pos.isEqualTo(myFlag)) {
+			    delete Memory.flags[myFlag.name];
+			    //myFlag.memory.destroy = false;
+			    myFlag.remove();
+			} else {
+			    this.moveTo(myFlag);
+			}
 			return;
 		}
 
 		if(powerBank.hits <= 10000 && myFlag.memory.destroy !== true) {
+		    // check for collectors every X ticks (odd number in case they are flickering on a room border)
+		    if(Game.time % 11 === 0) {
+		        // filter for powerCollector flags for this room
+            	let flagRegex = new RegExp('_remote_' + this.pos.roomName + '_creep_powerCollector_');
+            	let powerColFlags = _.filter(Game.flags, (flag) => flagRegex.test(flag.name) === true);
+
+            	if(isArrayWithContents(powerColFlags)) {
+            	    let powerColCreeps = _.filter(Game.creeps, (creep) => {
+            	        // could also check if the powerCollectors are waiting on their flags
+            	        return ((creep.pos.roomName === this.pos.roomName) && (creep.memory.role === 'powerCollector'));
+            	    });
+
+            	    if(isArrayWithContents(powerColCreeps) && powerColCreeps.length === powerColFlags.length) {
+            	        myFlag.memory.destroy = true;
+            	    }
+            	}
+		    }
+
+			// if the power bank is about to decay, just destroy it
+			// hopefully collectors are on the way
+			if(powerBank.ticksToDecay < 25) {
+				myFlag.memory.destroy = true;
+			}
+
 			// don't destroy until collectors are available
 			return;
 		}
@@ -2371,6 +2424,9 @@ Creep.prototype.runPowerCollector = function() {
 			let powerPiles = getResourcesOfType(roomResources, RESOURCE_POWER);
 			if(!isArrayWithContents(powerPiles)) {
 				this.log('no power in my flag\'s room');
+				// if position is equal to my flag
+				    // check if there are any power banks in the room
+				    // if not, room has been cleared so clear flag
 				this.moveTo(myFlag);
 				return;
 			}
