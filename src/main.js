@@ -1,6 +1,6 @@
 /* jshint esversion: 6, loopfunc: true */
 
-var Logger = require('logger');
+global.Logger = require('logger');
 
 require('utils').populateUtils(global);
 
