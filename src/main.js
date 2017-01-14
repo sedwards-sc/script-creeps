@@ -916,6 +916,7 @@ function marketSell(room_name, resource, amt = Infinity) {
 }
 global.marketSell = marketSell;
 
+// visualize creep paths with screeps-visual
 function visualizePaths(){
 	let Visual = require('visual');
 	let colors = [];
