@@ -940,6 +940,15 @@ function visualizePaths(){
 	});
 }
 
+// call this function to use screeps-visual through steam
+global.loadVisual = function(){
+  return console.log('<script>' +
+    'if(!window.visualLoaded){' +
+    '  $.getScript("https://screepers.github.io/screeps-visual/src/visual.screeps.user.js");' +
+    '  window.visualLoaded = true;' +
+    '}</script>');
+};
+
 var reset_memory = function () {
 	let default_keys = ['creeps', 'spawn', 'rooms', 'flags'];
 	let keys = Object.keys(Memory);
