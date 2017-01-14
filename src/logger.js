@@ -1,8 +1,8 @@
 /* jshint esversion: 6 */
 // example source from: https://github.com/screepers/screeps_console/blob/master/docs/ExampleLogger.js
-var logger = {};
+var Logger = {};
 
-logger.colors = {
+Logger.colors = {
 	'5': '#ff0066',
 	'4': '#e65c00',
 	'3': '#809fff',
@@ -12,7 +12,7 @@ logger.colors = {
 	'highlight': '#ffff00',
 };
 
-logger.log = function (message, severity = 3) {
+Logger.log = function (message, severity = 3) {
 	if(severity > 5) {
 		severity = 5;
 	} else if (severity < 0) {
@@ -24,8 +24,8 @@ logger.log = function (message, severity = 3) {
 	console.log('<font color="' + this.colors[severity] + '" severity="' + severity + '">' + message + "</font>");
 };
 
-logger.highlight = function (message) {
+Logger.highlight = function (message) {
 	console.log('<font color="' + this.colors.highlight + '" type="highlight">' + message + "</font>");
 };
 
-module.exports = logger;
+module.exports = Logger;
