@@ -406,26 +406,6 @@ Room.prototype.checkMineralStatus = function() {
 	return OK;
 };
 
-Room.prototype.minePowerRoom = function(sourceRooms) {
-	if(!isArrayWithContents(sourceRooms)) {
-		return ERR_INVALID_ARGS;
-	}
-
-	let flagSpot = new RoomPosition(25, 25, this.name);
-
-	for(let i in sourceRooms) {
-		let sourceRoom = sourceRooms[i];
-		if(typeof sourceRoom === 'string') {
-			let flagName = flagSpot.createFlag(sourceRoom + '_remote_' + this.name + '_creep_powerBankAttacker_0', COLOR_RED, COLOR_RED);
-			if(typeof flagName !== 'string') {
-				return flagName;
-			}
-		}
-	}
-
-	return OK;
-};
-
 // DEPRECATED - added to global utils
 //function isNullOrUndefined(theObject) {
 //    return (theObject === undefined || theObject === null);

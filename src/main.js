@@ -790,6 +790,31 @@ function countAllCreepFlags() {
 global.countAllCreepFlags = countAllCreepFlags;
 global.countAllC = countAllCreepFlags;
 
+function minePowerRoom(targetRoom, sourceRooms) {
+	if(typeof targetRoom !== 'string') {
+		return ERR_INVALID_ARGS;
+	}
+
+	if(!isArrayWithContents(sourceRooms)) {
+		return ERR_INVALID_ARGS;
+	}
+
+	let flagSpot = new RoomPosition(25, 25, targetRoom);
+
+	for(let i in sourceRooms) {
+		let sourceRoom = sourceRooms[i];
+		if(typeof sourceRoom === 'string') {
+			let flagName = flagSpot.createFlag(sourceRoom + '_remote_' + targetRoom + '_creep_powerBankAttacker_0', COLOR_RED, COLOR_RED);
+			if(typeof flagName !== 'string') {
+				return flagName;
+			}
+		}
+	}
+
+	return OK;
+}
+global.minePowerRoom = minePowerRoom;
+
 function calcMineralDistribution() {
 	let roomList = [];
 
