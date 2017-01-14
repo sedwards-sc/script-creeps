@@ -281,7 +281,7 @@ module.exports.loop = function () {
 	    		        let curLinkerFlagName = roomCreepQuotas.linker[curLinkerIndex];
 	    		        let currentFlagLinkers = _.filter(roomCreeps, (creep) => creep.memory.flagName === curLinkerFlagName);
 	    		        if((currentFlagLinkers.length < 1) || (currentFlagLinkers[0].ticksToLive <= 12)) {
-	    		            let newName = mainSpawn.createCreep([CARRY,CARRY,MOVE], undefined, {spawnRoom: roomName, role: 'linker', flagName: curLinkerFlagName});
+	    		            let newName = mainSpawn.createCreep([CARRY,CARRY,CARRY,CARRY,MOVE], undefined, {spawnRoom: roomName, role: 'linker', flagName: curLinkerFlagName});
 	    			        console.log('Spawning new linker: ' + newName + ' - ' + curLinkerFlagName);
 	    			        break;
 	    		        }
