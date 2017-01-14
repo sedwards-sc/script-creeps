@@ -685,6 +685,10 @@ module.exports.loop = function () {
 		}
 
 
+		// for screeps-visual
+		RawVisual.commit();
+
+
 	    var statsConsole = require("statsConsole");
 
         // sample data format ["Name for Stat", variableForStat]
