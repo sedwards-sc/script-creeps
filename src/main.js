@@ -1,5 +1,7 @@
 /* jshint esversion: 6, loopfunc: true */
 
+require('logger');
+
 require('utils').populateUtils(global);
 
 require('prototype.room');
