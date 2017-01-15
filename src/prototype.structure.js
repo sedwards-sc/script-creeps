@@ -4,14 +4,13 @@
  */
 
 Structure.prototype.descriptionString = function() {
-	//return this.structureType + '(' + this.pos.roomName + ', id#' + this.id + ')';
 	return `${this.structureType} (${this.pos.roomName}, id#${this.id})`;
 };
 
-Structure.prototype.log = function(msg) {
-	return console.log('structure: ' + this.descriptionString() + ', msg: ' + msg);
+Structure.prototype.log = function(msg, severity = 2) {
+	return Logger.log(`structure: ${this.descriptionString()}, msg: ${msg}`);
 };
 
-Structure.prototype.errorLog = function(msg, errCode) {
-	return console.log('!!!Error!!! structure: ' + this.descriptionString() + ', msg: ' + msg + ' (' + errCode + ')');
+Structure.prototype.errorLog = function(msg, errCode = -10, severity = 3) {
+	return Logger.log(`!!!Error!!! structure: ${this.descriptionString()}, msg: ${msg} (${errorCodeToText(errCode)})`);
 };
