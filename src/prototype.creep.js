@@ -69,7 +69,7 @@ Creep.prototype.errorLog = function(msg, errCode = -10, severity = 3) {
 	logString += 'creep: ' + roomLink(this, this.name);
 	logString += ' (' + this.room.name + ', ' + this.memory.role + ')';
 	logString += ', msg: ' + msg;
-	logString += ' (' + errCode + ', ' + errorCodeToText(errCode) + ')';
+	logString += ' (' + errorCodeToText(errCode) + ')';
 
 	return Logger.log(logString, severity);
 	//return Logger.log('!!!Error!!! creep: ' + roomLink(this, this.name) + '(' + this.room.name + ',' + this.memory.role + '), msg: ' + msg + ' (' + errCode + ',' + errorCodeToText(errCode) + ')', severity);
