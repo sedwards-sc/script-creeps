@@ -60,6 +60,7 @@ Creep.prototype.run = function() {
 };
 
 Creep.prototype.log = function(msg, severity = 2) {
+	// TODO: replace this string creation with template string (use embedded expressions)
 	return Logger.log('creep: ' + roomLink(this, this.name) + ' (' + this.room.name + ', ' + this.memory.role + '), msg: ' + msg, severity);
 };
 
