@@ -59,9 +59,12 @@ Creep.prototype.run = function() {
     }
 };
 
+Creep.prototype.descriptionString = function() {
+	return roomLink(this, this.name) + ' (' + this.room.name + ', ' + this.memory.role + ')';
+};
+
 Creep.prototype.log = function(msg, severity = 2) {
-	// TODO: replace this string creation with template string (use embedded expressions)
-	return Logger.log('creep: ' + roomLink(this, this.name) + ' (' + this.room.name + ', ' + this.memory.role + '), msg: ' + msg, severity);
+	return Logger.log(`creep: ${this.descriptionString()}, msg: ${msg}`, severity);
 };
 
 Creep.prototype.errorLog = function(msg, errCode = -10, severity = 3) {
