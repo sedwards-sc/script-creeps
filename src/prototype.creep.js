@@ -2404,7 +2404,8 @@ Creep.prototype.runPowerCollector = function() {
 			this.errorLog('could not find spawn room storage', ERR_NOT_FOUND);
 			return;
 		}
-		if(this.transfer(spawnRoomStorage, RESOURCE_POWER) === ERR_NOT_IN_RANGE) {
+		let highestQuantityResourceType = this.getHighestQuantityResourceType();
+		if(this.transfer(spawnRoomStorage, highestQuantityResourceType) === ERR_NOT_IN_RANGE) {
 			this.moveTo(spawnRoomStorage, {
                 costCallback: function(roomName, costMatrix) {
             	    if(roomName === 'E7S37') {
