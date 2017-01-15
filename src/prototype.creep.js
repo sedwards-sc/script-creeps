@@ -60,7 +60,7 @@ Creep.prototype.run = function() {
 };
 
 Creep.prototype.descriptionString = function() {
-	return roomLink(this, this.name) + ' (' + this.room.name + ', ' + this.memory.role + ')';
+	return `${roomLink(this, this.name)} (${this.room.name}, ${this.memory.role})`;
 };
 
 Creep.prototype.log = function(msg, severity = 2) {
@@ -68,14 +68,6 @@ Creep.prototype.log = function(msg, severity = 2) {
 };
 
 Creep.prototype.errorLog = function(msg, errCode = -10, severity = 3) {
-	//let logString = '';
-	//logString += '!!!Error!!! ';
-	//logString += 'creep: ' + this.descriptionString();
-	//logString += ', msg: ' + msg;
-	//logString += ' (' + errorCodeToText(errCode) + ')';
-
-	//return Logger.log(logString, severity);
-	//return Logger.log('!!!Error!!! creep: ' + roomLink(this, this.name) + '(' + this.room.name + ',' + this.memory.role + '), msg: ' + msg + ' (' + errCode + ',' + errorCodeToText(errCode) + ')', severity);
 	return Logger.log(`!!!Error!!! creep: ${this.descriptionString()}, msg: ${msg} (${errorCodeToText(errCode)})`, severity);
 };
 
