@@ -59,12 +59,12 @@ Creep.prototype.run = function() {
     }
 };
 
-Creep.prototype.log = function(msg) {
-	return console.log('creep: ' + this.name + ' (' + this.room.name + ', ' + this.memory.role + '), msg: ' + msg);
+Creep.prototype.log = function(msg, severity = 2) {
+	return Logger.log('creep: ' + roomLink(this, this.name) + ' (' + this.room.name + ', ' + this.memory.role + '), msg: ' + msg, severity);
 };
 
-Creep.prototype.errorLog = function(msg, errCode) {
-	return console.log('!!!Error!!! creep: ' + this.name + ' (' + this.room.name + ', ' + this.memory.role + '), msg: ' + msg + ' (' + errCode + ')');
+Creep.prototype.errorLog = function(msg, errCode, severity = 3) {
+	return Logger.log('!!!Error!!! creep: ' + roomLink(this, this.name) + ' (' + this.room.name + ', ' + this.memory.role + '), msg: ' + msg + ' (' + errCode + ')', severity);
 };
 
 Creep.prototype.getBoosted = function(bodyPartToBoost, resourceToBoost) {
