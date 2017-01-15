@@ -3,12 +3,12 @@
 var Logger = {};
 
 Logger.colors = {
-	'5': '#ff0066',
-	'4': '#e65c00',
-	'3': '#809fff',
-	'2': '#cccccc',
-	'1': '#999999',
-	'0': '#666666',
+	'5': '#ff0066',	// critical
+	'4': '#e65c00',	// warn
+	'3': '#809fff',	// attention
+	'2': '#cccccc',	// normal
+	'1': '#666666',	// verbose
+	'0': '#8fef8f',	// debug
 	'highlight': '#ffff00',
 };
 
@@ -21,7 +21,13 @@ Logger.log = function (message, severity = 2) {
 		severity = 2;
 	}
 
-	console.log('<font color="' + this.colors[severity] + '" severity="' + severity + '">' + message + "</font>");
+	if(typeof Memory.logLevel === 'undefined') {
+		Memory.logLevel = 1;
+	}
+
+	if(severity >= Memory.logLevel) {
+		console.log('<font color="' + this.colors[severity] + '" severity="' + severity + '">' + message + "</font>");
+	}
 };
 
 Logger.highlight = function (message) {
