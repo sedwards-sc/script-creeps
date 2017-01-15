@@ -141,7 +141,7 @@ function errorCodeToText(errorCode) {
 		case -4:
 			return 'ERR_BUSY';
 		case -5:
-			return 'ERR_BUSY';
+			return 'ERR_NOT_FOUND';
 		case -6:
 			return 'ERR_NOT_ENOUGH_ENERGY or RESOURCES or EXTENSIONS';
 		case -7:
