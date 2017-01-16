@@ -105,7 +105,7 @@ StructureSpawn.prototype.updateSpawnFlag = function() {
 				foundFlag = true;
 				continue;
 			} else {
-				this.log('removing flag: ' + spawningFlag.name);
+				this.log('removing flag: ' + spawningFlag.name, 0);
 				spawningFlag.remove();
 			}
 		}
