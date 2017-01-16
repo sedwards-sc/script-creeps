@@ -4,7 +4,11 @@
  */
 
 Structure.prototype.descriptionString = function() {
-	return `${roomLink(this, this.structureType)} (${this.pos.roomName}, id#${this.id})`;
+	let name = this.structureType;
+	if(this instanceof StructureSpawn) {
+		name = this.name;
+	}
+	return `${roomLink(this, name)} (${this.pos.roomName}, id#${this.id})`;
 };
 
 Structure.prototype.log = function(msg, severity = 2) {
