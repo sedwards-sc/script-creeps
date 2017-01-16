@@ -54,7 +54,7 @@ StructureSpawn.prototype.spawnHarvester2 = function(roomCreeps) {
 		let currentFlagHarvesters = _.filter(roomCreeps, (creep) => creep.memory.flagName === curHarvesterFlagName);
 		if((currentFlagHarvesters.length < 1) || (currentFlagHarvesters[0].ticksToLive <= 12)) {
 			let newName = this.createCreep(harvesterBody, undefined, {spawnRoom: this.pos.roomName, role: 'harvester', flagName: curHarvesterFlagName});
-			console.log('Spawning new harvester: ' + newName + ' - ' + curHarvesterFlagName);
+			this.log('spawning new harvester: ' + newName + ' - ' + curHarvesterFlagName, 1);
 			break;
 		}
 	}
@@ -71,7 +71,7 @@ StructureSpawn.prototype.spawnMineralHarvester = function() {
 	}
 
 	let newName = this.createCreep(harvesterBody, undefined, {role: 'mineralHarvester', spawnRoom: this.pos.roomName});
-	console.log('Spawning new mineral harvester (' + this.pos.roomName + '): ' + newName);
+	this.log('spawning new mineral harvester: ' + newName, 1);
 };
 
 StructureSpawn.prototype.updateSpawnFlag = function() {
@@ -95,7 +95,7 @@ StructureSpawn.prototype.updateSpawnFlag = function() {
 			let flagSpawningRoleReturn = /_spawningRole_(.+)/.exec(spawningFlag.name);
 
 			if(flagSpawningRoleReturn === null) {
-				console.log('!!!!ERROR: spawningRole flag with no role: ' + spawningFlag.name);
+				this.errorLog('spawningRole flag with no role: ' + spawningFlag.name, ERR_INVALID_ARGS, 4);
 				continue;
 			}
 
