@@ -28,6 +28,14 @@ Logger.log = function (message, severity = 2) {
 	if(severity >= Memory.logLevel) {
 		console.log('<font color="' + this.colors[severity] + '" severity="' + severity + '">' + message + "</font>");
 	}
+
+	if(typeof Memory.notifyLevel === 'undefined') {
+		Memory.notifyLevel = 5;
+	}
+
+	if(severity >= Memory.notifyLevel) {
+		Game.notify('<font color="' + this.colors[severity] + '" severity="' + severity + '">' + message + "</font>");
+	}
 };
 
 Logger.highlight = function (message) {

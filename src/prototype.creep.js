@@ -2122,7 +2122,7 @@ Creep.prototype.runMineralTransfer = function() {
 	let roomTransferFlags = _.filter(Game.flags, (flag) => roomTransferFlagRegex.test(flag.name) === true);
 
 	if(!roomTransferFlags.length) {
-		this.log('no mineral transfer flags left in room; switching task to mineral return');
+		this.log('no mineral transfer flags left in room; switching task to mineral return', 0);
 		this.memory.task = 'return';
 		return;
 	}
@@ -2224,7 +2224,7 @@ Creep.prototype.runMineralReturn = function() {
     	let roomTransferFlags = _.filter(Game.flags, (flag) => roomTransferFlagRegex.test(flag.name) === true);
 
     	if(!roomTransferFlags.length) {
-    		this.log('no mineral return flags left in room; switching task to mineral transfer');
+    		this.log('no mineral return flags left in room; switching task to mineral transfer', 0);
     		this.memory.task = 'transfer';
     		return;
     	}
