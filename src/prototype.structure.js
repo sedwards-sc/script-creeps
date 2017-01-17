@@ -6,7 +6,7 @@
 Structure.prototype.descriptionString = function() {
 	let name = this.structureType;
 	if(this instanceof StructureSpawn) {
-		name = this.name;
+		name += `:${this.name}`;
 	}
 	return `${roomLink(this, name)} (${this.pos.roomName}, id#${this.id})`;
 };
