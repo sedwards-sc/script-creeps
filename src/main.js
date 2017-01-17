@@ -78,13 +78,15 @@ module.exports.loop = function () {
 					let roomSpawns = Game.rooms[name].find(FIND_MY_SPAWNS);
 					let mainSpawn = roomSpawns[0];
 
-					let newName;
+					//let newName;
 					if(Game.rooms[name].energyAvailable >= 1610) {
-						newName = mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {spawnRoom: name, role: 'defender'});
+						//newName =
+						mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {spawnRoom: name, role: 'defender'});
 					} else {
-						newName = mainSpawn.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {spawnRoom: name, role: 'defender'});
+						//newName =
+						mainSpawn.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {spawnRoom: name, role: 'defender'});
 					}
-					console.log('Spawning new defender: ' + newName + ' (' + name + ')');
+					//console.log('Spawning new defender: ' + newName + ' (' + name + ')');
 					mainSpawn.spawnCalled = 1;
 				}
 			} else {
@@ -98,16 +100,18 @@ module.exports.loop = function () {
 						let roomSpawns = Game.rooms[name].find(FIND_MY_SPAWNS);
 						let mainSpawn = roomSpawns[0];
 
-						let newName;
+						//let newName;
 
 						try {
     						if(Game.rooms[name].energyAvailable >= 1610) {
-    							newName = mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {spawnRoom: name, role: 'defender'});
+    							//newName =
+								mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {spawnRoom: name, role: 'defender'});
     						} else {
-    							newName = mainSpawn.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {spawnRoom: name, role: 'defender'});
+    							//newName =
+								mainSpawn.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {spawnRoom: name, role: 'defender'});
     						}
 
-    						console.log('Spawning new defender: ' + newName + ' (' + name + ')');
+    						//console.log('Spawning new defender: ' + newName + ' (' + name + ')');
 						    mainSpawn.spawnCalled = 1;
 						} catch(err) {
 						    Game.notify('Error creating creep in defense loop for room ' + name + ":\n" + err.name + "\n" + err.message);
@@ -266,15 +270,17 @@ module.exports.loop = function () {
 				let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
 				let roomCreepQuotas = Game.rooms[roomName].memory.creepQuotas;
 	    		if((roomCreepQuotas.carrier) && (undefToZero(roomCreepRoster.carrier) < roomCreepQuotas.carrier.length)) {
-	    			let newName = mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
-	    			console.log('Spawning new carrier (' + roomName + '): ' + newName);
+	    			//let newName =
+					mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
+	    			//console.log('Spawning new carrier (' + roomName + '): ' + newName);
 	    		} else if((roomCreepQuotas.miner) && (undefToZero(roomCreepRoster.miner) < roomCreepQuotas.miner.length)) {
 	    		    for(let curMinerIndex in roomCreepQuotas.miner) {
 	    		        let curMinerFlagName = roomCreepQuotas.miner[curMinerIndex];
 	    		        let currentFlagMiners = _.filter(roomCreeps, (creep) => creep.memory.flagName === curMinerFlagName);
 	    		        if((currentFlagMiners.length < 1) || (currentFlagMiners[0].ticksToLive <= 36)) {
-	    		            let newName = mainSpawn.createCreep(minerBody, undefined, {spawnRoom: roomName, role: 'miner', flagName: curMinerFlagName});
-	    			        console.log('Spawning new miner: ' + newName + ' - ' + curMinerFlagName);
+	    		            //let newName =
+							mainSpawn.createCreep(minerBody, undefined, {spawnRoom: roomName, role: 'miner', flagName: curMinerFlagName});
+	    			        //console.log('Spawning new miner: ' + newName + ' - ' + curMinerFlagName);
 	    			        break;
 	    		        }
 	    		    }
@@ -283,8 +289,9 @@ module.exports.loop = function () {
 	    		        let curLinkerFlagName = roomCreepQuotas.linker[curLinkerIndex];
 	    		        let currentFlagLinkers = _.filter(roomCreeps, (creep) => creep.memory.flagName === curLinkerFlagName);
 	    		        if((currentFlagLinkers.length < 1) || (currentFlagLinkers[0].ticksToLive <= 12)) {
-	    		            let newName = mainSpawn.createCreep([CARRY,CARRY,CARRY,CARRY,MOVE], undefined, {spawnRoom: roomName, role: 'linker', flagName: curLinkerFlagName});
-	    			        console.log('Spawning new linker: ' + newName + ' - ' + curLinkerFlagName);
+	    		            //let newName =
+							mainSpawn.createCreep([CARRY,CARRY,CARRY,CARRY,MOVE], undefined, {spawnRoom: roomName, role: 'linker', flagName: curLinkerFlagName});
+	    			        //console.log('Spawning new linker: ' + newName + ' - ' + curLinkerFlagName);
 	    			        break;
 	    		        }
 	    		    }
@@ -301,17 +308,20 @@ module.exports.loop = function () {
 							currentBody = builderBody;
 						}
 	    		        if((currentFlagBuilders.length < 1) || (currentFlagBuilders[0].ticksToLive <= (currentBody.length * 3))) {
-	    		            let newName = mainSpawn.createCreep(currentBody, undefined, {spawnRoom: roomName, role: 'builder', flagName: curBuilderFlagName});
-	    			        console.log('Spawning new builder: ' + newName + ' - ' + curBuilderFlagName);
+	    		            //let newName =
+							mainSpawn.createCreep(currentBody, undefined, {spawnRoom: roomName, role: 'builder', flagName: curBuilderFlagName});
+	    			        //console.log('Spawning new builder: ' + newName + ' - ' + curBuilderFlagName);
 	    			        break;
 	    		        }
 	    		    }
 	    		} else if(undefToZero(roomCreepRoster.upgrader) < roomQuota.upgraders) {
-	    			let newName = mainSpawn.createCreep(upgraderBody, undefined, {role: 'upgrader', spawnRoom: roomName});
-	    			console.log('Spawning new upgrader (' + roomName + '): ' + newName);
+	    			//let newName =
+					mainSpawn.createCreep(upgraderBody, undefined, {role: 'upgrader', spawnRoom: roomName});
+	    			//console.log('Spawning new upgrader (' + roomName + '): ' + newName);
 	    		} else if(undefToZero(roomCreepRoster.explorer) < roomQuota.explorers) {
-	    			let newName = mainSpawn.createCreep(explorerBody, undefined, {role: 'explorer', spawnRoom: roomName});
-	    			console.log('Spawning new explorer (' + roomName + '): ' + newName);
+	    			//let newName =
+					mainSpawn.createCreep(explorerBody, undefined, {role: 'explorer', spawnRoom: roomName});
+	    			//console.log('Spawning new explorer (' + roomName + '): ' + newName);
 	    		} else if((roomCreepQuotas.remoteMiner) && (undefToZero(roomCreepRoster.remoteMiner) < roomCreepQuotas.remoteMiner.length)) {
 					for(let curRemoteMinerIndex in roomCreepQuotas.remoteMiner) {
 	    		        let curRemoteMinerFlagName = roomCreepQuotas.remoteMiner[curRemoteMinerIndex];
@@ -320,8 +330,9 @@ module.exports.loop = function () {
 							if(Game.flags[curRemoteMinerFlagName].memory.bodyParts) {
 								remoteMinerBody = Game.flags[curRemoteMinerFlagName].memory.bodyParts;
 							}
-	    		            let newName = mainSpawn.createCreep(remoteMinerBody, undefined, {spawnRoom: roomName, role: 'remoteMiner', flagName: curRemoteMinerFlagName});
-	    			        console.log('Spawning new remote miner: ' + newName + ' - ' + curRemoteMinerFlagName);
+	    		            //let newName =
+							mainSpawn.createCreep(remoteMinerBody, undefined, {spawnRoom: roomName, role: 'remoteMiner', flagName: curRemoteMinerFlagName});
+	    			        //console.log('Spawning new remote miner: ' + newName + ' - ' + curRemoteMinerFlagName);
 	    			        break;
 	    		        }
 	    		    }
@@ -333,8 +344,9 @@ module.exports.loop = function () {
 							if(Game.flags[curRemoteCarrierFlagName].memory.bodyParts) {
 								remoteCarrierBody = Game.flags[curRemoteCarrierFlagName].memory.bodyParts;
 							}
-	    		            let newName = mainSpawn.createCreep(remoteCarrierBody, undefined, {spawnRoom: roomName, role: 'remoteCarrier', flagName: curRemoteCarrierFlagName});
-	    			        console.log('Spawning new remote carrier: ' + newName + ' - ' + curRemoteCarrierFlagName);
+	    		            //let newName =
+							mainSpawn.createCreep(remoteCarrierBody, undefined, {spawnRoom: roomName, role: 'remoteCarrier', flagName: curRemoteCarrierFlagName});
+	    			        //console.log('Spawning new remote carrier: ' + newName + ' - ' + curRemoteCarrierFlagName);
 	    			        break;
 	    		        }
 	    		    }
@@ -371,25 +383,30 @@ module.exports.loop = function () {
 							if(Game.flags[curFlagName].memory.bodyParts) {
 								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
 							}
-	    		            let newName = mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
+	    		            //let newName =
+							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+	    			        //console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
 	    			        break;
 	    		        }
 	    		    }
 	    		} else if(undefToZero(roomCreepRoster.reinforcer) < roomQuota.reinforcers) {
-	    			let newName = mainSpawn.createCreep([WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
-	    			console.log('Spawning new reinforcer (' + roomName + '): ' + newName);
+	    			//let newName =
+					mainSpawn.createCreep([WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
+	    			//console.log('Spawning new reinforcer (' + roomName + '): ' + newName);
 	    		} else if(undefToZero(roomCreepRoster.claimer) < roomQuota.claimers) {
 	    			//let newName = mainSpawn.createCreep([CLAIM,CLAIM,CLAIM,CLAIM,CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
-	    			let newName = mainSpawn.createCreep([CLAIM,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
-	    			console.log('Spawning new claimer (' + roomName + '): ' + newName);
+	    			//let newName =
+					mainSpawn.createCreep([CLAIM,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
+	    			//console.log('Spawning new claimer (' + roomName + '): ' + newName);
 	    		} else if(undefToZero(roomCreepRoster.remoteUpgrader) < roomQuota.remoteUpgraders) {
-	    			let newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteUpgrader', spawnRoom: roomName});
-	    			console.log('Spawning new remote upgrader (' + roomName + '): ' + newName);
+	    			//let newName =
+					mainSpawn.createCreep(currentBody, undefined, {role: 'remoteUpgrader', spawnRoom: roomName});
+	    			//console.log('Spawning new remote upgrader (' + roomName + '): ' + newName);
 	    		} else if(undefToZero(roomCreepRoster.remoteBuilder) < roomQuota.remoteBuilders) {
-	    			let newName = mainSpawn.createCreep(currentBody, undefined, {role: 'remoteBuilder', spawnRoom: roomName});
+	    			//let newName =
+					mainSpawn.createCreep(currentBody, undefined, {role: 'remoteBuilder', spawnRoom: roomName});
 	    			//let newName = mainSpawn.createCreep([MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY], undefined, {role: 'remoteBuilder', spawnRoom: roomName});
-	    			console.log('Spawning new remote builder (' + roomName + '): ' + newName);
+	    			//console.log('Spawning new remote builder (' + roomName + '): ' + newName);
 	    		} else if(curRoom.memory.shouldMine === true && undefToZero(roomCreepRoster.mineralHarvester) < 1) {
 	    		    mainSpawn.spawnMineralHarvester();
 	    		} else if((roomCreepQuotas.scout) && (undefToZero(roomCreepRoster.scout) < roomCreepQuotas.scout.length)) {
@@ -398,8 +415,9 @@ module.exports.loop = function () {
 	    		        let currentFlagScouts = _.filter(roomCreeps, (creep) => creep.memory.flagName === curScoutFlagName);
 	    		        if((currentFlagScouts.length < 1) || (currentFlagScouts[0].ticksToLive <= 20)) {
 	    		            //let newName = mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {spawnRoom: roomName, role: 'scout', flagName: curScoutFlagName});
-	    		            let newName = mainSpawn.createCreep([MOVE], undefined, {spawnRoom: roomName, role: 'scout', flagName: curScoutFlagName});
-	    			        console.log('Spawning new scout: ' + newName + ' - ' + curScoutFlagName);
+	    		            //let newName =
+							mainSpawn.createCreep([MOVE], undefined, {spawnRoom: roomName, role: 'scout', flagName: curScoutFlagName});
+	    			        //console.log('Spawning new scout: ' + newName + ' - ' + curScoutFlagName);
 	    			        break;
 	    		        }
 	    		    }
@@ -412,8 +430,9 @@ module.exports.loop = function () {
 							if(Game.flags[curSoldierFlagName].memory.bodyParts) {
 								soldierBody = Game.flags[curSoldierFlagName].memory.bodyParts;
 							}
-	    		            let newName = mainSpawn.createCreep(soldierBody, undefined, {spawnRoom: roomName, role: 'soldier', flagName: curSoldierFlagName});
-	    			        console.log('Spawning new soldier: ' + newName + ' - ' + curSoldierFlagName);
+	    		            //let newName =
+							mainSpawn.createCreep(soldierBody, undefined, {spawnRoom: roomName, role: 'soldier', flagName: curSoldierFlagName});
+	    			        //console.log('Spawning new soldier: ' + newName + ' - ' + curSoldierFlagName);
 	    			        break;
 	    		        }
 	    		    }
@@ -427,8 +446,9 @@ module.exports.loop = function () {
 							if(Game.flags[curFlagName].memory.bodyParts) {
 								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
 							}
-	    		            let newName = mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
+	    		            //let newName =
+							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+	    			        //console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
 	    			        break;
 	    		        }
 	    		    }
@@ -444,8 +464,9 @@ module.exports.loop = function () {
 						let creepName = roomName + '_mineralCarrier';
 						if(!Game.creeps[creepName]) {
 							//let newName = mainSpawn.createCreep([CARRY,CARRY,MOVE,MOVE], creepName, {spawnRoom: roomName, role: 'mineralCarrier'});
-							let newName = mainSpawn.createCreep([CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE], creepName, {spawnRoom: roomName, role: 'mineralCarrier'});
-	    			        console.log('Spawning new mineral carrier: ' + newName + ' (' + roomName + ')');
+							//let newName =
+							mainSpawn.createCreep([CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE], creepName, {spawnRoom: roomName, role: 'mineralCarrier'});
+	    			        //console.log('Spawning new mineral carrier: ' + newName + ' (' + roomName + ')');
 						}
 					}
 				}
@@ -471,8 +492,9 @@ module.exports.loop = function () {
 							if(Game.flags[curFlagName].memory.medicBodyParts) {
 								medicBody = Game.flags[curFlagName].memory.medicBodyParts;
 							}
-	    		            let newName = mainSpawn.createCreep(medicBody, undefined, {spawnRoom: roomName, role: 'medic', flagName: curFlagName});
-	    			        console.log('Spawning new medic: ' + newName + ' - ' + curFlagName);
+	    		            //let newName =
+							mainSpawn.createCreep(medicBody, undefined, {spawnRoom: roomName, role: 'medic', flagName: curFlagName});
+	    			        //console.log('Spawning new medic: ' + newName + ' - ' + curFlagName);
 	    			        break;
 	    		        }
 	    		    }
@@ -486,8 +508,9 @@ module.exports.loop = function () {
 							if(Game.flags[curFlagName].memory.dismantlerBodyParts) {
 								curCreepBody = Game.flags[curFlagName].memory.dismantlerBodyParts;
 							}
-	    		            let newName = mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
+	    		            //let newName =
+							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+	    			        //console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
 	    			        break;
 	    		        }
 	    		    }
@@ -516,8 +539,9 @@ module.exports.loop = function () {
 							if(Game.flags[curFlagName].memory.medicBodyParts) {
 								medicBody = Game.flags[curFlagName].memory.medicBodyParts;
 							}
-	    		            let newName = mainSpawn.createCreep(medicBody, undefined, {spawnRoom: roomName, role: 'medic', flagName: curFlagName});
-	    			        console.log('Spawning new medic: ' + newName + ' - ' + curFlagName);
+	    		            //let newName =
+							mainSpawn.createCreep(medicBody, undefined, {spawnRoom: roomName, role: 'medic', flagName: curFlagName});
+	    			        //console.log('Spawning new medic: ' + newName + ' - ' + curFlagName);
 	    			        break;
 	    		        }
 	    		    }
@@ -531,8 +555,9 @@ module.exports.loop = function () {
 							if(Game.flags[curFlagName].memory.powerBankAttackerBodyParts) {
 								curCreepBody = Game.flags[curFlagName].memory.powerBankAttackerBodyParts;
 							}
-	    		            let newName = mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
+	    		            //let newName =
+							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+	    			        //console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
 	    			        break;
 	    		        }
 	    		    }
@@ -546,8 +571,9 @@ module.exports.loop = function () {
 							if(Game.flags[curFlagName].memory.bodyParts) {
 								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
 							}
-	    		            let newName = mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
+	    		            //let newName =
+							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+	    			        //console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
 	    			        break;
 	    		        }
 	    		    }
