@@ -53,8 +53,9 @@ StructureSpawn.prototype.spawnHarvester2 = function(roomCreeps) {
 		let curHarvesterFlagName = roomCreepQuotas.harvester[curHarvesterIndex];
 		let currentFlagHarvesters = _.filter(roomCreeps, (creep) => creep.memory.flagName === curHarvesterFlagName);
 		if((currentFlagHarvesters.length < 1) || (currentFlagHarvesters[0].ticksToLive <= 12)) {
-			let newName = this.createCreep(harvesterBody, undefined, {spawnRoom: this.pos.roomName, role: 'harvester', flagName: curHarvesterFlagName});
-			this.log('spawning new harvester: ' + newName + ' - ' + curHarvesterFlagName, 1);
+			//let newName =
+			this.createCreep(harvesterBody, undefined, {spawnRoom: this.pos.roomName, role: 'harvester', flagName: curHarvesterFlagName});
+			//this.log('spawning new harvester: ' + newName + ' - ' + curHarvesterFlagName, 1);
 			break;
 		}
 	}
@@ -70,8 +71,9 @@ StructureSpawn.prototype.spawnMineralHarvester = function() {
 		harvesterBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,CARRY,CARRY,CARRY,WORK,WORK,WORK,WORK,WORK];
 	}
 
-	let newName = this.createCreep(harvesterBody, undefined, {role: 'mineralHarvester', spawnRoom: this.pos.roomName});
-	this.log('spawning new mineral harvester: ' + newName, 1);
+	//let newName =
+	this.createCreep(harvesterBody, undefined, {role: 'mineralHarvester', spawnRoom: this.pos.roomName});
+	//this.log('spawning new mineral harvester: ' + newName, 1);
 };
 
 StructureSpawn.prototype.updateSpawnFlag = function() {
