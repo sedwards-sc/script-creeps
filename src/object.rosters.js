@@ -199,7 +199,7 @@ module.exports = (function(){
 				2, //reservers
 				0, //claimers
 				0, //remoteUpgraders
-				2, //remoteBuilders
+				0, //remoteBuilders
 				0 //mineralHarvesters
 		);
 
