@@ -130,6 +130,28 @@ StructureSpawn.prototype.updateSpawnFlag = function() {
 	}
 };
 
+StructureSpawn.prototype.defaultCreateCreep = StructureSpawn.prototype.createCreep;
+StructureSpawn.prototype.createCreep = function(body, name, memory) {
+	let createReturn = this.defaultCreateCreep(body, name, memory);
+	let logMsg = '';
+	if(typeof memory === 'object') {
+		if(typeof memory.role === 'string') {
+			logMsg += `, role: ${memory.role}`;
+		}
+		if(typeof memory.flagName === 'string') {
+			logMsg += `, flag: ${memory.flagName}`;
+		}
+	}
+	if(typeof createReturn === 'string') {
+		logMsg = `spawning new creep: ${createReturn}${logMsg}`;
+		this.log(logMsg, 1);
+	} else {
+		logMsg = `problem spawning creep${logMsg}`;
+		this.errorLog(logMsg, createReturn, 4);
+	}
+	return createReturn;
+};
+
 function undefToZero(x) {
 	return x || 0;
 }
