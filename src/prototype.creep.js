@@ -55,7 +55,7 @@ Creep.prototype.run = function() {
 	} else if(this.memory.role === 'powerCarrier') {
 		this.runPowerCarrier();
     } else {
-        console.log('!!!Error: creep ' + this.name + ' has no role function!!!');
+        this.errorLog('no role function', ERR_NOT_FOUND, 4);
     }
 };
 
@@ -351,7 +351,7 @@ Creep.prototype.runMiner2 = function() {
 	let myFlag;
 
     if(this.memory.flagName === undefined) {
-        console.log('!!!Error: ' + this.name + ' has no flag in memory!!!');
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 4);
         return;
     } else {
         myFlag = Game.flags[this.memory.flagName];
@@ -444,7 +444,7 @@ Creep.prototype.runLinker2 = function() {
 	let myFlag;
 
     if(this.memory.flagName === undefined) {
-        console.log('!!!Error: ' + this.name + ' has no flag in memory!!!');
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 4);
         return;
     } else {
         myFlag = Game.flags[this.memory.flagName];
@@ -471,7 +471,7 @@ Creep.prototype.runLinker3 = function() {
 	let myFlag;
 
 	if(this.memory.flagName === undefined) {
-        this.errorLog('no flag in memory', ERR_NOT_FOUND);
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 4);
         return;
     } else {
         myFlag = Game.flags[this.memory.flagName];
@@ -962,7 +962,7 @@ Creep.prototype.runDismantler2 = function() {
 	let myFlag;
 
 	if(this.memory.flagName === undefined) {
-        this.errorLog('no flag in memory', ERR_NOT_FOUND);
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 4);
         return;
     } else {
         myFlag = Game.flags[this.memory.flagName];
@@ -1094,7 +1094,7 @@ Creep.prototype.runMedic = function() {
 	let myFlag;
 
 	if(this.memory.flagName === undefined) {
-        this.errorLog('no flag in memory', ERR_NOT_FOUND);
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 4);
         return;
     } else {
         myFlag = Game.flags[this.memory.flagName];
@@ -1180,7 +1180,7 @@ Creep.prototype.runScout = function() {
 	let myFlag;
 
     if(this.memory.flagName === undefined) {
-        console.log('!!!Error: ' + this.name + ' has no flag in memory!!!');
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 4);
         return;
     } else {
         myFlag = Game.flags[this.memory.flagName];
@@ -1217,7 +1217,7 @@ Creep.prototype.runSoldier = function() {
 	let myFlag;
 
     if(this.memory.flagName === undefined) {
-        console.log('!!!Error: ' + this.name + ' has no flag in memory!!!');
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 4);
         return;
     } else {
         myFlag = Game.flags[this.memory.flagName];
@@ -1299,7 +1299,7 @@ Creep.prototype.runRemoteMiner2 = function() {
 	let myFlag;
 
     if(this.memory.flagName === undefined) {
-        console.log('!!!Error: ' + this.name + ' has no flag in memory!!!');
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 4);
         return;
     } else {
         myFlag = Game.flags[this.memory.flagName];
@@ -1427,7 +1427,7 @@ Creep.prototype.runRemoteCarrier2 = function() {
 	let myFlag;
 
     if(this.memory.flagName === undefined) {
-        console.log('!!!Error: ' + this.name + ' has no flag in memory!!!');
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 4);
         return;
     } else {
         myFlag = Game.flags[this.memory.flagName];
@@ -1737,7 +1737,7 @@ Creep.prototype.runReserver2 = function() {
 	let myFlag;
 
 	if(this.memory.flagName === undefined) {
-        this.errorLog('no flag in memory', ERR_NOT_FOUND);
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 4);
         return;
     } else {
         myFlag = Game.flags[this.memory.flagName];
@@ -2288,7 +2288,7 @@ Creep.prototype.runPowerBankAttacker = function() {
 	let myFlag;
 
 	if(this.memory.flagName === undefined) {
-        this.errorLog('no flag in memory', ERR_NOT_FOUND);
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 4);
         return;
     } else {
         myFlag = Game.flags[this.memory.flagName];
@@ -2486,7 +2486,7 @@ Creep.prototype.runPowerCarrier = function() {
 	let myRoomStructures = this.room.find(FIND_MY_STRUCTURES);
 	let powerSpawn = getStructure(myRoomStructures, STRUCTURE_POWER_SPAWN);
 	if(!powerSpawn) {
-		this.errorLog('could not find power spawn', ERR_NOT_FOUND);
+		this.errorLog('could not find power spawn', ERR_NOT_FOUND, 4);
 		return ERR_NOT_FOUND;
 	}
 
