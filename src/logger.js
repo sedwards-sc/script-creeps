@@ -38,6 +38,10 @@ Logger.log = function (message, severity = 2) {
 	}
 };
 
+Logger.errorLog = function (message, errorCode = -10, severity = 3) {
+	return Logger.log(`!!!Error!!! ${message} (${errorCodeToText(errorCode)})`, severity);
+};
+
 Logger.highlight = function (message) {
 	console.log('<font color="' + this.colors.highlight + '" type="highlight">' + message + "</font>");
 };
