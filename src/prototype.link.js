@@ -44,7 +44,7 @@ StructureLink.prototype.run = function() {
 		} else if((storageLink) && (storageLink.energy <= (storageLink.energyCapacity * 0.8))) {
 			transferTarget = storageLink;
 		} else {
-			console.log('linker is full enough but targets aren\'t empty enough - room: ' + this.room.name + ', linker: ' + this.id);
+			this.log('full enough but targets aren\'t empty enough', 1);
 			return;
 		}
 
@@ -58,19 +58,19 @@ StructureLink.prototype.run = function() {
 		//if(inRangeRefillers.length > 0) {
 		    let transferReturn = this.transferEnergyFirstTimeOnly(transferTarget);
 			if(transferReturn === OK) {
-				console.log('remote link energy transferred to storage/controller link - room: ' + this.room.name + ', from: ' + this.id + ', to: ' + transferTarget.id);
+				this.log('remote link energy transferred to storage/controller link, target: ' + roomLink(transferTarget, transferTarget.structureType), 1);
 				this.room.memory.transferToStorageCounts = this.room.memory.transferToStorageCounts || {};
 				this.room.memory.transferToStorageCounts[this.id] = this.room.memory.transferToStorageCounts[this.id] || {};
 				this.room.memory.transferToStorageCounts[this.id].success = this.room.memory.transferToStorageCounts[this.id].success || 0;
 				this.room.memory.transferToStorageCounts[this.id].success++;
 			} else if(transferReturn === ERR_TIRED) {
-				console.log('too tired to transfer remote link energy to storage/controller link - room: ' + this.room.name + ', from: ' + this.id + ', to: ' + transferTarget.id);
+				this.log('too tired to transfer remote link energy to storage/controller link, target: ' + roomLink(transferTarget, transferTarget.structureType), 1);
 				this.room.memory.transferToStorageCounts = this.room.memory.transferToStorageCounts || {};
 				this.room.memory.transferToStorageCounts[this.id] = this.room.memory.transferToStorageCounts[this.id] || {};
 				this.room.memory.transferToStorageCounts[this.id].fail = this.room.memory.transferToStorageCounts[this.id].fail || 0;
 				this.room.memory.transferToStorageCounts[this.id].fail++;
 			} else {
-				console.log('!!!Error: transferring remote link energy to storage/controller link (' + transferReturn + ') - room: ' + this.room.name + ', from: ' + this.id + ', to: ' + transferTarget.id);
+				this.errorLog('problem transferring remote link energy to storage/controller link, target: ' + roomLink(transferTarget, transferTarget.structureType), transferReturn, 4);
 			}
 		//}
     }
@@ -93,7 +93,7 @@ StructureLink.prototype.transferEnergyFirstTimeOnly = function(transferTarget) {
            this.transferred = 1;
         }
     } else {
-        console.log('-link already transferred this tick - ' + this.id);
+        this.log('already transferred this tick', 1);
     }
 
     return transferReturnVal;

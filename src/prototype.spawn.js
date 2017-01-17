@@ -121,7 +121,7 @@ StructureSpawn.prototype.updateSpawnFlag = function() {
 		let flagCreateReturn = this.pos.createFlag(flagName, COLOR_CYAN, COLOR_WHITE);
 
 		if(flagCreateReturn !== flagName) {
-			this.errorLog('problem creating spawningRole flag: ' + flagName, flagCreateReturn);
+			this.errorLog('problem creating spawningRole flag: ' + flagName, flagCreateReturn, 4);
 		}
 
 		if(flagCreateReturn === ERR_NAME_EXISTS) {
