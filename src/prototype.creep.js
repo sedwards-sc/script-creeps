@@ -2390,12 +2390,23 @@ Creep.prototype.runPowerCollector = function() {
 	let myFlag;
 
 	if(this.memory.flagName === undefined) {
-        this.errorLog('no flag in memory', ERR_NOT_FOUND);
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 4);
         return;
     } else {
         myFlag = Game.flags[this.memory.flagName];
         if(myFlag === undefined) {
-			this.errorLog('flag is missing', ERR_NOT_FOUND);
+			this.errorLog('flag is missing', ERR_NOT_FOUND, 3);
+			// start suicide
+			this.memory.suicideCounter = this.memory.suicideCounter || 5;
+			if(this.memory.suicideCounter === 4) {
+			    countAllC();
+			} else if(this.memory.suicideCounter <= 1) {
+			    delete Memory.creeps[this.name].suicideCounter;
+				this.suicide();
+			}
+			if(typeof this.memory.suicideCounter !== 'undefined') {
+			    this.memory.suicideCounter--;
+			}
 	        return;
 		}
     }
@@ -2440,7 +2451,15 @@ Creep.prototype.runPowerCollector = function() {
 				// if position is equal to my flag
 				    // check if there are any power banks in the room
 				    // if not, room has been cleared so clear flag
-				this.moveTo(myFlag);
+				if(this.pos.isEqualTo(myFlag)) {
+					let roomStructures = this.room.find(FIND_STRUCTURES);
+					let powerBank = getStructure(roomStructures, STRUCTURE_POWER_BANK);
+					if(!powerBank) {
+					    myFlag.remove();
+					}
+				} else {
+					this.moveTo(myFlag);
+				}
 				return;
 			}
 			let closestResourcePile = this.pos.findClosestByRange(resourcePiles);
