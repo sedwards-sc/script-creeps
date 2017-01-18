@@ -3,6 +3,10 @@
  * prototype.structure
  */
 
+Structure.prototype.toString = function(htmlLink = true){
+	return `[structure (${this.structureType}) #${this.id} ${this.pos.toString(htmlLink, this.id, 'structures.' + this.id)}]`;
+};
+
 Structure.prototype.descriptionString = function() {
 	let name = this.structureType;
 	if(this instanceof StructureSpawn) {

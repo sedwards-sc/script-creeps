@@ -3,6 +3,10 @@
  * prototype.spawn
  */
 
+StructureSpawn.prototype.toString = function (htmlLink = true){
+	return `[structure (${this.structureType}) #${this.name} ${this.pos.toString(htmlLink, this.id, 'spawns.' + this.name)}]`;
+};
+
 StructureSpawn.prototype.spawnHarvester = function(roomCreeps) {
 	let harvesterBody = [WORK,CARRY,MOVE,MOVE];
 

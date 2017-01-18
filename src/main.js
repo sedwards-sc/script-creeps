@@ -5,6 +5,7 @@ global.Logger = require('logger');
 require('utils').populateUtils(global);
 
 require('prototype.room');
+require('prototype.roomposition');
 require('prototype.creep');
 require('prototype.flag');
 require('prototype.structure');
