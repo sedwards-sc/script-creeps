@@ -61,7 +61,7 @@ Creep.prototype.run = function() {
 	} else if(this.memory.role === 'medic') {
 		this.runMedic();
 	} else if(this.memory.role === 'scout') {
-		this.runScout();
+		this.runScout2();
 	} else if(this.memory.role === 'soldier') {
 		this.runSoldier();
 	} else if(this.memory.role === 'powerBankAttacker') {
@@ -1214,6 +1214,27 @@ Creep.prototype.runScout = function() {
         		}
         	}
         });
+	}
+};
+
+Creep.prototype.runScout2 = function() {
+    this.say('scout');
+
+	let myFlag;
+
+    if(this.memory.flagName === undefined) {
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 4);
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+        if(myFlag === undefined) {
+			this.errorLog('flag is missing', ERR_NOT_FOUND);
+	        return;
+		}
+    }
+
+	if(!this.pos.isEqualTo(myFlag)) {
+		this.travelTo(myFlag);
 	}
 };
 
