@@ -4,6 +4,8 @@ global.Logger = require('logger');
 
 require('utils').populateUtils(global);
 
+var Traveler = require('Traveler');
+
 require('prototype.room');
 require('prototype.roomposition');
 require('prototype.creep');
