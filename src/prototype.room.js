@@ -113,7 +113,7 @@ Room.prototype.isMine = function() {
 };
 
 Room.prototype.registerLabs = function() {
-	Logger.log(`Registering labs for ${this}`);
+	Logger.log(`Registering labs for ${this}`, 3);
 
 	let labFlagRegex = new RegExp('^' + this.name + '_structure_lab_');
 	let labFlags = _.filter(Game.flags, (flag) => labFlagRegex.test(flag.name) === true);
@@ -124,18 +124,14 @@ Room.prototype.registerLabs = function() {
 		let flagReturn = /_structure_lab_(\d)/.exec(labFlag.name);
 
 		if(flagReturn === null) {
-			let errString = '!!!!ERROR: lab flag with invalid number: ' + labFlag.name;
-			console.log(errString);
-			Game.notify(errString);
+			Logger.errorLog('lab flag with invalid number: ' + labFlag.name, ERR_INVALID_TARGET, 5);
 			continue;
 		}
 
 		let flagLabNum = parseInt(flagReturn[1], 10);
 
 		if(isNaN(flagLabNum)) {
-			let errString = '!!!!ERROR: lab flag with NaN: ' + labFlag.name;
-			console.log(errString);
-			Game.notify(errString);
+			Logger.errorLog('lab flag with NaN: ' + labFlag.name, ERR_INVALID_TARGET, 5);
 			continue;
 		}
 
@@ -144,9 +140,7 @@ Room.prototype.registerLabs = function() {
 		let lab = getLab(structuresAtFlag);
 
 		if(!lab) {
-			let errString = '!!!!ERROR: lab flag with no lab: ' + labFlag.name;
-			console.log(errString);
-			Game.notify(errString);
+			Logger.errorLog('lab flag with no lab: ' + labFlag.name, ERR_NOT_FOUND, 5);
 			continue;
 		}
 
@@ -173,7 +167,7 @@ Room.prototype.runLabs = function() {
 	let inLabB = Game.getObjectById(this.memory.labIds[7]);
 
 	if(inLabA === null || inLabB === null) {
-		console.log('!!!!ERROR: labIds is defined but cannot find inLabs');
+		Logger.errorLog('labIds is defined but cannot find inLabs', ERR_NOT_FOUND, 4);
 		return ERR_NOT_FOUND;
 	}
 
@@ -202,7 +196,7 @@ function getLab(structuresArray) {
 }
 
 Room.prototype.runCompoundProductionManagment = function() {
-    //console.log('~Running compound production management for room ' + this.name);
+    Logger.log(`~Running compound production management for ${this}`, 0);
 
     // filter for room mineral transfer and return flags
 	let roomMineralFlagRegex = new RegExp('^' + this.name + '_mineral(?:Transfer|Return)_');
@@ -214,12 +208,12 @@ Room.prototype.runCompoundProductionManagment = function() {
 	}
 
 	if(!isArrayWithContents(this.memory.labIds)) {
-	    console.log('!!!!ERROR: compound production activated but labs are not registered');
+	    Logger.errorLog('compound production activated but labs are not registered', ERR_NOT_FOUND, 3);
 		return ERR_NOT_FOUND;
 	}
 
 	if(typeof this.memory.labIds[2] === 'undefined' || typeof this.memory.labIds[7] === 'undefined') {
-	    console.log('!!!ERROR: inLabs are not registered, cannot run compound production');
+	    Logger.errorLog('inLabs are not registered, cannot run compound production', ERR_NOT_FOUND, 3);
 	    return ERR_NOT_FOUND;
 	}
 
@@ -243,7 +237,7 @@ Room.prototype.runCompoundProductionManagment = function() {
 	}
 
 	if(inLabsEmpty === true && outLabsEmpty === false) {
-	    console.log('Clearing finished reaction run in room ' + this.name);
+	    Logger.log(`~Clearing finished reaction run in ${this}`, 2);
 	    // add mineral return all flag
 	    let flagPos = new RoomPosition(2, 2, this.name);
 	    flagPos.createFlag(this.name + '_mineralReturn_all', COLOR_BLUE, COLOR_BLUE);
@@ -251,7 +245,7 @@ Room.prototype.runCompoundProductionManagment = function() {
 	    // add reactant flags to inLabs (choose and run reaction)
 
 	    if(typeof this.terminal === 'undefined') {
-	        console.log('!!!ERROR: no terminal in this room, cannot manage compound production');
+	        Logger.errorLog('no terminal in this room, cannot manage compound production', ERR_NOT_FOUND, 3);
 	        return ERR_NOT_FOUND;
 	    }
 
@@ -277,13 +271,13 @@ Room.prototype.runCompoundProductionManagment = function() {
 					let amountToProduce = Math.min(amountMissing, LAB_MINERAL_CAPACITY);
 
 	                // run this reaction (add reactant transfer flags on inLabs)
-	                console.log('Starting ' + compound + ' reaction run in room ' + this.name + ' - deficit: ' + amountMissing + ', production qty: ' + amountToProduce);
+					Logger.log(`~Starting ${compound} reaction run in ${this} - deficit: ${amountMissing}, production qty: ${amountToProduce}`, 2);
 
 	                let inLabA = Game.getObjectById(this.memory.labIds[2]);
                 	let inLabB = Game.getObjectById(this.memory.labIds[7]);
 
                 	if(inLabA === null || inLabB === null) {
-                		console.log('!!!!ERROR: labIds is defined but cannot find inLabs');
+                		Logger.errorLog('labIds is defined but cannot find inLabs', ERR_NOT_FOUND, 3);
                 		return ERR_NOT_FOUND;
                 	}
 
@@ -297,7 +291,8 @@ Room.prototype.runCompoundProductionManagment = function() {
 	            }
 	        }
 	    }
-		//console.log('no compounds under quota for room ' + this.name);
+
+		Logger.log(`~No valid compound orders for ${this}`, 0);
 
 		// lay out boost compound flags
 		if(typeof this.memory.boostTier !== 'undefined' && labs.length === 10) {
@@ -306,7 +301,7 @@ Room.prototype.runCompoundProductionManagment = function() {
 				return ERR_INVALID_ARGS;
 			}
 
-			console.log('Laying out boost compounds in room ' + this.name);
+			Logger.log(`~Laying out boost compounds in ${this}`, 2);
 
 			for(let i in labs) {
 				let secondaryColour = parseInt(i || 10);
@@ -322,6 +317,7 @@ Room.prototype.runCompoundProductionManagment = function() {
 			validBoostState = true;
 			let boostCompounds = getTierCompounds(this.memory.boostTier);
 			if(!isArrayWithContents(boostCompounds)) {
+				Logger.errorLog(`problem retrieving boost compounds tier list: ${this.memory.boostTier}, ${this}`, ERR_INVALID_ARGS, 4);
 				return ERR_INVALID_ARGS;
 			}
 
@@ -337,7 +333,7 @@ Room.prototype.runCompoundProductionManagment = function() {
 		let inLabB = Game.getObjectById(this.memory.labIds[7]);
 
 		if(outLab0 === null || inLabA === null || inLabB === null) {
-			console.log('!!!!ERROR: Cannot find inLabs and outLab0 for checking reaction progress');
+			Logger.errorLog(`cannot find inLabs and outLab0 for checking reaction progress in ${this}`, ERR_NOT_FOUND, 3);
 			return ERR_NOT_FOUND;
 		}
 
@@ -346,7 +342,7 @@ Room.prototype.runCompoundProductionManagment = function() {
 		let compound = outLab0.mineralType;
 
 		if((typeof REACTIONS[reactantA] === 'undefined' || typeof REACTIONS[reactantA][reactantB] === 'undefined' || REACTIONS[reactantA][reactantB] !== compound) && !validBoostState) {
-			console.log('!!!!ERROR: Problem with reaction run in room ' + this.name);
+			Logger.errorLog(`problem with reaction run in ${this}`, ERR_INVALID_ARGS, 4);
 		    // add mineral return all flag
 		    let flagPos = new RoomPosition(2, 2, this.name);
 		    flagPos.createFlag(this.name + '_mineralReturn_all', COLOR_BLUE, COLOR_BLUE);
@@ -362,7 +358,7 @@ Room.prototype.runCompoundProductionManagment = function() {
 Room.prototype.mineralReport = function() {
 	let mineral = this.find(FIND_MINERALS)[0];
 	if(!mineral) {
-		console.log('!!!!Error: could not find room mineral');
+		Logger.errorLog(`could not find room mineral in ${this}`, ERR_NOT_FOUND, 4);
 		return ERR_NOT_FOUND;
 	}
 
@@ -383,7 +379,7 @@ Room.prototype.mineralReport = function() {
 		reportString += "\nShould mine?: " + shouldMine;
 	}
 
-	console.log(reportString);
+	Logger.log(reportString, 3);
 };
 
 Room.prototype.checkMineralStatus = function() {
@@ -393,7 +389,7 @@ Room.prototype.checkMineralStatus = function() {
 
 	let mineral = this.find(FIND_MINERALS)[0];
 	if(!mineral) {
-		console.log('!!!!Error: could not find room mineral - ' + this.name);
+		Logger.errorLog(`could not find room mineral in ${this}`, ERR_NOT_FOUND, 4);
 		return ERR_NOT_FOUND;
 	}
 
