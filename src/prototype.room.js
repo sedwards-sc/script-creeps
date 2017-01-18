@@ -3,6 +3,13 @@
  * prototype.room
  */
 
+Room.prototype.toString = function(htmlLink = true) {
+	if(htmlLink) {
+		return `[${roomLink(this)}]`;
+	}
+	return `[${this.name}]`;
+};
+
 Room.prototype.findSources = function() {
 	return this.find(FIND_SOURCES);
 };
@@ -62,7 +69,7 @@ Room.prototype.countCreepRoles = function() {
 };
 
 Room.prototype.countCreepFlags = function() {
-	console.log('### Counting creep flags for ' + this.name);
+	Logger.log(`# Counting creep flags for ${this}`, 1);
 
 	// filter for room flags
 	let roomFlagRegex = new RegExp('^' + this.name + '_');
