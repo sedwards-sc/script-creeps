@@ -511,7 +511,7 @@ Creep.prototype.runLinker3 = function() {
 			if(transferTarget) {
 				let transferReturn = this.transfer(transferTarget, highestQuantityResourceType);
 				if(transferReturn != OK) {
-					this.errorLog('could not successfully transfer', transferReturn);
+					this.errorLog('could not successfully transfer', transferReturn, 4);
 				}
 			}
 		} else {
@@ -522,7 +522,7 @@ Creep.prototype.runLinker3 = function() {
 	        }
 
 			if(!myLink) {
-				this.errorLog('could not find link', ERR_NOT_FOUND);
+				this.errorLog('could not find link', ERR_NOT_FOUND, 4);
 				return;
 			}
 
@@ -737,12 +737,12 @@ Creep.prototype.runHarvester2 = function() {
 			let myFlag;
 
 		    if(this.memory.flagName === undefined) {
-		        console.log('!!!Error: ' + this.name + '(' + this.pos.roomName + ')' + ' has no flag in memory!!!');
+		        this.errorLog('no flag in memory', ERR_NOT_FOUND, 4);
 		        return;
 		    } else {
 		        myFlag = Game.flags[this.memory.flagName];
 				if(!myFlag) {
-					console.log('!!!Error: ' + this.name + '(' + this.pos.roomName + ')' + ' has a flag in memory that doesn\'t exist!!!');
+					this.errorLog('flag is missing', ERR_NOT_FOUND);
 					return;
 				}
 		    }
@@ -1024,7 +1024,7 @@ Creep.prototype.runDismantler2 = function() {
 		}
 
 		if(goal === undefined) {
-			this.log('no more attack targets');
+			this.log('no more attack targets', 3);
 			return;
 		}
 
@@ -1073,7 +1073,7 @@ Creep.prototype.runDismantler2 = function() {
 		});
 
 		if(!pathToTarget) {
-			this.errorLog('no path to target', ERR_NO_PATH);
+			this.errorLog('no path to target', ERR_NO_PATH, 4);
 		}
 
 		let nextPos = pathToTarget.path[0];
@@ -1189,7 +1189,7 @@ Creep.prototype.runScout = function() {
     } else {
         myFlag = Game.flags[this.memory.flagName];
         if(myFlag === undefined) {
-			console.log('!!!Error: ' + this.name + '\'s flag is missing!!!');
+			this.errorLog('flag is missing', ERR_NOT_FOUND);
 	        return;
 		}
     }
@@ -1226,7 +1226,7 @@ Creep.prototype.runSoldier = function() {
     } else {
         myFlag = Game.flags[this.memory.flagName];
 		if(myFlag === undefined) {
-			console.log('!!!Error: ' + this.name + '\'s flag is missing!!!');
+			this.errorLog('flag is missing', ERR_NOT_FOUND);
 	        return;
 		}
     }
@@ -1295,7 +1295,7 @@ Creep.prototype.runRemoteMiner2 = function() {
 		let reqParts = _.filter(this.body, function(bodyPart) { return (bodyPart.type === WORK) && (bodyPart.hits > 0); });
 
 		if(typeof reqParts === 'undefined' || reqParts.length === 0) {
-	        this.errorLog('missing required body parts; attempting suicide', ERR_NO_BODYPART);
+	        this.errorLog('missing required body parts; attempting suicide', ERR_NO_BODYPART, 4);
 			this.suicide();
 	    }
 	}
@@ -1307,6 +1307,10 @@ Creep.prototype.runRemoteMiner2 = function() {
         return;
     } else {
         myFlag = Game.flags[this.memory.flagName];
+		if(myFlag === undefined) {
+			this.errorLog('flag is missing', ERR_NOT_FOUND);
+	        return;
+		}
     }
 
     if(this.pos.isEqualTo(myFlag)) {
@@ -1435,6 +1439,10 @@ Creep.prototype.runRemoteCarrier2 = function() {
         return;
     } else {
         myFlag = Game.flags[this.memory.flagName];
+		if(myFlag === undefined) {
+			this.errorLog('flag is missing', ERR_NOT_FOUND);
+	        return;
+		}
     }
 
 	if(this.memory.state === undefined) {
@@ -1754,7 +1762,7 @@ Creep.prototype.runReserver2 = function() {
 	if(this.pos.isEqualTo(myFlag)) {
 		let reserveReturn = this.reserveController(this.room.controller);
         if(reserveReturn !== OK) {
-			this.errorLog('could not successfully reserve controller', reserveReturn);
+			this.errorLog('could not successfully reserve controller', reserveReturn, 4);
         }
 	} else {
 		this.moveTo(myFlag, {
@@ -2118,7 +2126,7 @@ Creep.prototype.runMineralCarrier = function() {
 	} else if(this.memory.task === 'return') {
 		this.runMineralReturn();
 	} else {
-		this.errorLog('unknown task: ' + this.memory.task, ERR_INVALID_TARGET);
+		this.errorLog('unknown task: ' + this.memory.task, ERR_INVALID_TARGET, 4);
 	}
 };
 
@@ -2140,7 +2148,7 @@ Creep.prototype.runMineralTransfer = function() {
 	let flagMineralReturn = /_mineralTransfer_(.+)/.exec(firstTransferFlag.name);
 
 	if(flagMineralReturn === null) {
-		this.errorLog('found mineral transfer flag with no mineral', ERR_NOT_FOUND);
+		this.errorLog('found mineral transfer flag with no mineral', ERR_NOT_FOUND, 4);
 		return;
 	}
 
@@ -2158,7 +2166,7 @@ Creep.prototype.runMineralTransfer = function() {
 	let lab = getStructure(flagPosStructures, STRUCTURE_LAB);
 
 	if(!lab || lab.structureType !== STRUCTURE_LAB) {
-		this.errorLog('could not find lab structure under flag' + firstTransferFlag.name, ERR_NOT_FOUND);
+		this.errorLog('could not find lab structure under flag' + firstTransferFlag.name, ERR_NOT_FOUND, 4);
 		return;
 	}
 
@@ -2183,7 +2191,7 @@ Creep.prototype.runMineralTransfer = function() {
 	} else {
 		// get minerals from terminal
 		if(typeof this.room.terminal === 'undefined') {
-			this.errorLog('no terminal', ERR_NOT_FOUND);
+			this.errorLog('no terminal', ERR_NOT_FOUND, 4);
 			return;
 		}
 
@@ -2210,7 +2218,7 @@ Creep.prototype.runMineralReturn = function() {
 		// drop off minerals at terminal
 
 		if(typeof this.room.terminal === 'undefined') {
-			this.errorLog('no terminal', ERR_NOT_FOUND);
+			this.errorLog('no terminal', ERR_NOT_FOUND, 4);
 			return;
 		}
 
@@ -2273,7 +2281,7 @@ Creep.prototype.runMineralReturn = function() {
     	}
 
     	if(!lab || lab.structureType !== STRUCTURE_LAB) {
-    		this.errorLog('could not find lab structure for flag ' + firstTransferFlag.name + ' - removing flag', ERR_NOT_FOUND);
+    		this.errorLog('could not find lab structure for flag ' + firstTransferFlag.name + ' - removing flag', ERR_NOT_FOUND, 4);
     		firstTransferFlag.remove();
     		return;
     	}
@@ -2403,7 +2411,7 @@ Creep.prototype.runPowerCollector = function() {
     } else {
         myFlag = Game.flags[this.memory.flagName];
         if(myFlag === undefined) {
-			this.errorLog('flag is missing', ERR_NOT_FOUND, 3);
+			this.errorLog('flag is missing', ERR_NOT_FOUND);
 			// start suicide
 			this.memory.suicideCounter = this.memory.suicideCounter || 5;
 			if(this.memory.suicideCounter === 4) {
@@ -2424,7 +2432,7 @@ Creep.prototype.runPowerCollector = function() {
 		// return power
 		let spawnRoomStorage = Game.rooms[this.memory.spawnRoom].storage;
 		if(!spawnRoomStorage) {
-			this.errorLog('could not find spawn room storage', ERR_NOT_FOUND);
+			this.errorLog('could not find spawn room storage', ERR_NOT_FOUND, 4);
 			return;
 		}
 		let highestQuantityResourceType = this.getHighestQuantityResourceType();
