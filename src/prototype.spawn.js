@@ -150,7 +150,7 @@ StructureSpawn.prototype.createCreep = function(body, name, memory) {
 	}
 	if(typeof createReturn === 'string') {
 		logMsg = `spawning new creep: ${createReturn}${logMsg}`;
-		this.log(logMsg, 1);
+		this.log(logMsg, 2);
 	} else {
 		logMsg = `problem spawning creep${logMsg}`;
 		this.errorLog(logMsg, createReturn, 4);
