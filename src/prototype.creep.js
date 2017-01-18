@@ -2281,7 +2281,7 @@ Creep.prototype.runMineralReturn = function() {
     	}
 
     	if(!lab || lab.structureType !== STRUCTURE_LAB) {
-    		this.errorLog('could not find lab structure for flag ' + firstTransferFlag.name + ' - removing flag', ERR_NOT_FOUND, 4);
+    		this.errorLog('could not find lab structure for flag ' + firstTransferFlag.name + ' - removing flag', ERR_NOT_FOUND, 3);
     		firstTransferFlag.remove();
     		return;
     	}
