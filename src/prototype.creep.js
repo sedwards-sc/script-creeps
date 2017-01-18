@@ -1234,7 +1234,10 @@ Creep.prototype.runScout2 = function() {
     }
 
 	if(!this.pos.isEqualTo(myFlag)) {
-		this.travelTo(myFlag);
+		let travelReturn = this.travelTo(myFlag);
+		if(travelReturn !== OK) {
+			this.errorLog('problem travelling to flag', travelReturn, 4);
+		}
 	}
 };
 
