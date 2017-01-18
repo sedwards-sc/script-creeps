@@ -31,7 +31,7 @@ Creep.prototype.run = function() {
 	} else if(this.memory.role === 'reserver') {
 		this.runReserver2();
 	} else if(this.memory.role === 'claimer') {
-		this.runClaimer();
+		this.runAttackClaimer();
 	} else if(this.memory.role === 'explorer') {
 		this.runExplorer();
 	} else if(this.memory.role === 'remoteUpgrader') {
@@ -366,7 +366,7 @@ Creep.prototype.runMiner2 = function() {
 
         let harvestReturn = this.harvest(mySource);
         if(harvestReturn != OK) {
-            console.log('!!!Error: ' + this.name + ' (' + this.room.name + ') could not successfully harvest (' + harvestReturn + ')');
+            this.errorLog('could not successfully harvest', harvestReturn, 4);
         }
 
         if(_.sum(this.carry) === this.carryCapacity) {
@@ -382,7 +382,7 @@ Creep.prototype.runMiner2 = function() {
 
             let transferReturn = this.transfer(myTransferStructure, RESOURCE_ENERGY);
             if(transferReturn != OK) {
-                console.log('!!!Error: ' + this.name + ' (' + this.room.name + ') could not successfully transfer (' + transferReturn + ')');
+                this.errorLog('could not successfully transfer', transferReturn);
             }
         }
 
@@ -1314,7 +1314,7 @@ Creep.prototype.runRemoteMiner2 = function() {
 
         let harvestReturn = this.harvest(mySource);
         if(harvestReturn != OK) {
-            console.log('!!!Error: ' + this.name + ' (' + this.pos.roomName + ') could not successfully harvest (' + harvestReturn + ')');
+            this.errorLog('could not successfully harvest', harvestReturn, 4);
         }
     } else {
         this.moveTo(myFlag);
@@ -1784,9 +1784,9 @@ Creep.prototype.runClaimer = function() {
 	//let checkPoint2 = new RoomPosition(6, 45, 'E11S31');
 	//let checkPoint3 = new RoomPosition(6, 45, 'E11S31');
 
-	let checkPoint1 = new RoomPosition(18, 32, 'E12S34');
-	let checkPoint2 = new RoomPosition(18, 32, 'E12S34');
-	let checkPoint3 = new RoomPosition(18, 32, 'E12S34');
+	let checkPoint1 = new RoomPosition(16, 32, 'E11S34');
+	let checkPoint2 = new RoomPosition(16, 32, 'E11S34');
+	let checkPoint3 = new RoomPosition(16, 32, 'E11S34');
 
 
 	if(this.memory.state === undefined) {
@@ -1823,19 +1823,23 @@ Creep.prototype.runClaimer = function() {
 };
 
 Creep.prototype.runAttackClaimer = function() {
-	this.say('claimer');
+	this.say('attackC');
 	// state 0 is head to next room
 
     //Markoez room
-	let checkPoint1 = new RoomPosition(44, 30, 'E6S29');
-	let checkPoint2 = new RoomPosition(44, 30, 'E6S29');
-	let checkPoint3 = new RoomPosition(44, 30, 'E6S29');
+	//let checkPoint1 = new RoomPosition(44, 30, 'E6S29');
+	//let checkPoint2 = new RoomPosition(44, 30, 'E6S29');
+	//let checkPoint3 = new RoomPosition(44, 30, 'E6S29');
 
 	// n0ne's room
 	//let checkPoint1 = new RoomPosition(32, 21, 'E5S31');
 	//let checkPoint2 = new RoomPosition(32, 21, 'E5S31');
 	//let checkPoint3 = new RoomPosition(32, 21, 'E5S31');
 
+	//Aachi's room
+	let checkPoint1 = new RoomPosition(16, 32, 'E11S34');
+	let checkPoint2 = new RoomPosition(16, 32, 'E11S34');
+	let checkPoint3 = new RoomPosition(16, 32, 'E11S34');
 
 	if(this.memory.state === undefined) {
 		this.memory.state = 0;

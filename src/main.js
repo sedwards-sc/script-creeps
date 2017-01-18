@@ -394,9 +394,10 @@ module.exports.loop = function () {
 					mainSpawn.createCreep([WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
 	    			//console.log('Spawning new reinforcer (' + roomName + '): ' + newName);
 	    		} else if(undefToZero(roomCreepRoster.claimer) < roomQuota.claimers) {
-	    			//let newName = mainSpawn.createCreep([CLAIM,CLAIM,CLAIM,CLAIM,CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
 	    			//let newName =
-					mainSpawn.createCreep([CLAIM,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
+	    			mainSpawn.createCreep([CLAIM,CLAIM,CLAIM,CLAIM,CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
+	    			//let newName =
+					//mainSpawn.createCreep([CLAIM,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
 	    			//console.log('Spawning new claimer (' + roomName + '): ' + newName);
 	    		} else if(undefToZero(roomCreepRoster.remoteUpgrader) < roomQuota.remoteUpgraders) {
 	    			//let newName =
