@@ -2194,7 +2194,7 @@ Creep.prototype.runMineralTransfer = function() {
 		return;
 	}
 
-	if(typeof firstTransferFlag.memory.minerals !== 'undefined' && firstTransferFlag.memory.minerals <= 0) {
+	if((typeof firstTransferFlag.memory.minerals !== 'undefined' && firstTransferFlag.memory.minerals <= 0) || (lab.mineralAmount === LAB_MINERAL_CAPACITY)) {
 		this.log('lab full, removing flag(' + firstTransferFlag.name + ')');
 		delete Memory.flags[firstTransferFlag.name];
 		firstTransferFlag.remove();
