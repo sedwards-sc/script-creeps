@@ -86,6 +86,10 @@ Room.prototype.countCreepFlags = function() {
 			continue;
 		}
 
+		if(currentFlag.memory.dontSpawn === true) {
+			continue;
+		}
+
 		let flagRole = flagRoleReturn[1];
 		this.memory.creepQuotas[flagRole] = this.memory.creepQuotas[flagRole] || [];
 		this.memory.creepQuotas[flagRole].push(currentFlag.name);
