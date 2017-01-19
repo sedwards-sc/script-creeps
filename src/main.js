@@ -822,6 +822,16 @@ function countAllCreepFlags() {
 global.countAllCreepFlags = countAllCreepFlags;
 global.countAllC = countAllCreepFlags;
 
+function cleanOldFlagsFromMemory() {
+	for(let name in Memory.flags) {
+		if(!Game.flags[name]) {
+			delete Memory.flags[name];
+		}
+	}
+	return OK;
+}
+global.cleanOldFlagsFromMemory = cleanOldFlagsFromMemory;
+
 function minePowerRoom(targetRoom, sourceRooms) {
 	if(typeof targetRoom !== 'string') {
 		return ERR_INVALID_ARGS;
