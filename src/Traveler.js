@@ -9,7 +9,7 @@
  * related information: https://github.com/bonzaiferroni/bonzAI/wiki/Traveler-API
  *
  */
-"use strict";
+//"use strict";
 const REPORT_CPU_THRESHOLD = 50;
 const DEFAULT_MAXOPS = 20000;
 const DEFAULT_STUCK_VALUE = 5;
@@ -159,12 +159,14 @@ class Traveler {
         // manage case where creep is nearby destination
         let rangeToDestination = creep.pos.getRangeTo(destination);
         if (rangeToDestination <= 1) {
+			/* jshint ignore:start */
             if (rangeToDestination === 1 && !(options.range >= 1)) {
                 if (options.returnData) {
                     options.returnData.nextPos = destination.pos;
                 }
                 return creep.move(creep.pos.getDirectionTo(destination));
             }
+			/* jshint ignore:end */
             return OK;
         }
         // check if creep is stuck
