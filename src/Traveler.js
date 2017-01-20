@@ -138,6 +138,7 @@ class Traveler {
         // register hostile rooms entered
         if (creep.room.controller) {
             if (creep.room.controller.owner && !creep.room.controller.my) {
+				Logger.log(`TRAVELER: hostile room detected, ${creep.room}`, 4);
                 this.memory.hostileRooms[creep.room.name] = creep.room.controller.level;
             }
             else {
