@@ -144,7 +144,7 @@ module.exports.loop = function () {
 			if(roomSpawns.length < 1) {
 			    continue;
 			} else if(roomQuota === undefined) {
-				console.log('!!!' + roomName + ' has spawn but no quota!!!');
+				Logger.errorLog(`${curRoom} has spawn but no quota`, ERR_NOT_FOUND, 4);
 				continue;
 			}
 
@@ -168,7 +168,7 @@ module.exports.loop = function () {
 
 			// print update but not every tick so console doesn't scroll as fast
 			if((Game.time % 5) === 1) {
-				console.log(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '%');
+				Logger.log(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '%', 2);
 			}
 
 			// send update email occasionally
