@@ -47,7 +47,7 @@ Creep.prototype.run = function() {
 	} else if(this.memory.role === 'reserver') {
 		this.runReserver2();
 	} else if(this.memory.role === 'claimer') {
-		this.runAttackClaimer();
+		this.runClaimer();
 	} else if(this.memory.role === 'explorer') {
 		this.runExplorer();
 	} else if(this.memory.role === 'remoteUpgrader') {
