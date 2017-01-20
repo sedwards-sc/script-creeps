@@ -4,8 +4,6 @@ global.Logger = require('logger');
 
 require('utils').populateUtils(global);
 
-var Traveler = require('Traveler');
-
 require('prototype.room');
 require('prototype.roomposition');
 require('prototype.creep');
@@ -14,6 +12,12 @@ require('prototype.structure');
 require('prototype.spawn');
 require('prototype.link');
 require('prototype.terminal');
+
+// require creep talk after creep prototypes
+require('creeptalk')({
+  'public': false,
+  'language': require('creeptalk_basic')
+});
 
 require('object.rosters');
 require('object.remotes');
@@ -31,6 +35,8 @@ if(Memory.enableProfiler === true) {
 
 module.exports.loop = function () {
 	profiler.wrap(function() {
+		var Traveler = require('Traveler');
+
 	    console.log(Game.time);
 
 		// loop to clean dead creeps out of memory
