@@ -70,7 +70,7 @@ class Traveler {
             },
         });
         if (!_.isArray(ret)) {
-            console.log(`couldn't findRoute to ${destination}`);
+            Logger.log(`couldn't findRoute from ${origin} to ${destination}`, 0);
             return;
         }
         for (let value of ret) {
@@ -208,15 +208,15 @@ class Traveler {
             travelData.cpu += (Game.cpu.getUsed() - cpu);
             travelData.count++;
             if (travelData.cpu > REPORT_CPU_THRESHOLD) {
-                console.log(`TRAVELER: heavy cpu use: ${creep.name}, cpu: ${_.round(travelData.cpu, 2)},\n` +
-                    `origin: ${creep.pos}, dest: ${destination.pos}`);
+                Logger.log(`TRAVELER: heavy cpu use: ${creep}, cpu: ${_.round(travelData.cpu, 2)},\n` +
+                    `origin: ${creep.pos}, dest: ${destination.pos}`, 4);
             }
             if (ret.incomplete) {
-                console.log(`TRAVELER: incomplete path for ${creep.name}`);
+                Logger.log(`TRAVELER: incomplete path for ${creep}`, 3);
                 if (ret.ops < 2000 && options.useFindRoute === undefined && travelData.stuck < DEFAULT_STUCK_VALUE) {
                     options.useFindRoute = false;
                     ret = this.findTravelPath(creep, destination, options);
-                    console.log(`attempting path without findRoute was ${ret.incomplete ? "not" : ""} successful`);
+                    Logger.log(`TRAVELER: attempting path without findRoute was ${ret.incomplete ? "not" : ""} successful`, 0);
                 }
             }
             travelData.path = Traveler.serializePath(creep.pos, ret.path);
