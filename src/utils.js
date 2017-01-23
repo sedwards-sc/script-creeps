@@ -193,6 +193,7 @@ function populateUtils(g) {
 	g.getTierCompounds = getTierCompounds;
 	g.runRoomMineralReports = runRoomMineralReports;
 	g.roomLink = roomLink;
+	g.timeLink = timeLink;
 	g.errorCodeToText = errorCodeToText;
 }
 
