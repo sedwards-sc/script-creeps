@@ -99,6 +99,24 @@ function runRoomMineralReports() {
 	return OK;
 }
 
+function timeLink(roomArg, text = undefined, select = true) {
+    let roomName;
+    let id = roomArg.id;
+    if (roomArg instanceof Room) {
+        roomName = roomArg.name;
+    } else if (roomArg.pos !== undefined) {
+        roomName = roomArg.pos.roomName;
+    } else if (roomArg.roomName !== undefined) {
+        roomName = roomArg.roomName;
+    } else if (typeof roomArg === 'string') {
+        roomName = roomArg;
+    } else {
+        console.log(`Invalid parameter to timeLink global function: ${roomArg} of type ${typeof roomArg}`);
+    }
+    text = text || (id ? roomArg : roomName);
+    return `<a href="#!/history/${roomName}?t=${Game.time}" ${select && id ? `onclick="angular.element('body').injector().get('RoomViewPendingSelector').set('${id}')"` : ``}>${text}</a>`;
+}
+
 /**
  * returns string for a link that can be clicked from the console
  * to change which room you are viewing. Useful for other logging functions.
