@@ -32,7 +32,7 @@ require('debug').populate(global);
 
 var profiler = require('screeps-profiler');
 
-if(Memory.enableProfiler === true) {
+if(Memory.config && Memory.config.enableProfiler === true) {
 	profiler.enable();
 }
 

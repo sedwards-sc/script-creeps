@@ -6,10 +6,7 @@ loopHelper.initMemory = function() {
 	_.defaultsDeep(Memory, {
 		logLevel: 1,
 		notifyLevel: 5,
-		enableProfiler: false,
 		config: {
-			logLevel: 1,
-			notifyLevel: 5,
 			enableProfiler: false,
 		},
 		/*
