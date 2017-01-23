@@ -4,6 +4,9 @@ global.Logger = require('logger');
 
 require('utils').populateUtils(global);
 
+global.loopHelper = require('loopHelper');
+loopHelper.initMemory();
+
 require('prototype.room');
 require('prototype.roomposition');
 require('prototype.creep');
