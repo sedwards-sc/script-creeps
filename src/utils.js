@@ -99,6 +99,16 @@ function runRoomMineralReports() {
 	return OK;
 }
 
+/**
+ * returns string for a link that can be clicked from the console
+ * to view a given room's history at the current tick. Useful for notify functions.
+ * If you pass a room object that has a '.id' property, that object will be selected
+ * upon entering the room.
+ * @param roomArg {Room|RoomObject|RoomPosition|RoomName}
+ * @param text {String} optional text value of link
+ * @param select {boolean} whether or not you want the object to be selected when the link is clicked.
+ * @returns {string}
+ */
 function timeLink(roomArg, text = undefined, select = true) {
     let roomName;
     let id = roomArg.id;
