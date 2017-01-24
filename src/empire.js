@@ -50,6 +50,4 @@ class Empire {
 	}
 }
 
-module.exports.newEmpire = function() {
-    return new Empire();
-};
+global.Empire = Empire;
