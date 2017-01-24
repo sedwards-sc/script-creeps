@@ -413,6 +413,18 @@ Room.prototype.checkMineralStatus = function() {
 	return OK;
 };
 
+/**
+ * Returns array of structures, caching results on a per-tick basis
+ * @param structureType
+ * @returns {Structure[]}
+ */
+Room.prototype.findStructures = function(structureType) {
+    if(!Game.cache.structures[this.name]) {
+        Game.cache.structures[this.name] = _.groupBy(this.find(FIND_STRUCTURES), (s) => s.structureType);
+    }
+    return Game.cache.structures[this.name][structureType] || [];
+};
+
 // DEPRECATED - added to global utils
 //function isNullOrUndefined(theObject) {
 //    return (theObject === undefined || theObject === null);

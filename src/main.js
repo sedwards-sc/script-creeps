@@ -40,6 +40,17 @@ module.exports.loop = function () {
 	profiler.wrap(function() {
 		console.log(Game.time);
 
+		// create cache for this tick
+		Game.cache = {
+			structures: {},
+			hostiles: {},
+			hostilesAndLairs: {},
+			mineralCount: {},
+			labProcesses: {},
+			activeLabCount: 0,
+			placedRoad: false,
+		};
+
 		var Traveler = require('Traveler');
 
 		let empire = loopHelper.initEmpire();
