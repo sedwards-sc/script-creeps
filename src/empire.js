@@ -26,6 +26,10 @@ class Empire {
 	    //allyTradeStatus: {[roomName: string]: boolean};
 	}
 
+	init() {
+
+	}
+
 	register(room) {
 		if(!room) return;
 
@@ -45,3 +49,7 @@ class Empire {
 		//}
 	}
 }
+
+module.exports.newEmpire = function() {
+    return new Empire();
+};

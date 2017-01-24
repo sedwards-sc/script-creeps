@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
 
-require('empire');
+var Empire = require('empire');
 
 var loopHelper = {};
 
@@ -34,7 +34,7 @@ loopHelper.initMemory = function() {
 };
 
 loopHelper.initEmpire = function() {
-	let empire = new Empire();
+	let empire = Empire.newEmpire();
 	empire.init();
 	global.emp = empire;
 	return empire;

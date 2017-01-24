@@ -38,9 +38,9 @@ if(Memory.config && Memory.config.enableProfiler === true) {
 
 module.exports.loop = function () {
 	profiler.wrap(function() {
-		var Traveler = require('Traveler');
+		console.log(Game.time);
 
-	    console.log(Game.time);
+		var Traveler = require('Traveler');
 
 		let empire = loopHelper.initEmpire();
 
