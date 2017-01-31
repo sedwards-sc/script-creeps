@@ -10,6 +10,7 @@ loopHelper.initMemory = function() {
 		notifyLevel: 5,
 		config: {
 			enableProfiler: false,
+			muteSpawn: false,
 		},
 		/*
 		stats: {},

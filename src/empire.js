@@ -50,7 +50,7 @@ class Empire {
 	}
 
 	getSpawnGroup(roomName) {
-        if (this.spawnGroups[roomName]) {
+        if(this.spawnGroups[roomName]) {
             return this.spawnGroups[roomName];
         } else {
             let room = Game.rooms[roomName];
