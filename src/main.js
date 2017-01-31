@@ -849,6 +849,7 @@ function countAllCreepFlags() {
 }
 global.countAllCreepFlags = countAllCreepFlags;
 global.countAllC = countAllCreepFlags;
+global.cacf = countAllCreepFlags;
 
 function cleanOldFlagsFromMemory() {
 	for(let name in Memory.flags) {
