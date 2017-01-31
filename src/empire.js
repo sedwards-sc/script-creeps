@@ -48,6 +48,18 @@ class Empire {
 		//    this.analyzeResources(room);
 		//}
 	}
+
+	getSpawnGroup(roomName) {
+        if (this.spawnGroups[roomName]) {
+            return this.spawnGroups[roomName];
+        } else {
+            let room = Game.rooms[roomName];
+            if(room && room.find(FIND_MY_SPAWNS).length > 0) {
+                this.spawnGroups[roomName] = new SpawnGroup(room);
+                return this.spawnGroups[roomName];
+            }
+        }
+    }
 }
 
 global.Empire = Empire;
