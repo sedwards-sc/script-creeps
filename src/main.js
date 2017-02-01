@@ -424,12 +424,26 @@ module.exports.loop = function () {
 	    			//let newName =
 					mainSpawn.createCreep([WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
 	    			//console.log('Spawning new reinforcer (' + roomName + '): ' + newName);
-	    		} else if(undefToZero(roomCreepRoster.claimer) < roomQuota.claimers) {
+	    		} else if((roomCreepQuotas.claimer) && (undefToZero(roomCreepRoster.claimer) < roomCreepQuotas.claimer.length)) {
+					//} else if(undefToZero(roomCreepRoster.claimer) < roomQuota.claimers) {
 	    			//let newName =
 	    			//mainSpawn.createCreep([CLAIM,CLAIM,CLAIM,CLAIM,CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
 	    			//let newName =
-					mainSpawn.createCreep([CLAIM,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
+					//mainSpawn.createCreep([CLAIM,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
 	    			//console.log('Spawning new claimer (' + roomName + '): ' + newName);
+					let curRole = 'claimer';
+	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+	    		        if(currentFlagCreeps.length < 1) {
+							let curCreepBody = [CLAIM,MOVE];
+							if(Game.flags[curFlagName].memory.bodyParts) {
+								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+							}
+							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+	    			        break;
+	    		        }
+	    		    }
 	    		} else if(undefToZero(roomCreepRoster.remoteUpgrader) < roomQuota.remoteUpgraders) {
 	    			//let newName =
 					mainSpawn.createCreep(currentBody, undefined, {role: 'remoteUpgrader', spawnRoom: roomName});
