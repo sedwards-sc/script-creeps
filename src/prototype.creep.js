@@ -1042,6 +1042,7 @@ Creep.prototype.runDismantler2 = function() {
 
 		if(goal === undefined) {
 			this.log('no more attack targets', 3);
+			this.moveTo(myFlag);
 			return;
 		}
 
