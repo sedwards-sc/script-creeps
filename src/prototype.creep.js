@@ -976,11 +976,11 @@ Creep.prototype.runDismantler2 = function() {
 		}
     }
 
-	if(isArrayWithContents(myFlag.memory.boosts)) {
+	if(myFlag.memory.dismantler && isArrayWithContents(myFlag.memory.dismantler.boosts)) {
 		this.memory.boostedArray = this.memory.boostedArray || [];
-        for(let i in myFlag.memory.boosts) {
+        for(let i in myFlag.memory.dismantler.boosts) {
 			if(this.memory.boostedArray[i] !== true) {
-	            let boostObj = myFlag.memory.boosts[i];
+	            let boostObj = myFlag.memory.dismantler.boosts[i];
 				let boostReturn = this.getBoosted(boostObj.part, boostObj.resource);
 	    		if(boostReturn === OK) {
 	    			this.memory.boostedArray[i] = true;
@@ -1123,11 +1123,11 @@ Creep.prototype.runMedic = function() {
 		}
     }
 
-	if(isArrayWithContents(myFlag.memory.boosts)) {
+	if(myFlag.memory.medic && isArrayWithContents(myFlag.memory.medic.boosts)) {
 		this.memory.boostedArray = this.memory.boostedArray || [];
-        for(let i in myFlag.memory.boosts) {
+        for(let i in myFlag.memory.medic.boosts) {
 			if(this.memory.boostedArray[i] !== true) {
-	            let boostObj = myFlag.memory.boosts[i];
+	            let boostObj = myFlag.memory.medic.boosts[i];
 				let boostReturn = this.getBoosted(boostObj.part, boostObj.resource);
 	    		if(boostReturn === OK) {
 	    			this.memory.boostedArray[i] = true;
