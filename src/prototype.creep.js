@@ -1873,6 +1873,43 @@ Creep.prototype.runClaimer = function() {
 	}
 };
 
+Creep.prototype.runClaimer2 = function() {
+	//this.say('claimer');
+
+	let myFlag;
+
+	if(this.memory.flagName === undefined) {
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 5);
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+        if(myFlag === undefined) {
+			this.errorLog('flag is missing', ERR_NOT_FOUND, 4);
+			// start suicide
+			this.memory.suicideCounter = this.memory.suicideCounter || 5;
+			if(this.memory.suicideCounter === 4) {
+			    countAllCreepFlags();
+			} else if(this.memory.suicideCounter <= 1) {
+			    delete Memory.creeps[this.name].suicideCounter;
+				this.suicide();
+			}
+			if(typeof this.memory.suicideCounter !== 'undefined') {
+			    this.memory.suicideCounter--;
+			}
+	        return;
+		}
+    }
+
+	if(this.pos.isEqualTo(myFlag)) {
+		let claimReturn = this.claimController(this.room.controller);
+        if(claimReturn !== OK) {
+			this.errorLog('could not successfully claim controller', claimReturn, 4);
+        }
+	} else {
+		this.travelTo(myFlag, { 'useFindRoute': true });
+	}
+};
+
 Creep.prototype.runAttackClaimer = function() {
 	this.say('attackC');
 	// state 0 is head to next room
@@ -1922,6 +1959,43 @@ Creep.prototype.runAttackClaimer = function() {
 		if(this.attackController(controllerToClaim) === ERR_NOT_IN_RANGE) {
 			this.moveTo(controllerToClaim);
 		}
+	}
+};
+
+Creep.prototype.runAttackClaimer2 = function() {
+	//this.say('attackClaimer');
+
+	let myFlag;
+
+	if(this.memory.flagName === undefined) {
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 5);
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+        if(myFlag === undefined) {
+			this.errorLog('flag is missing', ERR_NOT_FOUND, 4);
+			// start suicide
+			this.memory.suicideCounter = this.memory.suicideCounter || 5;
+			if(this.memory.suicideCounter === 4) {
+			    countAllCreepFlags();
+			} else if(this.memory.suicideCounter <= 1) {
+			    delete Memory.creeps[this.name].suicideCounter;
+				this.suicide();
+			}
+			if(typeof this.memory.suicideCounter !== 'undefined') {
+			    this.memory.suicideCounter--;
+			}
+	        return;
+		}
+    }
+
+	if(this.pos.isEqualTo(myFlag)) {
+		let attackReturn = this.attackController(this.room.controller);
+        if(attackReturn !== OK) {
+			this.errorLog('could not successfully attack controller', attackReturn, 4);
+        }
+	} else {
+		this.travelTo(myFlag, { 'useFindRoute': true });
 	}
 };
 
