@@ -1062,7 +1062,9 @@ Creep.prototype.runDismantler2 = function() {
 				        costs.set(structure.pos.x, structure.pos.y, 1);
 				    } else if (structure.structureType === STRUCTURE_ROAD) {
 						// Favor roads over plain tiles
-						costs.set(structure.pos.x, structure.pos.y, 1);
+						//costs.set(structure.pos.x, structure.pos.y, 1);
+						// roads will be dismantled anyway so set to the same as plains
+						costs.set(structure.pos.x, structure.pos.y, 2);
 					} else if (structure.structureType === STRUCTURE_WALL || structure.structureType === STRUCTURE_RAMPART) {
 						let tileCost = 251;
 
