@@ -1026,7 +1026,19 @@ Creep.prototype.runDismantler2 = function() {
 			}
 		}
 
-		if(myFlag.memory.destroyWalls === true) {
+        if(myFlag.memory.destroyAll === true) {
+		    if(typeof goal === 'undefined') {
+    			let notMyStructures = this.room.find(FIND_STRUCTURES, {
+    					filter: (structure) => {
+    						return (structure.my !== true && structure.hits > 0);
+    					}
+    			});
+
+    			if(notMyStructures.length > 0) {
+    				goal = { pos: notMyStructures[0].pos, range: 0 };
+    			}
+    		}
+		} else if(myFlag.memory.destroyWalls === true) {
 		    if(typeof goal === 'undefined') {
     			let walls = this.room.find(FIND_STRUCTURES, {
     					filter: (structure) => {
