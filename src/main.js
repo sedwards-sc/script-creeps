@@ -536,6 +536,12 @@ module.exports.loop = function () {
 			    mainSpawn = roomSpawns[1];
 			}
 
+			if(mainSpawn.spawnCalled || mainSpawn.spawning) {
+    			if(roomSpawns.length >= 3) {
+    			    mainSpawn = roomSpawns[2];
+    			}
+		    }
+
 			// for dismantlers
 			let numMedics = 3;
 
@@ -581,11 +587,6 @@ module.exports.loop = function () {
 			}
 
 
-            if(mainSpawn.spawnCalled || mainSpawn.spawning) {
-    			if(roomSpawns.length >= 3) {
-    			    mainSpawn = roomSpawns[2];
-    			}
-		    }
 
 			// for powerBankAttackers
 			numMedics = 2;
