@@ -587,7 +587,6 @@ module.exports.loop = function () {
 			}
 
 
-
 			// for powerBankAttackers
 			numMedics = 2;
 
