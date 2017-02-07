@@ -2664,9 +2664,14 @@ Creep.prototype.runPowerCarrier = function() {
 		}
 	} else {
 		// get power from terminal
-		let powerAmount = Math.min(this.carryCapacity, POWER_SPAWN_POWER_CAPACITY);
-		if(this.withdraw(this.room.terminal, RESOURCE_POWER, powerAmount) === ERR_NOT_IN_RANGE) {
-			this.moveTo(this.room.terminal);
+		let powerAmount = Math.min(this.carryCapacity, POWER_SPAWN_POWER_CAPACITY, undefToZero(this.room.terminal.store.power));
+		if(powerAmount > 0) {
+    		if(this.withdraw(this.room.terminal, RESOURCE_POWER, powerAmount) === ERR_NOT_IN_RANGE) {
+    			this.moveTo(this.room.terminal);
+    		}
+		} else {
+		    // this should keep him more out of the way
+		    this.moveTo(powerSpawn);
 		}
 	}
 };
