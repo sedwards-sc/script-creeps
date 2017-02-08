@@ -1270,12 +1270,12 @@ Creep.prototype.runScout2 = function() {
 		if(travelReturn !== OK) {
 			this.errorLog('problem travelling to flag', travelReturn, 4);
 		}
-	}
-
-	if(typeof myFlag.memory.signMessage === 'string') {
-		let signReturn = this.signController(this.room.controller, myFlag.memory.signMessage);
-		if(signReturn !== OK) {
-			this.errorLog('could not successfully sign controller', signReturn, 4);
+	} else {
+		if(typeof myFlag.memory.signMessage === 'string') {
+			let signReturn = this.signController(this.room.controller, myFlag.memory.signMessage);
+			if(signReturn !== OK) {
+				this.errorLog('could not successfully sign controller', signReturn, 4);
+			}
 		}
 	}
 };
