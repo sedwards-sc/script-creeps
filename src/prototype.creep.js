@@ -1918,10 +1918,17 @@ Creep.prototype.runClaimer2 = function() {
     }
 
 	if(this.pos.isEqualTo(myFlag)) {
-		let claimReturn = this.claimController(this.room.controller);
-        if(claimReturn !== OK) {
-			this.errorLog('could not successfully claim controller', claimReturn, 4);
-        }
+		if(typeof myFlag.memory.signMessage === 'string') {
+			let signReturn = this.signController(this.room.controller, myFlag.memory.signMessage);
+			if(signReturn !== OK) {
+				this.errorLog('could not successfully sign controller', signReturn, 4);
+			}
+		} else {
+			let claimReturn = this.claimController(this.room.controller);
+	        if(claimReturn !== OK) {
+				this.errorLog('could not successfully claim controller', claimReturn, 4);
+	        }
+		}
 	} else {
 		this.travelTo(myFlag, { 'useFindRoute': true });
 	}
