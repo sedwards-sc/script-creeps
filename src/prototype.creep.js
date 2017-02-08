@@ -2246,6 +2246,83 @@ Creep.prototype.runRemoteBuilder = function() {
 	}
 };
 
+Creep.prototype.runRemoteBuilder2 = function() {
+	//this.say('remoteBuilder');
+
+	let myFlag;
+
+	if(this.memory.flagName === undefined) {
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 5);
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+        if(myFlag === undefined) {
+			this.errorLog('flag is missing', ERR_NOT_FOUND, 4);
+			// start suicide
+			this.memory.suicideCounter = this.memory.suicideCounter || 5;
+			if(this.memory.suicideCounter === 4) {
+			    countAllCreepFlags();
+			} else if(this.memory.suicideCounter <= 1) {
+			    delete Memory.creeps[this.name].suicideCounter;
+				this.suicide();
+			}
+			if(typeof this.memory.suicideCounter !== 'undefined') {
+			    this.memory.suicideCounter--;
+			}
+	        return;
+		}
+    }
+
+	if(this.pos.roomName !== myFlag.pos.roomName) {
+		this.travelTo(myFlag, { useFindRoute: true });
+		return;
+	}
+
+	if(this.memory.state === undefined) {
+		this.memory.state = 0;
+	}
+
+	if(this.carry.energy === this.carryCapacity) {
+		if(this.memory.state === 0) {
+			this.say('I\'m full!');
+		}
+		this.memory.state = 1;
+	}
+
+	if(this.carry.energy === 0) {
+		if(this.memory.state == 1) {
+			this.say('I\'m empty!');
+		}
+		this.memory.state = 0;
+	}
+
+	if(this.memory.state === 0) {
+		// harvest
+		let mySource = Game.getObjectById(this.memory.mySourceId);
+        if(mySource === null) {
+			// TODO: assuming lookForAt is cheaper, change to use that instead of findClosestByRange for the source
+            mySource = myFlag.pos.findClosestByRange(FIND_SOURCES);
+            this.memory.mySourceId = mySource.id;
+        }
+
+		if(this.harvest(mySource) === ERR_NOT_IN_RANGE) {
+			this.moveTo(mySource);
+		}
+	} else {
+		// work
+		var targets = this.room.find(FIND_CONSTRUCTION_SITES);
+		if(targets.length) {
+			if(this.build(targets[0]) == ERR_NOT_IN_RANGE) {
+				this.moveTo(targets[0]);
+			}
+		} else {
+			if(this.upgradeController(this.room.controller) == ERR_NOT_IN_RANGE) {
+				this.moveTo(this.room.controller);
+			}
+		}
+	}
+};
+
 Creep.prototype.runMineralCarrier = function() {
 	if(typeof this.memory.task === 'undefined') {
 		this.memory.task = 'return';
