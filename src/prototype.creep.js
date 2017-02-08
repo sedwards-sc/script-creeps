@@ -1254,13 +1254,24 @@ Creep.prototype.runScout2 = function() {
 
 	let myFlag;
 
-    if(this.memory.flagName === undefined) {
-        this.errorLog('no flag in memory', ERR_NOT_FOUND, 4);
+	if(this.memory.flagName === undefined) {
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 5);
         return;
     } else {
         myFlag = Game.flags[this.memory.flagName];
         if(myFlag === undefined) {
-			this.errorLog('flag is missing', ERR_NOT_FOUND);
+			this.errorLog('flag is missing', ERR_NOT_FOUND, 4);
+			// start suicide
+			this.memory.suicideCounter = this.memory.suicideCounter || 5;
+			if(this.memory.suicideCounter === 4) {
+			    countAllCreepFlags();
+			} else if(this.memory.suicideCounter <= 1) {
+			    delete Memory.creeps[this.name].suicideCounter;
+				this.suicide();
+			}
+			if(typeof this.memory.suicideCounter !== 'undefined') {
+			    this.memory.suicideCounter--;
+			}
 	        return;
 		}
     }
