@@ -2299,7 +2299,7 @@ Creep.prototype.runRemoteBuilder2 = function() {
     }
 
 	if(this.pos.roomName !== myFlag.pos.roomName) {
-		this.travelTo(myFlag, { useFindRoute: true });
+		this.travelTo(myFlag, { 'useFindRoute': true });
 		return;
 	}
 
@@ -2533,6 +2533,11 @@ Creep.prototype.runMineralReturn = function() {
 };
 
 Creep.prototype.runPowerBankAttacker = function() {
+    // to account for case where medic takes longer to spawn than the attacker
+    if(this.ticksToLive > (CREEP_LIFE_TIME - 30)) {
+        return;
+    }
+
 	let myFlag;
 
 	if(this.memory.flagName === undefined) {
@@ -2620,6 +2625,7 @@ Creep.prototype.runPowerBankAttacker = function() {
 			this.moveTo(powerBank);
 		}
 	} else {
+	    /*
 		this.moveTo(myFlag, {
 			costCallback: function(roomName, costMatrix) {
 				if(roomName === 'E7S37') {
@@ -2631,6 +2637,8 @@ Creep.prototype.runPowerBankAttacker = function() {
 				}
 			}
 		});
+		*/
+		this.travelTo(myFlag, { 'useFindRoute': true });
 	}
 };
 
