@@ -1585,6 +1585,64 @@ Creep.prototype.runRemoteCarrier2 = function() {
 	}
 };
 
+Creep.prototype.runRemoteTransporter = function() {
+	// state 0 is head to next room
+	// state 1 harvest
+	// state 2 is head back to home room
+	// state 3 is upgrade controller
+
+	let myFlag;
+
+	if(this.memory.flagName === undefined) {
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 5);
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+        if(myFlag === undefined) {
+			this.errorLog('flag is missing', ERR_NOT_FOUND, 4);
+			// start suicide
+			this.memory.suicideCounter = this.memory.suicideCounter || 5;
+			if(this.memory.suicideCounter === 4) {
+			    countAllCreepFlags();
+			} else if(this.memory.suicideCounter <= 1) {
+			    delete Memory.creeps[this.name].suicideCounter;
+				this.suicide();
+			}
+			if(typeof this.memory.suicideCounter !== 'undefined') {
+			    this.memory.suicideCounter--;
+			}
+	        return;
+		}
+    }
+
+	let carrySum = _.sum(this.carry);
+	if(carrySum > 0) {
+		// drop off all carry contents
+		// at storage of destination room according to the flag name
+		let destinationRoom = /_creep_remoteTransporter_([EW]\d+[NS]\d+)_/.exec(myFlag.name)[1];
+		if(this.pos.roomName === destinationRoom) {
+			if(!this.room.storage) {
+				this.errorLog('no storage to drop off resources', ERR_NOT_FOUND, 5);
+				return;
+			}
+			// TODO: make creep drop off all resources it is carrying
+			if(this.transfer(this.room.storage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+				this.moveTo(this.room.storage);
+			}
+		} else {
+			this.moveTo(new RoomPosition(25, 25, destinationRoom));
+		}
+	} else {
+		// go to my flag's room
+		// once in flag's room, look for piles of energy at the flag position and then for structures like storage
+		if(this.pos.roomName === myFlag.pos.roomName) {
+			let resourcePiles = this.pos.lookFor(LOOK_RESOURCES);
+		} else {
+			this.moveTo(myFlag);
+		}
+	}
+};
+
 Creep.prototype.runReinforcer = function() {
 	//this.say('reinforcer');
 	// state 0 is get energy from storage
