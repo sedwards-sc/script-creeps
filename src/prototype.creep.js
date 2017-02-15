@@ -72,6 +72,8 @@ Creep.prototype.run = function() {
 		this.runPowerCollector();
 	} else if(this.memory.role === 'powerCarrier') {
 		this.runPowerCarrier();
+	} else if(this.memory.role === 'remoteTransporter') {
+		this.runRemoteTransporter();
     } else {
         this.errorLog('no role function', ERR_NOT_FOUND, 4);
     }
@@ -1586,11 +1588,6 @@ Creep.prototype.runRemoteCarrier2 = function() {
 };
 
 Creep.prototype.runRemoteTransporter = function() {
-	// state 0 is head to next room
-	// state 1 harvest
-	// state 2 is head back to home room
-	// state 3 is upgrade controller
-
 	let myFlag;
 
 	if(this.memory.flagName === undefined) {
@@ -1636,7 +1633,24 @@ Creep.prototype.runRemoteTransporter = function() {
 		// go to my flag's room
 		// once in flag's room, look for piles of energy at the flag position and then for structures like storage
 		if(this.pos.roomName === myFlag.pos.roomName) {
-			let resourcePiles = this.pos.lookFor(LOOK_RESOURCES);
+			let resourcePiles = myFlag.pos.lookFor(LOOK_RESOURCES);
+			if(isArrayWithContents(resourcePiles)) {
+				if(this.pickup(resourcePiles[0]) === ERR_NOT_IN_RANGE) {
+					this.moveTo(resourcePiles[0]);
+				}
+			} else {
+				let structures = myFlag.pos.lookFor(LOOK_STRUCTURES);
+				if(isArrayWithContents(structures)) {
+					let structure = structures[0];
+					// TODO: handle rampart case better
+					if(structure.structureType === STRUCTURE_RAMPART && typeof structures[1] !== 'undefined') {
+						structure = structures[1];
+					}
+					if(this.withdraw(structure, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+						this.moveTo(structure);
+					}
+				}
+			}
 		} else {
 			this.moveTo(myFlag);
 		}

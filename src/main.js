@@ -524,6 +524,20 @@ module.exports.loop = function () {
 	    			        break;
 	    		        }
 	    		    }
+				} else if((roomCreepQuotas.remoteTransporter) && (undefToZero(roomCreepRoster.remoteTransporter) < roomCreepQuotas.remoteTransporter.length)) {
+					let curRole = 'remoteTransporter';
+	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+	    		        if(currentFlagCreeps.length < 1) {
+							let curCreepBody = [CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE];
+							if(Game.flags[curFlagName].memory.bodyParts) {
+								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+							}
+							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+	    			        break;
+	    		        }
+	    		    }
 	    		} else {
 					// filter for room mineral transfer or return flags
 					let roomTransferFlagRegex = new RegExp('^' + roomName + '_mineralTransfer_');
