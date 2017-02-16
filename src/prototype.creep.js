@@ -2186,9 +2186,13 @@ Creep.prototype.runRemoteUpgrader = function() {
 	//var checkPoint2 = new RoomPosition(35, 35, 'E7S35');
 	//var checkPoint3 = new RoomPosition(35, 35, 'E7S35');
 
-	let checkPoint1 = new RoomPosition(14, 42, 'E5S30');
-	let checkPoint2 = new RoomPosition(34, 24, 'E4S31');
-	let checkPoint3 = new RoomPosition(34, 24, 'E4S31');
+	//let checkPoint1 = new RoomPosition(14, 42, 'E5S30');
+	//let checkPoint2 = new RoomPosition(34, 24, 'E4S31');
+	//let checkPoint3 = new RoomPosition(34, 24, 'E4S31');
+
+	let checkPoint1 = new RoomPosition(30, 18, 'E11S35');
+	let checkPoint2 = new RoomPosition(30, 18, 'E11S35');
+	let checkPoint3 = new RoomPosition(30, 18, 'E11S35');
 
 
 	if(this.memory.state === undefined) {
