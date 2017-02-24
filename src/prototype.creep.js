@@ -2861,3 +2861,119 @@ Creep.prototype.runPowerCarrier = function() {
 		}
 	}
 };
+
+Creep.prototype.runPaver = function() {
+	let myFlag;
+
+	if(this.memory.flagName === undefined) {
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 5);
+        return;
+    } else {
+        myFlag = Game.flags[this.memory.flagName];
+        if(myFlag === undefined) {
+			this.errorLog('flag is missing', ERR_NOT_FOUND);
+			// start suicide
+			this.memory.suicideCounter = this.memory.suicideCounter || 5;
+			if(this.memory.suicideCounter === 4) {
+			    countAllC();
+			} else if(this.memory.suicideCounter <= 1) {
+			    delete Memory.creeps[this.name].suicideCounter;
+				this.suicide();
+			}
+			if(typeof this.memory.suicideCounter !== 'undefined') {
+			    this.memory.suicideCounter--;
+			}
+	        return;
+		}
+    }
+
+	// let fleeing = paver.fleeHostiles();
+	// if (fleeing) return; // early
+
+	let withinRoom = paver.pos.roomName === myFlag.pos.roomName;
+	if(!withinRoom) {
+		this.moveTo(myFlag);
+		return;
+	}
+
+	// I'm in the room
+	paver.memory.scavanger = RESOURCE_ENERGY;
+	let hasLoad = this.hasLoad();
+	if(!hasLoad) {
+		// TODO implement energy procurement better
+		//this.procureEnergy(paver);
+		if(this.room.storage && this.room.storage.store.energy > this.carryCapacity) {
+			if(this.withdraw(this.room.storage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+				this.moveTo(this.room.storage);
+				return;
+			}
+		}
+
+		// get energy piles
+		var droppedEnergy = this.room.find(FIND_DROPPED_ENERGY, {
+				filter: (pile) => {
+					return (pile.energy >= (this.carryCapacity / 4)) && (pile.pos.roomName === myFlag.pos.roomName);
+				}
+		});
+
+		if(isArrayWithContents(droppedEnergy)) {
+			let target = this.pos.findClosestByPath(droppedEnergy);
+			if(target) {
+				if(this.pickup(target) === ERR_NOT_IN_RANGE) {
+					this.moveTo(target);
+				}
+			}
+		}
+		return;
+	}
+
+	// I'm in the room and I have energy
+	/*
+	let findRoad = () => {
+		return _.filter(this.room.findStructures(STRUCTURE_ROAD), (s) => s.hits < s.hitsMax - 1000)[0];
+	};
+	let forget = (s) => s.hits === s.hitsMax;
+	let target = this.rememberStructure<StructureRoad>(findRoad, forget);
+	*/
+	let target = _.filter(this.room.findStructures(STRUCTURE_ROAD), (s) => s.hits < s.hitsMax - 1000)[0];
+	if(!target) {
+		/*
+		let repairing = false;
+		if(this.room.controller && this.room.controller.my) {
+			repairing = this.repairContainers(paver);
+		}
+		if (!repairing) {
+			paver.memory.hasLoad = paver.carry.energy === paver.carryCapacity;
+			paver.idleOffRoad(this.flag);
+		}
+		*/
+		this.moveTo(myFlag);
+		return;
+	}
+
+
+	// and I have a target
+	let range = this.pos.getRangeTo(target);
+	if(range > 3) {
+		this.moveTo(target);
+		// repair any damaged road i'm standing on
+		let road = this.pos.lookForStructure(STRUCTURE_ROAD);
+		if(road && road.hits < road.hitsMax - 100) {
+			this.repair(road);
+		}
+		return;
+	}
+
+	// and i'm in range
+	this.repair(target);
+	//paver.yieldRoad(target);
+};
+
+Creep.prototype.hasLoad = function() {
+	if(this.memory.hasLoad && _.sum(this.carry) === 0) {
+		this.memory.hasLoad = false;
+	} else if(!this.memory.hasLoad && _.sum(this.carry) === this.carryCapacity) {
+		this.memory.hasLoad = true;
+	}
+	return this.memory.hasLoad;
+};
