@@ -1059,6 +1059,82 @@ function calcMineralDistribution() {
 }
 global.calcMineralDistribution = calcMineralDistribution;
 
+function drawFlagPath(arg1, arg2) {
+    let position1;
+    if(arg1 instanceof RoomPosition) {
+        position1 = arg1;
+    } else if(typeof arg1.pos !== 'undefined' && arg1.pos instanceof RoomPosition) {
+        position1 = arg1.pos;
+    } else {
+        Logger.errorLog(`invalid parameter to drawFlagPath function: ${arg1} of type ${typeof arg1}`);
+    }
+
+    let position2;
+    if(arg2 instanceof RoomPosition) {
+        position2 = arg2;
+    } else if(typeof arg2.pos !== 'undefined' && arg2.pos instanceof RoomPosition) {
+        position2 = arg2.pos;
+    } else {
+        Logger.errorLog(`invalid parameter to drawFlagPath function: ${arg2} of type ${typeof arg2}`, ERR_INVALID_ARGS, 4);
+    }
+
+    let flagPath = PathFinder.search(position1, position2, {
+        plainCost: 1,
+        swampCost: 1,
+        roomCallback: function(roomName) {
+
+            let room = Game.rooms[roomName];
+            if(!room) return;
+            let costs = new PathFinder.CostMatrix;
+
+            room.find(FIND_STRUCTURES).forEach(function(structure) {
+                if (structure.structureType === STRUCTURE_ROAD) {
+                    // Favor roads over plain tiles
+                    costs.set(structure.pos.x, structure.pos.y, 1);
+                } else if (structure.structureType !== STRUCTURE_CONTAINER &&
+                        (structure.structureType !== STRUCTURE_RAMPART ||
+                        !structure.my)) {
+                    // Can't walk through non-walkable buildings
+                    costs.set(structure.pos.x, structure.pos.y, 0xff);
+                }
+            });
+
+            /*
+            room.find(FIND_CREEPS).forEach(function(creep) {
+                costs.set(creep.pos.x, creep.pos.y, 0xff);
+            });
+            */
+
+            return costs;
+        },
+    });
+
+    if(!flagPath) {
+        Logger.errorLog('could not find path for drawFlagPath', ERR_NO_PATH, 4);
+        return;
+    }
+
+    for(let i in flagPath.path) {
+        let position = flagPath.path[i];
+        position.createFlag(`flagPath_${i}`);
+    }
+
+    return OK;
+}
+global.drawFlagPath = drawFlagPath;
+
+function removeFlagPath() {
+    for(let i in Game.flags) {
+        let flag = Game.flags[i];
+        if(/flagPath_/.test(flag) === true) {
+            console.log(flag.name);
+            flag.remove();
+        }
+    }
+    return OK;
+}
+global.removeFlagPath = removeFlagPath;
+
 function marketSell(room_name, resource, amt = Infinity) {
     // 9-30-2016 patch makes this way faster I guess?
     let orders = Game.market.getAllOrders({type: ORDER_BUY, resourceType: resource});
