@@ -12,6 +12,7 @@ loopHelper.initMemory();
 require('prototype.room');
 require('prototype.roomposition');
 require('prototype.creep');
+require('prototype.creep.run');
 require('prototype.flag');
 require('prototype.structure');
 require('prototype.spawn');
@@ -1085,7 +1086,7 @@ function drawFlagPath(arg1, arg2) {
 
             let room = Game.rooms[roomName];
             if(!room) return;
-            let costs = new PathFinder.CostMatrix;
+            let costs = new PathFinder.CostMatrix();
 
             room.find(FIND_STRUCTURES).forEach(function(structure) {
                 if (structure.structureType === STRUCTURE_ROAD) {
