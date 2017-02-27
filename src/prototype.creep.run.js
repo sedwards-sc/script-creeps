@@ -2728,7 +2728,7 @@ Creep.prototype.runPaver = function() {
 	}
 
 	// I'm in the room
-	paver.memory.scavanger = RESOURCE_ENERGY;
+	// this.memory.scavanger = RESOURCE_ENERGY;
 	let hasLoad = this.hasLoad();
 	if(!hasLoad) {
 		// TODO implement energy procurement better
