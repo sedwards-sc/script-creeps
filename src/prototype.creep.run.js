@@ -2723,7 +2723,7 @@ Creep.prototype.runPaver = function() {
 
 	let withinRoom = paver.pos.roomName === myFlag.pos.roomName;
 	if(!withinRoom) {
-		this.moveTo(myFlag);
+		this.blindMoveTo(myFlag);
 		return;
 	}
 
@@ -2735,7 +2735,7 @@ Creep.prototype.runPaver = function() {
 		//this.procureEnergy(paver);
 		if(this.room.storage && this.room.storage.store.energy > this.carryCapacity) {
 			if(this.withdraw(this.room.storage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-				this.moveTo(this.room.storage);
+				this.blindMoveTo(this.room.storage);
 				return;
 			}
 		}
@@ -2751,7 +2751,7 @@ Creep.prototype.runPaver = function() {
 			let target = this.pos.findClosestByPath(droppedEnergy);
 			if(target) {
 				if(this.pickup(target) === ERR_NOT_IN_RANGE) {
-					this.moveTo(target);
+					this.blindMoveTo(target);
 				}
 			}
 		}
@@ -2778,7 +2778,7 @@ Creep.prototype.runPaver = function() {
 			paver.idleOffRoad(this.flag);
 		}
 		*/
-		this.moveTo(myFlag);
+		this.blindMoveTo(myFlag);
 		return;
 	}
 
@@ -2786,7 +2786,7 @@ Creep.prototype.runPaver = function() {
 	// and I have a target
 	let range = this.pos.getRangeTo(target);
 	if(range > 3) {
-		this.moveTo(target);
+		this.blindMoveTo(target);
 		// repair any damaged road i'm standing on
 		let road = this.pos.lookForStructure(STRUCTURE_ROAD);
 		if(road && road.hits < road.hitsMax - 100) {
