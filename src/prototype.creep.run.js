@@ -2797,5 +2797,5 @@ Creep.prototype.runPaver = function() {
 
 	// and i'm in range
 	this.repair(target);
-	//paver.yieldRoad(target);
+	this.yieldRoad(target);
 };

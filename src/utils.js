@@ -193,6 +193,12 @@ function errorCodeToText(errorCode) {
 	}
 }
 
+function clampDirection(direction) {
+	while(direction < 1) direction += 8;
+	while(direction > 8) direction -= 8;
+	return direction;
+}
+
 function populateUtils(g) {
     g.undefToZero = undefToZero;
     g.isNullOrUndefined = isNullOrUndefined;
@@ -205,6 +211,7 @@ function populateUtils(g) {
 	g.roomLink = roomLink;
 	g.timeLink = timeLink;
 	g.errorCodeToText = errorCodeToText;
+	g.clampDirection = clampDirection;
 }
 
 exports.populateUtils = populateUtils;

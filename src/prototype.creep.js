@@ -252,3 +252,47 @@ Creep.prototype.blindMoveTo = function(destination, ops, dareDevil = false) {
 		return this.moveTo(destination, ops);
 	}
 };
+
+/**
+* another function for keeping roads clear, this one is more useful for builders and road repairers that are
+* currently working, will move off road without going out of range of target
+* @param target - target for which you do not want to move out of range
+* @param allowSwamps
+* @returns {number}
+*/
+Creep.prototype.yieldRoad = function(target, allowSwamps = true) {
+	let isOffRoad = this.pos.lookForStructure(STRUCTURE_ROAD) === undefined;
+	if(isOffRoad) {
+		return OK;
+	}
+
+	let swampPosition;
+	// find movement options
+	let direction = this.pos.getDirectionTo(target);
+	for(let i = -2; i <= 2; i++) {
+		let relDirection = direction + i;
+		relDirection = clampDirection(relDirection);
+		let position = this.pos.getPositionAtDirection(relDirection);
+		if(!position.inRangeTo(target, 3)) {
+			continue;
+		}
+		if(position.lookFor(LOOK_STRUCTURES).length > 0) {
+			continue;
+		}
+		if(!position.isPassible()) {
+			continue;
+		}
+		if(position.isNearExit(0)) {
+			continue;
+		}
+		if(position.lookFor(LOOK_TERRAIN)[0] === "swamp") {
+			swampPosition = position;
+			continue;
+		}
+		return this.move(relDirection);
+	}
+	if (swampPosition && allowSwamps) {
+		return this.move(this.pos.getDirectionTo(swampPosition));
+	}
+	return this.blindMoveTo(target);
+};
