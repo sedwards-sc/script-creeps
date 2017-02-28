@@ -1061,6 +1061,10 @@ function calcMineralDistribution() {
 global.calcMineralDistribution = calcMineralDistribution;
 
 function drawFlagPath(arg1, arg2) {
+	const ROAD_COST = 3;
+    const PLAIN_COST = 4;
+    const SWAMP_COST = 5;
+
     let position1;
     if(arg1 instanceof RoomPosition) {
         position1 = arg1;
@@ -1080,21 +1084,20 @@ function drawFlagPath(arg1, arg2) {
     }
 
     let flagPath = PathFinder.search(position1, position2, {
-        plainCost: 1,
-        swampCost: 1,
+        plainCost: PLAIN_COST,
+        swampCost: SWAMP_COST,
+		maxOps: 8000,
         roomCallback: function(roomName) {
-
             let room = Game.rooms[roomName];
-            if(!room) return;
+            if(!room) {
+				return;
+			}
             let costs = new PathFinder.CostMatrix();
 
             room.find(FIND_STRUCTURES).forEach(function(structure) {
-                if (structure.structureType === STRUCTURE_ROAD) {
-                    // Favor roads over plain tiles
-                    costs.set(structure.pos.x, structure.pos.y, 1);
-                } else if (structure.structureType !== STRUCTURE_CONTAINER &&
-                        (structure.structureType !== STRUCTURE_RAMPART ||
-                        !structure.my)) {
+                if(structure.structureType === STRUCTURE_ROAD) {
+                    costs.set(structure.pos.x, structure.pos.y, ROAD_COST);
+                } else if(structure.structureType !== STRUCTURE_CONTAINER && (structure.structureType !== STRUCTURE_RAMPART || !structure.my)) {
                     // Can't walk through non-walkable buildings
                     costs.set(structure.pos.x, structure.pos.y, 0xff);
                 }
