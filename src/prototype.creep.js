@@ -344,3 +344,32 @@ Creep.prototype.idleOffRoad = function(defaultPoint, maintainDistance = false) {
 
 	return this.blindMoveTo(defaultPoint);
 };
+
+Creep.prototype._withdraw = Creep.prototype.withdraw;
+/**
+ * Overrides the API's creep.withdraw() function to allow consistent transfer code whether the resource holder is
+ * a structure or a creep;
+ * @param target
+ * @param resourceType
+ * @param amount
+ * @returns {number}
+ */
+Creep.prototype.withdraw = function(target, resourceType, amount) {
+	if(target instanceof Creep) {
+		return target.transfer(this, resourceType, amount);
+	} else {
+		return this._withdraw(target, resourceType, amount);
+	}
+};
+
+Object.defineProperty(Creep.prototype, "store", {
+	get: function myProperty() {
+		return this.carry;
+	}
+});
+
+Object.defineProperty(Creep.prototype, "storeCapacity", {
+	get: function myProperty() {
+		return this.carryCapacity;
+	}
+});
