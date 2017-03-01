@@ -2768,16 +2768,16 @@ Creep.prototype.runPaver = function() {
 	*/
 	let target = _.filter(this.room.findStructures(STRUCTURE_ROAD), (s) => s.hits < s.hitsMax - 1000)[0];
 	if(!target) {
-		/*
 		let repairing = false;
+		/*
 		if(this.room.controller && this.room.controller.my) {
 			repairing = this.repairContainers(paver);
 		}
-		if (!repairing) {
-			paver.memory.hasLoad = paver.carry.energy === paver.carryCapacity;
-			paver.idleOffRoad(this.flag);
-		}
 		*/
+		if(!repairing) {
+			this.memory.hasLoad = this.carry.energy === this.carryCapacity;
+			this.idleOffRoad(myFlag);
+		}
 		this.blindMoveTo(myFlag);
 		return;
 	}

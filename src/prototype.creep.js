@@ -182,12 +182,12 @@ Creep.prototype.hasLoad = function() {
 };
 
 /**
-* General-purpose cpu-efficient movement function that uses ignoreCreeps: true, a high reusePath value and stuck-detection
-* @param destination
-* @param ops - pathfinding ops, ignoreCreeps and reusePath will be overwritten
-* @param dareDevil
-* @returns {number} - Error code
-*/
+ * General-purpose cpu-efficient movement function that uses ignoreCreeps: true, a high reusePath value and stuck-detection
+ * @param destination
+ * @param ops - pathfinding ops, ignoreCreeps and reusePath will be overwritten
+ * @param dareDevil
+ * @returns {number} - Error code
+ */
 Creep.prototype.blindMoveTo = function(destination, ops, dareDevil = false) {
 
 	if(this.spawning) {
@@ -254,12 +254,12 @@ Creep.prototype.blindMoveTo = function(destination, ops, dareDevil = false) {
 };
 
 /**
-* another function for keeping roads clear, this one is more useful for builders and road repairers that are
-* currently working, will move off road without going out of range of target
-* @param target - target for which you do not want to move out of range
-* @param allowSwamps
-* @returns {number}
-*/
+ * another function for keeping roads clear, this one is more useful for builders and road repairers that are
+ * currently working, will move off road without going out of range of target
+ * @param target - target for which you do not want to move out of range
+ * @param allowSwamps
+ * @returns {number}
+ */
 Creep.prototype.yieldRoad = function(target, allowSwamps = true) {
 	let isOffRoad = this.pos.lookForStructure(STRUCTURE_ROAD) === undefined;
 	if(isOffRoad) {
@@ -295,4 +295,52 @@ Creep.prototype.yieldRoad = function(target, allowSwamps = true) {
 		return this.move(this.pos.getDirectionTo(swampPosition));
 	}
 	return this.blindMoveTo(target);
+};
+
+/**
+ * Can be used to keep idling creeps out of the way, like when a road repairer doesn't have any roads needing repair
+ * or a spawn refiller who currently has full extensions. Clear roads allow for better creep.BlindMoveTo() behavior
+ * @param defaultPoint
+ * @param maintainDistance
+ * @returns {any}
+ */
+Creep.prototype.idleOffRoad = function(defaultPoint, maintainDistance = false) {
+	let offRoad = this.pos.lookForStructure(STRUCTURE_ROAD) === undefined;
+	if(offRoad) {
+		return OK;
+	}
+
+	/*
+	if (this.memory.idlePosition) {
+		let pos = helper.deserializeRoomPosition(this.memory.idlePosition);
+		if (!this.pos.inRangeTo(pos, 0)) {
+			return this.moveItOrLoseIt(pos);
+		}
+		return OK;
+	}
+	*/
+
+	let positions = _.sortBy(this.pos.openAdjacentSpots(), (p) => p.getRangeTo(defaultPoint));
+	if(maintainDistance) {
+		let currentRange = this.pos.getRangeTo(defaultPoint);
+		positions = _.filter(positions, (p) => p.getRangeTo(defaultPoint) <= currentRange);
+	}
+	let swampPosition;
+	for(let position of positions) {
+		if(position.lookForStructure(STRUCTURE_ROAD)) {
+			continue;
+		}
+		let terrain = position.lookFor(LOOK_TERRAIN)[0];
+		if(terrain === "swamp") {
+			swampPosition = position;
+		} else {
+			return this.move(this.pos.getDirectionTo(position));
+		}
+	}
+
+	if(swampPosition) {
+		return this.move(this.pos.getDirectionTo(swampPosition));
+	}
+
+	return this.blindMoveTo(defaultPoint);
 };

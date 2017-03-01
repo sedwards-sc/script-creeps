@@ -74,9 +74,9 @@ RoomPosition.prototype.isPassible = function(ignoreCreeps) {
 	if(_.head(this.lookFor(LOOK_TERRAIN)) !== "wall") {
 
 		// look for creeps
-		if (ignoreCreeps || this.lookFor(LOOK_CREEPS).length === 0) {
+		if(ignoreCreeps || this.lookFor(LOOK_CREEPS).length === 0) {
 
-			// look for impassible structions
+			// look for impassible structures
 			if(_.filter(this.lookFor(LOOK_STRUCTURES), (struct) => {
 				return struct.structureType !== STRUCTURE_ROAD && struct.structureType !== STRUCTURE_CONTAINER && struct.structureType !== STRUCTURE_RAMPART;
 			}).length === 0 ) {
@@ -91,4 +91,22 @@ RoomPosition.prototype.isPassible = function(ignoreCreeps) {
 
 RoomPosition.prototype.isNearExit = function(range) {
 	return this.x - range <= 0 || this.x + range >= 49 || this.y - range <= 0 || this.y + range >= 49;
+};
+
+/**
+ * Returns all surrounding positions that are currently open
+ * @param ignoreCreeps - if true, will consider positions containing a creep to be open
+ * @returns {RoomPosition[]}
+ */
+RoomPosition.prototype.openAdjacentSpots = function(ignoreCreeps) {
+	let positions = [];
+	for(let i = 1; i <= 8; i++) {
+		let testPosition = this.getPositionAtDirection(i);
+
+		if (testPosition.isPassible(ignoreCreeps)) {
+			// passed all tests
+			positions.push(testPosition);
+		}
+	}
+	return positions;
 };
