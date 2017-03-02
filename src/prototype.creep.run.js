@@ -2759,14 +2759,11 @@ Creep.prototype.runPaver = function() {
 	}
 
 	// I'm in the room and I have energy
-	/*
 	let findRoad = () => {
 		return _.filter(this.room.findStructures(STRUCTURE_ROAD), (s) => s.hits < s.hitsMax - 1000)[0];
 	};
 	let forget = (s) => s.hits === s.hitsMax;
-	let target = this.rememberStructure<StructureRoad>(findRoad, forget);
-	*/
-	let target = _.filter(this.room.findStructures(STRUCTURE_ROAD), (s) => s.hits < s.hitsMax - 1000)[0];
+	let target = this.rememberStructure(findRoad, forget);
 	if(!target) {
 		let repairing = false;
 		/*
