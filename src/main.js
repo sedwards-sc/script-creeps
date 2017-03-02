@@ -41,7 +41,7 @@ if(Memory.config && Memory.config.enableProfiler === true) {
 
 module.exports.loop = function () {
 	profiler.wrap(function() {
-		console.log(Game.time);
+		Logger.log(Game.time, 3);
 
 		// create cache for this tick
 		Game.cache = {
