@@ -413,3 +413,55 @@ Creep.prototype.transferEverything = function (target) {
 	}
 	return ERR_NOT_ENOUGH_RESOURCES;
 };
+
+/**
+ * Find a structure, cache, and invalidate cache based on the functions provided
+ * @param findStructure
+ * @param forget
+ * @param immediate
+ * @param prop
+ * @returns {Structure}
+ */
+//Creep.prototype.rememberStructure = function(findStructure: () => Structure, forget: (structure: Structure) => boolean, prop = "remStructureId", immediate = false): Structure {
+Creep.prototype.rememberStructure = function(findStructure, forget, prop = "remStructureId", immediate = false) {
+	if(this.memory[prop]) {
+		let structure = Game.getObjectById(this.memory[prop]);
+		if(structure && !forget(structure)) {
+			return structure;
+		} else {
+			this.memory[prop] = undefined;
+			return this.rememberStructure(findStructure, forget, prop, true);
+		}
+	} else if (Game.time % 10 === 0 || immediate) {
+		let object = findStructure();
+		if(object) {
+			this.memory[prop] = object.id;
+			return object;
+		}
+	}
+};
+
+/**
+ * Find a creep, cache, and invalidate cache based on the functions provided
+ * @param findCreep
+ * @param forget
+ * @returns {Structure}
+ */
+//Creep.prototype.rememberCreep = function(findCreep: () => Creep, forget: (creep: Creep) => boolean): Creep {
+Creep.prototype.rememberCreep = function(findCreep, forget) {
+	if(this.memory.remCreepId) {
+		let creep = Game.getObjectById(this.memory.remCreepId);
+		if(creep && !forget(creep)) {
+			return creep;
+		} else {
+			this.memory.remCreepId = undefined;
+			return this.rememberCreep(findCreep, forget);
+		}
+	} else {
+		let object = findCreep();
+		if (object) {
+			this.memory.remCreepId = object.id;
+			return object;
+		}
+	}
+};
