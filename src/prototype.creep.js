@@ -373,3 +373,43 @@ Object.defineProperty(Creep.prototype, "storeCapacity", {
 		return this.carryCapacity;
 	}
 });
+
+/**
+ * Only withdraw from a store-holder if there is enough resource to transfer (or if holder is full), cpu-efficiency effort
+ * @param target
+ * @param resourceType
+ * @returns {number}
+ */
+Creep.prototype.withdrawIfFull = function(target, resourceType) {
+	if(!this.pos.isNearTo(target)) {
+		return ERR_NOT_IN_RANGE;
+	}
+
+	let storageAvailable = this.carryCapacity - _.sum(this.carry);
+	let targetStorageAvailable = target.storeCapacity - _.sum(target.store);
+	if(target.store[resourceType] >= storageAvailable || targetStorageAvailable === 0) {
+		return this.withdraw(target, resourceType);
+	} else {
+		return ERR_NOT_ENOUGH_RESOURCES;
+	}
+};
+
+Creep.prototype.withdrawEverything = function (target) {
+	for(let resourceType in target.store) {
+		let amount = target.store[resourceType];
+		if(amount > 0) {
+			return this.withdraw(target, resourceType);
+		}
+	}
+	return ERR_NOT_ENOUGH_RESOURCES;
+};
+
+Creep.prototype.transferEverything = function (target) {
+	for(let resourceType in this.carry) {
+		let amount = this.carry[resourceType];
+		if(amount > 0) {
+			return this.transfer(target, resourceType);
+		}
+	}
+	return ERR_NOT_ENOUGH_RESOURCES;
+};
