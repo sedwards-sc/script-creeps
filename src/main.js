@@ -104,7 +104,7 @@ module.exports.loop = function () {
 			defendRoom(name);
 
 			// spawn defenders
-			if(Game.rooms[name].memory.hostiles > 0) {
+			if(Game.rooms[name].hostiles.length > 0) {
 				let defenders = _.filter(Game.creeps, (creep) => {
 					return (creep.memory.role === 'defender') && (creep.memory.spawnRoom === name);
 				});
