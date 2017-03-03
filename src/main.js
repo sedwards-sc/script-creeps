@@ -1,5 +1,7 @@
 /* jshint esversion: 6, loopfunc: true */
 
+require('constants');
+
 require('SVG');
 
 global.Logger = require('logger');
