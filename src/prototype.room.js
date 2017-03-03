@@ -15,7 +15,7 @@ Room.prototype.findSources = function() {
 };
 
 Room.prototype.assessThreats = function() {
-	var hostiles = this.find(FIND_HOSTILE_CREEPS);
+	var hostiles = this.hostiles;
 	if(hostiles.length > 0) {
 		this.memory.hostiles = hostiles.length;
 	} else {
