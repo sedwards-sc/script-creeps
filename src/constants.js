@@ -3,4 +3,4 @@
  * constants
  */
 
-const TEST_CONSTANT = 28;
+global.TEST_CONSTANT = 28;
