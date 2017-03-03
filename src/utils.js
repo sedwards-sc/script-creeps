@@ -199,6 +199,41 @@ function clampDirection(direction) {
 	return direction;
 }
 
+function checkEnemy(username, roomName) {
+	if(ALLIES[username]) {
+		return false;
+	}
+
+	// make note of non-ally, non-npc creeps
+	if(username !== "Invader" && username !== "Source Keeper") {
+		this.strangerDanger(username, roomName);
+	}
+	return true;
+}
+
+function strangerDanger(username, roomName) {
+	if(!Memory.strangerDanger) {
+		Memory.strangerDanger = {};
+	}
+	if(!Memory.strangerDanger[username]) {
+		Memory.strangerDanger[username] = [];
+	}
+	let lastReport = _.last(Memory.strangerDanger[username]);
+	if(!lastReport || lastReport.tickSeen < Game.time - 1000 ) {
+		let report = {
+			tickSeen: Game.time,
+			roomName: roomName
+		};
+		let msgText = `STRANGER DANGER: one of ${username}'s creeps seen in ${Game.rooms[roomName]} at ${Game.time}`;
+		Logger.log(msgText, 5);
+		Game.notify(msgText);
+		Memory.strangerDanger[username].push(report);
+		while(Memory.strangerDanger[username].length > 10) {
+			Memory.strangerDanger[username].shift();
+		}
+	}
+}
+
 function populateUtils(g) {
     g.undefToZero = undefToZero;
     g.isNullOrUndefined = isNullOrUndefined;
@@ -212,6 +247,8 @@ function populateUtils(g) {
 	g.timeLink = timeLink;
 	g.errorCodeToText = errorCodeToText;
 	g.clampDirection = clampDirection;
+	g.checkEnemy = checkEnemy;
+	g.strangerDanger = strangerDanger;
 }
 
 exports.populateUtils = populateUtils;
