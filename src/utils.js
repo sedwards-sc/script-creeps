@@ -219,7 +219,7 @@ function strangerDanger(username, roomName) {
 		Memory.strangerDanger[username] = [];
 	}
 	let lastReport = _.last(Memory.strangerDanger[username]);
-	if(!lastReport || lastReport.tickSeen < Game.time - 1000 ) {
+	if(!lastReport || lastReport.tickSeen < Game.time - 500 ) {
 		let report = {
 			tickSeen: Game.time,
 			roomName: roomName
