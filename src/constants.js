@@ -4,3 +4,7 @@
  */
 
 global.TEST_CONSTANT = 28;
+
+global.ALLIES = {
+    "Adimus": true,
+};
