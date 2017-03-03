@@ -465,3 +465,13 @@ Creep.prototype.rememberCreep = function(findCreep, forget) {
 		}
 	}
 };
+
+Creep.prototype.partCount = function(partType) {
+	let count = 0;
+	for(let part of this.body) {
+		if(part.type === partType) {
+			count++;
+		}
+	}
+	return count;
+};
