@@ -425,7 +425,63 @@ Room.prototype.findStructures = function(structureType) {
     return Game.cache.structures[this.name][structureType] || [];
 };
 
-// DEPRECATED - added to global utils
-//function isNullOrUndefined(theObject) {
-//    return (theObject === undefined || theObject === null);
-//}
+Object.defineProperty(Room.prototype, "hostiles", {
+	get: function myProperty() {
+		if(!Game.cache.hostiles[this.name]) {
+			let hostiles = this.find(FIND_HOSTILE_CREEPS);
+			let filteredHostiles = [];
+			for(let hostile of hostiles) {
+				let username = hostile.owner.username;
+				let isEnemy = checkEnemy(username, this.name);
+				if(isEnemy) {
+					filteredHostiles.push(hostile);
+				}
+			}
+			Game.cache.hostiles[this.name] = filteredHostiles;
+		}
+		return Game.cache.hostiles[this.name];
+	}
+});
+
+Object.defineProperty(Room.prototype, "hostilesAndLairs", {
+	get: function myProperty() {
+		if(!Game.cache.hostilesAndLairs[this.name]) {
+			let lairs = _.filter(this.findStructures(STRUCTURE_KEEPER_LAIR), (lair) => {
+				return !lair.ticksToSpawn || lair.ticksToSpawn < 10;
+			});
+			Game.cache.hostilesAndLairs[this.name] = lairs.concat(this.hostiles);
+		}
+		return Game.cache.hostilesAndLairs[this.name];
+	}
+});
+
+Object.defineProperty(Room.prototype, "roomType", {
+	get: function myProperty() {
+		if(!this.memory.roomType) {
+
+			// source keeper
+			let lairs = this.findStructures(STRUCTURE_KEEPER_LAIR);
+			if(lairs.length > 0) {
+				this.memory.roomType = ROOMTYPE_SOURCEKEEPER;
+			}
+
+			// core
+			if(!this.memory.roomType) {
+				let sources = this.find(FIND_SOURCES);
+				if(sources.length === 3) {
+					this.memory.roomType = ROOMTYPE_CORE;
+				}
+			}
+
+			// controller rooms
+			if(!this.memory.roomType) {
+				if(this.controller) {
+					this.memory.roomType = ROOMTYPE_CONTROLLER;
+				} else {
+					this.memory.roomType = ROOMTYPE_ALLEY;
+				}
+			}
+		}
+		return this.memory.roomType;
+	}
+});
