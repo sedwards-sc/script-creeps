@@ -3,4 +3,4 @@
  * constants
  */
 
-export const TEST_CONSTANT = 28;
+const TEST_CONSTANT = 28;
