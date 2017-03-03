@@ -822,7 +822,7 @@ module.exports.loop = function () {
 
 function defendRoom(roomName) {
 
-    let hostiles = Game.rooms[roomName].find(FIND_HOSTILE_CREEPS);
+    let hostiles = Game.rooms[roomName].hostiles;
 
     if(hostiles.length > 0) {
         let username = hostiles[0].owner.username;
