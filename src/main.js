@@ -102,7 +102,7 @@ module.exports.loop = function () {
 			defendRoom(name);
 
 			// spawn defenders
-			if(name === 'E8S23') {
+			if(Game.rooms[name].memory.hostiles > 0) {
 				let defenders = _.filter(Game.creeps, (creep) => {
 					return (creep.memory.role === 'defender') && (creep.memory.spawnRoom === name);
 				});
@@ -110,48 +110,14 @@ module.exports.loop = function () {
 				if(defenders.length < 1) {
 					// find room spawns
 					let roomSpawns = Game.rooms[name].find(FIND_MY_SPAWNS);
-					let mainSpawn = roomSpawns[0];
-
-					//let newName;
-					if(Game.rooms[name].energyAvailable >= 1610) {
-						//newName =
-						mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {spawnRoom: name, role: 'defender'});
-					} else {
-						//newName =
-						mainSpawn.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {spawnRoom: name, role: 'defender'});
-					}
-					//console.log('Spawning new defender: ' + newName + ' (' + name + ')');
-					mainSpawn.spawnCalled = 1;
-				}
-			} else {
-				if(Game.rooms[name].memory.hostiles > 0) {
-					let defenders = _.filter(Game.creeps, (creep) => {
-						return (creep.memory.role === 'defender') && (creep.memory.spawnRoom === name);
-					});
-
-					if(defenders.length < 1) {
-						// find room spawns
-						let roomSpawns = Game.rooms[name].find(FIND_MY_SPAWNS);
+					if(isArrayWithContents(roomSpawns)) {
 						let mainSpawn = roomSpawns[0];
-
-						//let newName;
-
-						try {
-    						if(Game.rooms[name].energyAvailable >= 1610) {
-    							//newName =
-								mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {spawnRoom: name, role: 'defender'});
-    						} else {
-    							//newName =
-								mainSpawn.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {spawnRoom: name, role: 'defender'});
-    						}
-
-    						//console.log('Spawning new defender: ' + newName + ' (' + name + ')');
-						    mainSpawn.spawnCalled = 1;
-						} catch(err) {
-						    Game.notify('Error creating creep in defense loop for room ' + name + ":\n" + err.name + "\n" + err.message);
-						    console.log('Error creating creep in defense loop for room ' + name + ":\n" + err.name + "\n" + err.message);
+						if(Game.rooms[name].energyAvailable >= 1610) {
+							mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {spawnRoom: name, role: 'defender'});
+						} else {
+							mainSpawn.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {spawnRoom: name, role: 'defender'});
 						}
-
+						mainSpawn.spawnCalled = 1;
 					}
 				}
 			}
