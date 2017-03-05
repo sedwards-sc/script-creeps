@@ -174,6 +174,59 @@ Creep.prototype.runCarrier = function () {
 	}
 };
 
+Creep.prototype.runCarrier2 = function() {
+
+	// let fleeing = paver.fleeHostiles();
+	// if (fleeing) return; // early
+
+	let withinRoom = this.pos.roomName === this.memory.spawnRoom;
+	if(!withinRoom) {
+		this.blindMoveTo(new RoomPosition(25, 25, this.memory.spawnRoom));
+		return;
+	}
+
+	// I'm in the room
+	let hasLoad = this.hasLoad();
+	if(!hasLoad) {
+		if(this.room.terminal && (this.room.terminal.store.energy > this.room.terminal.getResourceQuota(RESOURCE_ENERGY))) {
+			let excessEnergy = this.room.terminal.store.energy - this.room.terminal.getResourceQuota(RESOURCE_ENERGY);
+			let transferAmount = Math.min(excessEnergy, this.carryCapacity);
+			if(this.withdraw(this.room.terminal, RESOURCE_ENERGY, transferAmount) === ERR_NOT_IN_RANGE) {
+				this.blindMoveTo(this.room.terminal);
+			}
+		} else {
+			if(this.withdraw(this.room.storage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+				this.blindMoveTo(this.room.storage);
+			}
+		}
+		return;
+	}
+
+	// I'm in the room and I have energy
+	let findRoad = () => {
+		// return _.filter(this.room.findStructures(STRUCTURE_EXTENSION), (s) => s.energy < s.energyCapacity)[0];
+		return this.getRefillTarget();
+	};
+	let forget = (s) => s.energy === s.energyCapacity;
+	let target = this.rememberStructure(findRoad, forget);
+	if(!target) {
+		this.say('bored');
+
+		this.memory.hasLoad = this.carry.energy === this.carryCapacity;
+		// this.idleOffRoad(myFlag);
+		// this.blindMoveTo(myFlag);
+		return;
+	}
+
+
+	// and I have a target
+	if(this.pos.isNearTo(target)) {
+		this.transfer(target, RESOURCE_ENERGY);
+	} else {
+		this.blindMoveTo(target);
+	}
+};
+
 Creep.prototype.runMiner = function() {
 	//creep.say('miner');
 	// state 0 is harvest
@@ -2721,7 +2774,7 @@ Creep.prototype.runPaver = function() {
 	// let fleeing = paver.fleeHostiles();
 	// if (fleeing) return; // early
 
-	let withinRoom = paver.pos.roomName === myFlag.pos.roomName;
+	let withinRoom = this.pos.roomName === myFlag.pos.roomName;
 	if(!withinRoom) {
 		this.blindMoveTo(myFlag);
 		return;

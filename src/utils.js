@@ -53,7 +53,7 @@ function getTierCompounds(tier) {
     		RESOURCE_KEANIUM_HYDRIDE,
     		RESOURCE_KEANIUM_OXIDE,
     		RESOURCE_LEMERGIUM_HYDRIDE,
-    		RESOURCE_LEMERGIUM_OXID,
+    		RESOURCE_LEMERGIUM_OXIDE,
     		RESOURCE_ZYNTHIUM_HYDRIDE,
     		RESOURCE_ZYNTHIUM_OXIDE,
     		RESOURCE_GHODIUM_HYDRIDE,
@@ -225,8 +225,11 @@ function strangerDanger(username, roomName) {
 			roomName: roomName
 		};
 		let msgText = `STRANGER DANGER: one of ${username}'s creeps seen in ${Game.rooms[roomName]} at ${Game.time}`;
-		Logger.log(msgText, 5);
-		Game.notify(msgText);
+		let severity = 5;
+		if(!Game.rooms[roomName].isMine()) {
+			severity = 5;
+		}
+		Logger.log(msgText, severity);
 		Memory.strangerDanger[username].push(report);
 		while(Memory.strangerDanger[username].length > 10) {
 			Memory.strangerDanger[username].shift();
