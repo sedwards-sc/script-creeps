@@ -1311,24 +1311,29 @@ Creep.prototype.runContainerMiner = function() {
 	}
 
 	let findSource = () => {
-		
-
-		return _.filter(this.room.findStructures(STRUCTURE_ROAD), (s) => s.hits < s.hitsMax - 1000)[0];
+		let potentialSource = this.myFlag.pos.findClosestByRange(FIND_SOURCES);
+		if(this.myFlag.pos.isNearTo(potentialSource)) {
+			return potentialSource;
+		}
 	};
-	let forget = (s) => s.hits === s.hitsMax;
-	let target = this.rememberStructure(findRoad, forget);
-	if(!target) {
-		let repairing = false;
-		/*
-		if(this.room.controller && this.room.controller.my) {
-			repairing = this.repairContainers(paver);
-		}
-		*/
-		if(!repairing) {
-			this.memory.hasLoad = this.carry.energy === this.carryCapacity;
-			this.idleOffRoad(myFlag);
-		}
-		this.blindMoveTo(myFlag);
+	let forgetSource = (s) => {
+		return this.myFlag.pos.getRangeTo(s) > 1;
+	};
+	let source = this.rememberStructure(findSource, forgetSource, 'sourceStructureId', true);
+	if(!source) {
+		this.errorLog('flag not correctly place within range of a source', ERR_NOT_IN_RANGE, 4);
+		return;
+	}
+
+	let findContainer = () => {
+		return this.myFlag.pos.lookForStructure(STRUCTURE_CONTAINER);
+	};
+	let forgetContainer = (s) => {
+		return this.myFlag.pos.getRangeTo(s) > 1;
+	};
+	let container = this.rememberStructure(findContainer, forgetContainer, 'containerStructureId', true);
+	if(!container) {
+		// place container construction site and build it
 		return;
 	}
 
