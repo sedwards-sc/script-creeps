@@ -211,7 +211,9 @@ Creep.prototype.runCarrier2 = function() {
 	if(!target) {
 		this.say('bored');
 
-		this.memory.hasLoad = this.carry.energy === this.carryCapacity;
+		// need them to go to flag after refilling or theyll block the storage
+		//this.memory.hasLoad = this.carry.energy === this.carryCapacity;
+
 		// this.idleOffRoad(myFlag);
 		// this.blindMoveTo(myFlag);
 		return;
