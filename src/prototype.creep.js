@@ -57,7 +57,7 @@ Creep.prototype.getBoosted = function(bodyPartToBoost, resourceToBoost) {
 	return boostReturn;
 };
 
-Creep.prototype.getRefillTarget = function() {
+Creep.prototype.getRefillTarget_deprecated = function() {
 	let closestTarget;
 
 	if(this.room.energyAvailable < this.room.energyCapacityAvailable) {
@@ -121,6 +121,55 @@ Creep.prototype.getRefillTarget = function() {
 	//}
 
 	return closestTarget;
+};
+
+Creep.prototype.getRefillTarget = function() {
+	let targets;
+
+	// only look for spawns and extensions if room is at less than capacity
+	if(this.room.energyAvailable < this.room.energyCapacityAvailable) {
+		// if room energy is < 300, fill extensions first so spawn can generate energy
+		if(this.room.energyAvailable < 300) {
+			targets = _.filter(this.room.findStructures(STRUCTURE_EXTENSION), (s) => {
+				return s.energy < s.energyCapacity;
+			});
+
+			if(!isArrayWithContents(targets)) {
+				targets = _.filter(this.room.findStructures(STRUCTURE_SPAWN), (s) => {
+					return s.energy < s.energyCapacity;
+				});
+			}
+		} else {
+			targets = _.filter(this.room.findStructures(STRUCTURE_SPAWN).concat(this.room.findStructures(STRUCTURE_EXTENSION)), (s) => {
+				return s.energy < s.energyCapacity;
+			});
+		}
+	}
+
+	// refill towers if no spawns or extensions need refilling
+	if(!isArrayWithContents(targets)) {
+		targets = _.filter(this.room.findStructures(STRUCTURE_TOWER), (s) => {
+			return s.energy < s.energyCapacity * 0.95;
+		});
+	}
+
+	// refill labs if no spawns or extensions or towers need refilling
+	if(!isArrayWithContents(targets)) {
+		targets = _.filter(this.room.findStructures(STRUCTURE_LAB), (s) => {
+			return s.energy < s.energyCapacity;
+		});
+	}
+
+	// refill power spawns
+	if(!isArrayWithContents(targets)) {
+		targets = _.filter(this.room.findStructures(STRUCTURE_POWER_SPAWN), (s) => {
+			return s.energy < s.energyCapacity;
+		});
+	}
+
+	if(isArrayWithContents(target)) {
+		return this.pos.findClosestByRange(targets);
+	}
 };
 
 Creep.prototype.getHighestQuantityResourceType = function() {
