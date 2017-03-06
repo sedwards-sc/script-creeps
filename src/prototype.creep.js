@@ -167,7 +167,7 @@ Creep.prototype.getRefillTarget = function() {
 		});
 	}
 
-	if(isArrayWithContents(target)) {
+	if(isArrayWithContents(targets)) {
 		return this.pos.findClosestByRange(targets);
 	}
 };
