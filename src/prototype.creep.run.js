@@ -7,7 +7,7 @@ Creep.prototype.run = function() {
 	if(this.memory.role === 'miner') {
 		this.runMiner2();
 	} else if(this.memory.role === 'carrier') {
-		this.runCarrier();
+		this.runCarrier2();
 	} else if(this.memory.role === 'harvester') {
 		this.runHarvester2();
 	} else if(this.memory.role === 'linker') {
@@ -204,7 +204,6 @@ Creep.prototype.runCarrier2 = function() {
 
 	// I'm in the room and I have energy
 	let findRoad = () => {
-		// return _.filter(this.room.findStructures(STRUCTURE_EXTENSION), (s) => s.energy < s.energyCapacity)[0];
 		return this.getRefillTarget();
 	};
 	let forget = (s) => s.energy === s.energyCapacity;
