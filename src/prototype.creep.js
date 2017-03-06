@@ -524,3 +524,28 @@ Creep.prototype.partCount = function(partType) {
 	}
 	return count;
 };
+
+Creep.prototype.loadFlag = function() {
+	if(this.memory.flagName === undefined) {
+        this.errorLog('no flag in memory', ERR_NOT_FOUND, 5);
+    } else {
+        let myFlag = Game.flags[this.memory.flagName];
+        if(myFlag === undefined) {
+			this.errorLog('flag is missing', ERR_NOT_FOUND, 4);
+			// start suicide
+			this.memory.suicideCounter = this.memory.suicideCounter || 5;
+			if(this.memory.suicideCounter === 4) {
+			    countAllCreepFlags();
+			} else if(this.memory.suicideCounter <= 1) {
+			    delete Memory.creeps[this.name].suicideCounter;
+				this.suicide();
+			}
+			if(typeof this.memory.suicideCounter !== 'undefined') {
+			    this.memory.suicideCounter--;
+			}
+		} else {
+			this.myFlag = myFlag;
+			return true;
+		}
+    }
+};

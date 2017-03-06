@@ -1290,6 +1290,64 @@ Creep.prototype.runRemoteMiner2 = function() {
     }
 };
 
+Creep.prototype.runContainerMiner = function() {
+	if((Game.time % 50) === 1) {
+		let reqParts = _.filter(this.body, function(bodyPart) { return (bodyPart.type === WORK) && (bodyPart.hits > 0); });
+
+		if(typeof reqParts === 'undefined' || reqParts.length === 0) {
+	        this.errorLog('missing required body parts; attempting suicide', ERR_NO_BODYPART, 4);
+			this.suicide();
+	    }
+	}
+
+	let flagLoaded = this.loadFlag();
+	if(!flagLoad) {
+		return;
+	}
+
+	if(!this.pos.isEqualTo(this.myFlag)) {
+		this.blindMoveTo(this.myFlag);
+		return;
+	}
+
+	let findSource = () => {
+		
+
+		return _.filter(this.room.findStructures(STRUCTURE_ROAD), (s) => s.hits < s.hitsMax - 1000)[0];
+	};
+	let forget = (s) => s.hits === s.hitsMax;
+	let target = this.rememberStructure(findRoad, forget);
+	if(!target) {
+		let repairing = false;
+		/*
+		if(this.room.controller && this.room.controller.my) {
+			repairing = this.repairContainers(paver);
+		}
+		*/
+		if(!repairing) {
+			this.memory.hasLoad = this.carry.energy === this.carryCapacity;
+			this.idleOffRoad(myFlag);
+		}
+		this.blindMoveTo(myFlag);
+		return;
+	}
+
+    if(this.pos.isEqualTo(myFlag)) {
+        let mySource = Game.getObjectById(this.memory.mySourceId);
+        if(mySource === null) {
+            mySource = myFlag.pos.findClosestByRange(FIND_SOURCES);
+            this.memory.mySourceId = mySource.id;
+        }
+
+        let harvestReturn = this.harvest(mySource);
+        if(harvestReturn != OK) {
+            this.errorLog('could not successfully harvest', harvestReturn, 4);
+        }
+    } else {
+        this.moveTo(myFlag);
+    }
+};
+
 Creep.prototype.runRemoteCarrier = function() {
 	//creep.say('rCarrier');
 	// state 0 is head to next room
