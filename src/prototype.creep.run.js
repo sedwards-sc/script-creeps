@@ -1588,11 +1588,49 @@ Creep.prototype.runRemoteCart = function() {
 
 	let withinRoom = this.pos.roomName === myFlag.pos.roomName;
 	if(!withinRoom) {
-		this.blindMoveTo(myFlag);
+		this.blindMoveTo(this.myFlag);
 		return;
 	}
 
+	// in the remote room
 
+	let findSource = () => {
+		let potentialSource = this.myFlag.pos.findClosestByRange(FIND_SOURCES);
+	};
+	let forgetSource = (s) => {
+		return;
+	};
+	let source = this.rememberStructure(findSource, forgetSource, 'sourceStructureId', true);
+	if(!source) {
+		this.errorLog('could not find source near flag', ERR_NOT_FOUND, 4);
+		return;
+	}
+
+	if(this.pos.getRangeTo(source) > 3) {
+		this.blindMoveTo(source);
+		return;
+	}
+
+	// near source to service
+
+	let targets = this.room.find(FIND_DROPPED_ENERGY, {
+			filter: (pile) => {
+				return (pile.resourceType === RESOURCE_ENERGY && pile.energy >= 50);
+			}
+	});
+
+	if(!targets) {
+		targets = this.room.findStructures(STRUCTURE_CONTAINER);
+	}
+
+	if(targets) {
+		let target = this.pos.findClosestByRange(targets);
+		if(this.pos.isNearTo(target)) {
+			this.takeResource(target, RESOURCE_ENERGY);
+		} else {
+			this.blindMoveTo(target);
+		}
+	}
 };
 
 Creep.prototype.runRemoteTransporter = function() {
