@@ -62,6 +62,8 @@ Creep.prototype.run = function() {
 		this.runPowerCarrier();
 	} else if(this.memory.role === 'remoteTransporter') {
 		this.runRemoteTransporter();
+	} else if(this.memory.role === 'paver') {
+		this.runPaver();
     } else {
         this.errorLog('no role function', ERR_NOT_FOUND, 4);
     }
