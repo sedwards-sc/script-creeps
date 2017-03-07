@@ -2959,19 +2959,22 @@ Creep.prototype.runPaver = function() {
 			}
 		}
 
-		// get energy piles
-		var droppedEnergy = this.room.find(FIND_DROPPED_ENERGY, {
+		let targets = this.room.find(FIND_DROPPED_ENERGY, {
 				filter: (pile) => {
-					return (pile.energy >= (this.carryCapacity / 4)) && (pile.pos.roomName === myFlag.pos.roomName);
+					return (pile.resourceType === RESOURCE_ENERGY && pile.energy >= 50);
 				}
 		});
 
-		if(isArrayWithContents(droppedEnergy)) {
-			let target = this.pos.findClosestByPath(droppedEnergy);
-			if(target) {
-				if(this.pickup(target) === ERR_NOT_IN_RANGE) {
-					this.blindMoveTo(target);
-				}
+		if(!targets) {
+			targets = this.room.findStructures(STRUCTURE_CONTAINER);
+		}
+
+		if(targets) {
+			let target = this.pos.findClosestByRange(targets);
+			if(this.pos.isNearTo(target)) {
+				this.takeResource(target, RESOURCE_ENERGY);
+			} else {
+				this.blindMoveTo(target);
 			}
 		}
 		return;
