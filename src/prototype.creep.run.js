@@ -30,6 +30,8 @@ Creep.prototype.run = function() {
 		this.runContainerMiner();
 	} else if(this.memory.role === 'remoteCarrier') {
 		this.runRemoteCarrier2();
+	} else if(this.memory.role === 'remoteCart') {
+		this.runRemoteCart();
 	} else if(this.memory.role === 'reserver') {
 		this.runReserver2();
 	} else if(this.memory.role === 'claimer') {

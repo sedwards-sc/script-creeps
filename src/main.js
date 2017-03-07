@@ -366,6 +366,20 @@ module.exports.loop = function () {
 	    			        break;
 	    		        }
 	    		    }
+				} else if((roomCreepQuotas.remoteCart) && (undefToZero(roomCreepRoster.remoteCart) < roomCreepQuotas.remoteCart.length)) {
+					let curRole = 'remoteCart';
+	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+	    		        if(currentFlagCreeps.length < 1) {
+							let curCreepBody = [CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE];
+							if(Game.flags[curFlagName].memory.bodyParts) {
+								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+							}
+							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+	    			        break;
+	    		        }
+	    		    }
 				} else if((roomCreepQuotas.reserver) && (undefToZero(roomCreepRoster.reserver) < roomCreepQuotas.reserver.length)) {
 				/*
 	    		} else if(undefToZero(roomCreepRoster.reserver) < roomQuota.reservers) {
