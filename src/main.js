@@ -338,6 +338,20 @@ module.exports.loop = function () {
 	    			        break;
 	    		        }
 	    		    }
+				} else if((roomCreepQuotas.containerMiner) && (undefToZero(roomCreepRoster.containerMiner) < roomCreepQuotas.containerMiner.length)) {
+					let curRole = 'containerMiner';
+	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+	    		        if(currentFlagCreeps.length < 1) {
+							let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,WORK,WORK,WORK,WORK,WORK,WORK];
+							if(Game.flags[curFlagName].memory.bodyParts) {
+								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+							}
+							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+	    			        break;
+	    		        }
+	    		    }
 	    		} else if((roomCreepQuotas.remoteCarrier) && (undefToZero(roomCreepRoster.remoteCarrier) < roomCreepQuotas.remoteCarrier.length)) {
 					for(let curRemoteCarrierIndex in roomCreepQuotas.remoteCarrier) {
 	    		        let curRemoteCarrierFlagName = roomCreepQuotas.remoteCarrier[curRemoteCarrierIndex];
