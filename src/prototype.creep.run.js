@@ -1343,7 +1343,7 @@ Creep.prototype.runContainerMiner = function() {
 	let container = this.rememberStructure(findContainer, forgetContainer, 'containerStructureId', true);
 	if(!container) {
 		let findConstructionSite = () => {
-			let contructionSites = this.myFlag.pos.lookFor(LOOK_CONSTRUCTION_SITES);
+			let constructionSites = this.myFlag.pos.lookFor(LOOK_CONSTRUCTION_SITES);
 			return _.find(constructionSites, {structureType: STRUCTURE_CONTAINER});
 		};
 		let forgetConstructionSite = (s) => {
@@ -1561,6 +1561,38 @@ Creep.prototype.runRemoteCarrier2 = function() {
 			}
 		}
 	}
+};
+
+Creep.prototype.runRemoteCart = function() {
+	let flagLoaded = this.loadFlag();
+	if(!flagLoaded) {
+		return;
+	}
+
+	// flag is loaded
+
+	let hasLoad = this.hasLoad();
+	if(hasLoad) {
+		// have energy, head to drop off
+		let homeStorage = Game.rooms[this.memory.spawnRoom].storage;
+		if(!homeStorage) {
+			this.errorLog('could not find home storage', ERR_NOT_FOUND, 4);
+			return;
+		}
+		if(this.pos.isNearTo(homeStorage)) {
+			this.transfer(homeStorage, RESOURCE_ENERGY);
+		} else {
+			this.blindMoveTo(homeStorage);
+		}
+	}
+
+	let withinRoom = this.pos.roomName === myFlag.pos.roomName;
+	if(!withinRoom) {
+		this.blindMoveTo(myFlag);
+		return;
+	}
+
+
 };
 
 Creep.prototype.runRemoteTransporter = function() {
