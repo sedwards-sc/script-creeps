@@ -26,6 +26,8 @@ Creep.prototype.run = function() {
 		this.runDefender();
 	} else if(this.memory.role === 'remoteMiner') {
 		this.runRemoteMiner2();
+	} else if(this.memory.role === 'containerMiner') {
+		this.runContainerMiner();
 	} else if(this.memory.role === 'remoteCarrier') {
 		this.runRemoteCarrier2();
 	} else if(this.memory.role === 'reserver') {
@@ -1301,16 +1303,21 @@ Creep.prototype.runContainerMiner = function() {
 	}
 
 	let flagLoaded = this.loadFlag();
-	if(!flagLoad) {
+	if(!flagLoaded) {
 		return;
 	}
+
+	// flag is loaded
 
 	if(!this.pos.isEqualTo(this.myFlag)) {
 		this.blindMoveTo(this.myFlag);
 		return;
 	}
 
+	// in position on flag
+
 	let findSource = () => {
+		// TODO: do a range 1 search instead of closest and then checking correct range
 		let potentialSource = this.myFlag.pos.findClosestByRange(FIND_SOURCES);
 		if(this.myFlag.pos.isNearTo(potentialSource)) {
 			return potentialSource;
@@ -1321,9 +1328,11 @@ Creep.prototype.runContainerMiner = function() {
 	};
 	let source = this.rememberStructure(findSource, forgetSource, 'sourceStructureId', true);
 	if(!source) {
-		this.errorLog('flag not correctly place within range of a source', ERR_NOT_IN_RANGE, 4);
+		this.errorLog('flag not correctly placed within range of a source', ERR_NOT_IN_RANGE, 4);
 		return;
 	}
+
+	// have successfully cached a source
 
 	let findContainer = () => {
 		return this.myFlag.pos.lookForStructure(STRUCTURE_CONTAINER);
@@ -1333,24 +1342,43 @@ Creep.prototype.runContainerMiner = function() {
 	};
 	let container = this.rememberStructure(findContainer, forgetContainer, 'containerStructureId', true);
 	if(!container) {
-		// place container construction site and build it
+		let findConstructionSite = () => {
+			let contructionSites = this.myFlag.pos.lookFor(LOOK_CONSTRUCTION_SITES);
+			return _.find(constructionSites, {structureType: STRUCTURE_CONTAINER});
+		};
+		let forgetConstructionSite = (s) => {
+			return s.progress === s.progressTotal;
+		};
+		let constructionSite = this.rememberStructure(findConstructionSite, forgetConstructionSite, 'constructionSiteId', true);
+		if(!constructionSite) {
+			// place construction site
+			this.myFlag.pos.createConstructionSite(STRUCTURE_CONTAINER);
+			return;
+		}
+
+		// have successfully cached construction site for the container
+
+		let hasLoad = this.hasLoad();
+		if(!hasLoad) {
+			this.harvest(source);
+			return;
+		}
+
+		// have energy for building
+
+		this.build(constructionSite);
 		return;
 	}
 
-    if(this.pos.isEqualTo(myFlag)) {
-        let mySource = Game.getObjectById(this.memory.mySourceId);
-        if(mySource === null) {
-            mySource = myFlag.pos.findClosestByRange(FIND_SOURCES);
-            this.memory.mySourceId = mySource.id;
-        }
+	// have successfully cached container
 
-        let harvestReturn = this.harvest(mySource);
-        if(harvestReturn != OK) {
-            this.errorLog('could not successfully harvest', harvestReturn, 4);
-        }
-    } else {
-        this.moveTo(myFlag);
-    }
+	if(source.energy > 0) {
+		this.harvest(source);
+	} else {
+		if(container.hits < container.hitsMax) {
+			this.repair(container);
+		}
+	}
 };
 
 Creep.prototype.runRemoteCarrier = function() {
