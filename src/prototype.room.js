@@ -116,14 +116,16 @@ Room.prototype.isMine = function() {
     return this.controller.my;
 };
 
+// this assumes vision in the reserved room
 Room.prototype.isMyReserved = function() {
-	if(isNullOrUndefined(this)) {
+	if(isNullOrUndefined(this) || isNullOrUndefined(this.controller) || isNullOrUndefined(this.controller.reservation)) {
         return false;
     }
-    if(isNullOrUndefined(this.controller)) {
-        return false;
-    }
-    return (this.controller.reservation && this.controller.reservation.username === USERNAME);
+    return this.controller.reservation.username === USERNAME;
+};
+
+Room.prototype.isMineOrMyReserved = function() {
+	return (this.isMine() || this.isMyReserved());
 };
 
 Room.prototype.registerLabs = function() {
