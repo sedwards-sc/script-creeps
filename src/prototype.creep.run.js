@@ -1380,7 +1380,11 @@ Creep.prototype.runContainerMiner = function() {
 		this.harvest(source);
 	} else {
 		if(container.hits < container.hitsMax) {
-			this.repair(container);
+		    if(this.hasLoad()) {
+			    this.repair(container);
+		    } else {
+		        this.withdraw(container, RESOURCE_ENERGY);
+		    }
 		}
 	}
 };
@@ -1588,9 +1592,10 @@ Creep.prototype.runRemoteCart = function() {
 		} else {
 			this.blindMoveTo(homeStorage);
 		}
+		return;
 	}
 
-	let withinRoom = this.pos.roomName === myFlag.pos.roomName;
+	let withinRoom = this.pos.roomName === this.myFlag.pos.roomName;
 	if(!withinRoom) {
 		this.blindMoveTo(this.myFlag);
 		return;
@@ -1599,10 +1604,10 @@ Creep.prototype.runRemoteCart = function() {
 	// in the remote room
 
 	let findSource = () => {
-		let potentialSource = this.myFlag.pos.findClosestByRange(FIND_SOURCES);
+		return this.myFlag.pos.findClosestByRange(FIND_SOURCES);
 	};
 	let forgetSource = (s) => {
-		return;
+		return false;
 	};
 	let source = this.rememberStructure(findSource, forgetSource, 'sourceStructureId', true);
 	if(!source) {
@@ -1619,15 +1624,18 @@ Creep.prototype.runRemoteCart = function() {
 
 	let targets = this.room.find(FIND_DROPPED_ENERGY, {
 			filter: (pile) => {
-				return (pile.resourceType === RESOURCE_ENERGY && pile.energy >= 50);
+				return (pile.resourceType === RESOURCE_ENERGY && pile.energy >= 50 && this.pos.getRangeTo(pile) <= 3);
 			}
 	});
 
-	if(!targets) {
-		targets = this.room.findStructures(STRUCTURE_CONTAINER);
+	if(!isArrayWithContents(targets)) {
+		let containers = this.room.findStructures(STRUCTURE_CONTAINER);
+		targets = _.filter(containers, (c) => {
+		    return (c.store.energy >= this.carryCapacity && this.pos.getRangeTo(c) <= 3);
+		});
 	}
 
-	if(targets) {
+	if(isArrayWithContents(targets)) {
 		let target = this.pos.findClosestByRange(targets);
 		if(this.pos.isNearTo(target)) {
 			this.takeResource(target, RESOURCE_ENERGY);
@@ -2965,11 +2973,14 @@ Creep.prototype.runPaver = function() {
 				}
 		});
 
-		if(!targets) {
-			targets = this.room.findStructures(STRUCTURE_CONTAINER);
-		}
+		if(!isArrayWithContents(targets)) {
+        	let containers = this.room.findStructures(STRUCTURE_CONTAINER);
+        	targets = _.filter(containers, (c) => {
+        	    return c.store.energy >= this.carryCapacity;
+        	});
+        }
 
-		if(targets) {
+		if(isArrayWithContents(targets)) {
 			let target = this.pos.findClosestByRange(targets);
 			if(this.pos.isNearTo(target)) {
 				this.takeResource(target, RESOURCE_ENERGY);
