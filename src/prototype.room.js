@@ -5,7 +5,7 @@
 
 Room.prototype.toString = function(htmlLink = true) {
 	if(htmlLink) {
-		return `[${roomLink(this)}]`;
+		return `[${roomLink(this, this.name)}]`;
 	}
 	return `[${this.name}]`;
 };
