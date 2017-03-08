@@ -14,3 +14,5 @@ global.ROOMTYPE_ALLEY = -1604;
 global.ALLIES = {
     "Adimus": true,
 };
+
+global.USERNAME = _.first(_.toArray(Game.structures)).owner.username;

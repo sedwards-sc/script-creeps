@@ -116,6 +116,16 @@ Room.prototype.isMine = function() {
     return this.controller.my;
 };
 
+Room.prototype.isMyReserved = function() {
+	if(isNullOrUndefined(this)) {
+        return false;
+    }
+    if(isNullOrUndefined(this.controller)) {
+        return false;
+    }
+    return (this.controller.reservation && this.controller.reservation.username === USERNAME);
+};
+
 Room.prototype.registerLabs = function() {
 	Logger.log(`Registering labs for ${this}`, 3);
 
