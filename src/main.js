@@ -425,7 +425,7 @@ module.exports.loop = function () {
 	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
 	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
 	    		        if(currentFlagCreeps.length < 1) {
-							let curCreepBody = [CARRY,CARRY,WORK,MOVE,MOVE,MOVE];
+							let curCreepBody = [CARRY,CARRY,CARRY,WORK,MOVE,MOVE];
 							if(Game.flags[curFlagName].memory.bodyParts) {
 								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
 							}
@@ -891,7 +891,7 @@ function defendRoom(roomName) {
 
 		let damagedContainersAndRoads = Game.rooms[roomName].find(FIND_STRUCTURES, {
 				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_ROAD) && structure.hits < structure.hitsMax;
+					return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_ROAD) && structure.hits < structure.hitsMax * 0.5;
 				}
 		});
 		let sortedDamagedContainersAndRoads = _.sortBy(damagedContainersAndRoads, function(damagedContainerOrRoad) { return damagedContainerOrRoad.hits; });
