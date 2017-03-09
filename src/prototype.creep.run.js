@@ -3008,7 +3008,7 @@ Creep.prototype.runPaver = function() {
 			this.memory.hasLoad = this.carry.energy === this.carryCapacity;
 			this.idleOffRoad(myFlag);
 		}
-		this.blindMoveTo(myFlag);
+		//this.blindMoveTo(myFlag);
 		return;
 	}
 
