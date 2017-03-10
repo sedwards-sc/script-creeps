@@ -2945,8 +2945,10 @@ Creep.prototype.runPaver = function() {
 		}
     }
 
-	// let fleeing = paver.fleeHostiles();
-	// if (fleeing) return; // early
+	let fleeing = this.fleeHostiles();
+	if(fleeing) {
+		return; // early
+	}
 
 	let withinRoom = this.pos.roomName === myFlag.pos.roomName;
 	if(!withinRoom) {

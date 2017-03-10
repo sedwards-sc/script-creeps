@@ -549,3 +549,68 @@ Creep.prototype.loadFlag = function() {
 		}
     }
 };
+
+Creep.prototype.fleeHostiles = function(pathFinding) {
+	if(!this.fleeObjects) {
+		let lairs = this.room.findStructures(STRUCTURE_KEEPER_LAIR);
+		let fleeObjects = lairs.length > 0 ? this.room.hostilesAndLairs : this.room.hostiles;
+
+		this.fleeObjects = _.filter(fleeObjects, (c) => {
+			if(c instanceof Creep) {
+				return _.find(c.body, (part) => {
+						return part.type === ATTACK || part.type === RANGED_ATTACK;
+					}) !== null;
+			} else {
+				return true;
+			}
+		});
+	}
+
+	if(this.fleeObjects.length === 0) {
+		return false;
+	}
+
+	let closest = this.pos.findClosestByRange(this.fleeObjects);
+	if(closest) {
+		let range = this.pos.getRangeTo(closest);
+		if(range < 3 && this.carry.energy > 0 && closest instanceof Creep) {
+			this.drop(RESOURCE_ENERGY);
+		}
+
+		let fleeRange = closest.owner.username === "Source Keeper" ? 5 : 8;
+
+		if(range < fleeRange) {
+			if(pathFinding) {
+				this.fleeByPath(closest);
+			} else {
+				let fleePosition = this.pos.bestFleePosition(closest);
+				if(fleePosition) {
+					this.move(this.pos.getDirectionTo(fleePosition));
+				}
+			}
+			return true;
+		}
+	}
+	return false;
+};
+
+Creep.prototype.fleeByPath = function(roomObject) {
+	let avoidPositions = _.map(this.pos.findInRange(this.room.hostiles, 5), (c) => { return {pos: c.pos, range: 10 }; });
+
+	let ret = PathFinder.search(this.pos, avoidPositions, {
+		flee: true,
+		maxRooms: 1,
+		roomCallback: (roomName) => {
+			if(roomName !== this.room.name) {
+				return;
+			}
+			if(!this.room.structureMatrix) {
+				let matrix = new PathFinder.CostMatrix();
+				addStructuresToMatrix(matrix, this.room);
+				this.room.structureMatrix = matrix;
+			}
+			return this.room.structureMatrix;
+		}
+	});
+	return this.move(this.pos.getDirectionTo(ret.path[0]));
+};

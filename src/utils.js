@@ -237,6 +237,58 @@ function strangerDanger(username, roomName) {
 	}
 }
 
+function addStructuresToMatrix(matrix, room, roadCost = 1) {
+	room.find(FIND_STRUCTURES).forEach(function(structure) {
+		if(structure instanceof StructureRampart) {
+			if(!structure.my) {
+				matrix.set(structure.pos.x, structure.pos.y, 0xff);
+			}
+		} else if(structure instanceof StructureRoad) {
+			// Favor roads over plain tiles
+			matrix.set(structure.pos.x, structure.pos.y, roadCost);
+		} else if(structure.structureType !== STRUCTURE_CONTAINER) {
+			// Can't walk through non-walkable buildings
+			matrix.set(structure.pos.x, structure.pos.y, 0xff);
+		}
+	});
+	return matrix;
+}
+
+function addCreepsToMatrix(matrix, room, addFriendly = true, addHostile = true) {
+	room.find(FIND_CREEPS).forEach((creep) => {
+		if(!creep.owner) {
+			if(addHostile) {
+				matrix.set(creep.pos.x, creep.pos.y, 0xff);
+			}
+		} else if(ALLIES[creep.owner.username]) {
+			if(addFriendly) {
+				matrix.set(creep.pos.x, creep.pos.y, 0xff);
+			}
+		} else {
+			if(addHostile) {
+				matrix.set(creep.pos.x, creep.pos.y, 0xff);
+			}
+		}
+	});
+	return matrix;
+}
+
+function addTerrainToMatrix(matrix, roomName) {
+	for(let x = 0; x < 50; x++) {
+		for(let y = 0; y < 50; y++) {
+			let terrain = Game.map.getTerrainAt(x, y, roomName);
+			if(terrain === "wall") {
+				matrix.set(x, y, 0xff);
+			} else if(terrain === "swamp") {
+				matrix.set(x, y, 5);
+			} else {
+				matrix.set(x, y, 1);
+			}
+		}
+	}
+	return;
+}
+
 function populateUtils(g) {
     g.undefToZero = undefToZero;
     g.isNullOrUndefined = isNullOrUndefined;
@@ -252,6 +304,9 @@ function populateUtils(g) {
 	g.clampDirection = clampDirection;
 	g.checkEnemy = checkEnemy;
 	g.strangerDanger = strangerDanger;
+	g.addStructuresToMatrix = addStructuresToMatrix;
+	g.addCreepsToMatrix = addCreepsToMatrix;
+	g.addTerrainToMatrix = addTerrainToMatrix;
 }
 
 exports.populateUtils = populateUtils;

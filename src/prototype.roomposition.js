@@ -103,10 +103,94 @@ RoomPosition.prototype.openAdjacentSpots = function(ignoreCreeps) {
 	for(let i = 1; i <= 8; i++) {
 		let testPosition = this.getPositionAtDirection(i);
 
-		if (testPosition.isPassible(ignoreCreeps)) {
+		if(testPosition.isPassible(ignoreCreeps)) {
 			// passed all tests
 			positions.push(testPosition);
 		}
 	}
 	return positions;
+};
+
+RoomPosition.prototype.getFleeOptions = function(roomObject) {
+	let fleePositions = [];
+	let currentRange = this.getRangeTo(roomObject);
+
+	for(let i = 1; i <= 8; i++) {
+		let fleePosition = this.getPositionAtDirection(i);
+		if(fleePosition.x > 0 && fleePosition.x < 49 && fleePosition.y > 0 && fleePosition.y < 49) {
+			let rangeToHostile = fleePosition.getRangeTo(roomObject);
+			if(rangeToHostile > 0) {
+				if(rangeToHostile < currentRange) {
+					fleePosition.veryDangerous = true;
+				} else if(rangeToHostile === currentRange) {
+					fleePosition.dangerous = true;
+				}
+				fleePositions.push(fleePosition);
+			}
+		}
+	}
+
+	return fleePositions;
+};
+
+RoomPosition.prototype.bestFleePosition = function(hostile, ignoreRoads = false, swampRat = false) {
+	let options = [];
+
+	let fleeOptions = this.getFleeOptions(hostile);
+	for(let i = 0; i < fleeOptions.length; i++) {
+		let option = fleeOptions[i];
+		let terrain = option.lookFor(LOOK_TERRAIN)[0];
+		if(terrain !== "wall") {
+			let creepsInTheWay = option.lookFor(LOOK_CREEPS);
+			if(creepsInTheWay.length === 0) {
+				let structures = option.lookFor(LOOK_STRUCTURES);
+				let hasRoad = false;
+				let impassible = false;
+				for(let structure of structures) {
+					if(_.includes(OBSTACLE_OBJECT_TYPES, structure.structureType)) {
+						// can't go through it
+						impassible = true;
+						break;
+					}
+					if(structure.structureType === STRUCTURE_ROAD) {
+						hasRoad = true;
+					}
+				}
+
+				if(!impassible) {
+					let preference = 0;
+
+					if(option.dangerous) {
+						preference += 10;
+					} else if(option.veryDangerous) {
+						preference += 20;
+					}
+
+					if(hasRoad) {
+						if(ignoreRoads) {
+							preference += 2;
+						} else {
+							preference += 1;
+						}
+					} else if(terrain === "plain") {
+						preference += 2;
+					} else if(terrain === "swamp") {
+						if(swampRat) {
+							preference += 1;
+						} else {
+							preference += 5;
+						}
+					}
+
+					options.push({position: option, preference: preference});
+				}
+			}
+		}
+	}
+
+	if(options.length > 0) {
+		options = _(options).shuffle().sortBy("preference").value();
+
+		return options[0].position;
+	}
 };
