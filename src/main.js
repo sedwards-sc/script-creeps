@@ -48,6 +48,7 @@ module.exports.loop = function () {
 		// create cache for this tick
 		Game.cache = {
 			structures: {},
+			creeps: {},
 			hostiles: {},
 			hostilesAndLairs: {},
 			mineralCount: {},

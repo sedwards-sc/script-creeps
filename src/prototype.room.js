@@ -437,6 +437,17 @@ Room.prototype.findStructures = function(structureType) {
     return Game.cache.structures[this.name][structureType] || [];
 };
 
+/**
+ * Returns array of creeps, caching results on a per-tick basis
+ * @returns {Creep[]}
+ */
+Room.prototype.findCreeps = function() {
+    if(!Game.cache.creeps[this.name]) {
+        Game.cache.creeps[this.name] = this.find(FIND_CREEPS);
+    }
+    return Game.cache.creeps[this.name] || [];
+};
+
 Object.defineProperty(Room.prototype, "hostiles", {
 	get: function myProperty() {
 		if(!Game.cache.hostiles[this.name]) {
