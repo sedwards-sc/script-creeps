@@ -873,44 +873,36 @@ function defendRoom(roomName) {
 		if(username !== 'Invader') {
         	Game.notify(`User ${username} spotted in room ${roomName} at ${timeLink(roomName, gameTime)}`);
 		}
-		let towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
+		let towers = Game.rooms[roomName].findStructures(STRUCTURE_TOWER);
         towers.forEach(tower => tower.attack(hostiles[0]));
     } else {
-		let ramparts = Game.rooms[roomName].find(FIND_STRUCTURES, {
-				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_RAMPART) && structure.hits < 50000;
-				}
-		});
-		let sortedRamparts = _.sortBy(ramparts, function(rampart) { return rampart.hits; });
+        let repairTargets;
 
-		let walls = Game.rooms[roomName].find(FIND_STRUCTURES, {
-				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_WALL) && structure.hits < 50000;
-				}
-		});
-		let sortedWalls = _.sortBy(walls, function(wall) { return wall.hits; });
+        // check ramparts
+        repairTargets = _.filter(Game.rooms[roomName].findStructures(STRUCTURE_RAMPART), (structure) => structure.hits < 50000);
 
-		let damagedContainersAndRoads = Game.rooms[roomName].find(FIND_STRUCTURES, {
-				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_ROAD) && structure.hits < structure.hitsMax * 0.5;
-				}
-		});
-		let sortedDamagedContainersAndRoads = _.sortBy(damagedContainersAndRoads, function(damagedContainerOrRoad) { return damagedContainerOrRoad.hits; });
-
-		//var towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_TOWER}});
-		let towers = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {
-				filter: (tower) => {
-					return (tower.structureType == STRUCTURE_TOWER) && tower.energy > 400;
-				}
-		});
-
-		if(sortedRamparts.length >= 1) {
-			towers.forEach(tower => tower.repair(sortedRamparts[0]));
-		} else if(sortedWalls.length >= 1) {
-			towers.forEach(tower => tower.repair(sortedWalls[0]));
-		} else if(sortedDamagedContainersAndRoads.length >= 1) {
-			towers.forEach(tower => tower.repair(sortedDamagedContainersAndRoads[0]));
+		// check walls
+		if(!isArrayWithContents(repairTargets)) {
+		    repairTargets = _.filter(Game.rooms[roomName].findStructures(STRUCTURE_WALL), (structure) => structure.hits < 50000);
 		}
+
+		// check containers and roads
+		if(!isArrayWithContents(repairTargets)) {
+		    repairTargets = _.filter(Game.rooms[roomName].findStructures(STRUCTURE_CONTAINER).concat(Game.rooms[roomName].findStructures(STRUCTURE_ROAD)), (structure) => structure.hits < structure.hitsMax * 0.5);
+		}
+
+        if(!isArrayWithContents(repairTargets)) {
+            // nothing to repair
+		    return;
+        }
+
+        let topRepairTarget = _.sortBy(repairTargets, (structure) => structure.hits)[0];
+
+	    let towers = _.filter(Game.rooms[roomName].findStructures(STRUCTURE_TOWER), (structure) => structure.energy > TOWER_RESERVE_ENERGY);
+
+	    if(isArrayWithContents(towers)) {
+	        towers.forEach((tower) => tower.repair(topRepairTarget));
+	    }
 	}
 }
 
