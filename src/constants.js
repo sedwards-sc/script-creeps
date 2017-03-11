@@ -3,8 +3,6 @@
  * constants
  */
 
-global.TEST_CONSTANT = 28;
-
 global.DESTINATION_REACHED = -1501;
 global.ROOMTYPE_SOURCEKEEPER = -1601;
 global.ROOMTYPE_CORE = -1602;
