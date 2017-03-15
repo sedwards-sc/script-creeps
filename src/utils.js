@@ -225,9 +225,9 @@ function strangerDanger(username, roomName) {
 			roomName: roomName
 		};
 		let msgText = `STRANGER DANGER: one of ${username}'s creeps seen in ${Game.rooms[roomName]} at ${Game.time}`;
-		let severity = 4;
+		let severity = 5;
 		if(!Game.rooms[roomName].isMine()) {
-			severity = 5;
+			severity = 4;
 		}
 		Logger.log(msgText, severity);
 		Memory.strangerDanger[username].push(report);
