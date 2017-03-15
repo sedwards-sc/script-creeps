@@ -26,7 +26,7 @@ Logger.log = function (message, severity = 2) {
 	}
 
 	if(severity >= Memory.logLevel) {
-		console.log('<font color="' + this.colors[severity] + '" severity="' + severity + '">' + message + "</font>");
+		console.log('<font color="' + this.colors[severity] + '" severity="' + severity + '" tick="' + Game.time + '">' + message + "</font>");
 	}
 
 	if(typeof Memory.notifyLevel === 'undefined') {
@@ -34,7 +34,7 @@ Logger.log = function (message, severity = 2) {
 	}
 
 	if(severity >= Memory.notifyLevel) {
-		Game.notify('<font color="' + this.colors[severity] + '" severity="' + severity + '">' + message + "</font>");
+		Game.notify('<font color="' + this.colors[severity] + '" severity="' + severity + '" tick="' + Game.time + '">' + message + "</font>");
 	}
 };
 
