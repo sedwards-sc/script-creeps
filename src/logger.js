@@ -1,5 +1,6 @@
 /* jshint esversion: 6 */
 // example source from: https://github.com/screepers/screeps_console/blob/master/docs/ExampleLogger.js
+
 var Logger = {};
 
 Logger.colors = {
