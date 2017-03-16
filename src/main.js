@@ -429,6 +429,14 @@ module.exports.loop = function () {
 							let curCreepBody = [CARRY,CARRY,CARRY,WORK,MOVE,MOVE];
 							if(Game.flags[curFlagName].memory.bodyParts) {
 								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+							} else if(Game.flags[curFlagName].room) {
+								let roads = Game.flags[curFlagName].room.findStructures(STRUCTURE_ROAD);
+								let sum = 0;
+								for(let road of roads) {
+									sum += road.hitsMax;
+								}
+								let potency = Math.max(Math.ceil(sum / 500000), 1);
+								curCreepBody = workerBody(3 * potency, potency, 2 * potency);
 							}
 							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
 	    			        break;

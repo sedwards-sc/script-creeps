@@ -289,6 +289,20 @@ function addTerrainToMatrix(matrix, roomName) {
 	return;
 }
 
+function workerBody(carryCount, workCount, moveCount) {
+	let body = [];
+	for (let i = 0; i < carryCount; i++) {
+		body.push(CARRY);
+	}
+	for (let i = 0; i < workCount; i++) {
+		body.push(WORK);
+	}
+	for (let i = 0; i < moveCount; i++) {
+		body.push(MOVE);
+	}
+	return body;
+}
+
 function populateUtils(g) {
     g.undefToZero = undefToZero;
     g.isNullOrUndefined = isNullOrUndefined;
@@ -307,6 +321,7 @@ function populateUtils(g) {
 	g.addStructuresToMatrix = addStructuresToMatrix;
 	g.addCreepsToMatrix = addCreepsToMatrix;
 	g.addTerrainToMatrix = addTerrainToMatrix;
+	g.workerBody = workerBody;
 }
 
 exports.populateUtils = populateUtils;
