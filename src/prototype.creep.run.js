@@ -214,7 +214,7 @@ Creep.prototype.runCarrier2 = function() {
 	};
 	let forget = (s) => {
 		if(s.structureType === STRUCTURE_TOWER) {
-			return s.energy > s.energyCapacity * 0.90;
+			return s.energy > s.energyCapacity * 0.95;
 		}
 		return s.energy === s.energyCapacity;
 	};
