@@ -209,11 +209,16 @@ Creep.prototype.runCarrier2 = function() {
 	}
 
 	// I'm in the room and I have energy
-	let findRoad = () => {
+	let findTarget = () => {
 		return this.getRefillTarget();
 	};
-	let forget = (s) => s.energy === s.energyCapacity;
-	let target = this.rememberStructure(findRoad, forget);
+	let forget = (s) => {
+		if(s.structureType === STRUCTURE_TOWER) {
+			return s.energy > s.energyCapacity * 0.90;
+		}
+		return s.energy === s.energyCapacity;
+	};
+	let target = this.rememberStructure(findTarget, forget);
 	if(!target) {
 		this.say('bored');
 
