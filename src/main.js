@@ -588,6 +588,33 @@ module.exports.loop = function () {
     			}
 		    }
 
+
+
+			// for sentinels
+			if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
+				let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
+				let roomCreepQuotas = Game.rooms[roomName].memory.creepQuotas;
+				if((roomCreepQuotas.sentinel) && (undefToZero(roomCreepRoster.sentinel) < roomCreepQuotas.sentinel.length)) {
+					let curRole = 'sentinel';
+	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+						if(Game.flags[curFlagName].room && Game.flags[curFlagName].room.hostiles.length > 0) {
+							let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+		    		        if(currentFlagCreeps.length < 1) {
+								let curCreepBody = [TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,HEAL,HEAL,HEAL];
+								if(Game.flags[curFlagName].memory.bodyParts) {
+									curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+								}
+								mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+		    			        break;
+		    		        }
+						}
+	    		    }
+				}
+			}
+
+
+
 			// for dismantlers
 			let numMedics = 0;
 

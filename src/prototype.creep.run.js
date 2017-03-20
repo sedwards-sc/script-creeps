@@ -64,6 +64,8 @@ Creep.prototype.run = function() {
 		this.runRemoteTransporter();
 	} else if(this.memory.role === 'paver') {
 		this.runPaver();
+	} else if(this.memory.role === 'sentinel') {
+		this.runSentinel();
     } else {
         this.errorLog('no role function', ERR_NOT_FOUND, 4);
     }
@@ -3036,4 +3038,68 @@ Creep.prototype.runPaver = function() {
 	// and i'm in range
 	this.repair(target);
 	this.yieldRoad(target);
+};
+
+Creep.prototype.runSentinel = function() {
+	let flagLoaded = this.loadFlag();
+	if(!flagLoaded) {
+		return;
+	}
+
+	// flag is loaded
+
+	let withinRoom = this.pos.roomName === this.myFlag.pos.roomName;
+	if(!withinRoom) {
+		this.blindMoveTo(this.myFlag);
+		return;
+	}
+
+	// inside room to watch over
+
+	if(this.healingSelf(this.hitsMax / 2)) {
+		 this.heal(this);
+		 return;
+	}
+
+	// have enough hit points for battle
+
+	let attackTarget;
+	let attacking = false;
+	if(this.room.hostiles.length > 0) {
+		attackTarget = this.pos.findClosestByRange(this.room.hostiles);
+		if(this.pos.isNearTo(attackTarget)) {
+			this.attack(attackTarget);
+			attacking = true;
+		} else {
+			this.blindMoveTo(attackTarget);
+		}
+	} else {
+		// heal to max if no hostiles
+		if(this.healingSelf(this.hitsMax)) {
+			 this.heal(this);
+			 return;
+		}
+	}
+
+	if(!attacking) {
+		// heal self and others on route
+		let healTarget = this.pos.findClosestByRange(FIND_MY_CREEPS, {
+			filter: function(c) {
+				return c.hits < c.hitsMax;
+			}
+		});
+
+		if(this.pos.isNearTo(healTarget)) {
+			this.heal(healTarget);
+		} else {
+			this.rangedHeal(healTarget);
+			if(!attackTarget) {
+				this.blindMoveTo(healTarget);
+			}
+		}
+
+		if(!attackTarget && !healTarget) {
+			this.blindMoveTo(this.myFlag);
+		}
+	}
 };

@@ -230,6 +230,15 @@ Creep.prototype.hasLoad = function() {
 	return this.memory.hasLoad;
 };
 
+Creep.prototype.healingSelf = function(threshold = 100) {
+	if(this.memory.healingSelf && this.hits === this.hitsMax) {
+		this.memory.healingSelf = false;
+	} else if(!this.memory.healingSelf && this.hits < threshold) {
+		this.memory.healingSelf = true;
+	}
+	return this.memory.hasLoad;
+};
+
 /**
  * General-purpose cpu-efficient movement function that uses ignoreCreeps: true, a high reusePath value and stuck-detection
  * @param destination
