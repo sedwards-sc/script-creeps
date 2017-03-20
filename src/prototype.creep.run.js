@@ -3089,12 +3089,14 @@ Creep.prototype.runSentinel = function() {
 			}
 		});
 
-		if(this.pos.isNearTo(healTarget)) {
-			this.heal(healTarget);
-		} else {
-			this.rangedHeal(healTarget);
-			if(!attackTarget) {
-				this.blindMoveTo(healTarget);
+		if(healTarget) {
+			if(this.pos.isNearTo(healTarget)) {
+				this.heal(healTarget);
+			} else {
+				this.rangedHeal(healTarget);
+				if(!attackTarget) {
+					this.blindMoveTo(healTarget);
+				}
 			}
 		}
 
