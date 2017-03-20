@@ -606,6 +606,7 @@ module.exports.loop = function () {
 									curCreepBody = Game.flags[curFlagName].memory.bodyParts;
 								}
 								mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+								Logger.log(`sentinel activated for flag ${curFlagName}`, 5);
 		    			        break;
 		    		        }
 						}
