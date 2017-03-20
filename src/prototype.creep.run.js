@@ -3101,7 +3101,9 @@ Creep.prototype.runSentinel = function() {
 		}
 
 		if(!attackTarget && !healTarget) {
-			this.blindMoveTo(this.myFlag);
+			if(!this.pos.isNearTo(this.myFlag)) {
+				this.blindMoveTo(this.myFlag);
+			}
 		}
 	}
 };
