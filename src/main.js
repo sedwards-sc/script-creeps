@@ -830,6 +830,20 @@ module.exports.loop = function () {
 				}
 			}
 
+			// run observer
+			if(isArrayWithContents(curRoom.memory.observeRooms)) {
+				let roomList = curRoom.memory.observerRooms;
+				let observers = curRoom.findStructures(STRUCTURE_OBSERVER);
+				if(isArrayWithContents(observers)) {
+					let observationIndex = Game.time % roomList.length;
+					let roomToObserve = roomList[observationIndex];
+					if(typeof roomToObserve === 'string') {
+						Logger.log(`observing ${Game.rooms[roomToObserve]} from ${curRoom}`, 0);
+						observers[0].observeRoom(roomToObserve);
+					}
+				}
+			}
+
 		}
 
 
