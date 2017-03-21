@@ -3058,6 +3058,7 @@ Creep.prototype.runSentinel = function() {
 
 	if(this.healingSelf(this.hitsMax / 2)) {
 		 this.heal(this);
+		 this.fleeHostiles();
 		 return;
 	}
 
