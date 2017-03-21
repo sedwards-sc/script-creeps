@@ -133,6 +133,15 @@ module.exports.loop = function () {
 		for(let roomName in Game.rooms) {
 			let curRoom = Game.rooms[roomName];
 
+			if(curRoom.roomType === ROOMTYPE_ALLEY) {
+				// find and report on power banks
+				let powerBanks = curRoom.findStructures(STRUCTURE_POWER_BANK);
+				if(isArrayWithContents(powerBanks)) {
+					Logger.highlight(JSON.stringify(powerBanks[0]));
+				}
+				continue;
+			}
+
 			// find room spawns
 			let roomSpawns = Game.rooms[roomName].find(FIND_MY_SPAWNS);
 
