@@ -236,7 +236,7 @@ Creep.prototype.healingSelf = function(threshold = 100) {
 	} else if(!this.memory.healingSelf && this.hits < threshold) {
 		this.memory.healingSelf = true;
 	}
-	return this.memory.hasLoad;
+	return this.memory.healingSelf;
 };
 
 /**
