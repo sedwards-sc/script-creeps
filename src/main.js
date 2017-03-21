@@ -838,8 +838,8 @@ module.exports.loop = function () {
 					let observationIndex = Game.time % roomList.length;
 					let roomToObserve = roomList[observationIndex];
 					if(typeof roomToObserve === 'string') {
-						Logger.log(`observing ${Game.rooms[roomToObserve]} from ${curRoom}`, 0);
-						observers[0].observeRoom(roomToObserve);
+						let observeReturn = observers[0].observeRoom(roomToObserve);
+						Logger.log(`observing ${roomToObserve} from ${curRoom} (${errorCodeToText(observeReturn)})`, 0);
 					}
 				}
 			}
