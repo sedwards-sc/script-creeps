@@ -832,7 +832,7 @@ module.exports.loop = function () {
 
 			// run observer
 			if(isArrayWithContents(curRoom.memory.observeRooms)) {
-				let roomList = curRoom.memory.observerRooms;
+				let roomList = curRoom.memory.observeRooms;
 				let observers = curRoom.findStructures(STRUCTURE_OBSERVER);
 				if(isArrayWithContents(observers)) {
 					let observationIndex = Game.time % roomList.length;
