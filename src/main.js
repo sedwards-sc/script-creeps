@@ -726,7 +726,7 @@ module.exports.loop = function () {
 
 
 			// run links
-			let links = Game.rooms[roomName].find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_LINK}});
+			let links = Game.rooms[roomName].findStructures(STRUCTURE_LINK);
 			links.forEach(link => link.run());
 
 			// transfer energy from links to any creeps except carriers, miners, and various special roles
