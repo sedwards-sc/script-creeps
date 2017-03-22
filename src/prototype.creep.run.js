@@ -3212,9 +3212,18 @@ Creep.prototype.runContainerBuilder = function() {
 	let forgetConstructionSite = (s) => s.progress === s.progressTotal;
 	let target = this.rememberStructure(findConstructionSite, forgetConstructionSite, 'constructionId');
 
-	if(!target) {
+	if(!target && this.room.isMine()) {
 		target = this.room.controller;
 	}
+
+	if(!target) {
+		this.memory.hasLoad = this.carry.energy === this.carryCapacity;
+		this.idleOffRoad(myFlag);
+		this.say('idle');
+		return;
+	}
+
+	// I have a target
 
 	let range = this.pos.getRangeTo(target);
 	if(range > 3) {
