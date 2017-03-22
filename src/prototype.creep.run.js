@@ -1320,6 +1320,11 @@ Creep.prototype.runContainerMiner = function() {
 
 	// flag is loaded
 
+	let fleeing = this.fleeHostiles();
+	if(fleeing) {
+		return; // early
+	}
+
 	if(!this.pos.isEqualTo(this.myFlag)) {
 		this.blindMoveTo(this.myFlag);
 		return;
@@ -1585,6 +1590,11 @@ Creep.prototype.runRemoteCart = function() {
 	}
 
 	// flag is loaded
+
+	let fleeing = this.fleeHostiles();
+	if(fleeing) {
+		return; // early
+	}
 
 	let hasLoad = this.hasLoad();
 	if(hasLoad) {
@@ -1969,6 +1979,11 @@ Creep.prototype.runReserver2 = function() {
 	        return;
 		}
     }
+
+    let fleeing = this.fleeHostiles();
+	if(fleeing) {
+		return; // early
+	}
 
 	if(this.pos.isEqualTo(myFlag)) {
 		let reserveReturn = this.reserveController(this.room.controller);

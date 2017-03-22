@@ -137,7 +137,10 @@ module.exports.loop = function () {
 				// find and report on power banks
 				let powerBanks = curRoom.findStructures(STRUCTURE_POWER_BANK);
 				if(isArrayWithContents(powerBanks)) {
-					Logger.highlight(JSON.stringify(powerBanks[0]));
+				    let powerBank = powerBanks[0];
+				    if(powerBank.ticksToDecay > 3500 && powerBank.hits === powerBank.hitsMax) {
+					    Logger.highlight(`power bank in ${curRoom} - power: ${powerBank.power}, ticksToDecay: ${powerBank.ticksToDecay}`);
+				    }
 				}
 				continue;
 			}
@@ -419,7 +422,7 @@ module.exports.loop = function () {
 	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
 	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
 	    		        if(currentFlagCreeps.length < 1) {
-							let curCreepBody = [CLAIM,CLAIM,MOVE,MOVE,MOVE,ATTACK];
+							let curCreepBody = [CLAIM,CLAIM,MOVE,MOVE];
 							if(Game.flags[curFlagName].memory.bodyParts) {
 								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
 							}
@@ -615,7 +618,7 @@ module.exports.loop = function () {
 									curCreepBody = Game.flags[curFlagName].memory.bodyParts;
 								}
 								mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-								Logger.log(`sentinel activated for flag ${curFlagName}`, 5);
+								Logger.log(`sentinel activated for flag ${curFlagName}`, 4);
 		    			        break;
 		    		        }
 						}
