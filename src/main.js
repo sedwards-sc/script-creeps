@@ -511,6 +511,21 @@ module.exports.loop = function () {
 	    			        break;
 	    		        }
 	    		    }
+				} else if((roomCreepQuotas.containerBuilder) && (undefToZero(roomCreepRoster.containerBuilder) < roomCreepQuotas.containerBuilder.length)) {
+					let curRole = 'containerBuilder';
+	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+	    		        if(currentFlagCreeps.length < 1) {
+							let curCreepBody = currentBody;
+							//let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY];
+							if(Game.flags[curFlagName].memory.bodyParts) {
+								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+							}
+							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+	    			        break;
+	    		        }
+	    		    }
 	    		} else if(curRoom.memory.shouldMine === true && undefToZero(roomCreepRoster.mineralHarvester) < 1) {
 	    		    mainSpawn.spawnMineralHarvester();
 	    		} else if((roomCreepQuotas.scout) && (undefToZero(roomCreepRoster.scout) < roomCreepQuotas.scout.length)) {

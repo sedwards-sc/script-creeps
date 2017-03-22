@@ -66,6 +66,8 @@ Creep.prototype.run = function() {
 		this.runPaver();
 	} else if(this.memory.role === 'sentinel') {
 		this.runSentinel();
+	} else if(this.memory.role === 'containerBuilder') {
+		this.runContainerBuilder();
     } else {
         this.errorLog('no role function', ERR_NOT_FOUND, 4);
     }
@@ -3145,4 +3147,95 @@ Creep.prototype.runSentinel = function() {
 			}
 		}
 	}
+};
+
+Creep.prototype.runContainerBuilder = function() {
+	let flagLoaded = this.loadFlag();
+	if(!flagLoaded) {
+		return;
+	}
+
+	// flag is loaded
+
+	let fleeing = this.fleeHostiles();
+	if(fleeing) {
+		return; // early
+	}
+
+	let withinRoom = this.pos.roomName === this.myFlag.pos.roomName;
+	if(!withinRoom) {
+		this.travelTo(this.myFlag, { 'useFindRoute': true });
+		return;
+	}
+
+	// I'm in the room
+
+	let hasLoad = this.hasLoad();
+	if(!hasLoad) {
+		// TODO implement energy procurement better
+		if(this.room.storage && this.room.storage.store.energy > this.carryCapacity) {
+			if(this.withdraw(this.room.storage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+				this.blindMoveTo(this.room.storage);
+				return;
+			}
+		}
+
+		let targets = this.room.find(FIND_DROPPED_ENERGY, {
+				filter: (pile) => {
+					return (pile.resourceType === RESOURCE_ENERGY && pile.energy >= 50);
+				}
+		});
+
+		if(!isArrayWithContents(targets)) {
+			let containers = this.room.findStructures(STRUCTURE_CONTAINER);
+			targets = _.filter(containers, (c) => {
+				return c.store.energy >= this.carryCapacity;
+			});
+		}
+
+		if(isArrayWithContents(targets)) {
+			let target = this.pos.findClosestByRange(targets);
+			if(this.pos.isNearTo(target)) {
+				this.takeResource(target, RESOURCE_ENERGY);
+			} else {
+				this.blindMoveTo(target);
+			}
+		}
+		return;
+	}
+
+	// I'm in the room and I have energy
+
+	let findConstructionSite = () => {
+		return this.room.find(FIND_CONSTRUCTION_SITES)[0];
+	};
+	let forgetConstructionSite = (s) => s.progress === s.progressTotal;
+	let target = this.rememberStructure(findConstructionSite, forgetConstructionSite, 'constructionId');
+
+	if(!target) {
+		target = this.room.controller;
+	}
+
+	let range = this.pos.getRangeTo(target);
+	if(range > 3) {
+		this.blindMoveTo(target);
+		// repair any damaged road i'm standing on
+		let road = this.pos.lookForStructure(STRUCTURE_ROAD);
+		if(road && road.hits < road.hitsMax - 100) {
+			this.repair(road);
+		}
+		return;
+	}
+
+	// and i'm in range
+
+	if(target instanceof ConstructionSite) {
+		this.build(target);
+	} else if(target instanceof StructureController) {
+		this.upgradeController(target);
+	} else {
+		this.errorLog(`unknown target: ${target}`, ERR_INVALID_TARGET, 5);
+		delete this.memory.constructionId;
+	}
+	this.yieldRoad(target);
 };
