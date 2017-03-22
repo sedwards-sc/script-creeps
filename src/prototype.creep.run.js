@@ -3035,7 +3035,7 @@ Creep.prototype.runPaver = function() {
 			})[0];
 		};
 		let forgetRoadUnderConstruction = (s) => s.progress === s.progressTotal;
-		let target = this.rememberStructure(findRoadUnderConstruction, forgetRoadUnderConstruction, 'constructionId');
+		target = this.rememberStructure(findRoadUnderConstruction, forgetRoadUnderConstruction, 'constructionId');
 	}
 
 	if(!target) {
