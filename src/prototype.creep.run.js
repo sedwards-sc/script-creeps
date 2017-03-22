@@ -3016,11 +3016,26 @@ Creep.prototype.runPaver = function() {
 	}
 
 	// I'm in the room and I have energy
+
 	let findRoad = () => {
 		return _.filter(this.room.findStructures(STRUCTURE_ROAD), (s) => s.hits < s.hitsMax - 1000)[0];
 	};
-	let forget = (s) => s.hits === s.hitsMax;
-	let target = this.rememberStructure(findRoad, forget);
+	let forgetRoad = (s) => s.hits === s.hitsMax;
+	let target = this.rememberStructure(findRoad, forgetRoad, 'roadId');
+
+	if(!target) {
+		// look for construction site roads if there are no roads to repair
+		let findRoadUnderConstruction = () => {
+			return this.room.find(FIND_CONSTRUCTION_SITES, {
+				filter: function(site) {
+					return site.structureType === STRUCTURE_ROAD;
+				}
+			})[0];
+		};
+		let forgetRoadUnderConstruction = (s) => s.progress === s.progressTotal;
+		let target = this.rememberStructure(findRoadUnderConstruction, forgetRoadUnderConstruction, 'constructionId');
+	}
+
 	if(!target) {
 		let repairing = false;
 		/*
@@ -3033,7 +3048,6 @@ Creep.prototype.runPaver = function() {
 			this.idleOffRoad(myFlag);
 			this.say('idle');
 		}
-		//this.blindMoveTo(myFlag);
 		return;
 	}
 
@@ -3051,7 +3065,16 @@ Creep.prototype.runPaver = function() {
 	}
 
 	// and i'm in range
-	this.repair(target);
+
+	if(target instanceof StructureRoad) {
+		this.repair(target);
+	} else if(target instanceof ConstructionSite) {
+		this.build(target);
+	} else {
+		this.errorLog(`unknown target: ${target}`, ERR_INVALID_TARGET, 5);
+		delete this.memory.roadId;
+		delete this.memory.constructionId;
+	}
 	this.yieldRoad(target);
 };
 
