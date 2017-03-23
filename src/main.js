@@ -139,8 +139,19 @@ module.exports.loop = function () {
 				if(isArrayWithContents(powerBanks)) {
 				    let powerBank = powerBanks[0];
 				    if(powerBank.ticksToDecay > 3500 && powerBank.hits === powerBank.hitsMax) {
-					    Logger.highlight(`power bank in ${curRoom} - power: ${powerBank.power}, ticksToDecay: ${powerBank.ticksToDecay}`);
+						let powerBankMsg = `power bank in ${curRoom} - power: ${powerBank.power}, ticksToDecay: ${powerBank.ticksToDecay}`;
+						if(typeof curRoom.memory.powerBank === 'undefined') {
+							Game.notify(powerBankMsg);
+						}
+						Logger.highlight(powerBankMsg);
+						curRoom.memory.powerBank = {
+							'power': powerBank.power,
+							'ticksToDecay': powerBank.ticksToDecay,
+							'time': Game.time
+						};
 				    }
+				} else {
+					delete curRoom.memory.powerBank;
 				}
 				continue;
 			}
