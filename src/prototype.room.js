@@ -37,11 +37,11 @@ Room.prototype.countCreepRoles = function() {
 	for(let curCreepIndex in roomCreeps) {
 		let currentCreepRole = roomCreeps[curCreepIndex].memory.role;
 
-        if((currentCreepRole === 'miner') && (roomCreeps[curCreepIndex].ticksToLive <= 36)) {
+        if((currentCreepRole === 'miner') && (roomCreeps[curCreepIndex].ticksToLive <= 40)) {
             continue;
         }
 
-        if((currentCreepRole === 'linker') && (roomCreeps[curCreepIndex].ticksToLive <= 12)) {
+        if((currentCreepRole === 'linker') && (roomCreeps[curCreepIndex].ticksToLive <= 20)) {
             continue;
         }
 
