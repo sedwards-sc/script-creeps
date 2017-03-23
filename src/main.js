@@ -311,13 +311,19 @@ module.exports.loop = function () {
 	    		        }
 	    		    }
 	    		} else if((roomCreepQuotas.linker) && (undefToZero(roomCreepRoster.linker) < roomCreepQuotas.linker.length)) {
-					for(let curLinkerIndex in roomCreepQuotas.linker) {
-	    		        let curLinkerFlagName = roomCreepQuotas.linker[curLinkerIndex];
-	    		        let currentFlagLinkers = _.filter(roomCreeps, (creep) => creep.memory.flagName === curLinkerFlagName);
-	    		        if((currentFlagLinkers.length < 1) || (currentFlagLinkers[0].ticksToLive <= 12)) {
-	    		            //let newName =
-							mainSpawn.createCreep([CARRY,CARRY,CARRY,CARRY,MOVE], undefined, {spawnRoom: roomName, role: 'linker', flagName: curLinkerFlagName});
-	    			        //console.log('Spawning new linker: ' + newName + ' - ' + curLinkerFlagName);
+					let curRole = 'linker';
+	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+	    		        if(currentFlagCreeps.length < 1) {
+							let curCreepBody = [CARRY,CARRY,CARRY,CARRY,MOVE];
+							if(curRoom.controller.level === 8) {
+								curCreepBody = [CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE];
+							}
+							if(Game.flags[curFlagName].memory.bodyParts) {
+								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+							}
+							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
 	    			        break;
 	    		        }
 	    		    }
