@@ -41,6 +41,12 @@ Room.prototype.countCreepRoles = function() {
             continue;
         }
 
+		if(this.controller.level === 8) {
+			if((currentCreepRole === 'linker') && (roomCreeps[curCreepIndex].ticksToLive <= 35)) {
+	            continue;
+	        }
+		}
+
         if((currentCreepRole === 'linker') && (roomCreeps[curCreepIndex].ticksToLive <= 20)) {
             continue;
         }
