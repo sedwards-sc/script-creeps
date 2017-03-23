@@ -58,7 +58,7 @@ StructureLink.prototype.run = function() {
 		//if(inRangeRefillers.length > 0) {
 		    let transferReturn = this.transferEnergyFirstTimeOnly(transferTarget);
 			if(transferReturn === OK) {
-				this.log('remote link energy transferred to storage/controller link, target: ' + roomLink(transferTarget, transferTarget.structureType), 1);
+				this.log('remote link energy transferred to storage/controller link, target: ' + roomLink(transferTarget, transferTarget.structureType), 0);
 				this.room.memory.transferToStorageCounts = this.room.memory.transferToStorageCounts || {};
 				this.room.memory.transferToStorageCounts[this.id] = this.room.memory.transferToStorageCounts[this.id] || {};
 				this.room.memory.transferToStorageCounts[this.id].success = this.room.memory.transferToStorageCounts[this.id].success || 0;
