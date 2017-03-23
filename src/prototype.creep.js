@@ -490,7 +490,7 @@ Creep.prototype.rememberStructure = function(findStructure, forget, prop = "remS
 			this.memory[prop] = undefined;
 			return this.rememberStructure(findStructure, forget, prop, true);
 		}
-	} else if (Game.time % 10 === 0 || immediate) {
+	} else if (Game.time % 9 === 0 || immediate) {
 		let object = findStructure();
 		if(object) {
 			this.memory[prop] = object.id;

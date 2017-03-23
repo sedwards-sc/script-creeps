@@ -1661,6 +1661,9 @@ Creep.prototype.runRemoteCart = function() {
 		} else {
 			this.blindMoveTo(target);
 		}
+	} else {
+	    this.yieldRoad(source);
+		this.say('waiting');
 	}
 };
 
@@ -3218,7 +3221,7 @@ Creep.prototype.runContainerBuilder = function() {
 
 	if(!target) {
 		this.memory.hasLoad = this.carry.energy === this.carryCapacity;
-		this.idleOffRoad(myFlag);
+		this.idleOffRoad(this.myFlag);
 		this.say('idle');
 		return;
 	}
