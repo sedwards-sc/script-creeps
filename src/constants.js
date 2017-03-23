@@ -16,3 +16,6 @@ global.ALLIES = {
 global.USERNAME = _.first(_.toArray(Game.structures)).owner.username;
 
 global.TOWER_RESERVE_ENERGY = 400;
+
+//global.LINK_TRANSFER_THRESHOLD = LINK_CAPACITY * 0.8
+global.LINK_TRANSFER_THRESHOLD = LINK_CAPACITY * 0.5;
