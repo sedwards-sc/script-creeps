@@ -204,9 +204,31 @@ Creep.prototype.runCarrier2 = function() {
 			if(this.withdraw(this.room.terminal, RESOURCE_ENERGY, transferAmount) === ERR_NOT_IN_RANGE) {
 				this.blindMoveTo(this.room.terminal);
 			}
-		} else {
+		} else if(this.room.storage && this.room.storage.energy > 0) {
 			if(this.withdraw(this.room.storage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
 				this.blindMoveTo(this.room.storage);
+			}
+		} else {
+			let targets = this.room.find(FIND_DROPPED_ENERGY, {
+					filter: (pile) => {
+						return (pile.resourceType === RESOURCE_ENERGY && pile.energy >= 50);
+					}
+			});
+
+			if(!isArrayWithContents(targets)) {
+				let containers = this.room.findStructures(STRUCTURE_CONTAINER);
+				targets = _.filter(containers, (c) => {
+					return c.store.energy >= this.carryCapacity;
+				});
+			}
+
+			if(isArrayWithContents(targets)) {
+				let target = this.pos.findClosestByRange(targets);
+				if(this.pos.isNearTo(target)) {
+					this.takeResource(target, RESOURCE_ENERGY);
+				} else {
+					this.blindMoveTo(target);
+				}
 			}
 		}
 		return;
