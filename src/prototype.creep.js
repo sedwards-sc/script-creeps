@@ -364,7 +364,8 @@ Creep.prototype.yieldRoad = function(target, allowSwamps = true) {
  */
 Creep.prototype.idleOffRoad = function(defaultPoint, maintainDistance = false) {
 	let offRoad = this.pos.lookForStructure(STRUCTURE_ROAD) === undefined;
-	if(offRoad) {
+	let offContainer = this.pos.lookForStructure(STRUCTURE_CONTAINER) === undefined;
+	if(offRoad && offContainer) {
 		return OK;
 	}
 
@@ -385,7 +386,7 @@ Creep.prototype.idleOffRoad = function(defaultPoint, maintainDistance = false) {
 	}
 	let swampPosition;
 	for(let position of positions) {
-		if(position.lookForStructure(STRUCTURE_ROAD)) {
+		if(position.lookForStructure(STRUCTURE_ROAD) || position.lookForStructure(STRUCTURE_CONTAINER)) {
 			continue;
 		}
 		let terrain = position.lookFor(LOOK_TERRAIN)[0];
