@@ -112,7 +112,7 @@ module.exports.loop = function () {
 
 				if(defenders.length < 1) {
 					// find room spawns
-					let roomSpawns = Game.rooms[name].find(FIND_MY_SPAWNS);
+					let roomSpawns = Game.rooms[name].findStructures(STRUCTURE_SPAWN);
 					if(isArrayWithContents(roomSpawns)) {
 						let mainSpawn = roomSpawns[0];
 						if(Game.rooms[name].energyAvailable >= 1610) {
