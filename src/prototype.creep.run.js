@@ -209,6 +209,7 @@ Creep.prototype.runCarrier2 = function() {
 				this.blindMoveTo(this.room.storage);
 			}
 		} else {
+			// get dropped or container energy if storage is empty
 			let targets = this.room.find(FIND_DROPPED_ENERGY, {
 					filter: (pile) => {
 						return (pile.resourceType === RESOURCE_ENERGY && pile.energy >= 50);
