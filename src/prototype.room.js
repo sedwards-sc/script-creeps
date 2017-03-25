@@ -514,3 +514,17 @@ Object.defineProperty(Room.prototype, "roomType", {
 		return this.memory.roomType;
 	}
 });
+
+Room.prototype.drawRoomStats = function() {
+	if(this.storage) {
+		this.visual.text(`Storage Energy Amount: ${undefToZero(this.storage.store.energy)}`, 0, 1);
+		this.visual.text(`Storage Power Amount: ${undefToZero(this.storage.store.power)}`, 0, 2);
+		this.visual.text(`Storage Overall Resource Amount: ${_.sum(this.storage.store)}`, 0, 3);
+	}
+
+	if(this.terminal) {
+		this.visual.text(`Terminal Energy Amount: ${undefToZero(this.terminal.store.energy)}`, 0, 5);
+		this.visual.text(`Terminal Power Amount: ${undefToZero(this.terminal.store.power)}`, 0, 6);
+		this.visual.text(`Terminal Overall Resource Amount: ${_.sum(this.terminal.store)}`, 0, 7);
+	}
+};

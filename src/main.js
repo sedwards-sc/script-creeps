@@ -199,6 +199,8 @@ module.exports.loop = function () {
 				Game.notify(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '% - time: ' + Game.time);
 			}
 
+			curRoom.drawRoomStats();
+
 			// get the roster of creeps for the current room
 			Game.rooms[roomName].countCreepRoles();
 
