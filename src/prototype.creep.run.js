@@ -185,7 +185,6 @@ Creep.prototype.runCarrier = function () {
 };
 
 Creep.prototype.runCarrier2 = function() {
-
 	// let fleeing = paver.fleeHostiles();
 	// if (fleeing) return; // early
 
@@ -204,7 +203,7 @@ Creep.prototype.runCarrier2 = function() {
 			if(this.withdraw(this.room.terminal, RESOURCE_ENERGY, transferAmount) === ERR_NOT_IN_RANGE) {
 				this.blindMoveTo(this.room.terminal);
 			}
-		} else if(this.room.storage && this.room.storage.energy > 0) {
+		} else if(this.room.storage && this.room.storage.store.energy > 0) {
 			if(this.withdraw(this.room.storage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
 				this.blindMoveTo(this.room.storage);
 			}
@@ -3199,12 +3198,14 @@ Creep.prototype.runContainerBuilder = function() {
 	let hasLoad = this.hasLoad();
 	if(!hasLoad) {
 		// TODO implement energy procurement better
+		/* Temporarily disable so that containers get used (mostly remote use anyway)
 		if(this.room.storage && this.room.storage.store.energy > this.carryCapacity) {
 			if(this.withdraw(this.room.storage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
 				this.blindMoveTo(this.room.storage);
 				return;
 			}
 		}
+		*/
 
 		let targets = this.room.find(FIND_DROPPED_ENERGY, {
 				filter: (pile) => {
