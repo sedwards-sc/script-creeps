@@ -86,7 +86,7 @@ Room.prototype.countCreepFlags = function() {
 	for(let curFlagIndex in roomFlags) {
 		let currentFlag = roomFlags[curFlagIndex];
 
-		let flagRoleReturn = /_creep_(.+)_/.exec(currentFlag.name);
+		let flagRoleReturn = /_creep_([a-zA-Z0-9]+)_/.exec(currentFlag.name);
 
 		if(flagRoleReturn === null) {
 			continue;
