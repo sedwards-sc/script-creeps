@@ -266,8 +266,6 @@ module.exports.loop = function () {
 				carrierBody = [CARRY,CARRY,MOVE,MOVE];
 			}
 
-			let minerBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
-
 	        let builderBody;
 			if(Game.rooms[roomName].controller.level === 8) {
 				builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
@@ -302,13 +300,16 @@ module.exports.loop = function () {
 					mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
 	    			//console.log('Spawning new carrier (' + roomName + '): ' + newName);
 	    		} else if((roomCreepQuotas.miner) && (undefToZero(roomCreepRoster.miner) < roomCreepQuotas.miner.length)) {
-	    		    for(let curMinerIndex in roomCreepQuotas.miner) {
-	    		        let curMinerFlagName = roomCreepQuotas.miner[curMinerIndex];
-	    		        let currentFlagMiners = _.filter(roomCreeps, (creep) => creep.memory.flagName === curMinerFlagName);
-	    		        if((currentFlagMiners.length < 1) || (currentFlagMiners[0].ticksToLive <= 36)) {
-	    		            //let newName =
-							mainSpawn.createCreep(minerBody, undefined, {spawnRoom: roomName, role: 'miner', flagName: curMinerFlagName});
-	    			        //console.log('Spawning new miner: ' + newName + ' - ' + curMinerFlagName);
+					let curRole = 'miner';
+	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+	    		        if(currentFlagCreeps.length < 1) {
+							let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,CARRY,WORK,WORK,WORK,WORK,WORK];
+							if(Game.flags[curFlagName].memory.bodyParts) {
+								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+							}
+							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
 	    			        break;
 	    		        }
 	    		    }
