@@ -1665,14 +1665,14 @@ Creep.prototype.runRemoteCart = function() {
 
 	let targets = this.room.find(FIND_DROPPED_ENERGY, {
 			filter: (pile) => {
-				return (pile.resourceType === RESOURCE_ENERGY && pile.energy >= 50 && this.pos.getRangeTo(pile) <= 4);
+				return (pile.resourceType === RESOURCE_ENERGY && pile.energy >= 50 && source.pos.getRangeTo(pile) <= 3);
 			}
 	});
 
 	if(!isArrayWithContents(targets)) {
 		let containers = this.room.findStructures(STRUCTURE_CONTAINER);
 		targets = _.filter(containers, (c) => {
-		    return (c.store.energy >= this.carryCapacity && this.pos.getRangeTo(c) <= 4);
+		    return (c.store.energy >= this.carryCapacity && source.pos.getRangeTo(c) <= 3);
 		});
 	}
 
