@@ -185,18 +185,20 @@ module.exports.loop = function () {
 			let roomEnergy = Game.rooms[roomName].energyAvailable;
 			let roomEnergyCapacity = Game.rooms[roomName].energyCapacityAvailable;
 			let roomStorageEnergy;
+			let roomStoragePower;
 			if(Game.rooms[roomName].storage) {
-				roomStorageEnergy = Game.rooms[roomName].storage.store[RESOURCE_ENERGY];
+				roomStorageEnergy = undefToZero(Game.rooms[roomName].storage.store.energy);
+				roomStoragePower = undefToZero(Game.rooms[roomName].storage.store.power);
 			}
 
 			// print update but not every tick so console doesn't scroll as fast
 			if((Game.time % 5) === 1) {
-				Logger.log(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '%', 2);
+				Logger.log(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy / power: ' + roomStorageEnergy + ' / ' + roomStoragePower + ' - controller progress: ' + controllerProgress + '%', 2);
 			}
 
 			// send update email occasionally
 			if((Game.time % 1500) === 1) {
-				Game.notify(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy: ' + roomStorageEnergy + ' - controller progress: ' + controllerProgress + '% - time: ' + Game.time);
+				Game.notify(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy / power: ' + roomStorageEnergy + ' / ' + roomStoragePower + ' - controller progress: ' + controllerProgress + '% - time: ' + Game.time);
 			}
 
 			curRoom.drawRoomStats();
