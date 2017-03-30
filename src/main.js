@@ -35,12 +35,13 @@ global.Stats = new ScreepsStats();
 
 require('debug').populate(global);
 
+var profiler = require('screeps-profiler');
+
 if(Memory.config && Memory.config.enableProfiler === true) {
 	try {
-		var profiler = require('screeps-profiler');
 		profiler.enable();
 	} catch(e) {
-		Logger.errorLog("could not find 'screeps-profiler'", ERR_NOT_FOUND, 5);
+		Logger.errorLog("could enable 'screeps-profiler'", ERR_NOT_FOUND, 5);
 		Memory.config.enableProfiler = false;
 	}
 }
