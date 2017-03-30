@@ -35,931 +35,940 @@ global.Stats = new ScreepsStats();
 
 require('debug').populate(global);
 
-var profiler = require('screeps-profiler');
-
 if(Memory.config && Memory.config.enableProfiler === true) {
-	profiler.enable();
+	try {
+		var profiler = require('screeps-profiler');
+		profiler.enable();
+	} catch(e) {
+		Logger.errorLog("could not find 'screeps-profiler'", ERR_NOT_FOUND, 5);
+		Memory.config.enableProfiler = false;
+	}
 }
 
-module.exports.loop = function () {
-	profiler.wrap(function() {
-		Logger.log(Game.time, 3);
+/**
+ * main function called in tick loop
+ */
+var main = function () {
+	if(Game.cpu.bucket < 2 * Game.cpu.tickLimit) {
+		Logger.errorLog(`skipping tick ${Game.time} due to lack of CPU`, ERR_BUSY, 5);
+		return;
+	}
 
-		// create cache for this tick
-		Game.cache = {
-			structures: {},
-			creeps: {},
-			hostiles: {},
-			hostilesAndLairs: {},
-			mineralCount: {},
-			labProcesses: {},
-			activeLabCount: 0,
-			placedRoad: false,
-		};
+	Logger.log(Game.time, 3);
 
-		var Traveler = require('Traveler');
+	// create cache for this tick
+	Game.cache = {
+		structures: {},
+		creeps: {},
+		hostiles: {},
+		hostilesAndLairs: {},
+		mineralCount: {},
+		labProcesses: {},
+		activeLabCount: 0,
+		placedRoad: false,
+	};
 
-		let empire = loopHelper.initEmpire();
+	var Traveler = require('Traveler');
 
+	let empire = loopHelper.initEmpire();
+
+	for(let name in Game.rooms) {
+		if(Game.rooms[name].isMine()) {
+			empire.register(Game.rooms[name]);
+		}
+	}
+
+	// loop to clean dead creeps out of memory
+    for(let name in Memory.creeps) {
+        if(!Game.creeps[name]) {
+            delete Memory.creeps[name];
+        }
+    }
+
+	// run room planning loop occasionally
+	if((Game.time % 100) === 0) {
 		for(let name in Game.rooms) {
 			if(Game.rooms[name].isMine()) {
-				empire.register(Game.rooms[name]);
+				Game.rooms[name].planRoom();
 			}
 		}
+	}
 
-		// loop to clean dead creeps out of memory
-	    for(let name in Memory.creeps) {
-	        if(!Game.creeps[name]) {
-	            delete Memory.creeps[name];
-	        }
-	    }
+	// run room quota count loop occasionally
+	if((Game.time % 100) === 5) {
+		countAllCreepFlags();
+	}
 
-		// run room planning loop occasionally
-		if((Game.time % 100) === 0) {
-			for(let name in Game.rooms) {
-				if(Game.rooms[name].isMine()) {
-					Game.rooms[name].planRoom();
-				}
-			}
+	// report gcl progress occasionally
+	if((Game.time % 1500) === 1) {
+	    Game.notify('GCL - level: ' + Game.gcl.level + ' - progress: ' + (Game.gcl.progress / 1000000).toFixed(2) + 'M - required: ' + (Game.gcl.progressTotal / 1000000).toFixed(2) + 'M - ' + ((Game.gcl.progress / Game.gcl.progressTotal) * 100).toFixed(1) + '%');
+	}
+
+	// room defence loop
+	for(let name in Game.rooms) {
+		Game.rooms[name].assessThreats();
+
+		// skip rooms i don't own
+		if(!Game.rooms[name].isMine()) {
+		    continue;
 		}
 
-		// run room quota count loop occasionally
-		if((Game.time % 100) === 5) {
-			countAllCreepFlags();
-		}
+		defendRoom(name);
 
-		// report gcl progress occasionally
-		if((Game.time % 1500) === 1) {
-		    Game.notify('GCL - level: ' + Game.gcl.level + ' - progress: ' + (Game.gcl.progress / 1000000).toFixed(2) + 'M - required: ' + (Game.gcl.progressTotal / 1000000).toFixed(2) + 'M - ' + ((Game.gcl.progress / Game.gcl.progressTotal) * 100).toFixed(1) + '%');
-		}
-
-		// room defence loop
-		for(let name in Game.rooms) {
-			Game.rooms[name].assessThreats();
-
-			// skip rooms i don't own
-			if(!Game.rooms[name].isMine()) {
-			    continue;
-			}
-
-			defendRoom(name);
-
-			// spawn defenders
-			if(Game.rooms[name].hostiles.length > 0) {
-				let defenders = _.filter(Game.creeps, (creep) => {
-					return (creep.memory.role === 'defender') && (creep.memory.spawnRoom === name);
-				});
-
-				if(defenders.length < 1) {
-					// find room spawns
-					let roomSpawns = Game.rooms[name].findStructures(STRUCTURE_SPAWN);
-					if(isArrayWithContents(roomSpawns)) {
-						let mainSpawn = roomSpawns[0];
-						if(Game.rooms[name].energyAvailable >= 1610) {
-							mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {spawnRoom: name, role: 'defender'});
-						} else {
-							mainSpawn.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {spawnRoom: name, role: 'defender'});
-						}
-						mainSpawn.spawnCalled = 1;
-					}
-				}
-			}
-		}
-
-		let roomQuotas = new WorldRoster();
-		let remoteInfo = new RoomRemotes();
-
-		// room spawn loop
-		for(let roomName in Game.rooms) {
-			let curRoom = Game.rooms[roomName];
-
-			if(curRoom.roomType === ROOMTYPE_ALLEY) {
-				// find and report on power banks
-				let powerBanks = curRoom.findStructures(STRUCTURE_POWER_BANK);
-				if(isArrayWithContents(powerBanks)) {
-				    let powerBank = powerBanks[0];
-				    if(powerBank.ticksToDecay > 3500 && powerBank.hits === powerBank.hitsMax) {
-						let powerBankMsg = `power bank in ${curRoom} - power: ${powerBank.power}, ticksToDecay: ${powerBank.ticksToDecay}`;
-						if(typeof curRoom.memory.powerBank === 'undefined') {
-							Game.notify(powerBankMsg);
-						}
-						Logger.highlight(powerBankMsg);
-						curRoom.memory.powerBank = {
-							'power': powerBank.power,
-							'ticksToDecay': powerBank.ticksToDecay,
-							'time': Game.time
-						};
-				    }
-				} else {
-					delete curRoom.memory.powerBank;
-				}
-				continue;
-			}
-
-			// find room spawns
-			let roomSpawns = Game.rooms[roomName].find(FIND_MY_SPAWNS);
-
-			// get room creep role quota and remote info for this room
-			let roomQuota = roomQuotas[roomName];
-			let roomRemoteInfo = remoteInfo[roomName];
-
-			// continue to next room if there are no spawns or no room quota
-			if(roomSpawns.length < 1) {
-			    continue;
-			} else if(roomQuota === undefined) {
-				Logger.errorLog(`${curRoom} has spawn but no quota`, ERR_NOT_FOUND, 4);
-				continue;
-			}
-
-			//if((roomSpawns.length >= 2) && (roomSpawns[0].spawning)) {
-			//    var mainSpawn = roomSpawns[1];
-			//} else {
-			    let mainSpawn = roomSpawns[0];
-			//}
-
-			// check the mineral status of the room and if it should be mined (based on storage amount)
-			curRoom.checkMineralStatus();
-
-			// gather room info
-			let controllerProgress = (Game.rooms[roomName].controller.progress / Game.rooms[roomName].controller.progressTotal * 100).toFixed(2);
-			let roomEnergy = Game.rooms[roomName].energyAvailable;
-			let roomEnergyCapacity = Game.rooms[roomName].energyCapacityAvailable;
-			let roomStorageEnergy;
-			let roomStoragePower;
-			if(Game.rooms[roomName].storage) {
-				roomStorageEnergy = undefToZero(Game.rooms[roomName].storage.store.energy);
-				roomStoragePower = undefToZero(Game.rooms[roomName].storage.store.power);
-			}
-
-			// print update but not every tick so console doesn't scroll as fast
-			if((Game.time % 5) === 1) {
-				Logger.log(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy / power: ' + roomStorageEnergy + ' / ' + roomStoragePower + ' - controller progress: ' + controllerProgress + '%', 2);
-			}
-
-			// send update email occasionally
-			if((Game.time % 1500) === 1) {
-				Game.notify(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy / power: ' + roomStorageEnergy + ' / ' + roomStoragePower + ' - controller progress: ' + controllerProgress + '% - time: ' + Game.time);
-			}
-
-			curRoom.drawRoomStats();
-
-			// get the roster of creeps for the current room
-			Game.rooms[roomName].countCreepRoles();
-
-			// find room creeps
-			let roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
-
-			// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
-			// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
-			// TODO: check which of this body code can be deprecated
-	        let currentBody;
-	        let currentHarvesterBody;
-			if(undefToZero(Game.rooms[roomName].memory.creepRoster.carrier) > 1) {
-				currentBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
-				currentHarvesterBody = [WORK,CARRY,MOVE,MOVE];
-				if(roomEnergy >= 1350) {
-				    currentBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY];
-				} else if(roomEnergy >= 950) {
-					currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
-				}
-			} else {
-				if(roomEnergy >= 1100) {
-					currentBody = [WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
-				} else if(roomEnergy >= 950) {
-					currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
-				} else if(roomEnergy >= 800) {
-				    // NOTE: this config is really only good for upgraders that can reach the controller from an energy source (e.g. storage)
-				    currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
-				} else if(roomEnergy >= 350) {
-				    currentBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
-				} else {
-					currentBody = [WORK,CARRY,MOVE,MOVE];
-				}
-				currentHarvesterBody = currentBody;
-			}
-
-			let upgraderBody;
-			if(roomEnergyCapacity >= 950) {
-			    upgraderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
-			} else if(roomEnergyCapacity >= 850) {
-				upgraderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
-			} else if(roomEnergyCapacity >= 800) {
-			    // NOTE: this config is really only good for upgraders that can reach the controller from an energy source (e.g. storage)
-			    upgraderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
-			} else if(roomEnergyCapacity >= 350) {
-			    upgraderBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
-			} else {
-				upgraderBody = [WORK,CARRY,MOVE,MOVE];
-			}
-
-	        let carrierBody;
-			if(Game.rooms[roomName].controller.level === 8) {
-				carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
-				if(undefToZero(Game.rooms[roomName].memory.creepRoster.carrier) === 0 && roomEnergy < 800) {
-					if(roomEnergy >= 400) {
-						carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
-					} else {
-						carrierBody = [CARRY,CARRY,MOVE,MOVE];
-					}
-				}
-			} else if(roomEnergy >= 400) {
-				carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
-			} else {
-				carrierBody = [CARRY,CARRY,MOVE,MOVE];
-			}
-
-	        let builderBody;
-			if(Game.rooms[roomName].controller.level === 8) {
-				builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
-			} else if((roomEnergyCapacity >= 1900) && (roomStorageEnergy > 500000)) {
-				builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,MOVE,CARRY,MOVE];
-			} else if((roomEnergyCapacity >= 950) && (roomStorageEnergy > 100000)) {
-				builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
-			} else if(roomEnergyCapacity >= 500) {
-				builderBody = [WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
-			} else {
-				builderBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
-			}
-
-	        let explorerBody;
-			if((roomEnergy >= 1150) && (roomStorageEnergy > 250000)) {
-				explorerBody = [WORK,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE];
-			} else if(roomEnergy >= 950) {
-				explorerBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
-			} else {
-				explorerBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
-			}
-
-			//let remoteMinerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK];
-			let remoteMinerBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,ATTACK];
-			let remoteCarrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE,MOVE,ATTACK];
-
-			if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
-				let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
-				let roomCreepQuotas = Game.rooms[roomName].memory.creepQuotas;
-	    		if((roomCreepQuotas.carrier) && (undefToZero(roomCreepRoster.carrier) < roomCreepQuotas.carrier.length)) {
-	    			//let newName =
-					mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
-	    			//console.log('Spawning new carrier (' + roomName + '): ' + newName);
-	    		} else if((roomCreepQuotas.miner) && (undefToZero(roomCreepRoster.miner) < roomCreepQuotas.miner.length)) {
-					let curRole = 'miner';
-	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
-	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
-	    		        if(currentFlagCreeps.length < 1) {
-							let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,CARRY,WORK,WORK,WORK,WORK,WORK];
-							if(Game.flags[curFlagName].memory.bodyParts) {
-								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
-							}
-							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        break;
-	    		        }
-	    		    }
-	    		} else if((roomCreepQuotas.linker) && (undefToZero(roomCreepRoster.linker) < roomCreepQuotas.linker.length)) {
-					let curRole = 'linker';
-	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
-	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
-	    		        if(currentFlagCreeps.length < 1) {
-							let curCreepBody = [CARRY,CARRY,CARRY,CARRY,MOVE];
-							if(curRoom.controller.level === 8) {
-								curCreepBody = [CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE];
-							}
-							if(Game.flags[curFlagName].memory.bodyParts) {
-								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
-							}
-							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        break;
-	    		        }
-	    		    }
-	    		} else if((roomCreepQuotas.harvester) && (undefToZero(roomCreepRoster.harvester) < roomCreepQuotas.harvester.length)) {
-	    			mainSpawn.spawnHarvester2(roomCreeps);
-	    		} else if((roomCreepQuotas.builder) && (undefToZero(roomCreepRoster.builder) < roomCreepQuotas.builder.length)) {
-					for(let curBuilderIndex in roomCreepQuotas.builder) {
-	    		        let curBuilderFlagName = roomCreepQuotas.builder[curBuilderIndex];
-	    		        let currentFlagBuilders = _.filter(roomCreeps, (creep) => creep.memory.flagName === curBuilderFlagName);
-						let currentBody;
-						if(Game.flags[curBuilderFlagName].memory.bodyParts) {
-							currentBody = Game.flags[curBuilderFlagName].memory.bodyParts;
-						} else {
-							currentBody = builderBody;
-						}
-	    		        if((currentFlagBuilders.length < 1) || (currentFlagBuilders[0].ticksToLive <= (currentBody.length * 3))) {
-	    		            //let newName =
-							mainSpawn.createCreep(currentBody, undefined, {spawnRoom: roomName, role: 'builder', flagName: curBuilderFlagName});
-	    			        //console.log('Spawning new builder: ' + newName + ' - ' + curBuilderFlagName);
-	    			        break;
-	    		        }
-	    		    }
-	    		} else if(undefToZero(roomCreepRoster.upgrader) < roomQuota.upgraders) {
-	    			//let newName =
-					mainSpawn.createCreep(upgraderBody, undefined, {role: 'upgrader', spawnRoom: roomName});
-	    			//console.log('Spawning new upgrader (' + roomName + '): ' + newName);
-	    		} else if(undefToZero(roomCreepRoster.explorer) < roomQuota.explorers) {
-	    			//let newName =
-					mainSpawn.createCreep(explorerBody, undefined, {role: 'explorer', spawnRoom: roomName});
-	    			//console.log('Spawning new explorer (' + roomName + '): ' + newName);
-	    		} else if((roomCreepQuotas.remoteMiner) && (undefToZero(roomCreepRoster.remoteMiner) < roomCreepQuotas.remoteMiner.length)) {
-					for(let curRemoteMinerIndex in roomCreepQuotas.remoteMiner) {
-	    		        let curRemoteMinerFlagName = roomCreepQuotas.remoteMiner[curRemoteMinerIndex];
-	    		        let currentFlagRemoteMiners = _.filter(roomCreeps, (creep) => creep.memory.flagName === curRemoteMinerFlagName);
-	    		        if((currentFlagRemoteMiners.length < 1) || (currentFlagRemoteMiners[0].ticksToLive <= ((remoteMinerBody.length * 3) + 25))) {
-							if(Game.flags[curRemoteMinerFlagName].memory.bodyParts) {
-								remoteMinerBody = Game.flags[curRemoteMinerFlagName].memory.bodyParts;
-							}
-	    		            //let newName =
-							mainSpawn.createCreep(remoteMinerBody, undefined, {spawnRoom: roomName, role: 'remoteMiner', flagName: curRemoteMinerFlagName});
-	    			        //console.log('Spawning new remote miner: ' + newName + ' - ' + curRemoteMinerFlagName);
-	    			        break;
-	    		        }
-	    		    }
-				} else if((roomCreepQuotas.containerMiner) && (undefToZero(roomCreepRoster.containerMiner) < roomCreepQuotas.containerMiner.length)) {
-					let curRole = 'containerMiner';
-	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
-	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
-	    		        if(currentFlagCreeps.length < 1) {
-							let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,WORK,WORK,WORK,WORK,WORK,WORK];
-							if(Game.flags[curFlagName].memory.bodyParts) {
-								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
-							}
-							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        break;
-	    		        }
-	    		    }
-	    		} else if((roomCreepQuotas.remoteCarrier) && (undefToZero(roomCreepRoster.remoteCarrier) < roomCreepQuotas.remoteCarrier.length)) {
-					for(let curRemoteCarrierIndex in roomCreepQuotas.remoteCarrier) {
-	    		        let curRemoteCarrierFlagName = roomCreepQuotas.remoteCarrier[curRemoteCarrierIndex];
-	    		        let currentFlagRemoteCarriers = _.filter(roomCreeps, (creep) => creep.memory.flagName === curRemoteCarrierFlagName);
-	    		        if((currentFlagRemoteCarriers.length < 1) || (currentFlagRemoteCarriers[0].ticksToLive <= ((remoteCarrierBody.length * 3) + 25))) {
-							if(Game.flags[curRemoteCarrierFlagName].memory.bodyParts) {
-								remoteCarrierBody = Game.flags[curRemoteCarrierFlagName].memory.bodyParts;
-							}
-	    		            //let newName =
-							mainSpawn.createCreep(remoteCarrierBody, undefined, {spawnRoom: roomName, role: 'remoteCarrier', flagName: curRemoteCarrierFlagName});
-	    			        //console.log('Spawning new remote carrier: ' + newName + ' - ' + curRemoteCarrierFlagName);
-	    			        break;
-	    		        }
-	    		    }
-				} else if((roomCreepQuotas.remoteCart) && (undefToZero(roomCreepRoster.remoteCart) < roomCreepQuotas.remoteCart.length)) {
-					let curRole = 'remoteCart';
-	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
-	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
-	    		        if(currentFlagCreeps.length < 1) {
-							let curCreepBody = [CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE];
-							if(Game.flags[curFlagName].memory.bodyParts) {
-								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
-							}
-							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        break;
-	    		        }
-	    		    }
-				} else if((roomCreepQuotas.reserver) && (undefToZero(roomCreepRoster.reserver) < roomCreepQuotas.reserver.length)) {
-				/*
-	    		} else if(undefToZero(roomCreepRoster.reserver) < roomQuota.reservers) {
-					if(roomRemoteInfo && (roomRemoteInfo.reservers.length > 0)) {
-	    				for(let reserversIndex in roomRemoteInfo.reservers) {
-	    					let currentReserver = roomRemoteInfo.reservers[reserversIndex];
-	    					let currentReserverFilter = _.filter(roomCreeps, (creep) => creep.memory.creepId === currentReserver.creepId);
-
-	    					if(currentReserverFilter.length < 1) {
-	    						let newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE,MOVE,ATTACK], undefined, {
-	    							role: 'reserver',
-	    							spawnRoom: roomName,
-	    							creepId: currentReserver.creepId,
-	    							controllerId: currentReserver.controllerId
-	    						});
-	    						console.log('Spawning new reserver: ' + newName + ' - ' + JSON.stringify(currentReserver));
-	    						break;
-	    					}
-	    				}
-	    			} else {
-	    				console.log('!!!' + roomName + ' quota has reservers but there is no reserver info for this room!!!');
-	    			}
-					*/
-
-					let curRole = 'reserver';
-	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
-	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
-	    		        if(currentFlagCreeps.length < 1) {
-							let curCreepBody = [CLAIM,CLAIM,MOVE,MOVE];
-							if(Game.flags[curFlagName].memory.bodyParts) {
-								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
-							}
-	    		            //let newName =
-							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        //console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
-	    			        break;
-	    		        }
-	    		    }
-				} else if((roomCreepQuotas.paver) && (undefToZero(roomCreepRoster.paver) < roomCreepQuotas.paver.length)) {
-					let curRole = 'paver';
-	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
-	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
-	    		        if(currentFlagCreeps.length < 1) {
-							let curCreepBody = [CARRY,CARRY,CARRY,WORK,MOVE,MOVE];
-							if(Game.flags[curFlagName].memory.bodyParts) {
-								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
-							} else if(Game.flags[curFlagName].room) {
-								let roads = Game.flags[curFlagName].room.findStructures(STRUCTURE_ROAD);
-								let sum = 0;
-								for(let road of roads) {
-									sum += road.hitsMax;
-								}
-								let potency = Math.max(Math.ceil(sum / 500000), 1);
-								curCreepBody = workerBody(3 * potency, potency, 2 * potency);
-							}
-							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        break;
-	    		        }
-	    		    }
-	    		} else if(undefToZero(roomCreepRoster.reinforcer) < roomQuota.reinforcers) {
-	    			//let newName =
-					mainSpawn.createCreep([WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
-	    			//console.log('Spawning new reinforcer (' + roomName + '): ' + newName);
-	    		} else if((roomCreepQuotas.claimer) && (undefToZero(roomCreepRoster.claimer) < roomCreepQuotas.claimer.length)) {
-					//} else if(undefToZero(roomCreepRoster.claimer) < roomQuota.claimers) {
-	    			//let newName =
-	    			//mainSpawn.createCreep([CLAIM,CLAIM,CLAIM,CLAIM,CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
-	    			//let newName =
-					//mainSpawn.createCreep([CLAIM,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
-	    			//console.log('Spawning new claimer (' + roomName + '): ' + newName);
-					let curRole = 'claimer';
-	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
-	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
-	    		        if(currentFlagCreeps.length < 1) {
-							let curCreepBody = [CLAIM,MOVE];
-							if(Game.flags[curFlagName].memory.bodyParts) {
-								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
-							}
-							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        break;
-	    		        }
-	    		    }
-				} else if((roomCreepQuotas.attackClaimer) && (undefToZero(roomCreepRoster.attackClaimer) < roomCreepQuotas.attackClaimer.length)) {
-					let curRole = 'attackClaimer';
-	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
-	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
-	    		        if(currentFlagCreeps.length < 1) {
-							let curCreepBody = [CLAIM,CLAIM,CLAIM,CLAIM,CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE];
-							if(Game.flags[curFlagName].memory.bodyParts) {
-								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
-							}
-							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        break;
-	    		        }
-	    		    }
-	    		} else if(undefToZero(roomCreepRoster.remoteUpgrader) < roomQuota.remoteUpgraders) {
-	    			//let newName =
-					mainSpawn.createCreep(currentBody, undefined, {role: 'remoteUpgrader', spawnRoom: roomName});
-	    			//console.log('Spawning new remote upgrader (' + roomName + '): ' + newName);
-				} else if((roomCreepQuotas.remoteBuilder) && (undefToZero(roomCreepRoster.remoteBuilder) < roomCreepQuotas.remoteBuilder.length)) {
-					let curRole = 'remoteBuilder';
-	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
-	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
-	    		        if(currentFlagCreeps.length < 1) {
-							let curCreepBody = currentBody;
-							//let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY];
-							if(Game.flags[curFlagName].memory.bodyParts) {
-								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
-							}
-							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        break;
-	    		        }
-	    		    }
-				} else if((roomCreepQuotas.containerBuilder) && (undefToZero(roomCreepRoster.containerBuilder) < roomCreepQuotas.containerBuilder.length)) {
-					let curRole = 'containerBuilder';
-	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
-	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
-	    		        if(currentFlagCreeps.length < 1) {
-							let curCreepBody = currentBody;
-							//let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY];
-							if(Game.flags[curFlagName].memory.bodyParts) {
-								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
-							}
-							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        break;
-	    		        }
-	    		    }
-	    		} else if(curRoom.memory.shouldMine === true && undefToZero(roomCreepRoster.mineralHarvester) < 1) {
-	    		    mainSpawn.spawnMineralHarvester();
-	    		} else if((roomCreepQuotas.scout) && (undefToZero(roomCreepRoster.scout) < roomCreepQuotas.scout.length)) {
-	    		    for(let curScoutIndex in roomCreepQuotas.scout) {
-	    		        let curScoutFlagName = roomCreepQuotas.scout[curScoutIndex];
-	    		        let currentFlagScouts = _.filter(roomCreeps, (creep) => creep.memory.flagName === curScoutFlagName);
-	    		        if((currentFlagScouts.length < 1) || (currentFlagScouts[0].ticksToLive <= 20)) {
-	    		            //let newName = mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {spawnRoom: roomName, role: 'scout', flagName: curScoutFlagName});
-	    		            //let newName =
-							mainSpawn.createCreep([MOVE], undefined, {spawnRoom: roomName, role: 'scout', flagName: curScoutFlagName});
-	    			        //console.log('Spawning new scout: ' + newName + ' - ' + curScoutFlagName);
-	    			        break;
-	    		        }
-	    		    }
-	    		} else if((roomCreepQuotas.soldier) && (undefToZero(roomCreepRoster.soldier) < roomCreepQuotas.soldier.length)) {
-	    		    for(let curSoldierIndex in roomCreepQuotas.soldier) {
-	    		        let curSoldierFlagName = roomCreepQuotas.soldier[curSoldierIndex];
-	    		        let currentFlagSoldiers = _.filter(roomCreeps, (creep) => creep.memory.flagName === curSoldierFlagName);
-	    		        if((currentFlagSoldiers.length < 1) || (currentFlagSoldiers[0].ticksToLive <= 25)) {
-							let soldierBody = [TOUGH,MOVE,ATTACK,MOVE];
-							if(Game.flags[curSoldierFlagName].memory.bodyParts) {
-								soldierBody = Game.flags[curSoldierFlagName].memory.bodyParts;
-							}
-	    		            //let newName =
-							mainSpawn.createCreep(soldierBody, undefined, {spawnRoom: roomName, role: 'soldier', flagName: curSoldierFlagName});
-	    			        //console.log('Spawning new soldier: ' + newName + ' - ' + curSoldierFlagName);
-	    			        break;
-	    		        }
-	    		    }
-				} else if((roomCreepQuotas.powerCarrier) && (undefToZero(roomCreepRoster.powerCarrier) < roomCreepQuotas.powerCarrier.length)) {
-					let curRole = 'powerCarrier';
-	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
-	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
-	    		        if(currentFlagCreeps.length < 1) {
-							let curCreepBody = [CARRY,MOVE,CARRY,MOVE];
-							if(Game.flags[curFlagName].memory.bodyParts) {
-								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
-							}
-	    		            //let newName =
-							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        //console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
-	    			        break;
-	    		        }
-	    		    }
-				} else if((roomCreepQuotas.remoteTransporter) && (undefToZero(roomCreepRoster.remoteTransporter) < roomCreepQuotas.remoteTransporter.length)) {
-					let curRole = 'remoteTransporter';
-	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
-	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
-	    		        if(currentFlagCreeps.length < 1) {
-							let curCreepBody = [CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE];
-							if(Game.flags[curFlagName].memory.bodyParts) {
-								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
-							}
-							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        break;
-	    		        }
-	    		    }
-	    		} else {
-					// filter for room mineral transfer or return flags
-					let roomTransferFlagRegex = new RegExp('^' + roomName + '_mineralTransfer_');
-					let roomReturnFlagRegex = new RegExp('^' + roomName + '_mineralReturn_');
-					let roomTransferFlags = _.filter(Game.flags, (flag) => {
-						return (roomTransferFlagRegex.test(flag.name) === true) || (roomReturnFlagRegex.test(flag.name) === true);
-					});
-
-					if(roomTransferFlags.length) {
-						let creepName = roomName + '_mineralCarrier';
-						if(!Game.creeps[creepName]) {
-							//let newName = mainSpawn.createCreep([CARRY,CARRY,MOVE,MOVE], creepName, {spawnRoom: roomName, role: 'mineralCarrier'});
-							//let newName =
-							mainSpawn.createCreep([CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE], creepName, {spawnRoom: roomName, role: 'mineralCarrier'});
-	    			        //console.log('Spawning new mineral carrier: ' + newName + ' (' + roomName + ')');
-						}
-					}
-				}
-			}
-
-			if(roomSpawns.length >= 2) {
-			    mainSpawn = roomSpawns[1];
-			}
-
-			if(mainSpawn.spawnCalled || mainSpawn.spawning) {
-    			if(roomSpawns.length >= 3) {
-    			    mainSpawn = roomSpawns[2];
-    			}
-		    }
-
-
-
-			// for sentinels
-			if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
-				let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
-				let roomCreepQuotas = Game.rooms[roomName].memory.creepQuotas;
-				if((roomCreepQuotas.sentinel) && (undefToZero(roomCreepRoster.sentinel) < roomCreepQuotas.sentinel.length)) {
-					let curRole = 'sentinel';
-	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
-	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
-						if(Game.flags[curFlagName].room && Game.flags[curFlagName].room.hostiles.length > 0) {
-							let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
-		    		        if(currentFlagCreeps.length < 1) {
-								let curCreepBody = [TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,HEAL,HEAL,HEAL];
-								if(Game.flags[curFlagName].memory.bodyParts) {
-									curCreepBody = Game.flags[curFlagName].memory.bodyParts;
-								}
-								mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-								Logger.log(`sentinel activated for flag ${curFlagName}`, 4);
-		    			        break;
-		    		        }
-						}
-	    		    }
-				}
-			}
-
-
-
-			// for dismantlers
-			let numMedics = 0;
-
-			if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
-				let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
-				let roomCreepQuotas = Game.rooms[roomName].memory.creepQuotas;
-				if((roomCreepQuotas.dismantler) && (undefToZero(roomCreepRoster.medic) < (roomCreepQuotas.dismantler.length * numMedics))) {
-	    		    for(let curQuotaIndex in roomCreepQuotas.dismantler) {
-	    		        let curFlagName = roomCreepQuotas.dismantler[curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === 'medic'));
-	    		        if(currentFlagCreeps.length < numMedics) {
-	    		            let medicBody = [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL];
-							//let medicBody = [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL];
-							//let medicBody = [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL,HEAL];
-							if(Game.flags[curFlagName].memory.medicBodyParts) {
-								medicBody = Game.flags[curFlagName].memory.medicBodyParts;
-							}
-	    		            //let newName =
-							mainSpawn.createCreep(medicBody, undefined, {spawnRoom: roomName, role: 'medic', flagName: curFlagName});
-	    			        //console.log('Spawning new medic: ' + newName + ' - ' + curFlagName);
-	    			        break;
-	    		        }
-	    		    }
-	    		}  else if((roomCreepQuotas.dismantler) && (undefToZero(roomCreepRoster.dismantler) < roomCreepQuotas.dismantler.length)) {
-					let curRole = 'dismantler';
-	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
-	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
-	    		        if(currentFlagCreeps.length < 1) {
-							//let curCreepBody = [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK];
-	    		            //let curCreepBody = [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK];
-							let curCreepBody = [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK];
-							if(Game.flags[curFlagName].memory.dismantlerBodyParts) {
-								curCreepBody = Game.flags[curFlagName].memory.dismantlerBodyParts;
-							}
-	    		            //let newName =
-							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        //console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
-	    			        break;
-	    		        }
-	    		    }
-	    		}
-			}
-
-
-
-			// for powerBankAttackers
-			numMedics = 1;
-
-			if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
-				let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
-				let roomCreepQuotas = Game.rooms[roomName].memory.creepQuotas;
-				if((roomCreepQuotas.powerBankAttacker) && (undefToZero(roomCreepRoster.medic) < (roomCreepQuotas.powerBankAttacker.length * numMedics))) {
-	    		    for(let curQuotaIndex in roomCreepQuotas.powerBankAttacker) {
-	    		        let curFlagName = roomCreepQuotas.powerBankAttacker[curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === 'medic'));
-	    		        if(currentFlagCreeps.length < numMedics) {
-	    		            // 2 medics, 1 attacker
-							//let medicBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL];
-							// 1 medic, 1 attacker
-							let medicBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL];
-							if(Game.flags[curFlagName].memory.medicBodyParts) {
-								medicBody = Game.flags[curFlagName].memory.medicBodyParts;
-							}
-	    		            //let newName =
-							mainSpawn.createCreep(medicBody, undefined, {spawnRoom: roomName, role: 'medic', flagName: curFlagName});
-	    			        //console.log('Spawning new medic: ' + newName + ' - ' + curFlagName);
-	    			        break;
-	    		        }
-	    		    }
-	    		}  else if((roomCreepQuotas.powerBankAttacker) && (undefToZero(roomCreepRoster.powerBankAttacker) < roomCreepQuotas.powerBankAttacker.length)) {
-					let curRole = 'powerBankAttacker';
-	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
-	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
-	    		        if(currentFlagCreeps.length < 1) {
-	    		            // 2 medics, 1 attacker
-							//let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK];
-							// 1 medic, 1 atttacker
-							let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK];
-							if(Game.flags[curFlagName].memory.powerBankAttackerBodyParts) {
-								curCreepBody = Game.flags[curFlagName].memory.powerBankAttackerBodyParts;
-							}
-	    		            //let newName =
-							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        //console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
-	    			        break;
-	    		        }
-	    		    }
-	    		}  else if((roomCreepQuotas.powerCollector) && (undefToZero(roomCreepRoster.powerCollector) < roomCreepQuotas.powerCollector.length)) {
-					let curRole = 'powerCollector';
-	    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
-	    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
-	    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
-	    		        if(currentFlagCreeps.length < 1) {
-							let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY];
-							if(Game.flags[curFlagName].memory.bodyParts) {
-								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
-							}
-	    		            //let newName =
-							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
-	    			        //console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
-	    			        break;
-	    		        }
-	    		    }
-	    		}
-			}
-
-
-			// run links
-			let links = Game.rooms[roomName].findStructures(STRUCTURE_LINK);
-			links.forEach(link => link.run());
-
-			// transfer energy from links to any creeps except carriers, miners, and various special roles
-			// find non carriers that aren't full of energy
-			//let linkTransferCandidates = _.filter(roomCreeps, (creep) => {
-			//		return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.memory.role !== 'mineralHarvester') && (creep.memory.role !== 'miner') && (creep.memory.role !== 'mineralCarrier') && (creep.memory.role !== 'harvester') && (creep.memory.role !== 'powerCollector') && (creep.carry.energy < creep.carryCapacity);
-			//});
-
-			// only refill builders automatically (other roles will withdraw themselves; this is to top up builders)
-			let linkTransferCandidates = _.filter(roomCreeps, (creep) => {
-					return (creep.memory.role === 'builder') && (creep.carry.energy < creep.carryCapacity);
+		// spawn defenders
+		if(Game.rooms[name].hostiles.length > 0) {
+			let defenders = _.filter(Game.creeps, (creep) => {
+				return (creep.memory.role === 'defender') && (creep.memory.spawnRoom === name);
 			});
 
-			links.forEach(link => link.refillCreeps(linkTransferCandidates));
-
-
-			// calculate mineral distribution network
-			if(Game.time % 500 === 0) {
-				calcMineralDistribution();
+			if(defenders.length < 1) {
+				// find room spawns
+				let roomSpawns = Game.rooms[name].findStructures(STRUCTURE_SPAWN);
+				if(isArrayWithContents(roomSpawns)) {
+					let mainSpawn = roomSpawns[0];
+					if(Game.rooms[name].energyAvailable >= 1610) {
+						mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK], undefined, {spawnRoom: name, role: 'defender'});
+					} else {
+						mainSpawn.createCreep([TOUGH,MOVE,ATTACK,MOVE], undefined, {spawnRoom: name, role: 'defender'});
+					}
+					mainSpawn.spawnCalled = 1;
+				}
 			}
+		}
+	}
 
-			// run terminals
-			if(curRoom.terminal) {
-				curRoom.terminal.run();
-			}
+	let roomQuotas = new WorldRoster();
+	let remoteInfo = new RoomRemotes();
 
-			// run compound production manager for current room
-			if((curRoom.memory.produceCompounds === true) && (Game.time % 10 === 1)) {
-			    curRoom.runCompoundProductionManagment();
-			}
+	// room spawn loop
+	for(let roomName in Game.rooms) {
+		let curRoom = Game.rooms[roomName];
 
-			// run labs (new flower style)
-			curRoom.runLabs();
-
-			// run labs (old style)
-			/*
-			if(typeof curRoom.memory.reactors !== 'undefined') {
-			    for(let reactorIndex in curRoom.memory.reactors) {
-			        let curReactorGroup = curRoom.memory.reactors[reactorIndex];
-
-			        let curReactor = Game.getObjectById(curReactorGroup.reactorId);
-			        if(curReactor === null) {
-			            //TODO: make this work if there are ramparts on top
-			            curReactor = curRoom.lookForAt(LOOK_STRUCTURES, Game.flags[curReactorGroup.reactorFlagName].pos)[0];
-			            if(curReactor.structureType === STRUCTURE_LAB) {
-			                curReactorGroup.reactorId = curReactor.id;
-			            } else {
-			                console.log('!!!Error: non-lab building under flag: ' + curReactorGroup.reactorFlagName);
-			                continue;
-			            }
-			        }
-
-			        if((curReactor.cooldown === 0) && (curReactor.mineralAmount < curReactor.mineralCapacity)) {
-			            curReactorGroup.reactorSiloIds = curReactorGroup.reactorSiloIds || [];
-
-			            let curReactorSilo0 = Game.getObjectById(curReactorGroup.reactorSiloIds[0]);
-			            if(curReactorSilo0 === null) {
-			                //TODO: make this work if there are ramparts on top
-    			            curReactorSilo0 = curRoom.lookForAt(LOOK_STRUCTURES, Game.flags[curReactorGroup.reactorSiloFlagNames[0]].pos)[0];
-    			            if(curReactorSilo0.structureType === STRUCTURE_LAB) {
-    			                curReactorGroup.reactorSiloIds[0] = curReactorSilo0.id;
-    			            } else {
-    			                console.log('!!!Error: non-lab building under flag: ' + curReactorGroup.reactorSiloFlagNames[0]);
-    			                continue;
-    			            }
-			            }
-
-			            let curReactorSilo1 = Game.getObjectById(curReactorGroup.reactorSiloIds[1]);
-			            if(curReactorSilo1 === null) {
-			                //TODO: make this work if there are ramparts on top
-    			            curReactorSilo1 = curRoom.lookForAt(LOOK_STRUCTURES, Game.flags[curReactorGroup.reactorSiloFlagNames[1]].pos)[0];
-    			            if(curReactorSilo1.structureType === STRUCTURE_LAB) {
-    			                curReactorGroup.reactorSiloIds[1] = curReactorSilo1.id;
-    			            } else {
-    			                console.log('!!!Error: non-lab building under flag: ' + curReactorGroup.reactorSiloFlagNames[1]);
-    			                continue;
-    			            }
-			            }
-
-			            if((curReactorSilo0.mineralAmount > 0) && (curReactorSilo1.mineralAmount > 0)) {
-			                let reactionReturn = curReactor.runReaction(curReactorSilo0, curReactorSilo1);
-			                if(reactionReturn !== OK) {
-			                    console.log('***Reaction Error: ' + reactionReturn + ', ' + roomName + ', ' + curReactorGroup.reactorFlagName);
-			                }
-			            }
-			        }
+		if(curRoom.roomType === ROOMTYPE_ALLEY) {
+			// find and report on power banks
+			let powerBanks = curRoom.findStructures(STRUCTURE_POWER_BANK);
+			if(isArrayWithContents(powerBanks)) {
+			    let powerBank = powerBanks[0];
+			    if(powerBank.ticksToDecay > 3500 && powerBank.hits === powerBank.hitsMax) {
+					let powerBankMsg = `power bank in ${curRoom} - power: ${powerBank.power}, ticksToDecay: ${powerBank.ticksToDecay}`;
+					if(typeof curRoom.memory.powerBank === 'undefined') {
+						Game.notify(powerBankMsg);
+					}
+					Logger.highlight(powerBankMsg);
+					curRoom.memory.powerBank = {
+						'power': powerBank.power,
+						'ticksToDecay': powerBank.ticksToDecay,
+						'time': Game.time
+					};
 			    }
+			} else {
+				delete curRoom.memory.powerBank;
 			}
-			*/
-
-			// run power spawns
-			if(curRoom.memory.processPower === true && (Game.time % 5 === 3)) {
-				let myRoomStructures = curRoom.find(FIND_MY_STRUCTURES);
-				let powerSpawn = getStructure(myRoomStructures, STRUCTURE_POWER_SPAWN);
-				if(powerSpawn) {
-					if(powerSpawn.power >= 1 && powerSpawn.energy >= 50) {
-						powerSpawn.processPower();
-					}
-				} else {
-					console.log('!!!!Error: could not find power spawn in room ' + curRoom.name);
-				}
-			}
-
-			// run observer
-			if(isArrayWithContents(curRoom.memory.observeRooms)) {
-				let roomList = curRoom.memory.observeRooms;
-				let observers = curRoom.findStructures(STRUCTURE_OBSERVER);
-				if(isArrayWithContents(observers)) {
-					let observationIndex = Game.time % roomList.length;
-					let roomToObserve = roomList[observationIndex];
-					if(typeof roomToObserve === 'string') {
-						let observeReturn = observers[0].observeRoom(roomToObserve);
-						Logger.log(`observing ${roomToObserve} from ${curRoom} (${errorCodeToText(observeReturn)})`, 0);
-					}
-				}
-			}
-
+			continue;
 		}
 
+		// find room spawns
+		let roomSpawns = Game.rooms[roomName].find(FIND_MY_SPAWNS);
 
-		// run creep loop
-		Memory.roster = {};
-	    for(let creepName in Game.creeps) {
-	        let creep = Game.creeps[creepName];
+		// get room creep role quota and remote info for this room
+		let roomQuota = roomQuotas[roomName];
+		let roomRemoteInfo = remoteInfo[roomName];
 
-			Memory.roster[creep.pos.roomName] = Memory.roster[creep.pos.roomName] || {};
+		// continue to next room if there are no spawns or no room quota
+		if(roomSpawns.length < 1) {
+		    continue;
+		} else if(roomQuota === undefined) {
+			Logger.errorLog(`${curRoom} has spawn but no quota`, ERR_NOT_FOUND, 4);
+			continue;
+		}
 
-			if(!creep.spawning) {
-				creep.run();
-				Memory.roster[creep.pos.roomName][creep.memory.role] = Memory.roster[creep.pos.roomName][creep.memory.role] || 0;
-				Memory.roster[creep.pos.roomName][creep.memory.role]++;
+		//if((roomSpawns.length >= 2) && (roomSpawns[0].spawning)) {
+		//    var mainSpawn = roomSpawns[1];
+		//} else {
+		    let mainSpawn = roomSpawns[0];
+		//}
+
+		// check the mineral status of the room and if it should be mined (based on storage amount)
+		curRoom.checkMineralStatus();
+
+		// gather room info
+		let controllerProgress = (Game.rooms[roomName].controller.progress / Game.rooms[roomName].controller.progressTotal * 100).toFixed(2);
+		let roomEnergy = Game.rooms[roomName].energyAvailable;
+		let roomEnergyCapacity = Game.rooms[roomName].energyCapacityAvailable;
+		let roomStorageEnergy;
+		let roomStoragePower;
+		if(Game.rooms[roomName].storage) {
+			roomStorageEnergy = undefToZero(Game.rooms[roomName].storage.store.energy);
+			roomStoragePower = undefToZero(Game.rooms[roomName].storage.store.power);
+		}
+
+		// print update but not every tick so console doesn't scroll as fast
+		if((Game.time % 5) === 1) {
+			Logger.log(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy / power: ' + roomStorageEnergy + ' / ' + roomStoragePower + ' - controller progress: ' + controllerProgress + '%', 2);
+		}
+
+		// send update email occasionally
+		if((Game.time % 1500) === 1) {
+			Game.notify(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy / power: ' + roomStorageEnergy + ' / ' + roomStoragePower + ' - controller progress: ' + controllerProgress + '% - time: ' + Game.time);
+		}
+
+		curRoom.drawRoomStats();
+
+		// get the roster of creeps for the current room
+		Game.rooms[roomName].countCreepRoles();
+
+		// find room creeps
+		let roomCreeps = _.filter(Game.creeps, (creep) => creep.memory.spawnRoom == roomName);
+
+		// note: top level parts upgrade may not be necessary for harvesters (source already runs out sometimes)
+		// quick fix to stop from quickly making weak creeps in a row before extensions can be refilled (still need to recover is creeps are wiped)
+		// TODO: check which of this body code can be deprecated
+        let currentBody;
+        let currentHarvesterBody;
+		if(undefToZero(Game.rooms[roomName].memory.creepRoster.carrier) > 1) {
+			currentBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
+			currentHarvesterBody = [WORK,CARRY,MOVE,MOVE];
+			if(roomEnergy >= 1350) {
+			    currentBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY];
+			} else if(roomEnergy >= 950) {
+				currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+			}
+		} else {
+			if(roomEnergy >= 1100) {
+				currentBody = [WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+			} else if(roomEnergy >= 950) {
+				currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+			} else if(roomEnergy >= 800) {
+			    // NOTE: this config is really only good for upgraders that can reach the controller from an energy source (e.g. storage)
+			    currentBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
+			} else if(roomEnergy >= 350) {
+			    currentBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
 			} else {
-				Memory.roster[creep.pos.roomName].spawning = Memory.roster[creep.pos.roomName].spawning || [];
-				Memory.roster[creep.pos.roomName].spawning.push(creep.memory.role);
+				currentBody = [WORK,CARRY,MOVE,MOVE];
+			}
+			currentHarvesterBody = currentBody;
+		}
+
+		let upgraderBody;
+		if(roomEnergyCapacity >= 950) {
+		    upgraderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+		} else if(roomEnergyCapacity >= 850) {
+			upgraderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
+		} else if(roomEnergyCapacity >= 800) {
+		    // NOTE: this config is really only good for upgraders that can reach the controller from an energy source (e.g. storage)
+		    upgraderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE];
+		} else if(roomEnergyCapacity >= 350) {
+		    upgraderBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
+		} else {
+			upgraderBody = [WORK,CARRY,MOVE,MOVE];
+		}
+
+        let carrierBody;
+		if(Game.rooms[roomName].controller.level === 8) {
+			carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
+			if(undefToZero(Game.rooms[roomName].memory.creepRoster.carrier) === 0 && roomEnergy < 800) {
+				if(roomEnergy >= 400) {
+					carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
+				} else {
+					carrierBody = [CARRY,CARRY,MOVE,MOVE];
+				}
+			}
+		} else if(roomEnergy >= 400) {
+			carrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE];
+		} else {
+			carrierBody = [CARRY,CARRY,MOVE,MOVE];
+		}
+
+        let builderBody;
+		if(Game.rooms[roomName].controller.level === 8) {
+			builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+		} else if((roomEnergyCapacity >= 1900) && (roomStorageEnergy > 500000)) {
+			builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,MOVE,CARRY,MOVE];
+		} else if((roomEnergyCapacity >= 950) && (roomStorageEnergy > 100000)) {
+			builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+		} else if(roomEnergyCapacity >= 500) {
+			builderBody = [WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE];
+		} else {
+			builderBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
+		}
+
+        let explorerBody;
+		if((roomEnergy >= 1150) && (roomStorageEnergy > 250000)) {
+			explorerBody = [WORK,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE];
+		} else if(roomEnergy >= 950) {
+			explorerBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
+		} else {
+			explorerBody = [WORK,WORK,CARRY,MOVE,MOVE,MOVE];
+		}
+
+		//let remoteMinerBody = [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK];
+		let remoteMinerBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,ATTACK];
+		let remoteCarrierBody = [CARRY,CARRY,MOVE,MOVE,CARRY,CARRY,MOVE,MOVE,MOVE,ATTACK];
+
+		if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
+			let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
+			let roomCreepQuotas = Game.rooms[roomName].memory.creepQuotas;
+    		if((roomCreepQuotas.carrier) && (undefToZero(roomCreepRoster.carrier) < roomCreepQuotas.carrier.length)) {
+    			//let newName =
+				mainSpawn.createCreep(carrierBody, undefined, {role: 'carrier', spawnRoom: roomName});
+    			//console.log('Spawning new carrier (' + roomName + '): ' + newName);
+    		} else if((roomCreepQuotas.miner) && (undefToZero(roomCreepRoster.miner) < roomCreepQuotas.miner.length)) {
+				let curRole = 'miner';
+    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+    		        if(currentFlagCreeps.length < 1) {
+						let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,CARRY,WORK,WORK,WORK,WORK,WORK];
+						if(Game.flags[curFlagName].memory.bodyParts) {
+							curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+						}
+						mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+    			        break;
+    		        }
+    		    }
+    		} else if((roomCreepQuotas.linker) && (undefToZero(roomCreepRoster.linker) < roomCreepQuotas.linker.length)) {
+				let curRole = 'linker';
+    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+    		        if(currentFlagCreeps.length < 1) {
+						let curCreepBody = [CARRY,CARRY,CARRY,CARRY,MOVE];
+						if(curRoom.controller.level === 8) {
+							curCreepBody = [CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,MOVE];
+						}
+						if(Game.flags[curFlagName].memory.bodyParts) {
+							curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+						}
+						mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+    			        break;
+    		        }
+    		    }
+    		} else if((roomCreepQuotas.harvester) && (undefToZero(roomCreepRoster.harvester) < roomCreepQuotas.harvester.length)) {
+    			mainSpawn.spawnHarvester2(roomCreeps);
+    		} else if((roomCreepQuotas.builder) && (undefToZero(roomCreepRoster.builder) < roomCreepQuotas.builder.length)) {
+				for(let curBuilderIndex in roomCreepQuotas.builder) {
+    		        let curBuilderFlagName = roomCreepQuotas.builder[curBuilderIndex];
+    		        let currentFlagBuilders = _.filter(roomCreeps, (creep) => creep.memory.flagName === curBuilderFlagName);
+					let currentBody;
+					if(Game.flags[curBuilderFlagName].memory.bodyParts) {
+						currentBody = Game.flags[curBuilderFlagName].memory.bodyParts;
+					} else {
+						currentBody = builderBody;
+					}
+    		        if((currentFlagBuilders.length < 1) || (currentFlagBuilders[0].ticksToLive <= (currentBody.length * 3))) {
+    		            //let newName =
+						mainSpawn.createCreep(currentBody, undefined, {spawnRoom: roomName, role: 'builder', flagName: curBuilderFlagName});
+    			        //console.log('Spawning new builder: ' + newName + ' - ' + curBuilderFlagName);
+    			        break;
+    		        }
+    		    }
+    		} else if(undefToZero(roomCreepRoster.upgrader) < roomQuota.upgraders) {
+    			//let newName =
+				mainSpawn.createCreep(upgraderBody, undefined, {role: 'upgrader', spawnRoom: roomName});
+    			//console.log('Spawning new upgrader (' + roomName + '): ' + newName);
+    		} else if(undefToZero(roomCreepRoster.explorer) < roomQuota.explorers) {
+    			//let newName =
+				mainSpawn.createCreep(explorerBody, undefined, {role: 'explorer', spawnRoom: roomName});
+    			//console.log('Spawning new explorer (' + roomName + '): ' + newName);
+    		} else if((roomCreepQuotas.remoteMiner) && (undefToZero(roomCreepRoster.remoteMiner) < roomCreepQuotas.remoteMiner.length)) {
+				for(let curRemoteMinerIndex in roomCreepQuotas.remoteMiner) {
+    		        let curRemoteMinerFlagName = roomCreepQuotas.remoteMiner[curRemoteMinerIndex];
+    		        let currentFlagRemoteMiners = _.filter(roomCreeps, (creep) => creep.memory.flagName === curRemoteMinerFlagName);
+    		        if((currentFlagRemoteMiners.length < 1) || (currentFlagRemoteMiners[0].ticksToLive <= ((remoteMinerBody.length * 3) + 25))) {
+						if(Game.flags[curRemoteMinerFlagName].memory.bodyParts) {
+							remoteMinerBody = Game.flags[curRemoteMinerFlagName].memory.bodyParts;
+						}
+    		            //let newName =
+						mainSpawn.createCreep(remoteMinerBody, undefined, {spawnRoom: roomName, role: 'remoteMiner', flagName: curRemoteMinerFlagName});
+    			        //console.log('Spawning new remote miner: ' + newName + ' - ' + curRemoteMinerFlagName);
+    			        break;
+    		        }
+    		    }
+			} else if((roomCreepQuotas.containerMiner) && (undefToZero(roomCreepRoster.containerMiner) < roomCreepQuotas.containerMiner.length)) {
+				let curRole = 'containerMiner';
+    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+    		        if(currentFlagCreeps.length < 1) {
+						let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,WORK,WORK,WORK,WORK,WORK,WORK];
+						if(Game.flags[curFlagName].memory.bodyParts) {
+							curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+						}
+						mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+    			        break;
+    		        }
+    		    }
+    		} else if((roomCreepQuotas.remoteCarrier) && (undefToZero(roomCreepRoster.remoteCarrier) < roomCreepQuotas.remoteCarrier.length)) {
+				for(let curRemoteCarrierIndex in roomCreepQuotas.remoteCarrier) {
+    		        let curRemoteCarrierFlagName = roomCreepQuotas.remoteCarrier[curRemoteCarrierIndex];
+    		        let currentFlagRemoteCarriers = _.filter(roomCreeps, (creep) => creep.memory.flagName === curRemoteCarrierFlagName);
+    		        if((currentFlagRemoteCarriers.length < 1) || (currentFlagRemoteCarriers[0].ticksToLive <= ((remoteCarrierBody.length * 3) + 25))) {
+						if(Game.flags[curRemoteCarrierFlagName].memory.bodyParts) {
+							remoteCarrierBody = Game.flags[curRemoteCarrierFlagName].memory.bodyParts;
+						}
+    		            //let newName =
+						mainSpawn.createCreep(remoteCarrierBody, undefined, {spawnRoom: roomName, role: 'remoteCarrier', flagName: curRemoteCarrierFlagName});
+    			        //console.log('Spawning new remote carrier: ' + newName + ' - ' + curRemoteCarrierFlagName);
+    			        break;
+    		        }
+    		    }
+			} else if((roomCreepQuotas.remoteCart) && (undefToZero(roomCreepRoster.remoteCart) < roomCreepQuotas.remoteCart.length)) {
+				let curRole = 'remoteCart';
+    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+    		        if(currentFlagCreeps.length < 1) {
+						let curCreepBody = [CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE];
+						if(Game.flags[curFlagName].memory.bodyParts) {
+							curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+						}
+						mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+    			        break;
+    		        }
+    		    }
+			} else if((roomCreepQuotas.reserver) && (undefToZero(roomCreepRoster.reserver) < roomCreepQuotas.reserver.length)) {
+			/*
+    		} else if(undefToZero(roomCreepRoster.reserver) < roomQuota.reservers) {
+				if(roomRemoteInfo && (roomRemoteInfo.reservers.length > 0)) {
+    				for(let reserversIndex in roomRemoteInfo.reservers) {
+    					let currentReserver = roomRemoteInfo.reservers[reserversIndex];
+    					let currentReserverFilter = _.filter(roomCreeps, (creep) => creep.memory.creepId === currentReserver.creepId);
+
+    					if(currentReserverFilter.length < 1) {
+    						let newName = mainSpawn.createCreep([CLAIM,CLAIM,MOVE,MOVE,MOVE,ATTACK], undefined, {
+    							role: 'reserver',
+    							spawnRoom: roomName,
+    							creepId: currentReserver.creepId,
+    							controllerId: currentReserver.controllerId
+    						});
+    						console.log('Spawning new reserver: ' + newName + ' - ' + JSON.stringify(currentReserver));
+    						break;
+    					}
+    				}
+    			} else {
+    				console.log('!!!' + roomName + ' quota has reservers but there is no reserver info for this room!!!');
+    			}
+				*/
+
+				let curRole = 'reserver';
+    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+    		        if(currentFlagCreeps.length < 1) {
+						let curCreepBody = [CLAIM,CLAIM,MOVE,MOVE];
+						if(Game.flags[curFlagName].memory.bodyParts) {
+							curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+						}
+    		            //let newName =
+						mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+    			        //console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
+    			        break;
+    		        }
+    		    }
+			} else if((roomCreepQuotas.paver) && (undefToZero(roomCreepRoster.paver) < roomCreepQuotas.paver.length)) {
+				let curRole = 'paver';
+    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+    		        if(currentFlagCreeps.length < 1) {
+						let curCreepBody = [CARRY,CARRY,CARRY,WORK,MOVE,MOVE];
+						if(Game.flags[curFlagName].memory.bodyParts) {
+							curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+						} else if(Game.flags[curFlagName].room) {
+							let roads = Game.flags[curFlagName].room.findStructures(STRUCTURE_ROAD);
+							let sum = 0;
+							for(let road of roads) {
+								sum += road.hitsMax;
+							}
+							let potency = Math.max(Math.ceil(sum / 500000), 1);
+							curCreepBody = workerBody(3 * potency, potency, 2 * potency);
+						}
+						mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+    			        break;
+    		        }
+    		    }
+    		} else if(undefToZero(roomCreepRoster.reinforcer) < roomQuota.reinforcers) {
+    			//let newName =
+				mainSpawn.createCreep([WORK,MOVE,CARRY,MOVE,WORK,MOVE,CARRY,MOVE,CARRY,MOVE], undefined, {role: 'reinforcer', spawnRoom: roomName});
+    			//console.log('Spawning new reinforcer (' + roomName + '): ' + newName);
+    		} else if((roomCreepQuotas.claimer) && (undefToZero(roomCreepRoster.claimer) < roomCreepQuotas.claimer.length)) {
+				//} else if(undefToZero(roomCreepRoster.claimer) < roomQuota.claimers) {
+    			//let newName =
+    			//mainSpawn.createCreep([CLAIM,CLAIM,CLAIM,CLAIM,CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
+    			//let newName =
+				//mainSpawn.createCreep([CLAIM,MOVE], undefined, {role: 'claimer', spawnRoom: roomName});
+    			//console.log('Spawning new claimer (' + roomName + '): ' + newName);
+				let curRole = 'claimer';
+    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+    		        if(currentFlagCreeps.length < 1) {
+						let curCreepBody = [CLAIM,MOVE];
+						if(Game.flags[curFlagName].memory.bodyParts) {
+							curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+						}
+						mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+    			        break;
+    		        }
+    		    }
+			} else if((roomCreepQuotas.attackClaimer) && (undefToZero(roomCreepRoster.attackClaimer) < roomCreepQuotas.attackClaimer.length)) {
+				let curRole = 'attackClaimer';
+    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+    		        if(currentFlagCreeps.length < 1) {
+						let curCreepBody = [CLAIM,CLAIM,CLAIM,CLAIM,CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE];
+						if(Game.flags[curFlagName].memory.bodyParts) {
+							curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+						}
+						mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+    			        break;
+    		        }
+    		    }
+    		} else if(undefToZero(roomCreepRoster.remoteUpgrader) < roomQuota.remoteUpgraders) {
+    			//let newName =
+				mainSpawn.createCreep(currentBody, undefined, {role: 'remoteUpgrader', spawnRoom: roomName});
+    			//console.log('Spawning new remote upgrader (' + roomName + '): ' + newName);
+			} else if((roomCreepQuotas.remoteBuilder) && (undefToZero(roomCreepRoster.remoteBuilder) < roomCreepQuotas.remoteBuilder.length)) {
+				let curRole = 'remoteBuilder';
+    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+    		        if(currentFlagCreeps.length < 1) {
+						let curCreepBody = currentBody;
+						//let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY];
+						if(Game.flags[curFlagName].memory.bodyParts) {
+							curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+						}
+						mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+    			        break;
+    		        }
+    		    }
+			} else if((roomCreepQuotas.containerBuilder) && (undefToZero(roomCreepRoster.containerBuilder) < roomCreepQuotas.containerBuilder.length)) {
+				let curRole = 'containerBuilder';
+    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+    		        if(currentFlagCreeps.length < 1) {
+						let curCreepBody = currentBody;
+						//let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY];
+						if(Game.flags[curFlagName].memory.bodyParts) {
+							curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+						}
+						mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+    			        break;
+    		        }
+    		    }
+    		} else if(curRoom.memory.shouldMine === true && undefToZero(roomCreepRoster.mineralHarvester) < 1) {
+    		    mainSpawn.spawnMineralHarvester();
+    		} else if((roomCreepQuotas.scout) && (undefToZero(roomCreepRoster.scout) < roomCreepQuotas.scout.length)) {
+    		    for(let curScoutIndex in roomCreepQuotas.scout) {
+    		        let curScoutFlagName = roomCreepQuotas.scout[curScoutIndex];
+    		        let currentFlagScouts = _.filter(roomCreeps, (creep) => creep.memory.flagName === curScoutFlagName);
+    		        if((currentFlagScouts.length < 1) || (currentFlagScouts[0].ticksToLive <= 20)) {
+    		            //let newName = mainSpawn.createCreep([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined, {spawnRoom: roomName, role: 'scout', flagName: curScoutFlagName});
+    		            //let newName =
+						mainSpawn.createCreep([MOVE], undefined, {spawnRoom: roomName, role: 'scout', flagName: curScoutFlagName});
+    			        //console.log('Spawning new scout: ' + newName + ' - ' + curScoutFlagName);
+    			        break;
+    		        }
+    		    }
+    		} else if((roomCreepQuotas.soldier) && (undefToZero(roomCreepRoster.soldier) < roomCreepQuotas.soldier.length)) {
+    		    for(let curSoldierIndex in roomCreepQuotas.soldier) {
+    		        let curSoldierFlagName = roomCreepQuotas.soldier[curSoldierIndex];
+    		        let currentFlagSoldiers = _.filter(roomCreeps, (creep) => creep.memory.flagName === curSoldierFlagName);
+    		        if((currentFlagSoldiers.length < 1) || (currentFlagSoldiers[0].ticksToLive <= 25)) {
+						let soldierBody = [TOUGH,MOVE,ATTACK,MOVE];
+						if(Game.flags[curSoldierFlagName].memory.bodyParts) {
+							soldierBody = Game.flags[curSoldierFlagName].memory.bodyParts;
+						}
+    		            //let newName =
+						mainSpawn.createCreep(soldierBody, undefined, {spawnRoom: roomName, role: 'soldier', flagName: curSoldierFlagName});
+    			        //console.log('Spawning new soldier: ' + newName + ' - ' + curSoldierFlagName);
+    			        break;
+    		        }
+    		    }
+			} else if((roomCreepQuotas.powerCarrier) && (undefToZero(roomCreepRoster.powerCarrier) < roomCreepQuotas.powerCarrier.length)) {
+				let curRole = 'powerCarrier';
+    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+    		        if(currentFlagCreeps.length < 1) {
+						let curCreepBody = [CARRY,MOVE,CARRY,MOVE];
+						if(Game.flags[curFlagName].memory.bodyParts) {
+							curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+						}
+    		            //let newName =
+						mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+    			        //console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
+    			        break;
+    		        }
+    		    }
+			} else if((roomCreepQuotas.remoteTransporter) && (undefToZero(roomCreepRoster.remoteTransporter) < roomCreepQuotas.remoteTransporter.length)) {
+				let curRole = 'remoteTransporter';
+    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+    		        if(currentFlagCreeps.length < 1) {
+						let curCreepBody = [CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE];
+						if(Game.flags[curFlagName].memory.bodyParts) {
+							curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+						}
+						mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+    			        break;
+    		        }
+    		    }
+    		} else {
+				// filter for room mineral transfer or return flags
+				let roomTransferFlagRegex = new RegExp('^' + roomName + '_mineralTransfer_');
+				let roomReturnFlagRegex = new RegExp('^' + roomName + '_mineralReturn_');
+				let roomTransferFlags = _.filter(Game.flags, (flag) => {
+					return (roomTransferFlagRegex.test(flag.name) === true) || (roomReturnFlagRegex.test(flag.name) === true);
+				});
+
+				if(roomTransferFlags.length) {
+					let creepName = roomName + '_mineralCarrier';
+					if(!Game.creeps[creepName]) {
+						//let newName = mainSpawn.createCreep([CARRY,CARRY,MOVE,MOVE], creepName, {spawnRoom: roomName, role: 'mineralCarrier'});
+						//let newName =
+						mainSpawn.createCreep([CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE,CARRY,MOVE], creepName, {spawnRoom: roomName, role: 'mineralCarrier'});
+    			        //console.log('Spawning new mineral carrier: ' + newName + ' (' + roomName + ')');
+					}
+				}
+			}
+		}
+
+		if(roomSpawns.length >= 2) {
+		    mainSpawn = roomSpawns[1];
+		}
+
+		if(mainSpawn.spawnCalled || mainSpawn.spawning) {
+			if(roomSpawns.length >= 3) {
+			    mainSpawn = roomSpawns[2];
 			}
 	    }
 
 
-		// run spawn loop
-		for(let spawnName in Game.spawns) {
-			Game.spawns[spawnName].updateSpawnFlag();
+
+		// for sentinels
+		if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
+			let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
+			let roomCreepQuotas = Game.rooms[roomName].memory.creepQuotas;
+			if((roomCreepQuotas.sentinel) && (undefToZero(roomCreepRoster.sentinel) < roomCreepQuotas.sentinel.length)) {
+				let curRole = 'sentinel';
+    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+					if(Game.flags[curFlagName].room && Game.flags[curFlagName].room.hostiles.length > 0) {
+						let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+	    		        if(currentFlagCreeps.length < 1) {
+							let curCreepBody = [TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,HEAL,HEAL,HEAL];
+							if(Game.flags[curFlagName].memory.bodyParts) {
+								curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+							}
+							mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+							Logger.log(`sentinel activated for flag ${curFlagName}`, 4);
+	    			        break;
+	    		        }
+					}
+    		    }
+			}
 		}
 
 
-		// for screeps-visual
-		visualizePaths();
-		RawVisual.commit();
+
+		// for dismantlers
+		let numMedics = 0;
+
+		if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
+			let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
+			let roomCreepQuotas = Game.rooms[roomName].memory.creepQuotas;
+			if((roomCreepQuotas.dismantler) && (undefToZero(roomCreepRoster.medic) < (roomCreepQuotas.dismantler.length * numMedics))) {
+    		    for(let curQuotaIndex in roomCreepQuotas.dismantler) {
+    		        let curFlagName = roomCreepQuotas.dismantler[curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === 'medic'));
+    		        if(currentFlagCreeps.length < numMedics) {
+    		            let medicBody = [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL];
+						//let medicBody = [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL];
+						//let medicBody = [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL,HEAL];
+						if(Game.flags[curFlagName].memory.medicBodyParts) {
+							medicBody = Game.flags[curFlagName].memory.medicBodyParts;
+						}
+    		            //let newName =
+						mainSpawn.createCreep(medicBody, undefined, {spawnRoom: roomName, role: 'medic', flagName: curFlagName});
+    			        //console.log('Spawning new medic: ' + newName + ' - ' + curFlagName);
+    			        break;
+    		        }
+    		    }
+    		}  else if((roomCreepQuotas.dismantler) && (undefToZero(roomCreepRoster.dismantler) < roomCreepQuotas.dismantler.length)) {
+				let curRole = 'dismantler';
+    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+    		        if(currentFlagCreeps.length < 1) {
+						//let curCreepBody = [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK];
+    		            //let curCreepBody = [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK];
+						let curCreepBody = [TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK,WORK];
+						if(Game.flags[curFlagName].memory.dismantlerBodyParts) {
+							curCreepBody = Game.flags[curFlagName].memory.dismantlerBodyParts;
+						}
+    		            //let newName =
+						mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+    			        //console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
+    			        break;
+    		        }
+    		    }
+    		}
+		}
 
 
-	    var statsConsole = require("statsConsole");
 
-        // sample data format ["Name for Stat", variableForStat]
-        let myStats = [];
-        /*let myStats = [
-        	["Creep Managers", CreepManagersCPUUsage],
-        	["Towers", towersCPUUsage],
-        	["Links", linksCPUUsage],
-        	["Setup Roles", SetupRolesCPUUsage],
-        	["Creeps", CreepsCPUUsage],
-        	["Init", initCPUUsage],
-        	["Stats", statsCPUUsage],
-        	["Total", totalCPUUsage]
-        ];*/
+		// for powerBankAttackers
+		numMedics = 1;
 
-        statsConsole.run(myStats); // Run Stats collection
+		if((!mainSpawn.spawnCalled) && ((mainSpawn.spawning === null) || (mainSpawn.spawning === undefined))) {
+			let roomCreepRoster = Game.rooms[roomName].memory.creepRoster;
+			let roomCreepQuotas = Game.rooms[roomName].memory.creepQuotas;
+			if((roomCreepQuotas.powerBankAttacker) && (undefToZero(roomCreepRoster.medic) < (roomCreepQuotas.powerBankAttacker.length * numMedics))) {
+    		    for(let curQuotaIndex in roomCreepQuotas.powerBankAttacker) {
+    		        let curFlagName = roomCreepQuotas.powerBankAttacker[curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === 'medic'));
+    		        if(currentFlagCreeps.length < numMedics) {
+    		            // 2 medics, 1 attacker
+						//let medicBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL];
+						// 1 medic, 1 attacker
+						let medicBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL,HEAL];
+						if(Game.flags[curFlagName].memory.medicBodyParts) {
+							medicBody = Game.flags[curFlagName].memory.medicBodyParts;
+						}
+    		            //let newName =
+						mainSpawn.createCreep(medicBody, undefined, {spawnRoom: roomName, role: 'medic', flagName: curFlagName});
+    			        //console.log('Spawning new medic: ' + newName + ' - ' + curFlagName);
+    			        break;
+    		        }
+    		    }
+    		}  else if((roomCreepQuotas.powerBankAttacker) && (undefToZero(roomCreepRoster.powerBankAttacker) < roomCreepQuotas.powerBankAttacker.length)) {
+				let curRole = 'powerBankAttacker';
+    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+    		        if(currentFlagCreeps.length < 1) {
+    		            // 2 medics, 1 attacker
+						//let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK];
+						// 1 medic, 1 atttacker
+						let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK,ATTACK];
+						if(Game.flags[curFlagName].memory.powerBankAttackerBodyParts) {
+							curCreepBody = Game.flags[curFlagName].memory.powerBankAttackerBodyParts;
+						}
+    		            //let newName =
+						mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+    			        //console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
+    			        break;
+    		        }
+    		    }
+    		}  else if((roomCreepQuotas.powerCollector) && (undefToZero(roomCreepRoster.powerCollector) < roomCreepQuotas.powerCollector.length)) {
+				let curRole = 'powerCollector';
+    		    for(let curQuotaIndex in roomCreepQuotas[curRole]) {
+    		        let curFlagName = roomCreepQuotas[curRole][curQuotaIndex];
+    		        let currentFlagCreeps = _.filter(roomCreeps, (creep) => (creep.memory.flagName === curFlagName) && (creep.memory.role === curRole));
+    		        if(currentFlagCreeps.length < 1) {
+						let curCreepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY,CARRY];
+						if(Game.flags[curFlagName].memory.bodyParts) {
+							curCreepBody = Game.flags[curFlagName].memory.bodyParts;
+						}
+    		            //let newName =
+						mainSpawn.createCreep(curCreepBody, undefined, {spawnRoom: roomName, role: curRole, flagName: curFlagName});
+    			        //console.log('Spawning new ' + curRole + ': ' + newName + ' - ' + curFlagName);
+    			        break;
+    		        }
+    		    }
+    		}
+		}
 
-        if (Game.cpu.getUsed() > Game.cpu.limit) {
-        	statsConsole.log("Tick: " + Game.time + "  CPU OVERRUN: " + Game.cpu.getUsed().toFixed(2) + "  Bucket:" + Game.cpu.bucket, 5);
-        }
 
-        if ((Game.time % 5) === 0) {
-            let timeBeforeDisplay = Game.cpu.getUsed();
-        	console.log(statsConsole.displayHistogram());
-        	console.log(statsConsole.displayStats());
-        	console.log(statsConsole.displayLogs());
-        	//console.log(statsConsole.displayMaps()); // Don't use as it will consume ~30-40 CPU
-        	totalTimeToDisplay = (Game.cpu.getUsed() - timeBeforeDisplay);
-        	console.log("Time to Draw: " + totalTimeToDisplay.toFixed(2));
-        }
+		// run links
+		let links = Game.rooms[roomName].findStructures(STRUCTURE_LINK);
+		links.forEach(link => link.run());
+
+		// transfer energy from links to any creeps except carriers, miners, and various special roles
+		// find non carriers that aren't full of energy
+		//let linkTransferCandidates = _.filter(roomCreeps, (creep) => {
+		//		return (creep.memory.role !== 'remoteCarrier') && (creep.memory.role !== 'carrier') && (creep.memory.role !== 'explorer') && (creep.memory.role !== 'reinforcer') && (creep.memory.role !== 'mineralHarvester') && (creep.memory.role !== 'miner') && (creep.memory.role !== 'mineralCarrier') && (creep.memory.role !== 'harvester') && (creep.memory.role !== 'powerCollector') && (creep.carry.energy < creep.carryCapacity);
+		//});
+
+		// only refill builders automatically (other roles will withdraw themselves; this is to top up builders)
+		let linkTransferCandidates = _.filter(roomCreeps, (creep) => {
+				return (creep.memory.role === 'builder') && (creep.carry.energy < creep.carryCapacity);
+		});
+
+		links.forEach(link => link.refillCreeps(linkTransferCandidates));
 
 
-		Stats.runBuiltinStats(); // for screeps-stats
+		// calculate mineral distribution network
+		if(Game.time % 500 === 0) {
+			calcMineralDistribution();
+		}
 
-	});
+		// run terminals
+		if(curRoom.terminal) {
+			curRoom.terminal.run();
+		}
+
+		// run compound production manager for current room
+		if((curRoom.memory.produceCompounds === true) && (Game.time % 10 === 1)) {
+		    curRoom.runCompoundProductionManagment();
+		}
+
+		// run labs (new flower style)
+		curRoom.runLabs();
+
+		// run labs (old style)
+		/*
+		if(typeof curRoom.memory.reactors !== 'undefined') {
+		    for(let reactorIndex in curRoom.memory.reactors) {
+		        let curReactorGroup = curRoom.memory.reactors[reactorIndex];
+
+		        let curReactor = Game.getObjectById(curReactorGroup.reactorId);
+		        if(curReactor === null) {
+		            //TODO: make this work if there are ramparts on top
+		            curReactor = curRoom.lookForAt(LOOK_STRUCTURES, Game.flags[curReactorGroup.reactorFlagName].pos)[0];
+		            if(curReactor.structureType === STRUCTURE_LAB) {
+		                curReactorGroup.reactorId = curReactor.id;
+		            } else {
+		                console.log('!!!Error: non-lab building under flag: ' + curReactorGroup.reactorFlagName);
+		                continue;
+		            }
+		        }
+
+		        if((curReactor.cooldown === 0) && (curReactor.mineralAmount < curReactor.mineralCapacity)) {
+		            curReactorGroup.reactorSiloIds = curReactorGroup.reactorSiloIds || [];
+
+		            let curReactorSilo0 = Game.getObjectById(curReactorGroup.reactorSiloIds[0]);
+		            if(curReactorSilo0 === null) {
+		                //TODO: make this work if there are ramparts on top
+			            curReactorSilo0 = curRoom.lookForAt(LOOK_STRUCTURES, Game.flags[curReactorGroup.reactorSiloFlagNames[0]].pos)[0];
+			            if(curReactorSilo0.structureType === STRUCTURE_LAB) {
+			                curReactorGroup.reactorSiloIds[0] = curReactorSilo0.id;
+			            } else {
+			                console.log('!!!Error: non-lab building under flag: ' + curReactorGroup.reactorSiloFlagNames[0]);
+			                continue;
+			            }
+		            }
+
+		            let curReactorSilo1 = Game.getObjectById(curReactorGroup.reactorSiloIds[1]);
+		            if(curReactorSilo1 === null) {
+		                //TODO: make this work if there are ramparts on top
+			            curReactorSilo1 = curRoom.lookForAt(LOOK_STRUCTURES, Game.flags[curReactorGroup.reactorSiloFlagNames[1]].pos)[0];
+			            if(curReactorSilo1.structureType === STRUCTURE_LAB) {
+			                curReactorGroup.reactorSiloIds[1] = curReactorSilo1.id;
+			            } else {
+			                console.log('!!!Error: non-lab building under flag: ' + curReactorGroup.reactorSiloFlagNames[1]);
+			                continue;
+			            }
+		            }
+
+		            if((curReactorSilo0.mineralAmount > 0) && (curReactorSilo1.mineralAmount > 0)) {
+		                let reactionReturn = curReactor.runReaction(curReactorSilo0, curReactorSilo1);
+		                if(reactionReturn !== OK) {
+		                    console.log('***Reaction Error: ' + reactionReturn + ', ' + roomName + ', ' + curReactorGroup.reactorFlagName);
+		                }
+		            }
+		        }
+		    }
+		}
+		*/
+
+		// run power spawns
+		if(curRoom.memory.processPower === true && (Game.time % 5 === 3)) {
+			let myRoomStructures = curRoom.find(FIND_MY_STRUCTURES);
+			let powerSpawn = getStructure(myRoomStructures, STRUCTURE_POWER_SPAWN);
+			if(powerSpawn) {
+				if(powerSpawn.power >= 1 && powerSpawn.energy >= 50) {
+					powerSpawn.processPower();
+				}
+			} else {
+				console.log('!!!!Error: could not find power spawn in room ' + curRoom.name);
+			}
+		}
+
+		// run observer
+		if(isArrayWithContents(curRoom.memory.observeRooms)) {
+			let roomList = curRoom.memory.observeRooms;
+			let observers = curRoom.findStructures(STRUCTURE_OBSERVER);
+			if(isArrayWithContents(observers)) {
+				let observationIndex = Game.time % roomList.length;
+				let roomToObserve = roomList[observationIndex];
+				if(typeof roomToObserve === 'string') {
+					let observeReturn = observers[0].observeRoom(roomToObserve);
+					Logger.log(`observing ${roomToObserve} from ${curRoom} (${errorCodeToText(observeReturn)})`, 0);
+				}
+			}
+		}
+
+	}
+
+
+	// run creep loop
+	Memory.roster = {};
+    for(let creepName in Game.creeps) {
+        let creep = Game.creeps[creepName];
+
+		Memory.roster[creep.pos.roomName] = Memory.roster[creep.pos.roomName] || {};
+
+		if(!creep.spawning) {
+			creep.run();
+			Memory.roster[creep.pos.roomName][creep.memory.role] = Memory.roster[creep.pos.roomName][creep.memory.role] || 0;
+			Memory.roster[creep.pos.roomName][creep.memory.role]++;
+		} else {
+			Memory.roster[creep.pos.roomName].spawning = Memory.roster[creep.pos.roomName].spawning || [];
+			Memory.roster[creep.pos.roomName].spawning.push(creep.memory.role);
+		}
+    }
+
+
+	// run spawn loop
+	for(let spawnName in Game.spawns) {
+		Game.spawns[spawnName].updateSpawnFlag();
+	}
+
+
+	// for screeps-visual
+	visualizePaths();
+	RawVisual.commit();
+
+
+    var statsConsole = require("statsConsole");
+
+    // sample data format ["Name for Stat", variableForStat]
+    let myStats = [];
+    /*let myStats = [
+    	["Creep Managers", CreepManagersCPUUsage],
+    	["Towers", towersCPUUsage],
+    	["Links", linksCPUUsage],
+    	["Setup Roles", SetupRolesCPUUsage],
+    	["Creeps", CreepsCPUUsage],
+    	["Init", initCPUUsage],
+    	["Stats", statsCPUUsage],
+    	["Total", totalCPUUsage]
+    ];*/
+
+    statsConsole.run(myStats); // Run Stats collection
+
+    if (Game.cpu.getUsed() > Game.cpu.limit) {
+    	statsConsole.log("Tick: " + Game.time + "  CPU OVERRUN: " + Game.cpu.getUsed().toFixed(2) + "  Bucket:" + Game.cpu.bucket, 5);
+    }
+
+    if ((Game.time % 5) === 0) {
+        let timeBeforeDisplay = Game.cpu.getUsed();
+    	console.log(statsConsole.displayHistogram());
+    	console.log(statsConsole.displayStats());
+    	console.log(statsConsole.displayLogs());
+    	//console.log(statsConsole.displayMaps()); // Don't use as it will consume ~30-40 CPU
+    	totalTimeToDisplay = (Game.cpu.getUsed() - timeBeforeDisplay);
+    	console.log("Time to Draw: " + totalTimeToDisplay.toFixed(2));
+    }
+
+
+	Stats.runBuiltinStats(); // for screeps-stats
 };
 
 function defendRoom(roomName) {
@@ -1307,84 +1316,16 @@ var reset_memory = function () {
 	return true;
 };
 
-//module.exports = reset_memory;
-
-/*
-    var tower = Game.getObjectById('id655200');
-    if(tower) {
-        var closestDamagedStructure = tower.pos.findClosestByRange(FIND_STRUCTURES, {
-            filter: (structure) => structure.hits < structure.hitsMax
-        });
-        if(closestDamagedStructure) {
-            tower.repair(closestDamagedStructure);
-        }
-
-        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if(closestHostile) {
-            tower.attack(closestHostile);
-        }
-    }
-*/
-
-//var walls = Game.rooms[roomName].find(FIND_STRUCTURES, {filter: {structureType: STRUCTURE_WALL}});
-/*
-		var defenses = Game.rooms[roomName].find(FIND_STRUCTURES, {
-				filter: (structure) => {
-					return (structure.structureType == STRUCTURE_WALL || structure.structureType == STRUCTURE_RAMPART) && structure.hits < 35000;
-				}
+/**
+ * main tick loop
+ */
+module.exports.loop = function() {
+	// wrap main function if profiler has been turned on
+	if(Memory.config && Memory.config.enableProfiler === true) {
+		profiler.wrap(function() {
+			main();
 		});
-*/
-
-
-// transfer energy from storage to carriers or reinforcers if they are in range
-//let mainStorage = Game.rooms[roomName].storage;
-//if(mainStorage) {
-
-	/*
-	var candidates = _.filter(roomCreeps, (creep) => {
-			return ((creep.memory.role === 'carrier') || (creep.memory.role === 'reinforcer')) && creep.carry.energy < creep.carryCapacity;
-	});
-
-	var inRangeCandidates = mainStorage.pos.findInRange(candidates, 1);
-
-	if(inRangeCandidates.length > 0) {
-		if(mainStorage.transfer(inRangeCandidates[0], RESOURCE_ENERGY) === OK) {
-			console.log('storage energy transferred to: ' + inRangeCandidates[0].name + ' - ' + inRangeCandidates[0].memory.role);
-		}
+	} else {
+		main();
 	}
-	*/
-
-	//let nonFullCarriers = _.filter(roomCreeps, (creep) => {
-	//		return (creep.memory.role === 'carrier') && (creep.carry.energy < creep.carryCapacity);
-	//});
-
-	//let nonFullBuilders = _.filter(roomCreeps, (creep) => {
-	//		return (creep.memory.role === 'builder') && (creep.carry.energy < creep.carryCapacity);
-			//return (creep.memory.role === 'builder') && (creep.carry.energy === 0);
-	//});
-
-	//let nonFullReinforcers = _.filter(roomCreeps, (creep) => {
-	//		return (creep.memory.role === 'reinforcer') && (creep.carry.energy === 0);
-	//});
-
-	//let inRangeCarriers = mainStorage.pos.findInRange(nonFullCarriers, 1);
-	// EDITS
-	//let inRangeBuildersPreSort = mainStorage.pos.findInRange(nonFullBuilders, 1);
-	//let inRangeBuilders = _.sortBy(inRangeBuildersPreSort, function(inRangeBuilder) { return inRangeBuilder.carry.energy; });
-	//let inRangeReinforcers = mainStorage.pos.findInRange(nonFullReinforcers, 1);
-
-	//if(inRangeCarriers.length > 0) {
-	//	if(mainStorage.transfer(inRangeCarriers[0], RESOURCE_ENERGY) === OK) {
-	//		//console.log('storage energy transferred to: ' + inRangeCarriers[0].name + ' - ' + inRangeCarriers[0].memory.role);
-	//	}
-	//} else
-	//if(inRangeBuilders.length > 0) {
-	//	if(mainStorage.transfer(inRangeBuilders[0], RESOURCE_ENERGY) === OK) {
-			//console.log('storage energy transferred to: ' + inRangeBuilders[0].name + ' - ' + inRangeBuilders[0].memory.role);
-	//	}
-	//}// else if(inRangeReinforcers.length > 0) {
-	//	if(mainStorage.transfer(inRangeReinforcers[0], RESOURCE_ENERGY) === OK) {
-			//console.log('storage energy transferred to: ' + inRangeReinforcers[0].name + ' - ' + inRangeReinforcers[0].memory.role);
-	//	}
-	//}
-//}
+};
