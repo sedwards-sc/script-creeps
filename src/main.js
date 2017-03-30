@@ -36,7 +36,6 @@ global.Stats = new ScreepsStats();
 require('debug').populate(global);
 
 var profiler = require('screeps-profiler');
-
 if(Memory.config && Memory.config.enableProfiler === true) {
 	try {
 		profiler.enable();
