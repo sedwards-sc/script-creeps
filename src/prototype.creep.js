@@ -319,8 +319,9 @@ Creep.prototype.blindMoveTo = function(destination, ops, dareDevil = false) {
  * @returns {number}
  */
 Creep.prototype.yieldRoad = function(target, allowSwamps = true) {
-	let isOffRoad = this.pos.lookForStructure(STRUCTURE_ROAD) === undefined;
-	if(isOffRoad) {
+	let offRoad = this.pos.lookForStructure(STRUCTURE_ROAD) === undefined;
+	let offContainer = this.pos.lookForStructure(STRUCTURE_CONTAINER) === undefined;
+	if(offRoad && offContainer) {
 		return OK;
 	}
 

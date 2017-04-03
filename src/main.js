@@ -1253,7 +1253,11 @@ global.removeFlagPath = removeFlagPath;
 function marketSell(room_name, resource, amt = Infinity) {
     // 9-30-2016 patch makes this way faster I guess?
     let orders = Game.market.getAllOrders({type: ORDER_BUY, resourceType: resource});
-    orders = _.filter(orders, o => o.price > 0.25);
+    orders = _.filter(orders, o => o.price > 0.1);
+    if(!isArrayWithContents(orders)) {
+        Logger.highlight('no valid orders found');
+        return;
+    }
     let order = _.max(orders, o => o.price / Game.market.calcTransactionCost(amt, room_name, o.roomName));
     console.log('Chosen order:', JSON.stringify(order));
     console.log('Transaction cost:', Game.market.calcTransactionCost(amt, room_name, order.roomName));
