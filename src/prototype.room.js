@@ -454,6 +454,35 @@ Room.prototype.findCreeps = function() {
     return Game.cache.creeps[this.name] || [];
 };
 
+Object.defineProperty(Room.prototype, "sources", {
+	get: function myProperty() {
+		if(!this.cache) {
+			this.cache = {};
+		}
+		if(!this.cache.sources) {
+			this.cache.sources = this.find(FIND_SOURCES);
+		}
+		return this.cache.sources;
+	}
+});
+
+Object.defineProperty(Room.prototype, "mineral", {
+	get: function myProperty() {
+		if(!this.cache) {
+			this.cache = {};
+		}
+		if(!this.cache.mineral) {
+			let minerals = this.find(FIND_MINERALS);
+			let mineral;
+			if(minerals) {
+				mineral = minerals[0];
+			}
+			this.cache.mineral = mineral;
+		}
+		return this.cache.mineral;
+	}
+});
+
 Object.defineProperty(Room.prototype, "hostiles", {
 	get: function myProperty() {
 		if(!Game.cache.hostiles[this.name]) {
