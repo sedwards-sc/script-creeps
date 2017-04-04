@@ -472,12 +472,7 @@ Object.defineProperty(Room.prototype, "mineral", {
 			this.cache = {};
 		}
 		if(!this.cache.mineral) {
-			let minerals = this.find(FIND_MINERALS);
-			let mineral;
-			if(minerals) {
-				mineral = minerals[0];
-			}
-			this.cache.mineral = mineral;
+			this.cache.mineral = this.find(FIND_MINERALS)[0];
 		}
 		return this.cache.mineral;
 	}
