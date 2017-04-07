@@ -106,12 +106,6 @@ var main = function () {
 	}
 
 
-	for(let name in Game.rooms) {
-		if(Game.rooms[name].isMine()) {
-			empire.register(Game.rooms[name]);
-		}
-	}
-
 	// loop to clean dead creeps out of memory
     for(let name in Memory.creeps) {
         if(!Game.creeps[name]) {
