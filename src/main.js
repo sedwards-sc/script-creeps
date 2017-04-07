@@ -27,6 +27,10 @@ require('creeptalk')({
   'language': require('creeptalk_basic')
 });
 
+require('epic');
+require('quest');
+require('spawnGroup');
+
 require('object.rosters');
 require('object.remotes');
 
@@ -70,7 +74,37 @@ var main = function () {
 
 	var Traveler = require('Traveler');
 
-	let empire = loopHelper.initEmpire();
+
+	loopHelper.initEmpire();
+	let prioritizedEpics = loopHelper.getEpics();
+
+	for(let epic of prioritizedEpics) {
+		epic.init();
+	}
+
+	for(let epic of prioritizedEpics) {
+		epic.collectCensus();
+	}
+
+	for(let epic of prioritizedEpics) {
+		epic.runActivities();
+	}
+
+	for(let epic of prioritizedEpics) {
+		epic.invalidateCache();
+	}
+
+	for(let epic of prioritizedEpics) {
+		epic.theEnd();
+	}
+
+	try {
+		empire.runActivities();
+	} catch(e) {
+		Logger.errorLog("error with empire activities", ERR_TIRED, 4);
+		Logger.log(e, 4);
+	}
+
 
 	for(let name in Game.rooms) {
 		if(Game.rooms[name].isMine()) {
