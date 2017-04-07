@@ -38,6 +38,8 @@ class Empire {
 	register(room) {
 		if(!room) return;
 
+		if(room.registered === true) return;
+
 		let hasTerminal;
 		if(room.terminal && room.terminal.my) {
 		    hasTerminal = true;
@@ -52,6 +54,8 @@ class Empire {
 		//if(hasTerminal && hasStorage) {
 		//    this.analyzeResources(room);
 		//}
+
+		room.registered = true;
 	}
 
 	getSpawnGroup(roomName) {
