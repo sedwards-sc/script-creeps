@@ -27,7 +27,12 @@ class Empire {
 	}
 
 	init() {
-
+		// register my owned rooms
+		for(let name in Game.rooms) {
+			if(Game.rooms[name].isMine()) {
+				empire.register(Game.rooms[name]);
+			}
+		}
 	}
 
 	register(room) {
@@ -72,7 +77,7 @@ class Empire {
     }
 
 	runActivities() {
-		
+
 	}
 }
 
