@@ -127,11 +127,6 @@ var main = function () {
 		countAllCreepFlags();
 	}
 
-	// report gcl progress occasionally
-	if((Game.time % 1500) === 1) {
-	    Game.notify('GCL - level: ' + Game.gcl.level + ' - progress: ' + (Game.gcl.progress / 1000000).toFixed(2) + 'M - required: ' + (Game.gcl.progressTotal / 1000000).toFixed(2) + 'M - ' + ((Game.gcl.progress / Game.gcl.progressTotal) * 100).toFixed(1) + '%');
-	}
-
 	// room defence loop
 	for(let name in Game.rooms) {
 		Game.rooms[name].assessThreats();

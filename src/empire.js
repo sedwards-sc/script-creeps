@@ -82,12 +82,14 @@ class Empire {
 
 	runActivities() {
 		// run reports
-		if((Game.time % 1500) === 1) {
+		if((Game.time % 1500) === 2) {
 			let storagesEnergy = _.sum(empire.storages, s => s.store.energy);
 			let terminalsEnergy = _.sum(empire.terminals, s => s.store.energy);
 			let storagesPower = _.sum(empire.storages, s => s.store.power);
 			let terminalsPower = _.sum(empire.terminals, s => s.store.power);
 			Game.notify(`Empire resources(storage/terminal/total): energy(${storagesEnergy}/${terminalsEnergy}/${storagesEnergy + terminalsEnergy}) :: power(${storagesPower}/${terminalsPower}/${storagesPower + terminalsPower})`);
+
+			Game.notify('GCL - level: ' + Game.gcl.level + ' - progress: ' + (Game.gcl.progress / 1000000).toFixed(2) + 'M - required: ' + (Game.gcl.progressTotal / 1000000).toFixed(2) + 'M - ' + ((Game.gcl.progress / Game.gcl.progressTotal) * 100).toFixed(1) + '%');
 		}
 	}
 }
