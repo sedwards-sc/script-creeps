@@ -36,8 +36,8 @@ loopHelper.initMemory = function() {
 
 loopHelper.initEmpire = function() {
 	let empire = new Empire();
-	empire.init();
 	global.empire = empire;
+	empire.init();
 	return empire;
 };
 
