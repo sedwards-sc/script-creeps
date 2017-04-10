@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
 
-require('empire');
+require('class.Empire');
 
 var loopHelper = {};
 

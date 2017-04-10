@@ -27,9 +27,9 @@ require('creeptalk')({
   'language': require('creeptalk_basic')
 });
 
-require('epic');
-require('quest');
-require('spawnGroup');
+require('class.Epic');
+require('class.Quest');
+require('class.SpawnGroup');
 
 require('object.rosters');
 require('object.remotes');
@@ -72,7 +72,7 @@ var main = function () {
 		placedRoad: false,
 	};
 
-	var Traveler = require('Traveler');
+	var Traveler = require('class.Traveler');
 
 
 	loopHelper.initEmpire();
