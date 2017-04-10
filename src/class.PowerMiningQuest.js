@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
 
-class PowerMiningQuest {
+class PowerMiningQuest extends Quest {
 
 	/**
 	 *
