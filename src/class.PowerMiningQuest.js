@@ -6,7 +6,7 @@ class PowerMiningQuest {
 	 *
 	 */
 	constructor(epic) {
-		super(powerMining, epic);
+		super('powerMining', epic);
 	}
 
     initQuest() {

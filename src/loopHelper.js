@@ -10,6 +10,10 @@ require('class.StrongholdEpic');
 
 require('class.PowerMiningQuest');
 
+global.EPIC_CLASSES = {
+	'stronghold': StrongholdEpic
+};
+
 var loopHelper = {};
 
 loopHelper.initMemory = function() {

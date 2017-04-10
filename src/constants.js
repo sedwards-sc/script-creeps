@@ -22,10 +22,6 @@ global.LINK_TRANSFER_THRESHOLD = LINK_CAPACITY * 0.5;
 
 global.CACHE_INVALIDATION_CHANCE = 0.01;
 
-global.EPIC_CLASSES = {
-	stronghold: StrongholdEpic
-};
-
 global.PRIORITY_EMERGENCY = 0;
 global.PRIORITY_HIGH = 1;
 global.PRIORITY_MEDIUM = 10;
