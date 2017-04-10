@@ -1,6 +1,14 @@
 /* jshint esversion: 6 */
 
 require('class.Empire');
+require('class.SpawnGroup');
+
+require('class.Epic');
+require('class.Quest');
+
+require('class.StrongholdEpic');
+
+require('class.PowerMiningQuest');
 
 var loopHelper = {};
 

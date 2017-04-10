@@ -27,10 +27,6 @@ require('creeptalk')({
   'language': require('creeptalk_basic')
 });
 
-require('class.Epic');
-require('class.Quest');
-require('class.SpawnGroup');
-
 require('object.rosters');
 require('object.remotes');
 
