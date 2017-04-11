@@ -291,14 +291,25 @@ function addTerrainToMatrix(matrix, roomName) {
 
 function workerBody(carryCount, workCount, moveCount) {
 	let body = [];
-	for (let i = 0; i < carryCount; i++) {
+	for(let i = 0; i < carryCount; i++) {
 		body.push(CARRY);
 	}
-	for (let i = 0; i < workCount; i++) {
+	for(let i = 0; i < workCount; i++) {
 		body.push(WORK);
 	}
-	for (let i = 0; i < moveCount; i++) {
+	for(let i = 0; i < moveCount; i++) {
 		body.push(MOVE);
+	}
+	return body;
+}
+
+function configBody(config) {
+	let body = [];
+	for(let partType in config) {
+		let amount = config[partType];
+		for(let i = 0; i < amount; i++) {
+			body.push(partType);
+		}
 	}
 	return body;
 }
@@ -322,6 +333,7 @@ function populateUtils(g) {
 	g.addCreepsToMatrix = addCreepsToMatrix;
 	g.addTerrainToMatrix = addTerrainToMatrix;
 	g.workerBody = workerBody;
+	g.configBody = configBody;
 }
 
 exports.populateUtils = populateUtils;

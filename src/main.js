@@ -299,7 +299,7 @@ var main = function () {
 		}
 
         let builderBody;
-		if(Game.rooms[roomName].controller.level === 8) {
+		if(Game.rooms[roomName].controller.level === 8 || (roomEnergyCapacity >= 2850 && roomStorageEnergy > 500000)) {
 			builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE];
 		} else if((roomEnergyCapacity >= 1900) && (roomStorageEnergy > 500000)) {
 			builderBody = [WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,WORK,WORK,WORK,WORK,WORK,CARRY,MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,MOVE,CARRY,MOVE];
