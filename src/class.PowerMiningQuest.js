@@ -34,14 +34,44 @@ class PowerMiningQuest extends Quest {
 
 		let maxCollectors = 0;
 		if(this.memory.currentTarget && this.memory.currentTarget.finishing === true) {
-			collectorsRequired = Math.floor(this.memory.currentTarget.power / 1250);
+			let collectorsRequired = Math.floor(this.memory.currentTarget.power / 1250);
 			maxCollectors = Math.min(collectorsRequired, 4);
 		}
 
-		this.powerBankCollectors = this.attendance("powerBankCollector", () => configBody({ MOVE: 25, CARRY: 25 }), maxCollectors);
+		this.powerCollectors = this.attendance("powerCollector", () => configBody({ MOVE: 25, CARRY: 25 }), maxCollectors);
     }
 
     runActivities() {
+		for(let i = 0; i < 2; i++) {
+            let powerBankAttacker = this.powerBankAttackers[i];
+            if(powerBankAttacker) {
+                if(!powerBankAttacker.memory.myHealerName) {
+                    if(this.powerBankAttackers.length === this.powerBankHealers.length) {
+                        powerBankAttacker.memory.myHealerName = this.powerBankHealers[i].name;
+                    }
+                } else {
+                    this.powerBankAttackerActivities(powerBankAttacker);
+                }
+            }
+            let powerBankHealer = this.powerBankHealers[i];
+            if(powerBankHealer) {
+                if(!powerBankHealer.memory.myAttackerName) {
+                    if(this.powerBankAttackers.length === this.powerBankHealers.length) {
+                        powerBankHealer.memory.myAttackerName = this.powerBankAttackers[i].name;
+                    }
+                } else {
+                    this.powerBankHealerActivities(powerBankHealer);
+                }
+            }
+        }
+
+        if(this.powerCollectors) {
+            let order = 0;
+            for(let powerCollector of this.powerCollectors) {
+                this.powerCollectorActivities(powerCollector, order);
+                order++;
+            }
+        }
     }
 
     questEnd() {
@@ -49,6 +79,128 @@ class PowerMiningQuest extends Quest {
 
     invalidateQuestCache() {
 	}
+
+	powerBankAttackerActivities(attacker) {
+        let myHealer = Game.creeps[attacker.memory.myHealerName];
+        if(!myHealer || (!attacker.pos.isNearTo(myHealer) && !attacker.pos.isNearExit(1))) {
+            attacker.idleOffRoad(this.epic.flag);
+            return;
+        }
+
+        if(!this.memory.currentTarget) {
+            Logger.log(`POWER: powerBankAttacker checking out: ${attacker.room.name}`);
+            attacker.suicide();
+            myHealer.suicide();
+            return;
+        }
+
+        let bankPos = deserializeRoomPosition(this.memory.currentTarget.pos);
+
+        if(attacker.pos.isNearTo(bankPos)) {
+            attacker.memory.inPosition = true;
+            let bank = bankPos.lookForStructure(STRUCTURE_POWER_BANK);
+            if(bank) {
+                if(bank.hits > 600 || attacker.ticksToLive < 5) {
+                    attacker.attack(bank);
+                } else {
+                    // wait for collectors
+                    for(let collector of this.powerCollectors) {
+                        if(!bankPos.inRangeTo(collector, 5)) {
+                            return;
+                        }
+                    }
+                    attacker.attack(bank);
+                }
+            }
+        } else if(myHealer.fatigue === 0) {
+            attacker.travelTo(bankPos, {ignoreRoads: true});
+        }
+    }
+
+	powerBankHealerActivities(healer) {
+        let myAttacker = Game.creeps[healer.memory.myAttackerName];
+        if(!myAttacker) {
+            return;
+        }
+
+        if(myAttacker.ticksToLive === 1) {
+            healer.suicide();
+            return;
+        }
+
+        if(healer.pos.isNearTo(myAttacker)) {
+            if(myAttacker.memory.inPosition) {
+                healer.heal(myAttacker);
+            } else {
+                healer.move(healer.pos.getDirectionTo(myAttacker));
+            }
+        } else {
+            healer.blindMoveTo(myAttacker);
+        }
+    }
+
+	powerCollectorActivities(collector, order) {
+        if(!collector.carry.power) {
+            if(this.memory.currentTarget && this.memory.currentTarget.finishing) {
+                this.powerCollectorApproachBank(collector, order);
+                return;
+            } else {
+                let power = collector.room.find(FIND_DROPPED_RESOURCES, {
+					filter: (r) => r.resourceType === RESOURCE_POWER
+				})[0];
+                if(power) {
+                    if(collector.pos.isNearTo(power)) {
+                        collector.pickup(power);
+                        collector.blindMoveTo(this.epic.flag.room.storage);
+                    } else {
+                        collector.blindMoveTo(power);
+                    }
+                    return; //  early;
+                }
+            }
+
+            //this.recycleCreep(collector);
+			collector.suicide();
+            return; // early
+        }
+
+        if(collector.pos.isNearTo(this.epic.flag.room.storage)) {
+            collector.transfer(this.epic.flag.room.storage, RESOURCE_POWER);
+        } else {
+            // traveling to storage
+            collector.travelTo(this.epic.flag.room.storage);
+        }
+    }
+
+    powerCollectorApproachBank(collector, order) {
+        let bankPos = deserializeRoomPosition(this.memory.currentTarget.pos);
+        if(!collector.pos.inRangeTo(bankPos, 5)) {
+            // traveling from spawn
+            collector.travelTo(bankPos, {ignoreRoads: true});
+        } else {
+            if(!collector.memory.inPosition) {
+                if(bankPos.openAdjacentSpots().length > 0) {
+                    if(collector.pos.isNearTo(bankPos)) {
+                        collector.memory.inPosition = true;
+                    } else {
+                        collector.blindMoveTo(bankPos);
+                    }
+                } else if(order > 0) {
+                    if(collector.pos.isNearTo(this.powerCollectors[order - 1])) {
+                        collector.memory.inPosition = true;
+                    } else {
+                        collector.blindMoveTo(this.powerCollectors[order - 1]);
+                    }
+                } else {
+                    if(collector.pos.isNearTo(this.powerBankAttackers[0])) {
+                        collector.memory.inPosition = true;
+                    } else {
+                        collector.blindMoveTo(this.powerBankAttackers[0]);
+                    }
+                }
+            }
+        }
+    }
 
 	observeAndMonitor(observer) {
 		if(this.memory.currentTarget) {

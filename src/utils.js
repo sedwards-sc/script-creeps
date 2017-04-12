@@ -314,6 +314,10 @@ function configBody(config) {
 	return body;
 }
 
+function deserializeRoomPosition(roomPosition) {
+	return new RoomPosition(roomPosition.x, roomPosition.y, roomPosition.roomName);
+}
+
 function populateUtils(g) {
     g.undefToZero = undefToZero;
     g.isNullOrUndefined = isNullOrUndefined;
@@ -334,6 +338,7 @@ function populateUtils(g) {
 	g.addTerrainToMatrix = addTerrainToMatrix;
 	g.workerBody = workerBody;
 	g.configBody = configBody;
+	g.deserializeRoomPosition = deserializeRoomPosition;
 }
 
 exports.populateUtils = populateUtils;
