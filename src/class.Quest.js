@@ -17,7 +17,7 @@ class Quest {
 
 		this.allowSpawn = allowSpawn;
 
-		if(this.room) {
+		if(this.epic.flag.room) {
 			this.hasVision = true;
 		}
 
