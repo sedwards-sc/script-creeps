@@ -15,8 +15,8 @@ class PowerMiningQuest extends Quest {
 			return;
 		}
 
-		this.observeAndMonitor(observer);
 		this.scanRoom();
+		this.observeAndMonitor(observer);
 	}
 
     collectCensus() {
@@ -214,6 +214,12 @@ class PowerMiningQuest extends Quest {
 		if(roomToObserve) {
 			let obsReturn = observer.observeRoom(roomToObserve);
 			Logger.log(`${this.epic.name} - ${this.name}: observing room ${roomToObserve} (${errorCodeToText(obsReturn)})`, 0);
+			if(obsReturn === OK) {
+				this.memory.lastObservation = {
+					'roomName': roomToObserve,
+					'time': Game.time
+				};
+			}
 		}
 	}
 
