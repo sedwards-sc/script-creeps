@@ -24,7 +24,7 @@ class PowerMiningQuest extends Quest {
 		let prespawnTime = 1;
 		if(this.memory.currentTarget) {
 			max = 1;
-			distance = Map.getRoomLinearDistance(this.epic.flag.pos.roomName, this.memory.currentTarget.pos.roomName) || 1;
+			distance = Game.map.getRoomLinearDistance(this.epic.flag.pos.roomName, this.memory.currentTarget.pos.roomName) || 1;
 			prespawnTime = distance * 25;
 		}
 
