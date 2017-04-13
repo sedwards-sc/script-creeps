@@ -113,7 +113,7 @@ class PowerMiningQuest extends Quest {
                 }
             }
         } else if(myHealer.fatigue === 0) {
-            attacker.travelTo(bankPos, {ignoreRoads: true});
+            attacker.travelTo({ pos: bankPos}, {ignoreRoads: true});
         }
     }
 
@@ -176,7 +176,7 @@ class PowerMiningQuest extends Quest {
         let bankPos = deserializeRoomPosition(this.memory.currentTarget.pos);
         if(!collector.pos.inRangeTo(bankPos, 5)) {
             // traveling from spawn
-            collector.travelTo(bankPos, {ignoreRoads: true});
+            collector.travelTo({ pos: bankPos }, {ignoreRoads: true});
         } else {
             if(!collector.memory.inPosition) {
                 if(bankPos.openAdjacentSpots().length > 0) {
