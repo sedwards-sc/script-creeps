@@ -141,7 +141,7 @@ class Epic {
      */
     addQuest(quest) {
         // each quest name must be unique
-		let questName = quest.getName();
+		let questName = quest.name
 		if(this.quests.hasOwnProperty(questName)) {
 			Logger.errorLog(`quest with name ${questName} already exists (epic: ${this.name}), please use a different name`, ERR_NAME_EXISTS, 4);
 		} else {

@@ -10,7 +10,7 @@ class PowerMiningQuest extends Quest {
 	}
 
     initQuest() {
-		let observer = this.room.findStructures(STRUCTURE_OBSERVER)[0];
+		let observer = this.epic.flag.room.findStructures(STRUCTURE_OBSERVER)[0];
         if(!observer) {
 			return;
 		}
@@ -237,7 +237,7 @@ class PowerMiningQuest extends Quest {
 					}
 				}
 			} else if(typeof this.memory.currentTarget !== 'undefined') {
-				let powerPiles = getResourcesOfType(this.room.find(FIND_DROPPED_RESOURCES), RESOURCE_POWER);
+				let powerPiles = getResourcesOfType(observedRoom.find(FIND_DROPPED_RESOURCES), RESOURCE_POWER);
 				if(!isArrayWithContents(powerPiles)) {
 					delete this.memory.currentTarget;
 				}

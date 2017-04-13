@@ -91,7 +91,7 @@ class Quest {
         }
 
         if(count < max && this.allowSpawn && this.spawnGroup.isAvailable && (this.hasVision || options.blindSpawn)) {
-            let creepName = this.opName + "_" + roleName + "_" + Math.floor(Math.random() * 100);
+            let creepName = this.epic.name + "_" + roleName + "_" + Math.floor(Math.random() * 100);
             let outcome = this.spawnGroup.spawn(getBody(), creepName, options.memory, options.reservation);
             if(_.isString(outcome)) {
 				this.memory.roster[roleName].push(creepName);
