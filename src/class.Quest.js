@@ -80,7 +80,7 @@ class Quest {
                     ticksNeeded += creep.body.length * 3;
                     ticksNeeded += options.prespawn;
                 }
-                if(creep.ticksToLive > ticksNeeded) {
+                if(creep.ticksToLive > ticksNeeded || creep.spawning === true) {
 					count++;
 				}
             } else {
