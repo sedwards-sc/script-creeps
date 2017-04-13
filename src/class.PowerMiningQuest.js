@@ -243,7 +243,7 @@ class PowerMiningQuest extends Quest {
 							hits: powerBank.hits,
 							power: powerBank.power,
 							//distance: Memory.powerObservers[this.room.name][room.name],
-							timeout: Game.time + bank.ticksToDecay,
+							timeout: Game.time + powerBank.ticksToDecay,
 						};
 						Logger.log(`${this.epic.name} - ${this.name}: new target chosen in room ${this.memory.currentTarget.pos.roomName} with ${this.memory.currentTarget.power} power`, 3);
 					}
