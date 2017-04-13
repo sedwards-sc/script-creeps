@@ -108,7 +108,7 @@ StructureSpawn.prototype.updateSpawnFlag = function() {
 
 			let flagSpawningRole = flagSpawningRoleReturn[1];
 
-			if((this.spawning !== null) && (this.spawning !== undefined) && (Memory.creeps[this.spawning.name].role === flagSpawningRole)) {
+			if((this.spawning !== null) && (this.spawning !== undefined) && (Memory.creeps[this.spawning.name].role === flagSpawningRole || this.spawning.name === flagSpawningRole)) {
 				foundFlag = true;
 				continue;
 			} else {
@@ -124,7 +124,11 @@ StructureSpawn.prototype.updateSpawnFlag = function() {
 
 	// create flag for the currently spawning role
 	if(!(isNullOrUndefined(this.spawning))) {
-		let flagName = this.name + '_spawningRole_' + Memory.creeps[this.spawning.name].role;
+		let tag = Memory.creeps[this.spawning.name].role;
+		if(!tag) {
+			tag = this.spawning.name;
+		}
+		let flagName = this.name + '_spawningRole_' + tag;
 		let flagCreateReturn = this.pos.createFlag(flagName, COLOR_CYAN, COLOR_WHITE);
 
 		if(flagCreateReturn !== flagName) {
