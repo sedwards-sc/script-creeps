@@ -203,13 +203,17 @@ class PowerMiningQuest extends Quest {
     }
 
 	observeAndMonitor(observer) {
+		let roomToObserve;
 		if(this.memory.currentTarget) {
-			observer.observeRoom(this.memory.currentTarget.pos.roomName);
+			roomToObserve = this.memory.currentTarget.pos.roomName;
 		} else if(isArrayWithContents(this.epic.memory.powerMiningRooms)) {
 			let roomList = this.epic.memory.powerMiningRooms;
 			let observationIndex = Game.time % roomList.length;
-			let roomToObserve = roomList[observationIndex];
-			observer.observeRoom(roomToObserve);
+			roomToObserve = roomList[observationIndex];
+		}
+		if(roomToObserve) {
+			let obsReturn = observer.observeRoom(roomToObserve);
+			Logger.log(`${this.epic.name} - ${this.name}: observing room ${roomToObserve} (${errorCodeToText(obsReturn)})`, 0);
 		}
 	}
 
@@ -223,6 +227,7 @@ class PowerMiningQuest extends Quest {
 					this.memory.currentTarget.hits = powerBank.hits;
 					if(powerBank.hits < POWER_BANK_FINISHING_THRESHOLD) {
 						this.memory.currentTarget.finishing = true;
+						Logger.log(`${this.epic.name} - ${this.name}: finishing power mining in room ${this.memory.currentTarget.pos.roomName}`, 3);
 					}
 				} else {
 					// analyze target
@@ -234,11 +239,13 @@ class PowerMiningQuest extends Quest {
 							//distance: Memory.powerObservers[this.room.name][room.name],
 							timeout: Game.time + bank.ticksToDecay,
 						};
+						Logger.log(`${this.epic.name} - ${this.name}: new target chosen in room ${this.memory.currentTarget.pos.roomName} with ${this.memory.currentTarget.power} power`, 3);
 					}
 				}
 			} else if(typeof this.memory.currentTarget !== 'undefined') {
 				let powerPiles = getResourcesOfType(observedRoom.find(FIND_DROPPED_RESOURCES), RESOURCE_POWER);
 				if(!isArrayWithContents(powerPiles)) {
+					Logger.log(`${this.epic.name} - ${this.name}: clearing target for room ${this.memory.currentTarget.pos.roomName}`, 3);
 					delete this.memory.currentTarget;
 				}
 			}
