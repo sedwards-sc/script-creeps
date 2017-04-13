@@ -28,9 +28,9 @@ class PowerMiningQuest extends Quest {
 			prespawnTime = distance * 25;
 		}
 
-		this.powerBankHealers = this.attendance("powerBankHealer", () => configBody({ MOVE: 25, HEAL: 25 }), max, { 'prespawn': prespawnTime, 'reservation': { 'spawns': 2, 'currentEnergy': 8000 } });
+		this.powerBankHealers = this.attendance("powerBankHealer", () => configBody({ move: 25, heal: 25 }), max, { 'prespawn': prespawnTime, 'reservation': { 'spawns': 2, 'currentEnergy': 8000 } });
 
-		this.powerBankAttackers = this.attendance("powerBankAttacker", () => configBody({ MOVE: 20, ATTACK: 20 }), this.powerBankHealers.length);
+		this.powerBankAttackers = this.attendance("powerBankAttacker", () => configBody({ move: 20, attack: 20 }), this.powerBankHealers.length);
 
 		let maxCollectors = 0;
 		if(this.memory.currentTarget && this.memory.currentTarget.finishing === true) {
@@ -38,7 +38,7 @@ class PowerMiningQuest extends Quest {
 			maxCollectors = Math.min(collectorsRequired, 4);
 		}
 
-		this.powerCollectors = this.attendance("powerCollector", () => configBody({ MOVE: 25, CARRY: 25 }), maxCollectors);
+		this.powerCollectors = this.attendance("powerCollector", () => configBody({ move: 25, carry: 25 }), maxCollectors);
     }
 
     runActivities() {
