@@ -244,25 +244,27 @@ class PowerMiningQuest extends Quest {
 					this.memory.currentTarget.hits = powerBank.hits;
 					if(powerBank.hits < POWER_BANK_FINISHING_THRESHOLD && !this.memory.currentTarget.finishing) {
 						this.memory.currentTarget.finishing = true;
-						Logger.log(`${this.epic.name} - ${this.name}: finishing power mining in room ${this.memory.currentTarget.pos.roomName}`, 3);
+						Logger.log(`${this.epic.name} - ${this.name}: finishing power mining in room ${this.memory.currentTarget.pos.roomName}`, 5);
 					}
 				} else {
-					// analyze target
-					if(powerBank.ticksToDecay > POWER_BANK_DECAY_THRESHOLD && powerBank.power > POWER_BANK_POWER_THRESHOLD && powerBank.hits === powerBank.hitsMax && observedRoom.findStructures(STRUCTURE_WALL).length === 0) {
-						this.memory.currentTarget = {
-							pos: powerBank.pos,
-							hits: powerBank.hits,
-							power: powerBank.power,
-							//distance: Memory.powerObservers[this.room.name][room.name],
-							timeout: Game.time + powerBank.ticksToDecay,
-						};
-						Logger.log(`${this.epic.name} - ${this.name}: new target chosen in room ${this.memory.currentTarget.pos.roomName} with ${this.memory.currentTarget.power} power`, 3);
+					if(this.epic.room.storage.store.energy > POWER_MINING_STORAGE_THRESHOLD) {
+						// analyze target
+						if(powerBank.ticksToDecay > POWER_BANK_DECAY_THRESHOLD && powerBank.power > POWER_BANK_POWER_THRESHOLD && powerBank.hits === powerBank.hitsMax && observedRoom.findStructures(STRUCTURE_WALL).length === 0) {
+							this.memory.currentTarget = {
+								pos: powerBank.pos,
+								hits: powerBank.hits,
+								power: powerBank.power,
+								//distance: Memory.powerObservers[this.room.name][room.name],
+								timeout: Game.time + powerBank.ticksToDecay,
+							};
+							Logger.log(`${this.epic.name} - ${this.name}: new target chosen in room ${this.memory.currentTarget.pos.roomName} with ${this.memory.currentTarget.power} power`, 5);
+						}
 					}
 				}
 			} else if(typeof this.memory.currentTarget !== 'undefined') {
 				let powerPiles = getResourcesOfType(observedRoom.find(FIND_DROPPED_RESOURCES), RESOURCE_POWER);
 				if(!isArrayWithContents(powerPiles)) {
-					Logger.log(`${this.epic.name} - ${this.name}: clearing target for room ${this.memory.currentTarget.pos.roomName}`, 3);
+					Logger.log(`${this.epic.name} - ${this.name}: clearing target for room ${this.memory.currentTarget.pos.roomName}`, 5);
 					delete this.memory.currentTarget;
 				}
 			}
