@@ -153,7 +153,7 @@ class PowerMiningQuest extends Quest {
                 return;
             } else {
                 if(this.memory.currentTarget && collector.pos.roomName !== this.memory.currentTarget.pos.roomName) {
-                    collector.travelTo({ pos: bankPos }, {ignoreRoads: true});
+                    collector.travelTo({ pos: deserializeRoomPosition(this.memory.currentTarget.pos) }, {ignoreRoads: true});
                     return;
                 }
                 let power = collector.room.find(FIND_DROPPED_RESOURCES, {
