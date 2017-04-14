@@ -22,7 +22,7 @@ class PowerMiningQuest extends Quest {
     collectCensus() {
 		let max = 0;
 		let prespawnTime = 1;
-		if(this.memory.currentTarget) {
+		if(this.memory.currentTarget && !this.memory.currentTarget.collecting) {
 			max = 1;
 			let distance = Game.map.getRoomLinearDistance(this.epic.flag.pos.roomName, this.memory.currentTarget.pos.roomName) || 1;
 			prespawnTime = distance * 25;
@@ -111,6 +111,13 @@ class PowerMiningQuest extends Quest {
                     }
                     attacker.attack(bank);
                 }
+            } else {
+                // bank destroyed
+                Logger.log(`POWER: bank destroyed, powerBankAttacker checking out: ${attacker.room.name}`);
+                this.memory.currentTarget.collecting = true;
+                attacker.suicide();
+                myHealer.suicide();
+                return;
             }
         } else if(myHealer.fatigue === 0) {
             attacker.travelTo({ pos: bankPos}, {ignoreRoads: true});
@@ -141,10 +148,14 @@ class PowerMiningQuest extends Quest {
 
 	powerCollectorActivities(collector, order) {
         if(!collector.carry.power) {
-            if(this.memory.currentTarget && this.memory.currentTarget.finishing) {
+            if(this.memory.currentTarget && this.memory.currentTarget.finishing && !this.memory.currentTarget.collecting) {
                 this.powerCollectorApproachBank(collector, order);
                 return;
             } else {
+                if(this.memory.currentTarget && collector.pos.roomName !== this.memory.currentTarget.pos.roomName) {
+                    collector.travelTo({ pos: bankPos }, {ignoreRoads: true});
+                    return;
+                }
                 let power = collector.room.find(FIND_DROPPED_RESOURCES, {
 					filter: (r) => r.resourceType === RESOURCE_POWER
 				})[0];
@@ -231,7 +242,7 @@ class PowerMiningQuest extends Quest {
 				if(this.memory.currentTarget) {
 					// update current target
 					this.memory.currentTarget.hits = powerBank.hits;
-					if(powerBank.hits < POWER_BANK_FINISHING_THRESHOLD) {
+					if(powerBank.hits < POWER_BANK_FINISHING_THRESHOLD && !this.memory.currentTarget.finishing) {
 						this.memory.currentTarget.finishing = true;
 						Logger.log(`${this.epic.name} - ${this.name}: finishing power mining in room ${this.memory.currentTarget.pos.roomName}`, 3);
 					}

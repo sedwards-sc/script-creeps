@@ -39,7 +39,9 @@ class SpawnGroup {
 					break; // early
 				}
 
-                if(outcome === ERR_INVALID_ARGS) {
+				if(_.isString(outcome)) {
+                    spawn.log(`building ${name}`, 2);
+                } else if(outcome === ERR_INVALID_ARGS) {
 					spawn.errorLog(`invalid args for creep\nbuild: ${build}\nname: ${name}\ncount: ${build.length}`, outcome, 5);
                 } else if(outcome === ERR_NOT_ENOUGH_RESOURCES) {
                     if (Game.time % 10 === 0) {
@@ -47,10 +49,6 @@ class SpawnGroup {
                     }
                 } else if(outcome !== ERR_NAME_EXISTS) {
                     spawn.errorLog(`had error spawning ${name}`, outcome, 5);
-                }
-
-                if(_.isString(outcome)) {
-                    spawn.log(`building ${name}`, 2);
                 }
 
                 break;
