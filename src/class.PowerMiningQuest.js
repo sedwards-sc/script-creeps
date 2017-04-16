@@ -247,7 +247,7 @@ class PowerMiningQuest extends Quest {
 						Logger.log(`${this.epic.name} - ${this.name}: finishing power mining in room ${this.memory.currentTarget.pos.roomName}`, 5);
 					}
 				} else {
-					if(this.epic.room.storage.store.energy > POWER_MINING_STORAGE_THRESHOLD) {
+					if(this.epic.flag.room.storage.store.energy > POWER_MINING_STORAGE_THRESHOLD) {
 						// analyze target
 						if(powerBank.ticksToDecay > POWER_BANK_DECAY_THRESHOLD && powerBank.power > POWER_BANK_POWER_THRESHOLD && powerBank.hits === powerBank.hitsMax && observedRoom.findStructures(STRUCTURE_WALL).length === 0) {
 							this.memory.currentTarget = {
