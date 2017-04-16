@@ -97,8 +97,8 @@ var main = function () {
 	try {
 		empire.runActivities();
 	} catch(e) {
-		Logger.errorLog("error with empire activities", ERR_TIRED, 4);
-		Logger.log(e, 4);
+		Logger.errorLog("error with empire activities", ERR_TIRED, 5);
+		Logger.log(e, 5);
 	}
 
 
