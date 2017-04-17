@@ -910,6 +910,7 @@ var main = function () {
 		}
 
 		// run observer
+		/*
 		if(isArrayWithContents(curRoom.memory.observeRooms)) {
 			let roomList = curRoom.memory.observeRooms;
 			let observers = curRoom.findStructures(STRUCTURE_OBSERVER);
@@ -922,6 +923,7 @@ var main = function () {
 				}
 			}
 		}
+		*/
 
 	}
 
