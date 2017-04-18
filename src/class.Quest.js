@@ -111,6 +111,14 @@ class Quest {
 		return creepNames;
 	}
 
+	log(msg, severity = 2) {
+		return Logger.log(`${this.epic.flag.pos.roomName}::${this.epic.name}::${this.name}, msg: ${msg}`, severity);
+	}
+
+	errorLog(msg, errCode = -10, severity = 3) {
+		return Logger.log(`!!!Error!!! ${this.epic.flag.pos.roomName}::${this.epic.name}::${this.name}, msg: ${msg} (${errorCodeToText(errCode)})`, severity);
+	}
+
 }
 
 global.Quest = Quest;

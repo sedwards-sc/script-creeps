@@ -165,6 +165,7 @@ var main = function () {
 
 		if(curRoom.roomType === ROOMTYPE_ALLEY) {
 			// find and report on power banks
+			/*
 			let powerBanks = curRoom.findStructures(STRUCTURE_POWER_BANK);
 			if(isArrayWithContents(powerBanks)) {
 			    let powerBank = powerBanks[0];
@@ -183,6 +184,7 @@ var main = function () {
 			} else {
 				delete curRoom.memory.powerBank;
 			}
+			*/
 			continue;
 		}
 

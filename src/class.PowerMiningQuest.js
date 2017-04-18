@@ -88,7 +88,7 @@ class PowerMiningQuest extends Quest {
         }
 
         if(!this.memory.currentTarget) {
-            Logger.log(`POWER: powerBankAttacker checking out: ${attacker.room.name}`);
+            this.log(`no current target, power mining team standing down (${attacker.room.name})`, 3);
             attacker.suicide();
             myHealer.suicide();
             return;
@@ -113,7 +113,7 @@ class PowerMiningQuest extends Quest {
                 }
             } else {
                 // bank destroyed
-                Logger.log(`POWER: bank destroyed, powerBankAttacker checking out: ${attacker.room.name}`);
+                this.log(`power bank destroyed, power mining team standing down (${attacker.room.name})`, 3);
                 this.memory.currentTarget.collecting = true;
                 attacker.suicide();
                 myHealer.suicide();
@@ -224,12 +224,14 @@ class PowerMiningQuest extends Quest {
 		}
 		if(roomToObserve) {
 			let obsReturn = observer.observeRoom(roomToObserve);
-			Logger.log(`${this.epic.name} - ${this.name}: observing room ${roomToObserve} (${errorCodeToText(obsReturn)})`, 0);
 			if(obsReturn === OK) {
+				this.log(`observing room ${roomToObserve}`, 0);
 				this.memory.lastObservation = {
 					'roomName': roomToObserve,
 					'time': Game.time
 				};
+			} else {
+				this.errorLog(`problem observing room ${roomToObserve}`, obsReturn, 5);
 			}
 		}
 	}
@@ -244,7 +246,7 @@ class PowerMiningQuest extends Quest {
 					this.memory.currentTarget.hits = powerBank.hits;
 					if(powerBank.hits < POWER_BANK_FINISHING_THRESHOLD && !this.memory.currentTarget.finishing) {
 						this.memory.currentTarget.finishing = true;
-						Logger.log(`${this.epic.name} - ${this.name}: finishing power mining in room ${this.memory.currentTarget.pos.roomName}`, 5);
+						this.log(`finishing power mining in room ${this.memory.currentTarget.pos.roomName}`, 5);
 					}
 				} else {
 					if(this.epic.flag.room.storage.store.energy > POWER_MINING_STORAGE_THRESHOLD) {
@@ -257,14 +259,14 @@ class PowerMiningQuest extends Quest {
 								//distance: Memory.powerObservers[this.room.name][room.name],
 								timeout: Game.time + powerBank.ticksToDecay,
 							};
-							Logger.log(`${this.epic.name} - ${this.name}: new target chosen in room ${this.memory.currentTarget.pos.roomName} with ${this.memory.currentTarget.power} power`, 5);
+							this.log(`new target chosen, room ${this.memory.currentTarget.pos.roomName} with ${this.memory.currentTarget.power} power`, 5);
 						}
 					}
 				}
 			} else if(typeof this.memory.currentTarget !== 'undefined') {
 				let powerPiles = getResourcesOfType(observedRoom.find(FIND_DROPPED_RESOURCES), RESOURCE_POWER);
 				if(!isArrayWithContents(powerPiles)) {
-					Logger.log(`${this.epic.name} - ${this.name}: clearing target for room ${this.memory.currentTarget.pos.roomName}`, 5);
+					this.log(`clearing target for room ${this.memory.currentTarget.pos.roomName}`, 5);
 					delete this.memory.currentTarget;
 				}
 			}
