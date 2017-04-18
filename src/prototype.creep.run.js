@@ -69,7 +69,7 @@ Creep.prototype.run = function() {
 	} else if(this.memory.role === 'containerBuilder') {
 		this.runContainerBuilder();
     } else {
-        this.errorLog('no role function', ERR_NOT_FOUND, 4);
+        this.errorLog('no role function', ERR_NOT_FOUND, 0);
     }
 };
 
