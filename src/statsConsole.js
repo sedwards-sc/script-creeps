@@ -189,7 +189,10 @@ var statsConsole = {
 
 
         for (let roomKey in rooms) {
-            let room = Game.rooms[roomKey];
+			// disable room stats
+			// too much console space
+			break;
+            let room = Game.rooms[roomKey]; // jshint ignore:line
             let isMyRoom = (room.controller ? room.controller.my : 0);
             if (isMyRoom) {
                 secondLineName = secondLineName.concat(["Room"]);
