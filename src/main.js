@@ -217,7 +217,7 @@ var main = function () {
 		if(curRoom.controller.level === 8) {
 			controllerProgress = 100;
 		} else {
-			controllerProgress = (Game.rooms[roomName].controller.progress / Game.rooms[roomName].controller.progressTotal * 100).toFixed(2);
+			controllerProgress = Game.rooms[roomName].controller.progress / Game.rooms[roomName].controller.progressTotal * 100;
 		}
 		let roomEnergy = Game.rooms[roomName].energyAvailable;
 		let roomEnergyCapacity = Game.rooms[roomName].energyCapacityAvailable;
@@ -236,7 +236,7 @@ var main = function () {
 
 		// print update but not every tick so console doesn't scroll as fast
 		if((Game.time % 5) === 1) {
-			Logger.log(`${roomName} ${curRoom.controller.level}/${controllerProgress}% :: EA ${roomEnergy}/${roomEnergyCapacity} :: E ${roomStorageEnergy}/${roomTerminalEnergy}/${roomStorageEnergy + roomTerminalEnergy} :: P ${roomStoragePower}/${roomTerminalPower}/${roomStoragePower + roomTerminalPower}`, 2);
+			Logger.log(`${roomName} ${curRoom.controller.level}/${controllerProgress.toFixed(2)}% :: EA ${roomEnergy}/${roomEnergyCapacity} :: E ${roomStorageEnergy}/${roomTerminalEnergy}/${roomStorageEnergy + roomTerminalEnergy} :: P ${roomStoragePower}/${roomTerminalPower}/${roomStoragePower + roomTerminalPower}`, 2);
 		}
 
 		// send update email occasionally
