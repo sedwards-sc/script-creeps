@@ -241,7 +241,7 @@ var main = function () {
 
 		// send update email occasionally
 		if((Game.time % 1500) === 1) {
-			Game.notify(roomName + ' - energy avail: ' + roomEnergy + ' / ' + roomEnergyCapacity + ' - storage energy / power: ' + roomStorageEnergy + ' / ' + roomStoragePower + ' - controller progress: ' + controllerProgress + '% - time: ' + Game.time);
+			Game.notify(`${roomName} ${curRoom.controller.level}/${controllerProgress.toFixed(2)}% :: EA ${roomEnergy}/${roomEnergyCapacity} :: E ${roomStorageEnergy}/${roomTerminalEnergy}/${roomStorageEnergy + roomTerminalEnergy} :: P ${roomStoragePower}/${roomTerminalPower}/${roomStoragePower + roomTerminalPower} @ ${Game.time}`);
 		}
 
 		curRoom.drawRoomStats();
