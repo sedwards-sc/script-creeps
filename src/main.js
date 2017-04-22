@@ -910,7 +910,7 @@ var main = function () {
 		*/
 
 		// run power spawns
-		if(curRoom.memory.processPower === true && (Game.time % 5 === 3)) {
+		if(curRoom.memory.processPower === true && (Game.time % POWER_PROCESS_INTERVAL === 0)) {
 			let myRoomStructures = curRoom.find(FIND_MY_STRUCTURES);
 			let powerSpawn = getStructure(myRoomStructures, STRUCTURE_POWER_SPAWN);
 			if(powerSpawn) {
