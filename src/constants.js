@@ -27,7 +27,7 @@ global.POWER_MINING_STORAGE_THRESHOLD = 500000;
 // processing rate during expansion
 //global.POWER_PROCESS_INTERVAL = 5;
 // processing rate when empire is all RCL8
-global.POWER_PROCESS_INTERVAL = 2;
+global.POWER_PROCESS_INTERVAL = 3;
 
 
 global.CACHE_INVALIDATION_CHANCE = 0.01;
