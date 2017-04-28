@@ -1729,7 +1729,7 @@ Creep.prototype.runRemoteTransporter = function() {
 				this.moveTo(this.room.storage);
 			}
 		} else {
-			this.moveTo(new RoomPosition(25, 25, destinationRoom));
+			this.travelTo(new RoomPosition(25, 25, destinationRoom), { 'useFindRoute': true });
 		}
 	} else {
 		// go to my flag's room
@@ -1754,7 +1754,7 @@ Creep.prototype.runRemoteTransporter = function() {
 				}
 			}
 		} else {
-			this.moveTo(myFlag);
+			this.travelTo(myFlag, { 'useFindRoute': true });
 		}
 	}
 };
