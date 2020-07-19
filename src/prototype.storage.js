@@ -1,6 +1,0 @@
-/*
- * prototype.storage
- */
-
-
-
