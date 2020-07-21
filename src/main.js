@@ -6,6 +6,12 @@ global.Logger = require('logger');
 
 require('utils').populateUtils(global);
 
+global.loopHelper = require('loopHelper');
+loopHelper.initMemory();
+
+require('prototype.room');
+require('prototype.structure');
+
 // require creep talk after creep prototypes
 require('creeptalk')({
   'public': false,
@@ -25,6 +31,48 @@ var main = function () {
 	}
 
 	Logger.log(Game.time, 3);
+
+	// create cache for this tick
+	Game.cache = {
+		structures: {},
+		creeps: {},
+		hostiles: {},
+		hostilesAndLairs: {},
+		// mineralCount: {},
+		// labProcesses: {},
+		// activeLabCount: 0,
+		// placedRoad: false,
+	};
+
+	loopHelper.initEmpire();
+	let prioritizedEpics = loopHelper.getEpics();
+
+	for(let epic of prioritizedEpics) {
+		epic.init();
+	}
+
+	for(let epic of prioritizedEpics) {
+		epic.collectCensus();
+	}
+
+	for(let epic of prioritizedEpics) {
+		epic.runActivities();
+	}
+
+	for(let epic of prioritizedEpics) {
+		epic.invalidateCache();
+	}
+
+	for(let epic of prioritizedEpics) {
+		epic.theEnd();
+	}
+
+	try {
+		empire.runActivities();
+	} catch(e) {
+		Logger.errorLog("error with empire activities", ERR_TIRED, 5);
+		Logger.log(e, 5);
+	}
 
 	// loop to clean dead creeps out of memory
     for(let name in Memory.creeps) {

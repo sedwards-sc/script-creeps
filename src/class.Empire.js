@@ -1,0 +1,89 @@
+/* jshint esversion: 6 */
+
+class Empire {
+
+	constructor() {
+		if(!Memory.empire) Memory.empire = {};
+		_.defaults(Memory.empire, {
+			allyRooms: [],
+			hostileRooms: {},
+			// tradeIndex: 0,
+			// activeNukes: [],
+			safe: {},
+			danger: {},
+			errantConstructionRooms: {},
+		});
+		this.memory = Memory.empire;
+
+		this.storages = [];
+	    this.terminals = [];
+	    // swapTerminals: StructureTerminal[] = [];
+	    this.spawnGroups = {};
+	    // tradeResource: string;
+	    // shortages: StructureTerminal[] = [];
+	    // severeShortages: StructureTerminal[] = [];
+	    // surpluses: StructureTerminal[] = [];
+	    // allyTradeStatus: {[roomName: string]: boolean};
+	}
+
+	init() {
+		// register my owned rooms
+		for(let name in Game.rooms) {
+			if(Game.rooms[name].ownedByMe) {
+				empire.register(Game.rooms[name]);
+			}
+		}
+	}
+
+	register(room) {
+		if(!room) return;
+
+		if(room.registered === true) return;
+
+		if(room.terminal && room.terminal.my) {
+		    this.terminals.push(room.terminal);
+		}
+		if(room.storage && room.storage.my) {
+		    this.storages.push(room.storage);
+		}
+
+		room.registered = true;
+	}
+
+	getSpawnGroup(roomName) {
+        if(this.spawnGroups[roomName]) {
+            return this.spawnGroups[roomName];
+        } else {
+            let room = Game.rooms[roomName];
+			if(room) {
+				let roomSpawns = room.findStructures(STRUCTURE_SPAWN);
+				let ownedSpawns = false;
+				for(let i in roomSpawns) {
+					if(roomSpawns[i].my === true) {
+						ownedSpawns = true;
+						break;
+					}
+				}
+				if(ownedSpawns === true) {
+					this.spawnGroups[roomName] = new SpawnGroup(room);
+					return this.spawnGroups[roomName];
+				}
+			}
+        }
+    }
+
+	runActivities() {
+		// run reports
+		// if((Game.time % 1500) === 2) {
+		// 	let storagesEnergy = _.sum(empire.storages, s => s.store.energy);
+		// 	let terminalsEnergy = _.sum(empire.terminals, s => s.store.energy);
+		// 	let storagesPower = _.sum(empire.storages, s => s.store.power);
+		// 	let terminalsPower = _.sum(empire.terminals, s => s.store.power);
+		// 	Game.notify(`Empire resources(storage/terminal/total): energy(${storagesEnergy}/${terminalsEnergy}/${storagesEnergy + terminalsEnergy}) :: power(${storagesPower}/${terminalsPower}/${storagesPower + terminalsPower})`);
+		//
+		// 	Game.notify('GCL - level: ' + Game.gcl.level + ' - progress: ' + (Game.gcl.progress / 1000000).toFixed(2) + 'M - required: ' + (Game.gcl.progressTotal / 1000000).toFixed(2) + 'M - ' + ((Game.gcl.progress / Game.gcl.progressTotal) * 100).toFixed(1) + '%');
+		// }
+	}
+}
+
+global.Empire = Empire;
