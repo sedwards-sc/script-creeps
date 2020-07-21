@@ -112,6 +112,7 @@ var reset_memory = function () {
 
 	return true;
 };
+global.reset_memory = reset_memory;
 
 /**
  * main tick loop
