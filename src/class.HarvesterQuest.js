@@ -13,7 +13,7 @@ class HarvesterQuest extends Quest {
 	}
 
 	collectCensus() {
-		this.harvesters = this.attendance("harvester", () => configBody({ work: 2, move: 1, carry: 1 }), 1);
+		this.harvesters = this.attendance("harvester", () => configBody({ work: 2, move: 1, carry: 1 }), 2);
 	}
 
 	runActivities() {
