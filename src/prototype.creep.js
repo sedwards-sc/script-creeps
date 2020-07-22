@@ -102,10 +102,11 @@ Creep.prototype.takeResource = function(target, resource, amount) {
     return ERR_INVALID_TARGET;
 };
 
+// TODO: ensure optimal usage of new "store"
 Creep.prototype.hasLoad = function() {
-	if(this.memory.hasLoad && _.sum(this.carry) === 0) {
+	if(this.memory.hasLoad && this.store.getUsedCapacity() === 0) {
 		this.memory.hasLoad = false;
-	} else if(!this.memory.hasLoad && _.sum(this.carry) === this.carryCapacity) {
+	} else if(!this.memory.hasLoad && this.store.getUsedCapacity() === this.store.getCapacity()) {
 		this.memory.hasLoad = true;
 	}
 	return this.memory.hasLoad;

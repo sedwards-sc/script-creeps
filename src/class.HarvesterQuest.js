@@ -19,7 +19,7 @@ class HarvesterQuest extends Quest {
 	runActivities() {
 		for(let creep of this.harvesters) {
 			if(!creep.spawning) {
-				this.harvesterActions(creep)
+				this.harvesterActions2(creep)
 			}
 		}
 	}
@@ -33,8 +33,6 @@ class HarvesterQuest extends Quest {
 	harvesterActions(creep) {
 		// state 0 is harvest
 		// state 1 is transfer energy
-
-		// TODO: add return for spawning state? (check if needed)
 
 		if(creep.pos.roomName !== this.epic.flag.pos.roomName) {
 			creep.moveTo(this.epic.flag);
@@ -130,6 +128,92 @@ class HarvesterQuest extends Quest {
 					if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
 						creep.moveTo(creep.room.controller);
 					}
+				}
+			}
+		}
+	}
+
+	harvesterActions2(creep) {
+		let withinRoom = creep.pos.roomName === this.epic.flag.pos.roomName;
+		if(!withinRoom) {
+			creep.moveTo(this.epic.flag);
+			return;
+		}
+
+		let hasLoad = creep.hasLoad();
+		if(!hasLoad) {
+			let findSource = () => {
+				return creep.pos.findClosestByRange(FIND_SOURCES);
+			};
+			let forgetSource = (s) => {
+				// TODO: forget is source is empty
+				return false;
+			};
+			let mySource = creep.rememberStructure(findSource, forgetSource, "remSourceId", true);
+
+			if(creep.harvest(mySource) === ERR_NOT_IN_RANGE) {
+				creep.moveTo(mySource);
+			}
+			return;
+		}
+
+		// transfer energy
+		// TODO: cache targets in memory. check if null or full each tick
+		var closestTarget;
+
+		// if room energy is < 300, fill extensions first so spawn can generate energy
+		if(creep.room.energyAvailable < 300) {
+			closestTarget = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+					filter: (structure) => {
+						return (structure.structureType === STRUCTURE_EXTENSION) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+					}
+			});
+
+			if(!closestTarget) {
+				closestTarget = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+						filter: (structure) => {
+							return (structure.structureType === STRUCTURE_SPAWN) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+						}
+				});
+			}
+		} else {
+			closestTarget = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+					filter: (structure) => {
+						return (structure.structureType === STRUCTURE_EXTENSION ||
+								structure.structureType === STRUCTURE_SPAWN) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+					}
+			});
+		}
+
+		if(!closestTarget) {
+			closestTarget = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+					filter: (structure) => {
+						return (structure.structureType === STRUCTURE_TOWER) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+					}
+			});
+		}
+
+		if(closestTarget) {
+			if(creep.transfer(closestTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+				creep.moveTo(closestTarget);
+			}
+		} else {
+			// build
+			var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+			if(targets.length) {
+				if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
+					creep.moveTo(targets[0]);
+				}
+			} else {
+				//else transfer to storage
+				//var closestStorage = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
+				//if(creep.transfer(closestStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+				//    creep.moveTo(closestStorage);
+				//}
+
+				// else upgrade
+				if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+					creep.moveTo(creep.room.controller);
 				}
 			}
 		}
