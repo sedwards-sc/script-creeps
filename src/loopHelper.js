@@ -24,8 +24,8 @@ loopHelper.initMemory = function() {
 			enableProfiler: false,
 			muteSpawn: false,
 		},
-		/*
 		stats: {},
+		/*
 		temp: {},
 		playerConfig: {
 			terminalNetworkRange: 6,
