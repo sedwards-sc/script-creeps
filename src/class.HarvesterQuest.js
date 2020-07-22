@@ -169,8 +169,8 @@ class HarvesterQuest extends Quest {
 		let refillTarget = creep.rememberStructure(findRefillTarget, forgetRefillTarget, "remRefillTargetId", true);
 
 		if(refillTarget) {
-			if(creep.transfer(closestTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-				creep.moveTo(closestTarget);
+			if(creep.transfer(refillTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+				creep.moveTo(refillTarget);
 			}
 		} else {
 			// build
