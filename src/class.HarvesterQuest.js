@@ -134,4 +134,4 @@ class HarvesterQuest extends Quest {
 	}
 }
 
-global.Harvester = HarvesterQuest;
+global.HarvesterQuest = HarvesterQuest;
