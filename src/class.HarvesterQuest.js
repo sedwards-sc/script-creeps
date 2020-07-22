@@ -157,60 +157,29 @@ class HarvesterQuest extends Quest {
 			return;
 		}
 
-		// transfer energy
-		// TODO: cache targets in memory. check if null or full each tick
-		var closestTarget;
-
-		// if room energy is < 300, fill extensions first so spawn can generate energy
-		if(creep.room.energyAvailable < 300) {
-			closestTarget = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-					filter: (structure) => {
-						return (structure.structureType === STRUCTURE_EXTENSION) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-					}
-			});
-
-			if(!closestTarget) {
-				closestTarget = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-						filter: (structure) => {
-							return (structure.structureType === STRUCTURE_SPAWN) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-						}
-				});
+		let findRefillTarget = () => {
+			return creep.getRefillTarget();
+		};
+		let forgetRefillTarget = (s) => {
+			if(s.structureType === STRUCTURE_TOWER) {
+				return s.store.getUsedCapacity(RESOURCE_ENERGY) > s.store.getCapacity(RESOURCE_ENERGY) * 0.95;
 			}
-		} else {
-			closestTarget = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-					filter: (structure) => {
-						return (structure.structureType === STRUCTURE_EXTENSION ||
-								structure.structureType === STRUCTURE_SPAWN) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-					}
-			});
-		}
+			return s.store.getFreeCapacity(RESOURCE_ENERGY) === 0;
+		};
+		let refillTarget = creep.rememberStructure(findRefillTarget, forgetRefillTarget, "remRefillTargetId", true);
 
-		if(!closestTarget) {
-			closestTarget = creep.pos.findClosestByRange(FIND_STRUCTURES, {
-					filter: (structure) => {
-						return (structure.structureType === STRUCTURE_TOWER) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-					}
-			});
-		}
-
-		if(closestTarget) {
+		if(refillTarget) {
 			if(creep.transfer(closestTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
 				creep.moveTo(closestTarget);
 			}
 		} else {
 			// build
-			var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+			let targets = creep.room.find(FIND_CONSTRUCTION_SITES);
 			if(targets.length) {
 				if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
 					creep.moveTo(targets[0]);
 				}
 			} else {
-				//else transfer to storage
-				//var closestStorage = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_STORAGE}});
-				//if(creep.transfer(closestStorage, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-				//    creep.moveTo(closestStorage);
-				//}
-
 				// else upgrade
 				if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
 					creep.moveTo(creep.room.controller);
