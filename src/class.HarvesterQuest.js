@@ -18,7 +18,9 @@ class HarvesterQuest extends Quest {
 
 	runActivities() {
 		for(let creep of this.harvesters) {
-			this.harvesterActions(creep)
+			if(!creep.spawning) {
+				this.harvesterActions(creep)
+			}
 		}
 	}
 
