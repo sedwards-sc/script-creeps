@@ -41,7 +41,7 @@ class SpawnGroup {
 					break; // early
 				}
 
-				if(_.isString(outcome)) {
+				if(outcome === OK) {
                     spawn.log(`building ${name}`, 2);
                 } else if(outcome === ERR_INVALID_ARGS) {
 					spawn.errorLog(`invalid args for creep\nbuild: ${build}\nname: ${name}\ncount: ${build.length}`, outcome, 5);
