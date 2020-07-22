@@ -9,6 +9,7 @@ require('utils').populateUtils(global);
 global.loopHelper = require('loopHelper');
 loopHelper.initMemory();
 
+require('prototype.creep');
 require('prototype.room');
 require('prototype.structure');
 
