@@ -146,10 +146,13 @@ class HarvesterQuest extends Quest {
 				return creep.pos.findClosestByRange(FIND_SOURCES);
 			};
 			let forgetSource = (s) => {
+				if(s.structureType) {
+					return true;
+				}
 				// TODO: forget is source is empty
 				return false;
 			};
-			let mySource = creep.rememberStructure(findSource, forgetSource, "remSourceId", true);
+			let mySource = creep.rememberStructure(findSource, forgetSource, "remStructureId", true);
 
 			if(creep.harvest(mySource) === ERR_NOT_IN_RANGE) {
 				creep.moveTo(mySource);
@@ -161,12 +164,15 @@ class HarvesterQuest extends Quest {
 			return creep.getRefillTarget();
 		};
 		let forgetRefillTarget = (s) => {
+			if(!s.structureType) {
+				return true;
+			}
 			if(s.structureType === STRUCTURE_TOWER) {
 				return s.store.getUsedCapacity(RESOURCE_ENERGY) > s.store.getCapacity(RESOURCE_ENERGY) * 0.95;
 			}
 			return s.store.getFreeCapacity(RESOURCE_ENERGY) === 0;
 		};
-		let refillTarget = creep.rememberStructure(findRefillTarget, forgetRefillTarget, "remRefillTargetId", true);
+		let refillTarget = creep.rememberStructure(findRefillTarget, forgetRefillTarget, "remStructureId", true);
 
 		if(refillTarget) {
 			if(creep.transfer(refillTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
