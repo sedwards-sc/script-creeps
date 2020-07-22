@@ -13,7 +13,11 @@ class HarvesterQuest extends Quest {
 	}
 
 	collectCensus() {
-		this.harvesters = this.attendance("harvester", () => configBody({ work: 1, carry: 1, move: 2 }), 3);
+		if(this.spawnGroup.currentSpawnEnergy >= 400) {
+			this.harvesters = this.attendance("harvester", () => configBody({ work: 2, carry: 1, move: 3 }), 3);
+		} else {
+			this.harvesters = this.attendance("harvester", () => configBody({ work: 1, carry: 1, move: 2 }), 3);
+		}
 	}
 
 	runActivities() {
