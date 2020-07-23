@@ -105,7 +105,7 @@ function runRoomMineralReports() {
  * If you pass a room object that has a '.id' property, that object will be selected
  * upon entering the room.
  * @param roomArg {Room|RoomObject|RoomPosition|RoomName}
- * @param text {String} optional text value of link
+ * @param text {string} optional text value of link
  * @param select {boolean} whether or not you want the object to be selected when the link is clicked.
  * @returns {string}
  */
@@ -134,7 +134,7 @@ function timeLink(roomArg, text = undefined, select = true) {
  * upon entering the room.
  * Author: Helam, Dragnar, Fubz
  * @param roomArg {Room|RoomObject|RoomPosition|RoomName}
- * @param text {String} optional text value of link
+ * @param text {string} optional text value of link
  * @param select {boolean} whether or not you want the object to be selected when the link is clicked.
  * @returns {string}
  */
@@ -289,20 +289,11 @@ function addTerrainToMatrix(matrix, roomName) {
 	return;
 }
 
-function workerBody(carryCount, workCount, moveCount) {
-	let body = [];
-	for(let i = 0; i < carryCount; i++) {
-		body.push(CARRY);
-	}
-	for(let i = 0; i < workCount; i++) {
-		body.push(WORK);
-	}
-	for(let i = 0; i < moveCount; i++) {
-		body.push(MOVE);
-	}
-	return body;
-}
-
+/**
+ * Returns creep body array based on part counts in the provided config
+ * @param config
+ * @returns {string[]}
+ */
 function configBody(config) {
 	let body = [];
 	for(let partType in config) {
@@ -310,6 +301,27 @@ function configBody(config) {
 		for(let i = 0; i < amount; i++) {
 			body.push(partType);
 		}
+	}
+	return body;
+}
+
+/**
+ * Returns creep body array for workers with the desired number of parts
+ * @param workCount {number}
+ * @param carryCount {number}
+ * @param moveCount {number}
+ * @returns {string[]}
+ */
+function workerBody(workCount, carryCount, moveCount) {
+	let body = [];
+	for(let i = 0; i < workCount; i++) {
+		body.push(WORK);
+	}
+	for(let i = 0; i < carryCount; i++) {
+		body.push(CARRY);
+	}
+	for(let i = 0; i < moveCount; i++) {
+		body.push(MOVE);
 	}
 	return body;
 }
@@ -336,8 +348,8 @@ function populateUtils(g) {
 	g.addStructuresToMatrix = addStructuresToMatrix;
 	g.addCreepsToMatrix = addCreepsToMatrix;
 	g.addTerrainToMatrix = addTerrainToMatrix;
-	g.workerBody = workerBody;
 	g.configBody = configBody;
+	g.workerBody = workerBody;
 	g.deserializeRoomPosition = deserializeRoomPosition;
 }
 
