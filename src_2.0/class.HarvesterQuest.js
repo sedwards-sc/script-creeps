@@ -5,8 +5,8 @@ class HarvesterQuest extends Quest {
 	/**
 	 *
 	 */
-	constructor(id, flag, colony) {
-		super('harvester', id, flag, colony);
+	constructor(epic) {
+		super('harvester', epic);
 	}
 
 	initQuest() {
@@ -14,9 +14,9 @@ class HarvesterQuest extends Quest {
 
 	collectCensus() {
 		if(this.spawnGroup.currentSpawnEnergy >= 400) {
-			this.harvesters = this.attendance(this.nameId, () => configBody({ work: 2, carry: 1, move: 3 }), 1);
+			this.harvesters = this.attendance("harvester", () => configBody({ work: 2, carry: 1, move: 3 }), 3);
 		} else {
-			this.harvesters = this.attendance(this.nameId, () => configBody({ work: 1, carry: 1, move: 2 }), 1);
+			this.harvesters = this.attendance("harvester", () => configBody({ work: 1, carry: 1, move: 2 }), 3);
 		}
 	}
 
@@ -138,9 +138,9 @@ class HarvesterQuest extends Quest {
 	}
 
 	harvesterActions2(creep) {
-		let withinRoom = creep.pos.roomName === this.flag.pos.roomName;
+		let withinRoom = creep.pos.roomName === this.epic.flag.pos.roomName;
 		if(!withinRoom) {
-			creep.moveTo(this.flag);
+			creep.moveTo(this.epic.flag);
 			return;
 		}
 

@@ -1,11 +1,10 @@
 /* jshint esversion: 6, loopfunc: true */
 
 require('constants');
-require('utils').populateUtils(global);
-// 3rd party debug/helper utilities
-require('debug').populate(global);
 
 global.Logger = require('logger');
+
+require('utils').populateUtils(global);
 
 global.loopHelper = require('loopHelper');
 loopHelper.initMemory();
@@ -16,9 +15,12 @@ require('prototype.structure');
 
 // require creep talk after creep prototypes
 require('creeptalk')({
-	'public': false,
-	'language': require('creeptalk_basic')
+  'public': false,
+  'language': require('creeptalk_basic')
 });
+
+// 3rd party debug/helper utilities
+require('debug').populate(global);
 
 /**
  * main function called in tick loop
@@ -32,7 +34,6 @@ var main = function () {
 	Logger.log(Game.time, 3);
 
 	// create cache for this tick
-	// TODO: change things that use this to an object cache (probably all room prototypes?)
 	Game.cache = {
 		structures: {},
 		creeps: {},
@@ -45,26 +46,26 @@ var main = function () {
 	};
 
 	loopHelper.initEmpire();
-	let prioritizedColonies = loopHelper.getColonies();
+	let prioritizedEpics = loopHelper.getEpics();
 
-	for(let colony of prioritizedColonies) {
-		colony.init();
+	for(let epic of prioritizedEpics) {
+		epic.init();
 	}
 
-	for(let colony of prioritizedColonies) {
-		colony.runCensus();
+	for(let epic of prioritizedEpics) {
+		epic.collectCensus();
 	}
 
-	for(let colony of prioritizedColonies) {
-		colony.runActivities();
+	for(let epic of prioritizedEpics) {
+		epic.runActivities();
 	}
 
-	for(let colony of prioritizedColonies) {
-		colony.invalidateCache();
+	for(let epic of prioritizedEpics) {
+		epic.invalidateCache();
 	}
 
-	for(let colony of prioritizedColonies) {
-		colony.theEnd();
+	for(let epic of prioritizedEpics) {
+		epic.theEnd();
 	}
 
 	try {
@@ -75,16 +76,16 @@ var main = function () {
 	}
 
 	// loop to clean dead creeps out of memory
-	for(let name in Memory.creeps) {
-		if(!Game.creeps[name]) {
-			delete Memory.creeps[name];
-		}
-	}
+    for(let name in Memory.creeps) {
+        if(!Game.creeps[name]) {
+            delete Memory.creeps[name];
+        }
+    }
 
 	if(Game.cpu.bucket > 9000) {
-		Logger.log(Game.time + " - generating pixel", 3);
-		Game.cpu.generatePixel();
-	}
+	    Logger.log(Game.time + " - generating pixel", 3);
+        Game.cpu.generatePixel();
+    }
 };
 
 function cleanOldFlagsFromMemory() {

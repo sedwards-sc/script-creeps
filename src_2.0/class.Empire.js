@@ -18,7 +18,7 @@ class Empire {
 		this.storages = [];
 	    this.terminals = [];
 	    // swapTerminals: StructureTerminal[] = [];
-	    // this.spawnGroups = {};
+	    this.spawnGroups = {};
 	    // tradeResource: string;
 	    // shortages: StructureTerminal[] = [];
 	    // severeShortages: StructureTerminal[] = [];
@@ -30,7 +30,7 @@ class Empire {
 		// register my owned rooms
 		for(let name in Game.rooms) {
 			if(Game.rooms[name].ownedByMe) {
-				this.register(Game.rooms[name]);
+				empire.register(Game.rooms[name]);
 			}
 		}
 	}
@@ -49,6 +49,28 @@ class Empire {
 
 		room.registered = true;
 	}
+
+	getSpawnGroup(roomName) {
+        if(this.spawnGroups[roomName]) {
+            return this.spawnGroups[roomName];
+        } else {
+            let room = Game.rooms[roomName];
+			if(room) {
+				let roomSpawns = room.findStructures(STRUCTURE_SPAWN);
+				let ownedSpawns = false;
+				for(let i in roomSpawns) {
+					if(roomSpawns[i].my === true) {
+						ownedSpawns = true;
+						break;
+					}
+				}
+				if(ownedSpawns === true) {
+					this.spawnGroups[roomName] = new SpawnGroup(room);
+					return this.spawnGroups[roomName];
+				}
+			}
+        }
+    }
 
 	runActivities() {
 		// run reports

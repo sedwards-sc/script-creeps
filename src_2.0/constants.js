@@ -3,23 +3,17 @@
  * constants
  */
 
-global.USERNAME = _.first(_.toArray(Game.structures)).owner.username;
-
-global.ALLIES = {
-    "Adimus": true,
-};
-
-global.FLAG_STRING_COLONY = "colony";
-
-global.QUEST_CLASSES = {
-	'harvester': HarvesterQuest
-};
-
 global.DESTINATION_REACHED = -1501;
 global.ROOMTYPE_SOURCEKEEPER = -1601;
 global.ROOMTYPE_CORE = -1602;
 global.ROOMTYPE_CONTROLLER = -1603;
 global.ROOMTYPE_ALLEY = -1604;
+
+global.ALLIES = {
+    "Adimus": true,
+};
+
+global.USERNAME = _.first(_.toArray(Game.structures)).owner.username;
 
 global.CACHE_INVALIDATION_CHANCE = 0.01;
 

@@ -5,34 +5,29 @@ class Quest {
 	/**
 	 *
 	 */
-	constructor(name, id, flag, colony, allowSpawn = true) {
+	constructor(name, epic, allowSpawn = true) {
 		this.name = name;
-		this.id = id;
-		this.flag = flag;
-		this.colony = colony;
+		this.epic = epic;
 		//Object.defineProperty(this, "flag", { enumerable: false, value: epic.flag });
 		//Object.defineProperty(this, "room", { enumerable: false, value: epic.flag.room });
 		//Object.defineProperty(this, "spawnGroup", { enumerable: false, value: epic.spawnGroup, writable: true });
 		//Object.defineProperty(this, "sources", { enumerable: false, value: epic.sources });
 
-		this.nameId = this.name + "_" + this.id;
-
-		this.spawnGroup = colony.getSpawnGroup();
+		this.spawnGroup = empire.getSpawnGroup(epic.flag.pos.roomName);
 
 		this.allowSpawn = allowSpawn;
 
-		// TODO: ensure using quest flag for vision doesn't interfere with vision spawning (i.e. in attendance)
-		if(this.flag.room) {
+		if(this.epic.flag.room) {
 			this.hasVision = true;
 		}
 
-		if(!this.flag.memory) {
-			this.flag.memory = {};
+		if(!epic.flag.memory[this.name]) {
+			epic.flag.memory[this.name] = {};
 		}
-		this.memory = flag.memory;
+		this.memory = epic.flag.memory[this.name];
 
 		// initialize memory to be used by this quest
-		if(!this.memory.roster) {
+        if(!this.memory.roster) {
 			this.memory.roster = {};
 		}
 	}
@@ -96,7 +91,7 @@ class Quest {
         }
 
         if(count < max && this.allowSpawn && this.spawnGroup.isAvailable && (this.hasVision || options.blindSpawn)) {
-            let creepName = this.colony.name + "_" + roleName + "_" + Math.floor(Math.random() * 100);
+            let creepName = this.epic.name + "_" + roleName + "_" + Math.floor(Math.random() * 100);
             let outcome = this.spawnGroup.spawn(getBody(), creepName, options.memory, options.reservation);
             if(outcome === OK) {
 				this.memory.roster[roleName].push(creepName);
@@ -109,7 +104,7 @@ class Quest {
 	findRoleCreeps(roleName) {
 		let creepNames = [];
 		for(let creepName in Game.creeps) {
-			if(creepName.indexOf(this.colony.name + "_" + roleName + "_") > -1) {
+			if(creepName.indexOf(this.epic.name + "_" + roleName + "_") > -1) {
 				creepNames.push(creepName);
 			}
 		}
@@ -117,11 +112,11 @@ class Quest {
 	}
 
 	log(msg, severity = 2) {
-		return Logger.log(`${this.colony.flag.pos.roomName}::${this.colony.name}::${this.nameId}, msg: ${msg}`, severity);
+		return Logger.log(`${this.epic.flag.pos.roomName}::${this.epic.name}::${this.name}, msg: ${msg}`, severity);
 	}
 
 	errorLog(msg, errCode = -10, severity = 3) {
-		return Logger.log(`!!!Error!!! ${this.colony.flag.pos.roomName}::${this.colony.name}::${this.nameId}, msg: ${msg} (${errorCodeToText(errCode)})`, severity);
+		return Logger.log(`!!!Error!!! ${this.epic.flag.pos.roomName}::${this.epic.name}::${this.name}, msg: ${msg} (${errorCodeToText(errCode)})`, severity);
 	}
 
 }
