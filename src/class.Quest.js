@@ -55,12 +55,12 @@ class Quest {
 	/**
      * maintain creep roster for this quest
      * @param roleName - Used to find creeps belonging to this role, examples: miner, energyCart
-     * @param getBody - function that returns the body to be used if a new creep needs to be spawned
+     * @param body - the body to be used if a new creep needs to be spawned
      * @param max - how many creeps are currently desired, pass 0 to halt spawning
      * @param options - Optional parameters like prespawn interval, whether to disable attack notifications, etc.
      * @returns {Creep[]}
      */
-    attendance(roleName, getBody, max, options) {
+    attendance(roleName, body, max, options) {
         if(!options) {
 			options = {};
 		}
@@ -97,7 +97,7 @@ class Quest {
 
         if(count < max && this.allowSpawn && this.spawnGroup.isAvailable && (this.hasVision || options.blindSpawn)) {
             let creepName = this.colony.name + "_" + roleName + "_" + Math.floor(Math.random() * 100);
-            let outcome = this.spawnGroup.spawn(getBody(), creepName, options.memory, options.reservation);
+            let outcome = this.spawnGroup.spawn(body, creepName, options.memory, options.reservation);
             if(outcome === OK) {
 				this.memory.roster[roleName].push(creepName);
 			}
