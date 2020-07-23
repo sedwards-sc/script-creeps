@@ -65,7 +65,7 @@ class Colony {
 						// found matching quest class
 						let questClass = QUEST_CLASSES[questClassName];
 						let flag = Game.flags[flagName];
-						let questId = flagQuestString.substring(flagName.indexOf("_") + 1);
+						let questId = flagQuestString.substring(flagQuestString.indexOf("_") + 1);
 
 						if(!this.quests[questClassName]) {
 							this.quests[questClassName] = {};
