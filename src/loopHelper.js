@@ -4,9 +4,11 @@ require('class.Empire');
 require('class.Colony');
 require('class.SpawnGroup');
 require('class.Quest');
+require('class.EmergencyHarvesterQuest');
 require('class.HarvesterQuest');
 
 global.QUEST_CLASSES = {
+	'emergencyHarvester': EmergencyHarvesterQuest,
 	'harvester': HarvesterQuest
 };
 
