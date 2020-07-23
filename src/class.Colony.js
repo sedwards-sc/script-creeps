@@ -60,11 +60,12 @@ class Colony {
 					if(!QUEST_CLASSES.hasOwnProperty(questClassName)) {
 						continue;
 					}
-					if(flagName.substring(flagName.indexOf("_") + 1, questClassName.length) === questClassName) {
+					let flagQuestString = flagName.substring(flagName.indexOf("_") + 1);
+					if(flagQuestString.substring(0, questClassName.length) === questClassName) {
 						// found matching quest class
 						let questClass = QUEST_CLASSES[questClassName];
 						let flag = Game.flags[flagName];
-						let questId = flagName.substring(flagName.indexOf(questClassName) + questClassName.length + 1);
+						let questId = flagQuestString.substring(flagName.indexOf("_") + 1);
 
 						if(this.quests[questClassName].hasOwnProperty(questId)) {
 							// TODO: include colony and quest type info
