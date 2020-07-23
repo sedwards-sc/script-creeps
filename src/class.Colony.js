@@ -67,6 +67,10 @@ class Colony {
 						let flag = Game.flags[flagName];
 						let questId = flagQuestString.substring(flagName.indexOf("_") + 1);
 
+						if(!this.quests[questClassName]) {
+							this.quests[questClassName] = {};
+						}
+
 						if(this.quests[questClassName].hasOwnProperty(questId)) {
 							// TODO: include colony and quest type info
 							Logger.errorLog(`quest with ID ${questId} already exists, please use a different ID`, ERR_NAME_EXISTS, 4);
