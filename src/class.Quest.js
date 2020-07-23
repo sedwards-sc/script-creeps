@@ -40,7 +40,7 @@ class Quest {
     initQuest() {
 	}
 
-    collectCensus() {
+    runCensus() {
     }
 
     runActivities() {

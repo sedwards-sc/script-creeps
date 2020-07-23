@@ -12,7 +12,7 @@ class HarvesterQuest extends Quest {
 	initQuest() {
 	}
 
-	collectCensus() {
+	runCensus() {
 		if(this.spawnGroup.currentSpawnEnergy >= 400) {
 			this.harvesters = this.attendance(this.nameId, () => configBody({ work: 2, carry: 1, move: 3 }), 1);
 		} else {
