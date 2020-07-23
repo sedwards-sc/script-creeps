@@ -6,6 +6,10 @@ require('class.SpawnGroup');
 require('class.Quest');
 require('class.HarvesterQuest');
 
+global.QUEST_CLASSES = {
+	'harvester': HarvesterQuest
+};
+
 var loopHelper = {};
 
 loopHelper.initMemory = function() {

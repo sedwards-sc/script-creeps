@@ -11,10 +11,6 @@ global.ALLIES = {
 
 global.FLAG_STRING_COLONY = "colony";
 
-global.QUEST_CLASSES = {
-	'harvester': HarvesterQuest
-};
-
 global.DESTINATION_REACHED = -1501;
 global.ROOMTYPE_SOURCEKEEPER = -1601;
 global.ROOMTYPE_CORE = -1602;
