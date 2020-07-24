@@ -49,7 +49,6 @@ class SpawnGroup {
 					spawnDirections = _.range(1, 9)
 				}
 
-				Logger.log(spawnDirections);
 				outcome = spawn.spawnCreep(build, name, {memory: memory, directions: spawnDirections});
 
 				if(Memory.config.muteSpawn) {
