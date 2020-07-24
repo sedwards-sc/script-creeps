@@ -98,7 +98,7 @@ class Quest {
 
         if(count < max && this.allowSpawn && this.spawnGroup.isAvailable && (this.hasVision || options.blindSpawn)) {
             let creepName = this.colony.name + "_" + roleName + "_" + Math.floor(Math.random() * 100);
-            let outcome = this.spawnGroup.spawn(body, creepName, options.memory, options.reservation);
+            let outcome = this.spawnGroup.spawn(body, creepName, options.memory, options.reservation, this.flag);
             if(outcome === OK) {
 				this.memory.roster[roleName].push(creepName);
 			}
