@@ -9,7 +9,7 @@ class EmergencyHarvesterQuest extends Quest {
 	 *
 	 */
 	constructor(id, flag, colony) {
-		super('emergencyHarvester', id, flag, colony);
+		super('emergencyHarvester', PRIORITY_EMERGENCY, id, flag, colony);
 	}
 
 	initQuest() {

@@ -11,10 +11,13 @@ class Colony {
 		this.name = name;
 		this.flag = flag;
 		// TODO: adjust colony priority with flag attributes or something
-		this.priority = PRIORITY_HIGH;
+		this.priority = PRIORITY_MEDIUM;
 		Object.defineProperty(this, "memory", { enumerable: false, value: flag.memory });
 		if(!this.quests) {
 			this.quests = {};
+		}
+		if(!this.prioritizedQuests) {
+			this.prioritizedQuests = [];
 		}
 		// variables that require vision (null check where appropriate)
 		if(this.flag.room) {

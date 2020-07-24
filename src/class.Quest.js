@@ -5,8 +5,9 @@ class Quest {
 	/**
 	 *
 	 */
-	constructor(name, id, flag, colony, allowSpawn = true) {
+	constructor(name, priority, id, flag, colony, allowSpawn = true) {
 		this.name = name;
+		this.priority = priority;
 		this.id = id;
 		this.flag = flag;
 		this.colony = colony;
