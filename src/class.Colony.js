@@ -38,7 +38,7 @@ class Colony {
 			Logger.log(e.stack, 5);
 		}
 
-		this.prioritizedQuestList = _.sortBy(this.questsList, (q) => q.priority);
+		this.prioritizedQuestList = _.sortBy(this.questList, (q) => q.priority);
 
 		for(let questClassName in this.quests) {
 			for(let questId in this.quests[questClassName]) {
