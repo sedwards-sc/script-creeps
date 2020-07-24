@@ -1,5 +1,8 @@
 /* jshint esversion: 6 */
 
+const MAX_EMERGENCY_HARVESTERS = 2;
+const EMERGENCY_RESPONSE_DELAY = 100;
+
 class EmergencyHarvesterQuest extends Quest {
 
 	/**
@@ -10,21 +13,33 @@ class EmergencyHarvesterQuest extends Quest {
 	}
 
 	initQuest() {
-		if(this.spawnGroup.currentSpawnEnergy >= 300) {
-			this.memory.lastTick = Game.time;
+		if(!this.hasVision) {
+			return;
 		}
+		let myRoomCreeps = this.flag.room.findMyCreeps();
+		if(myRoomCreeps.length === 0) {
+			return;
+		}
+		let myNonQuestRoomCreeps = _.filter(myRoomCreeps, (creep) => creep.name.indexOf(this.nameId) < 0)
+		// TODO: add requirement for non-quest room creeps to also have a work or carry part
+		if(myNonQuestRoomCreeps.length === 0) {
+			return;
+		}
+
+		// non-quest creeps are in the room so reset emergency timer
+		this.memory.lastTick = Game.time;
 	}
 
 	runCensus() {
 		let max = 0;
-		if(!this.memory.lastTick || Game.time > this.memory.lastTick + 100) {
+		if(!this.memory.lastTick || Game.time > this.memory.lastTick + EMERGENCY_RESPONSE_DELAY) {
 			if(Game.time % 5 === 0) {
 				this.log("emergency harvesting activated", 3);
 			}
-			max = 1;
+			max = MAX_EMERGENCY_HARVESTERS;
 		}
 
-		this.harvesters = this.attendance(this.nameId, workerBody(1, 1, 2), max);
+		this.harvesters = this.attendance(this.nameId, workerBody(1, 1, 2), max, {blindSpawn: true});
 	}
 
 	runActivities() {
