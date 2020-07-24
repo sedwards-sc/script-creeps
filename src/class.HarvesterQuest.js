@@ -13,7 +13,7 @@ class HarvesterQuest extends Quest {
 	}
 
 	runCensus() {
-		this.harvesters = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 1, 2), 1);
+		this.harvesters = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 1, 2, 1), 1);
 	}
 
 	runActivities() {
