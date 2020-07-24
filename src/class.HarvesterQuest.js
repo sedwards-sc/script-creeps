@@ -10,6 +10,7 @@ class HarvesterQuest extends Quest {
 	}
 
 	initQuest() {
+		this.harvesters = [];
 	}
 
 	runCensus() {

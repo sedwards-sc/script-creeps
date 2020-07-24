@@ -13,6 +13,8 @@ class EmergencyHarvesterQuest extends Quest {
 	}
 
 	initQuest() {
+		this.harvesters = [];
+
 		if(!this.hasVision) {
 			return;
 		}
