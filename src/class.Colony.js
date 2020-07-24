@@ -40,14 +40,12 @@ class Colony {
 
 		this.prioritizedQuestList = _.sortBy(this.questList, (q) => q.priority);
 
-		for(let questClassName in this.quests) {
-			for(let questId in this.quests[questClassName]) {
-				try {
-					this.quests[questClassName][questId].initQuest();
-				} catch(e) {
-					Logger.errorLog("error caught in initQuest phase, colony:" + this.name + ", quest:" + questClassName + "_" + questId, ERR_TIRED, 5);
-					Logger.log(e.stack, 5);
-				}
+		for(let quest of this.prioritizedQuestList) {
+			try {
+				quest.initQuest();
+			} catch(e) {
+				Logger.errorLog("error caught in initQuest phase, colony:" + this.name + ", quest:" + quest.nameId, ERR_TIRED, 5);
+				Logger.log(e.stack, 5);
 			}
 		}
 	}
@@ -105,14 +103,12 @@ class Colony {
 	 */
 	runCensus() {
 		// run census for quests
-		for(let questClassName in this.quests) {
-			for(let questId in this.quests[questClassName]) {
-				try {
-					this.quests[questClassName][questId].runCensus();
-				} catch(e) {
-					Logger.errorLog("error caught in census phase, colony:" + this.name + ", quest:" + questClassName + "_" + questId, ERR_TIRED, 5);
-					Logger.log(e.stack, 5);
-				}
+		for(let quest of this.prioritizedQuestList) {
+			try {
+				quest.runCensus();
+			} catch(e) {
+				Logger.errorLog("error caught in census phase, colony:" + this.name + ", quest:" + quest.nameId, ERR_TIRED, 5);
+				Logger.log(e.stack, 5);
 			}
 		}
 	}
@@ -122,14 +118,12 @@ class Colony {
 	 */
 	runActivities() {
 		// run quest activities
-		for(let questClassName in this.quests) {
-			for(let questId in this.quests[questClassName]) {
-				try {
-					this.quests[questClassName][questId].runActivities();
-				} catch(e) {
-					Logger.errorLog("error caught in activities phase, colony:" + this.name + ", quest:" + questClassName + "_" + questId + " in room " + this.flag.pos.roomName, ERR_TIRED, 5);
-					Logger.log(e.stack, 5);
-				}
+		for(let quest of this.prioritizedQuestList) {
+			try {
+				quest.runActivities();
+			} catch(e) {
+				Logger.errorLog("error caught in activities phase, colony:" + this.name + ", quest:" + quest.nameId + " in room " + this.flag.pos.roomName, ERR_TIRED, 5);
+				Logger.log(e.stack, 5);
 			}
 		}
 	}
@@ -139,14 +133,12 @@ class Colony {
 	 */
 	theEnd() {
 		// quest end phases
-		for(let questClassName in this.quests) {
-			for(let questId in this.quests[questClassName]) {
-				try {
-					this.quests[questClassName][questId].questEnd();
-				} catch(e) {
-					Logger.errorLog("error caught in quest end phase, colony:" + this.name + ", quest:" + questClassName + "_" + questId, ERR_TIRED, 5);
-					Logger.log(e.stack, 5);
-				}
+		for(let quest of this.prioritizedQuestList) {
+			try {
+				quest.questEnd();
+			} catch(e) {
+				Logger.errorLog("error caught in quest end phase, colony:" + this.name + ", quest:" + quest.nameId, ERR_TIRED, 5);
+				Logger.log(e.stack, 5);
 			}
 		}
 
@@ -168,14 +160,12 @@ class Colony {
      */
     invalidateCache() {
         if(Math.random() < CACHE_INVALIDATION_CHANCE) {
-			for(let questClassName in this.quests) {
-				for(let questId in this.quests[questClassName]) {
-					try {
-						this.quests[questClassName][questId].invalidateQuestCache();
-					} catch(e) {
-						Logger.errorLog("error caught in quest cache invalidation phase, colony:" + this.name + ", quest:" + questClassName + "_" + questId, ERR_TIRED, 5);
-						Logger.log(e.stack, 5);
-					}
+			for(let quest of this.prioritizedQuestList) {
+				try {
+					quest.invalidateQuestCache();
+				} catch(e) {
+					Logger.errorLog("error caught in quest cache invalidation phase, colony:" + this.name + ", quest:" + quest.nameId, ERR_TIRED, 5);
+					Logger.log(e.stack, 5);
 				}
 			}
 
