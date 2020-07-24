@@ -16,8 +16,8 @@ class Colony {
 		if(!this.quests) {
 			this.quests = {};
 		}
-		if(!this.prioritizedQuests) {
-			this.prioritizedQuests = [];
+		if(!this.questList) {
+			this.questList = [];
 		}
 		// variables that require vision (null check where appropriate)
 		if(this.flag.room) {
@@ -37,6 +37,8 @@ class Colony {
 			Logger.errorLog("error caught in initColony phase, colony:" + this.name, ERR_TIRED, 5);
 			Logger.log(e.stack, 5);
 		}
+
+		this.prioritizedQuestList = _.sortBy(this.questsList, (q) => q.priority);
 
 		for(let questClassName in this.quests) {
 			for(let questId in this.quests[questClassName]) {
@@ -91,6 +93,7 @@ class Colony {
 						}
 
 						this.quests[questClassName][questId] = quest;
+						this.questList.push(quest);
 					}
 				}
 			}
