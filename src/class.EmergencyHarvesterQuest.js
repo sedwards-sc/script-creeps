@@ -17,6 +17,8 @@ class EmergencyHarvesterQuest extends Quest {
 			return;
 		}
 		let myRoomCreeps = this.flag.room.findMyCreeps();
+		// TODO: also check if creeps are spawning because find() doesn't seem to return spawning creeps
+		// check if this.spawnGroup.availableSpawnCount === this.spawnGroup.spawns.length
 		if(myRoomCreeps.length === 0) {
 			return;
 		}
