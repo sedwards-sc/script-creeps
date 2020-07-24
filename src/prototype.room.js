@@ -16,10 +16,10 @@
  * @returns {Structure[]}
  */
 Room.prototype.findStructures = function(structureType) {
-    if(!Game.cache.structures[this.name]) {
-        Game.cache.structures[this.name] = _.groupBy(this.find(FIND_STRUCTURES), (s) => s.structureType);
-    }
-    return Game.cache.structures[this.name][structureType] || [];
+	if(!Game.cache.structures[this.name]) {
+		Game.cache.structures[this.name] = _.groupBy(this.find(FIND_STRUCTURES), (s) => s.structureType);
+	}
+	return Game.cache.structures[this.name][structureType] || [];
 };
 
 /**
@@ -27,22 +27,36 @@ Room.prototype.findStructures = function(structureType) {
  * @returns {Creep[]}
  */
 Room.prototype.findCreeps = function() {
-    if(!Game.cache.creeps[this.name]) {
-        Game.cache.creeps[this.name] = this.find(FIND_CREEPS);
-    }
-    return Game.cache.creeps[this.name] || [];
+	if(!Game.cache.creeps[this.name]) {
+		Game.cache.creeps[this.name] = this.find(FIND_CREEPS);
+	}
+	return Game.cache.creeps[this.name] || [];
+};
+
+/**
+ * Returns array of my creeps, caching results on a per-tick basis
+ * @returns {Creep[]}
+ */
+Room.prototype.findMyCreeps = function() {
+	if(!this.cache) {
+		this.cache = {};
+	}
+	if(!this.cache.myCreeps) {
+		this.cache.myCreeps = _.filter(this.findCreeps, (creep) => creep.my);
+	}
+	return this.cache.myCreeps;
 };
 
 // TODO: test ownership priorites
 Object.defineProperty(Room.prototype, "ownedByMe", {
 	get: function myProperty() {
 		if(isNullOrUndefined(this)) {
-	        return false;
-	    }
-	    if(isNullOrUndefined(this.controller)) {
-	        return false;
-	    }
-	    return this.controller.my;
+			return false;
+		}
+		if(isNullOrUndefined(this.controller)) {
+			return false;
+		}
+		return this.controller.my;
 	}
 });
 
@@ -50,9 +64,9 @@ Object.defineProperty(Room.prototype, "ownedByMe", {
 Object.defineProperty(Room.prototype, "reservedByMe", {
 	get: function myProperty() {
 		if(isNullOrUndefined(this) || isNullOrUndefined(this.controller) || isNullOrUndefined(this.controller.reservation)) {
-	        return false;
-	    }
-	    return this.controller.reservation.username === USERNAME;
+			return false;
+		}
+		return this.controller.reservation.username === USERNAME;
 	}
 });
 
