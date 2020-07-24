@@ -42,7 +42,7 @@ Room.prototype.findMyCreeps = function() {
 		this.cache = {};
 	}
 	if(!this.cache.myCreeps) {
-		this.cache.myCreeps = _.filter(this.findCreeps, (creep) => creep.my);
+		this.cache.myCreeps = _.filter(this.findCreeps(), (creep) => creep.my);
 	}
 	return this.cache.myCreeps;
 };
