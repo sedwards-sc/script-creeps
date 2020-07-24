@@ -37,7 +37,7 @@ class SpawnGroup {
 			if(spawn.spawning === null) {
 				let spawnDirections = [];
 				if(destination) {
-					destinationDirection = spawn.pos.getDirectionTo(destination);
+					let destinationDirection = spawn.pos.getDirectionTo(destination);
 					spawnDirections.push(
 						destinationDirection,
 						clampDirection(destinationDirection - 1), clampDirection(destinationDirection + 1),
