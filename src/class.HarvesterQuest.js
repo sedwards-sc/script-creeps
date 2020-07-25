@@ -34,7 +34,6 @@ class HarvesterQuest extends Quest {
 	harvesterActions(creep) {
 		let withinRoom = creep.pos.roomName === this.flag.pos.roomName;
 		if(!withinRoom) {
-			// TODO: move to position in same room as flag instead in case flag position isn't reachable
 			creep.moveTo(this.flag);
 			return;
 		}
