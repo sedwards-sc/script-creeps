@@ -72,6 +72,14 @@ class HarvesterQuest extends Quest {
 						return false;
 					}
 				} else if(e instanceof Structure) {
+					// TODO: make this cleaner
+					if(s.structureType !== STRUCTURE_STORAGE &&
+						s.structureType !== STRUCTURE_TERMINAL &&
+						s.structureType !== STRUCTURE_LINK &&
+						s.structureType !== STRUCTURE_CONTAINER
+					) {
+						return true;
+					}
 					if(e.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
 						return false;
 					}
