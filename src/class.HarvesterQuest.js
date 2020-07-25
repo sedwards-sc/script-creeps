@@ -40,20 +40,48 @@ class HarvesterQuest extends Quest {
 
 		let hasLoad = creep.hasLoad();
 		if(!hasLoad) {
-			let findSource = () => {
+			let findEnergy = () => {
+				let energySources = [];
+				if(creep.room.storage && creep.room.storage.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+					energySources.push(creep.room.storage);
+				}
+				if(creep.room.terminal && creep.room.terminal.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+					energySources.push(creep.room.terminal);
+				}
+				// TODO: check for minimum pile size based on creep's carry capacity
+				energySources = energySources.concat(
+					_.filter(creep.room.findDroppedResources(), (r) => r.resourceType === RESOURCE_ENERGY && r.amount > 20)
+				);
+				energySources = energySources.concat(
+					_.filter(creep.room.findStructures(STRUCTURE_CONTAINER), (s) => s.store.getUsedCapacity(RESOURCE_ENERGY) > 0)
+				);
+				energySources = energySources.concat(
+					_.filter(creep.room.findStructures(STRUCTURE_LINK), (s) => s.store.getUsedCapacity(RESOURCE_ENERGY) > 0)
+				);
+				if(energySources.length > 0) {
+					return creep.pos.findClosestByPath(energySources);
+				}
 				return creep.pos.findClosestByRange(FIND_SOURCES);
 			};
-			let forgetSource = (s) => {
-				if(s instanceof Source) {
+			let forgetEnergy = (e) => {
+				if(e instanceof Source) {
 					// TODO: forget if source is empty
 					return false;
+				} else if(e instanceof Resource) {
+					if(e.amount > 20) {
+						return false;
+					}
+				} else if(e instanceof Structure) {
+					if(e.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+						return false;
+					}
 				}
 				return true;
 			};
-			let mySource = creep.rememberStructure(findSource, forgetSource, "remStructureId", true);
+			let myEnergySource = creep.rememberStructure(findEnergy, forgetEnergy, "remStructureId", true);
 
-			if(creep.harvest(mySource) === ERR_NOT_IN_RANGE) {
-				creep.moveTo(mySource);
+			if(creep.takeResource(myEnergySource, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+				creep.moveTo(myEnergySource);
 			}
 			return;
 		}
@@ -63,6 +91,13 @@ class HarvesterQuest extends Quest {
 		};
 		let forgetRefillTarget = (s) => {
 			if(!s.structureType) {
+				return true;
+			}
+			if(s.structureType === STRUCTURE_STORAGE ||
+				s.structureType === STRUCTURE_TERMINAL ||
+				s.structureType === STRUCTURE_LINK ||
+				s.structureType === STRUCTURE_CONTAINER
+			) {
 				return true;
 			}
 			if(s.structureType === STRUCTURE_TOWER) {

@@ -47,7 +47,20 @@ Room.prototype.findMyCreeps = function() {
 	return this.cache.myCreeps;
 };
 
-// TODO: test ownership priorites
+/**
+ * Returns array of dropped resources, caching results on a per-tick basis
+ * @returns {Resource[]}
+ */
+Room.prototype.findDroppedResources = function() {
+	if(!this.cache) {
+		this.cache = {};
+	}
+	if(!this.cache.droppedResources) {
+		this.cache.droppedResources = this.find(FIND_DROPPED_RESOURCES);
+	}
+	return this.cache.droppedResources || [];
+};
+
 Object.defineProperty(Room.prototype, "ownedByMe", {
 	get: function myProperty() {
 		if(isNullOrUndefined(this)) {
