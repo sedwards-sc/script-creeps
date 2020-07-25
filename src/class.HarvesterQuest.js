@@ -20,7 +20,7 @@ class HarvesterQuest extends Quest {
 	runActivities() {
 		for(let creep of this.harvesters) {
 			if(!creep.spawning) {
-				this.harvesterActions2(creep)
+				this.harvesterActions(creep)
 			}
 		}
 	}
@@ -32,6 +32,68 @@ class HarvesterQuest extends Quest {
 	}
 
 	harvesterActions(creep) {
+		let withinRoom = creep.pos.roomName === this.flag.pos.roomName;
+		if(!withinRoom) {
+			// TODO: move to position in same room as flag instead in case flag position isn't reachable
+			creep.moveTo(this.flag);
+			return;
+		}
+
+		let hasLoad = creep.hasLoad();
+		if(!hasLoad) {
+			let findSource = () => {
+				return creep.pos.findClosestByRange(FIND_SOURCES);
+			};
+			let forgetSource = (s) => {
+				if(s instanceof Source) {
+					// TODO: forget if source is empty
+					return false;
+				}
+				return true;
+			};
+			let mySource = creep.rememberStructure(findSource, forgetSource, "remStructureId", true);
+
+			if(creep.harvest(mySource) === ERR_NOT_IN_RANGE) {
+				creep.moveTo(mySource);
+			}
+			return;
+		}
+
+		let findRefillTarget = () => {
+			return creep.getRefillTarget();
+		};
+		let forgetRefillTarget = (s) => {
+			if(!s.structureType) {
+				return true;
+			}
+			if(s.structureType === STRUCTURE_TOWER) {
+				return s.store.getUsedCapacity(RESOURCE_ENERGY) > s.store.getCapacity(RESOURCE_ENERGY) * 0.95;
+			}
+			return s.store.getFreeCapacity(RESOURCE_ENERGY) === 0;
+		};
+		let refillTarget = creep.rememberStructure(findRefillTarget, forgetRefillTarget, "remStructureId", true);
+
+		if(refillTarget) {
+			if(creep.transfer(refillTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+				creep.moveTo(refillTarget);
+			}
+		} else {
+			// build
+			let targets = creep.room.find(FIND_CONSTRUCTION_SITES);
+			if(targets.length) {
+				if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
+					creep.moveTo(targets[0]);
+				}
+			} else {
+				// else upgrade
+				if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
+					creep.moveTo(creep.room.controller);
+				}
+			}
+		}
+	}
+
+	harvesterActions_old(creep) {
 		// state 0 is harvest
 		// state 1 is transfer energy
 
@@ -129,68 +191,6 @@ class HarvesterQuest extends Quest {
 					if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
 						creep.moveTo(creep.room.controller);
 					}
-				}
-			}
-		}
-	}
-
-	harvesterActions2(creep) {
-		let withinRoom = creep.pos.roomName === this.flag.pos.roomName;
-		if(!withinRoom) {
-			// TODO: move to position in same room as flag instead in case flag position isn't reachable
-			creep.moveTo(this.flag);
-			return;
-		}
-
-		let hasLoad = creep.hasLoad();
-		if(!hasLoad) {
-			let findSource = () => {
-				return creep.pos.findClosestByRange(FIND_SOURCES);
-			};
-			let forgetSource = (s) => {
-				if(s.structureType) {
-					return true;
-				}
-				// TODO: forget is source is empty
-				return false;
-			};
-			let mySource = creep.rememberStructure(findSource, forgetSource, "remStructureId", true);
-
-			if(creep.harvest(mySource) === ERR_NOT_IN_RANGE) {
-				creep.moveTo(mySource);
-			}
-			return;
-		}
-
-		let findRefillTarget = () => {
-			return creep.getRefillTarget();
-		};
-		let forgetRefillTarget = (s) => {
-			if(!s.structureType) {
-				return true;
-			}
-			if(s.structureType === STRUCTURE_TOWER) {
-				return s.store.getUsedCapacity(RESOURCE_ENERGY) > s.store.getCapacity(RESOURCE_ENERGY) * 0.95;
-			}
-			return s.store.getFreeCapacity(RESOURCE_ENERGY) === 0;
-		};
-		let refillTarget = creep.rememberStructure(findRefillTarget, forgetRefillTarget, "remStructureId", true);
-
-		if(refillTarget) {
-			if(creep.transfer(refillTarget, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-				creep.moveTo(refillTarget);
-			}
-		} else {
-			// build
-			let targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-			if(targets.length) {
-				if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-					creep.moveTo(targets[0]);
-				}
-			} else {
-				// else upgrade
-				if(creep.upgradeController(creep.room.controller) == ERR_NOT_IN_RANGE) {
-					creep.moveTo(creep.room.controller);
 				}
 			}
 		}
