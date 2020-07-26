@@ -346,7 +346,7 @@ Creep.prototype.transferEverything = function (target) {
 //Creep.prototype.rememberStructure = function(findStructure: () => Structure, forget: (structure: Structure) => boolean, prop = "remStructureId", immediate = false): Structure {
 Creep.prototype.rememberStructure = function(findStructure, forget, prop = "remStructureId", immediate = false) {
 	if(this.memory[prop]) {
-		structureId = this.memory[prop];
+		let structureId = this.memory[prop];
 		let structure = Game.structures[structureId];
 		if(!structure) {
 			structure = Game.constructionSites[structureId];
