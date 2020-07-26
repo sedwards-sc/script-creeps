@@ -12,6 +12,7 @@ loopHelper.initMemory();
 
 require('prototype.creep');
 require('prototype.room');
+require('prototype.roomposition');
 require('prototype.structure');
 
 // require creep talk after creep prototypes

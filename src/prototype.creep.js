@@ -3,21 +3,21 @@
  * prototype.creep
  */
 
-// Creep.prototype.toString = function(htmlLink = true){
-// 	return `[${(this.name ? this.name : this.id)} ${this.pos.toString(htmlLink, this.id, 'creeps.'+this.name)}]`;
-// };
+Creep.prototype.toString = function(htmlLink = true){
+	return `[${(this.name ? this.name : this.id)} ${this.pos.toString(htmlLink, this.id, 'creeps.'+this.name)}]`;
+};
 
-// Creep.prototype.descriptionString = function() {
-// 	return `${roomLink(this, this.name)} (${this.room.name}, ${this.memory.role})`;
-// };
+Creep.prototype.descriptionString = function() {
+	return `${roomLink(this, this.name)} (${this.room.name}, ${this.memory.role})`;
+};
 
-// Creep.prototype.log = function(msg, severity = 2) {
-// 	return Logger.log(`creep: ${this.descriptionString()}, msg: ${msg}`, severity);
-// };
+Creep.prototype.log = function(msg, severity = 2) {
+	return Logger.log(`creep: ${this.descriptionString()}, msg: ${msg}`, severity);
+};
 
-// Creep.prototype.errorLog = function(msg, errCode = -10, severity = 3) {
-// 	return Logger.log(`!!!Error!!! creep: ${this.descriptionString()}, msg: ${msg} (${errorCodeToText(errCode)})`, severity);
-// };
+Creep.prototype.errorLog = function(msg, errCode = -10, severity = 3) {
+	return Logger.log(`!!!Error!!! creep: ${this.descriptionString()}, msg: ${msg} (${errorCodeToText(errCode)})`, severity);
+};
 
 Creep.prototype.getRefillTarget = function() {
 	let targets;
