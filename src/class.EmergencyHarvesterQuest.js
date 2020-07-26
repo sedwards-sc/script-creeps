@@ -95,7 +95,7 @@ class EmergencyHarvesterQuest extends Quest {
 			};
 			let forgetEnergy = (e) => {
 				if(e instanceof Source) {
-					if(e.energy > 0) {
+					if(e.energy > 0 && e.pos.openAdjacentSpots().length > 0) {
 						return false;
 					}
 				} else if(e instanceof Resource) {
