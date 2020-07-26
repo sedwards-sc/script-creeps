@@ -15,7 +15,7 @@ class DropMinerQuest extends Quest {
 	}
 
 	runCensus() {
-		this.miners = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 0, 1, 1, 5).reverse(), 1);
+		this.miners = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 0, 1, 1, 5).reverse(), 1, {prespawn: 0});
 	}
 
 	runActivities() {
