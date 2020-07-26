@@ -47,6 +47,7 @@ class EmergencyHarvesterQuest extends Quest {
 	}
 
 	runActivities() {
+		// TODO: recycle creeps after recovery (e.g. after >= 2 non-quest creeps in the room)
 		for(let creep of this.harvesters) {
 			if(!creep.spawning) {
 				this.harvesterActions(creep)
