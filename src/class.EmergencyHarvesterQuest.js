@@ -95,8 +95,9 @@ class EmergencyHarvesterQuest extends Quest {
 			};
 			let forgetEnergy = (e) => {
 				if(e instanceof Source) {
-					// TODO: forget if source is empty
-					return false;
+					if(e.energy > 0) {
+						return false;
+					}
 				} else if(e instanceof Resource) {
 					if(e.amount > 20) {
 						return false;
