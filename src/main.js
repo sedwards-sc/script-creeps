@@ -1,5 +1,4 @@
 /* jshint esversion: 6, loopfunc: true */
-// testing
 
 require('constants');
 require('utils').populateUtils(global);
