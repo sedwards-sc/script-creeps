@@ -30,7 +30,7 @@ class DefenseQuest extends Quest {
 			maxDefenders = 1;
 		}
 		// TODO: adjust defenders so they have more attack with some toughness
-		this.defenders = this.attendance("defender_" + this.id, this.spawnGroup.bodyRatio({TOUGH: 2, ATTACK: 1, MOVE: 1}, 1), maxDefenders);
+		this.defenders = this.attendance("defender_" + this.id, this.spawnGroup.bodyRatio({tough: 2, attack: 1, move: 1}, 1), maxDefenders);
 	}
 
 	runActivities() {
