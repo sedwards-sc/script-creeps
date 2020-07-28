@@ -206,7 +206,7 @@ function checkEnemy(username, roomName) {
 
 	// make note of non-ally, non-npc creeps
 	if(username !== "Invader" && username !== "Source Keeper") {
-		this.strangerDanger(username, roomName);
+		strangerDanger(username, roomName);
 	}
 	return true;
 }
@@ -224,9 +224,9 @@ function strangerDanger(username, roomName) {
 			tickSeen: Game.time,
 			roomName: roomName
 		};
-		let msgText = `STRANGER DANGER: one of ${username}'s creeps seen in ${Game.rooms[roomName]} at ${Game.time}`;
+		let msgText = `STRANGER DANGER: one of ${username}'s creeps seen in ${roomName} at ${Game.time}`;
 		let severity = 5;
-		if(!Game.rooms[roomName].isMine()) {
+		if(!Game.rooms[roomName].ownedByMe) {
 			severity = 4;
 		}
 		Logger.log(msgText, severity);
