@@ -29,6 +29,7 @@ class DefenseQuest extends Quest {
 		if(this.hostiles.length > 0) {
 			maxDefenders = 1;
 		}
+		// TODO: adjust defenders so they have more attack with some toughness
 		this.defenders = this.attendance("defender_" + this.id, this.spawnGroup.bodyRatio({TOUGH: 2, ATTACK: 1, MOVE: 1}, 1), maxDefenders);
 	}
 
