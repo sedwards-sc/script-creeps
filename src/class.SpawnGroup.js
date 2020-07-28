@@ -100,6 +100,31 @@ class SpawnGroup {
 	}
 
 	/**
+	 * Returns creep body array with desired ratio of parts based on the spawn group's energy capacity
+	 * @param bodyPartRatios {collection} collection with ratios of body parts
+	 * @param capacityFraction {number} fraction of room's energy capacity to use (must be <= 1)
+	 * @param limit {number} limit for the number of units if you don't need as many as possible (e.g. miners)
+	 * @returns {string[]}
+	 */
+	bodyRatio(bodyPartRatios, capacityFraction, limit) {
+		let partsPerUnit = 0;
+		let costPerUnit = 0;
+		_.forEach(bodyPartRatios, function(partRatio, bodyPart) {
+			partsPerUnit += partRatio;
+			costPerUnit += partRatio * BODYPART_COST[bodyPart];
+		});
+		if(!limit) {
+			limit = Math.floor(MAX_CREEP_SIZE / partsPerUnit);
+		}
+		let bodyRatio = Math.min(Math.floor((this.maxSpawnEnergy * capacityFraction) / costPerUnit), limit);
+		let bodyConfig = {};
+		_.forEach(bodyPartRatios, function(partRatio, bodyPart) {
+			bodyConfig[bodyPart] = partRatio * bodyRatio;
+		});
+		return configBody(bodyConfig);
+	}
+
+	/**
 	 * Returns creep body array for workers with desired ratio of parts based on the spawn group's energy capacity
 	 * @param workRatio {number} ratio of work parts
 	 * @param carryRatio {number} ratio of carry parts
