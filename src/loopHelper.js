@@ -6,11 +6,13 @@ require('class.SpawnGroup');
 require('class.Quest');
 require('class.EmergencyHarvesterQuest');
 require('class.HarvesterQuest');
+require('class.DefenseQuest');
 require('class.DropMinerQuest');
 
 global.QUEST_CLASSES = {
 	'emergencyHarvester': EmergencyHarvesterQuest,
 	'harvester': HarvesterQuest,
+	'defense': DefenseQuest,
 	"dropMiner": DropMinerQuest
 };
 
