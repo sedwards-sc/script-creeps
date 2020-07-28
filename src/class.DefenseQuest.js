@@ -10,8 +10,6 @@ class DefenseQuest extends Quest {
 	}
 
 	initQuest() {
-		this.towers = this.flag.room.findStructures(STRUCTURE_TOWER);
-
 		this.hostiles = this.flag.room.hostiles;
 		if(this.hostiles.length > 0) {
 			let username = _.first(this.hostiles).owner.username;
@@ -20,12 +18,23 @@ class DefenseQuest extends Quest {
 				Game.notify(`User ${username} spotted in room ${roomName} at ${timeLink(roomName, Game.time)}`);
 			}
 		}
+
+		this.towers = this.flag.room.findStructures(STRUCTURE_TOWER);
+
+		this.defenders = [];
 	}
 
 	runCensus() {
+		let maxDefenders = 0;
+		if(this.hostiles.length > 0) {
+			maxDefenders = 1;
+		}
+		this.defenders = this.attendance("defender_" + this.id, this.spawnGroup.bodyRatio({ATTACK: 1, MOVE: 1}, 1), maxDefenders);
 	}
 
 	runActivities() {
+		this.defenders.forEach(defender => this.defenderActions(defender));
+
 		if(this.hostiles.length > 0) {
 			let firstHostile = _.first(this.hostiles);
 			this.towers.forEach(tower => tower.attack(firstHostile));
@@ -38,6 +47,18 @@ class DefenseQuest extends Quest {
 	}
 
 	invalidateQuestCache() {
+		// TODO: cache bodyRatio results so they aren't calculated every time
+	}
+
+	defenderActions(defender) {
+		if(this.hostiles.length > 0) {
+			let target = defender.pos.findClosestByRange(this.hostiles);
+			if(defender.attack(target) === ERR_NOT_IN_RANGE) {
+				defender.moveTo(target);
+			}
+			return;
+		}
+		defender.idleOffRoad(this.flag);
 	}
 
 	towerRepair() {
