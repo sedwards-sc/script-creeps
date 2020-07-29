@@ -55,7 +55,7 @@ class Quest {
 	}
 
     invalidateQuestCache() {
-		this.log("clearing cache");
+		this.log("clearing quest cache");
 		this.memory.cache = {};
 	}
 
