@@ -52,7 +52,7 @@ class DropMinerQuest extends Quest {
 	        }
 
 	        let harvestReturn = creep.harvest(mySource);
-	        if(harvestReturn != OK) {
+	        if(harvestReturn !== OK && harvestReturn !== ERR_NOT_ENOUGH_RESOURCES) {
 	            creep.errorLog('could not successfully harvest', harvestReturn, 4);
 	        }
 	    } else {
