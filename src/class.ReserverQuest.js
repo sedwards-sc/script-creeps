@@ -34,9 +34,6 @@ class ReserverQuest extends Quest {
 	questEnd() {
 	}
 
-	invalidateQuestCache() {
-	}
-
 	reserverActions(creep) {
 		if(creep.fleeHostiles()) {
 			return;

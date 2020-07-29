@@ -31,9 +31,6 @@ class DropMinerQuest extends Quest {
 	questEnd() {
 	}
 
-	invalidateQuestCache() {
-	}
-
 	minerActions(creep) {
 		if((Game.time % 50) === 1) {
 			let reqParts = _.filter(creep.body, function(bodyPart) { return (bodyPart.type === WORK) && (bodyPart.hits > 0); });

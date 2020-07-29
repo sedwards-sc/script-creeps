@@ -29,7 +29,8 @@ class DefenseQuest extends Quest {
 		if(this.hostiles.length > 0) {
 			maxDefenders = 1;
 		}
-		// TODO: adjust defenders so they have more attack with some toughness
+		// TODO: adjust defenders so they have more attack with some toughness (just attack and move?)
+		// TODO: cache bodyRatio results so they aren't calculated every time
 		this.defenders = this.attendance("defender_" + this.id, this.spawnGroup.bodyRatio({tough: 2, attack: 1, move: 3}, 1), maxDefenders);
 	}
 
@@ -45,10 +46,6 @@ class DefenseQuest extends Quest {
 	}
 
 	questEnd() {
-	}
-
-	invalidateQuestCache() {
-		// TODO: cache bodyRatio results so they aren't calculated every time
 	}
 
 	defenderActions(defender) {

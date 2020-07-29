@@ -29,9 +29,6 @@ class UpgradingCartQuest extends Quest {
 	questEnd() {
 	}
 
-	invalidateQuestCache() {
-	}
-
 	cartActions(creep) {
 		if(creep.fleeHostiles()) {
 			return;

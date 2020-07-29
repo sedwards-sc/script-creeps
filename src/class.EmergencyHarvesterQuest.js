@@ -58,9 +58,6 @@ class EmergencyHarvesterQuest extends Quest {
 	questEnd() {
 	}
 
-	invalidateQuestCache() {
-	}
-
 	harvesterActions(creep) {
 		let withinRoom = creep.pos.roomName === this.flag.pos.roomName;
 		if(!withinRoom) {

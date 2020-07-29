@@ -36,6 +36,10 @@ class Quest {
 		if(!this.memory.roster) {
 			this.memory.roster = {};
 		}
+
+		if(!this.memory.cache) {
+			this.memory.cache = {};
+		}
 	}
 
     initQuest() {
@@ -51,6 +55,8 @@ class Quest {
 	}
 
     invalidateQuestCache() {
+		this.log("clearing cache");
+		this.memory.cache = {};
 	}
 
 	/**
