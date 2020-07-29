@@ -12,6 +12,35 @@ class UpgradingCartQuest extends Quest {
 	}
 
 	initQuest() {
+		if(!this.memory.cache.prespawn) {
+			const ROAD_COST = 3;
+			const PLAIN_COST = 4;
+			const SWAMP_COST = 5;
+			let pathFinderResults = PathFinder.search(this.spawnGroup.pos, this.flag.pos, {
+				plainCost: PLAIN_COST,
+				swampCost: SWAMP_COST,
+				maxOps: 8000,
+				roomCallback: function(roomName) {
+					let room = Game.rooms[roomName];
+					if(!room) {
+						return;
+					}
+
+					let costs = new PathFinder.CostMatrix();
+					room.find(FIND_STRUCTURES).forEach(function(structure) {
+						if(structure.structureType === STRUCTURE_ROAD) {
+							costs.set(structure.pos.x, structure.pos.y, ROAD_COST);
+						} else if(structure.structureType !== STRUCTURE_CONTAINER && (structure.structureType !== STRUCTURE_RAMPART || !structure.my)) {
+							// Can't walk through non-walkable buildings
+							costs.set(structure.pos.x, structure.pos.y, 0xff);
+						}
+					});
+					return costs;
+				},
+			});
+			this.memory.cache.prespawn = Math.max(pathFinderResults.path.length, 1);
+		}
+
 		if(!this.memory.cache.carryPartsRequired) {
 			const ROAD_COST = 3;
 			const PLAIN_COST = 4;
@@ -50,8 +79,9 @@ class UpgradingCartQuest extends Quest {
 	}
 
 	runCensus() {
+		// TODO: spawn extra carts if the max spawn energy isn't sufficient to produce maxBodyUnits
 		let maxBodyUnits = Math.max(Math.ceil(this.memory.cache.carryPartsRequired / 2), 1);
-		this.carts = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 2, 3, 1, maxBodyUnits), 1, {prespawn: 0});
+		this.carts = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 2, 3, 1, maxBodyUnits), 1, {prespawn: this.memory.cache.prespawn});
 	}
 
 	runActivities() {
