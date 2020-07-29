@@ -1,19 +1,24 @@
 /* jshint esversion: 6 */
 
 require('class.Empire');
+
 require('class.Colony');
 require('class.SpawnGroup');
+
 require('class.Quest');
-require('class.EmergencyHarvesterQuest');
-require('class.HarvesterQuest');
+
 require('class.DefenseQuest');
 require('class.DropMinerQuest');
+require('class.EmergencyHarvesterQuest');
+require('class.HarvesterQuest');
+require('class.ReserverQuest');
 
 global.QUEST_CLASSES = {
+	'defense': DefenseQuest,
+	"dropMiner": DropMinerQuest,
 	'emergencyHarvester': EmergencyHarvesterQuest,
 	'harvester': HarvesterQuest,
-	'defense': DefenseQuest,
-	"dropMiner": DropMinerQuest
+	"reserver": ReserverQuest
 };
 
 var loopHelper = {};
