@@ -1,5 +1,7 @@
 /* jshint esversion: 6 */
 
+const ENERGY_PER_TICK = 9;
+
 class UpgradingCartQuest extends Quest {
 
 	/**
@@ -10,12 +12,46 @@ class UpgradingCartQuest extends Quest {
 	}
 
 	initQuest() {
+		if(!this.memory.cache.carryPartsRequired) {
+			const ROAD_COST = 3;
+			const PLAIN_COST = 4;
+			const SWAMP_COST = 5;
+			let pathFinderResults = PathFinder.search(this.flag.pos, {pos: this.colony.flag.room.controller.pos, range: 3}, {
+				plainCost: PLAIN_COST,
+				swampCost: SWAMP_COST,
+				maxOps: 8000,
+				roomCallback: function(roomName) {
+					let room = Game.rooms[roomName];
+					if(!room) {
+						return;
+					}
+
+					let costs = new PathFinder.CostMatrix();
+					room.find(FIND_STRUCTURES).forEach(function(structure) {
+						if(structure.structureType === STRUCTURE_ROAD) {
+							costs.set(structure.pos.x, structure.pos.y, ROAD_COST);
+						} else if(structure.structureType !== STRUCTURE_CONTAINER && (structure.structureType !== STRUCTURE_RAMPART || !structure.my)) {
+							// Can't walk through non-walkable buildings
+							costs.set(structure.pos.x, structure.pos.y, 0xff);
+						}
+					});
+					return costs;
+				},
+			});
+
+			let pathLength = Math.max(pathFinderResults.path.length * 2, 1);
+			let energyPerTrip = pathLength * ENERGY_PER_TICK;
+
+			// TODO: maybe this should be Math.ceil to account for the upgrading time
+			this.memory.cache.carryPartsRequired = Math.max(Math.floor(energyPerTrip / CARRY_CAPACITY), 1);
+		}
+
 		this.carts = [];
 	}
 
 	runCensus() {
-		// TODO: dynamically size creep body based on distance between quest flag and colony room controller
-		this.carts = this.attendance(this.nameId, [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], 1, {prespawn: 0});
+		let maxBodyUnits = Math.max(Math.ceil(this.memory.cache.carryPartsRequired / 2), 1);
+		this.carts = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 2, 3, 1, maxBodyUnits), 1, {prespawn: 0});
 	}
 
 	runActivities() {
