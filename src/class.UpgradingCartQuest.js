@@ -6,7 +6,7 @@ class UpgradingCartQuest extends Quest {
 	 *
 	 */
 	constructor(id, flag, colony) {
-		super('upgradingCart', PRIORITY_MEDIUM, id, flag, colony);
+		super('upgradingCart', PRIORITY_LOW, id, flag, colony);
 	}
 
 	initQuest() {
@@ -14,7 +14,8 @@ class UpgradingCartQuest extends Quest {
 	}
 
 	runCensus() {
-		this.carts = this.attendance(this.nameId, [WORK, CARRY, MOVE, MOVE], 1, {prespawn: 0, blindSpawn: true});
+		// TODO: dynamically size creep body based on distance between quest flag and colony room controller
+		this.carts = this.attendance(this.nameId, [WORK, CARRY, CARRY, MOVE, MOVE, MOVE], 1, {prespawn: 0});
 	}
 
 	runActivities() {
@@ -69,7 +70,7 @@ class UpgradingCartQuest extends Quest {
 			return;
 		}
 
-		let energyPiles = _.filter(creep.room.findDroppedResources(), (r) => r.resourceType === RESOURCE_ENERGY && r.amount >= 50 && source.pos.getRangeTo(r) <= 3)
+		let energyPiles = _.filter(creep.room.findDroppedResources(), (r) => r.resourceType === RESOURCE_ENERGY && r.amount >= 20 && source.pos.getRangeTo(r) <= 3)
 		if(energyPiles.length > 0) {
 			let target = creep.pos.findClosestByRange(energyPiles);
 			if(creep.pos.isNearTo(target)) {
