@@ -15,7 +15,7 @@ class UpgradingCartQuest extends Quest {
 
 	runCensus() {
 		// TODO: dynamically size creep body based on distance between quest flag and colony room controller
-		this.carts = this.attendance(this.nameId, [WORK, CARRY, CARRY, MOVE, MOVE, MOVE], 1, {prespawn: 0});
+		this.carts = this.attendance(this.nameId, [WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE], 1, {prespawn: 0});
 	}
 
 	runActivities() {
