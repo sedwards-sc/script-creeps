@@ -16,7 +16,8 @@ class DropMinerQuest extends Quest {
 
 	runCensus() {
 		// TODO: cache path length to flag and add to prespawn
-		this.miners = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 0, 1, 1, 5).reverse(), 1, {prespawn: 0});
+		// TODO: remove blindSpawn after introducing "sentinal" or something for guarding remote rooms (reservers might be enough...)
+		this.miners = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 0, 1, 1, 5).reverse(), 1, {prespawn: 0, blindSpawn: true});
 	}
 
 	runActivities() {
