@@ -12,13 +12,15 @@ require('class.DropMinerQuest');
 require('class.EmergencyHarvesterQuest');
 require('class.HarvesterQuest');
 require('class.ReserverQuest');
+require('class.UpgradingCartQuest');
 
 global.QUEST_CLASSES = {
 	'defense': DefenseQuest,
-	"dropMiner": DropMinerQuest,
+	'dropMiner': DropMinerQuest,
 	'emergencyHarvester': EmergencyHarvesterQuest,
 	'harvester': HarvesterQuest,
-	"reserver": ReserverQuest
+	'reserver': ReserverQuest,
+	'upgradingCart': UpgradingCartQuest
 };
 
 var loopHelper = {};
