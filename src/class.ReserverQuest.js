@@ -15,10 +15,10 @@ class ReserverQuest extends Quest {
 
 	runCensus() {
 		let reserverBody = [MOVE, MOVE, CLAIM, CLAIM];
-		let maxReservers = 0;
-		if(this.spawnGroup.maxSpawnEnergy >= calculateCreepCost(reserverBody)) {
-			// TODO: add notice that there isn't enough energy for this quest
-			maxReservers = 1;
+		let maxReservers = 1;
+		if(this.spawnGroup.maxSpawnEnergy < calculateCreepCost(reserverBody)) {
+			this.errorLog("insufficient energy capacity to spawn reserver", ERR_NOT_ENOUGH_RESOURCES)
+			maxReservers = 0;
 		}
 		this.reservers = this.attendance(this.nameId, reserverBody, maxReservers);
 	}
