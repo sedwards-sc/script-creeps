@@ -12,7 +12,7 @@ class UpgradingCartQuest extends Quest {
 	}
 
 	initQuest() {
-		if(!this.memory.cache.prespawn) {
+		if(this.memory.cache.prespawn === undefined) {
 			const ROAD_COST = 3;
 			const PLAIN_COST = 4;
 			const SWAMP_COST = 5;
@@ -38,10 +38,10 @@ class UpgradingCartQuest extends Quest {
 					return costs;
 				},
 			});
-			this.memory.cache.prespawn = Math.max(pathFinderResults.path.length, 1);
+			this.memory.cache.prespawn = Math.max(pathFinderResults.path.length - 1, 0);
 		}
 
-		if(!this.memory.cache.carryPartsRequired) {
+		if(this.memory.cache.carryPartsRequired === undefined) {
 			const ROAD_COST = 3;
 			const PLAIN_COST = 4;
 			const SWAMP_COST = 5;
