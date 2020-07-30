@@ -19,6 +19,16 @@ Creep.prototype.errorLog = function(msg, errCode = -10, severity = 3) {
 	return Logger.log(`!!!Error!!! creep: ${this.descriptionString()}, msg: ${msg} (${errorCodeToText(errCode)})`, severity);
 };
 
+Creep.prototype.partCount = function(partType) {
+	let count = 0;
+	for(let part of this.body) {
+		if(part.type === partType) {
+			count++;
+		}
+	}
+	return count;
+};
+
 Creep.prototype.getRefillTarget = function() {
 	let targets;
 
@@ -68,6 +78,20 @@ Creep.prototype.getRefillTarget = function() {
 	}
 };
 
+/**
+ * Have the creep work on a StructureController or ConstructionSite as appropriate
+ * @param target - controller or construction site
+ * @returns {number}
+ */
+Creep.prototype.buildOrUpgrade = function(target) {
+	if(target instanceof StructureController) {
+		return this.upgradeController(target);
+	} else if(target instanceof ConstructionSite) {
+		return this.build(target);
+	}
+	return ERR_INVALID_TARGET;
+}
+
 // take a resource from anything else
 Creep.prototype.takeResource = function(target, resource, amount) {
     if (typeof target === 'string') {
@@ -102,6 +126,67 @@ Creep.prototype.takeResource = function(target, resource, amount) {
     return ERR_INVALID_TARGET;
 };
 
+Creep.prototype._withdraw = Creep.prototype.withdraw;
+/**
+ * Overrides the API's creep.withdraw() function to allow consistent transfer code whether the resource holder is
+ * a structure or a creep;
+ * @param target
+ * @param resourceType
+ * @param amount
+ * @returns {number}
+ */
+Creep.prototype.withdraw = function(target, resourceType, amount) {
+	if(target instanceof Creep) {
+		return target.transfer(this, resourceType, amount);
+	} else {
+		return this._withdraw(target, resourceType, amount);
+	}
+};
+
+/**
+ * Only withdraw from a store-holder if there is enough resource to transfer (or if holder is full), cpu-efficiency effort
+ * @param target
+ * @param resourceType
+ * @returns {number}
+ */
+// Uses the deprecated "carryCapacity"
+// TODO: update to use "store"
+// Creep.prototype.withdrawIfFull = function(target, resourceType) {
+// 	if(!this.pos.isNearTo(target)) {
+// 		return ERR_NOT_IN_RANGE;
+// 	}
+//
+// 	let storageAvailable = this.carryCapacity - _.sum(this.carry);
+// 	let targetStorageAvailable = target.storeCapacity - _.sum(target.store);
+// 	if(target.store[resourceType] >= storageAvailable || targetStorageAvailable === 0) {
+// 		return this.withdraw(target, resourceType);
+// 	} else {
+// 		return ERR_NOT_ENOUGH_RESOURCES;
+// 	}
+// };
+
+Creep.prototype.withdrawEverything = function (target) {
+	for(let resourceType in target.store) {
+		let amount = target.store[resourceType];
+		if(amount > 0) {
+			return this.withdraw(target, resourceType);
+		}
+	}
+	return ERR_NOT_ENOUGH_RESOURCES;
+};
+
+// Uses the deprecated "carry"
+// TODO: update to use "store"
+// Creep.prototype.transferEverything = function (target) {
+// 	for(let resourceType in this.carry) {
+// 		let amount = this.carry[resourceType];
+// 		if(amount > 0) {
+// 			return this.transfer(target, resourceType);
+// 		}
+// 	}
+// 	return ERR_NOT_ENOUGH_RESOURCES;
+// };
+
 // TODO: ensure optimal usage of new "store"
 Creep.prototype.hasLoad = function() {
 	if(this.memory.hasLoad && this.store.getUsedCapacity() === 0) {
@@ -110,6 +195,65 @@ Creep.prototype.hasLoad = function() {
 		this.memory.hasLoad = true;
 	}
 	return this.memory.hasLoad;
+};
+
+/**
+ * Find a structure, cache, and invalidate cache based on the functions provided
+ * @param findStructure
+ * @param forget
+ * @param immediate
+ * @param prop
+ * @returns {Structure}
+ */
+//Creep.prototype.rememberStructure = function(findStructure: () => Structure, forget: (structure: Structure) => boolean, prop = "remStructureId", immediate = false): Structure {
+Creep.prototype.rememberStructure = function(findStructure, forget, prop = "remStructureId", immediate = false) {
+	if(this.memory[prop]) {
+		let structureId = this.memory[prop];
+		let structure = Game.structures[structureId];
+		if(!structure) {
+			structure = Game.constructionSites[structureId];
+		}
+		if(!structure) {
+			structure = Game.getObjectById(structureId);
+		}
+		if(structure && !forget(structure)) {
+			return structure;
+		} else {
+			this.memory[prop] = undefined;
+			return this.rememberStructure(findStructure, forget, prop, true);
+		}
+	} else if (Game.time % 9 === 0 || immediate) {
+		let object = findStructure();
+		if(object) {
+			this.memory[prop] = object.id;
+			return object;
+		}
+	}
+};
+
+/**
+ * Find a creep, cache, and invalidate cache based on the functions provided
+ * @param findCreep
+ * @param forget
+ * @returns {Structure}
+ */
+//Creep.prototype.rememberCreep = function(findCreep: () => Creep, forget: (creep: Creep) => boolean): Creep {
+Creep.prototype.rememberCreep = function(findCreep, forget) {
+	if(this.memory.remCreepId) {
+		let creep = Game.getObjectById(this.memory.remCreepId);
+		if(creep && !forget(creep)) {
+			return creep;
+		} else {
+			this.memory.remCreepId = undefined;
+			return this.rememberCreep(findCreep, forget);
+		}
+	} else {
+		let object = findCreep();
+		if (object) {
+			this.memory.remCreepId = object.id;
+			return object;
+		}
+	}
 };
 
 /**
@@ -276,132 +420,6 @@ Creep.prototype.idleOffRoad = function(defaultPoint, maintainDistance = false) {
 	}
 
 	return this.blindMoveTo(defaultPoint);
-};
-
-Creep.prototype._withdraw = Creep.prototype.withdraw;
-/**
- * Overrides the API's creep.withdraw() function to allow consistent transfer code whether the resource holder is
- * a structure or a creep;
- * @param target
- * @param resourceType
- * @param amount
- * @returns {number}
- */
-Creep.prototype.withdraw = function(target, resourceType, amount) {
-	if(target instanceof Creep) {
-		return target.transfer(this, resourceType, amount);
-	} else {
-		return this._withdraw(target, resourceType, amount);
-	}
-};
-
-/**
- * Only withdraw from a store-holder if there is enough resource to transfer (or if holder is full), cpu-efficiency effort
- * @param target
- * @param resourceType
- * @returns {number}
- */
-Creep.prototype.withdrawIfFull = function(target, resourceType) {
-	if(!this.pos.isNearTo(target)) {
-		return ERR_NOT_IN_RANGE;
-	}
-
-	let storageAvailable = this.carryCapacity - _.sum(this.carry);
-	let targetStorageAvailable = target.storeCapacity - _.sum(target.store);
-	if(target.store[resourceType] >= storageAvailable || targetStorageAvailable === 0) {
-		return this.withdraw(target, resourceType);
-	} else {
-		return ERR_NOT_ENOUGH_RESOURCES;
-	}
-};
-
-Creep.prototype.withdrawEverything = function (target) {
-	for(let resourceType in target.store) {
-		let amount = target.store[resourceType];
-		if(amount > 0) {
-			return this.withdraw(target, resourceType);
-		}
-	}
-	return ERR_NOT_ENOUGH_RESOURCES;
-};
-
-Creep.prototype.transferEverything = function (target) {
-	for(let resourceType in this.carry) {
-		let amount = this.carry[resourceType];
-		if(amount > 0) {
-			return this.transfer(target, resourceType);
-		}
-	}
-	return ERR_NOT_ENOUGH_RESOURCES;
-};
-
-/**
- * Find a structure, cache, and invalidate cache based on the functions provided
- * @param findStructure
- * @param forget
- * @param immediate
- * @param prop
- * @returns {Structure}
- */
-//Creep.prototype.rememberStructure = function(findStructure: () => Structure, forget: (structure: Structure) => boolean, prop = "remStructureId", immediate = false): Structure {
-Creep.prototype.rememberStructure = function(findStructure, forget, prop = "remStructureId", immediate = false) {
-	if(this.memory[prop]) {
-		let structureId = this.memory[prop];
-		let structure = Game.structures[structureId];
-		if(!structure) {
-			structure = Game.constructionSites[structureId];
-		}
-		if(!structure) {
-			structure = Game.getObjectById(structureId);
-		}
-		if(structure && !forget(structure)) {
-			return structure;
-		} else {
-			this.memory[prop] = undefined;
-			return this.rememberStructure(findStructure, forget, prop, true);
-		}
-	} else if (Game.time % 9 === 0 || immediate) {
-		let object = findStructure();
-		if(object) {
-			this.memory[prop] = object.id;
-			return object;
-		}
-	}
-};
-
-/**
- * Find a creep, cache, and invalidate cache based on the functions provided
- * @param findCreep
- * @param forget
- * @returns {Structure}
- */
-//Creep.prototype.rememberCreep = function(findCreep: () => Creep, forget: (creep: Creep) => boolean): Creep {
-Creep.prototype.rememberCreep = function(findCreep, forget) {
-	if(this.memory.remCreepId) {
-		let creep = Game.getObjectById(this.memory.remCreepId);
-		if(creep && !forget(creep)) {
-			return creep;
-		} else {
-			this.memory.remCreepId = undefined;
-			return this.rememberCreep(findCreep, forget);
-		}
-	} else {
-		let object = findCreep();
-		if (object) {
-			this.memory.remCreepId = object.id;
-			return object;
-		}
-	}
-};
-
-Creep.prototype.partCount = function(partType) {
-	let count = 0;
-	for(let part of this.body) {
-		if(part.type === partType) {
-			count++;
-		}
-	}
-	return count;
 };
 
 Creep.prototype.fleeHostiles = function(pathFinding) {

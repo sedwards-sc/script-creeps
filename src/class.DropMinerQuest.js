@@ -45,6 +45,7 @@ class DropMinerQuest extends Quest {
 
 	runCensus() {
 		// TODO: remove blindSpawn after introducing "sentinal" or something for guarding remote rooms (reservers might be enough...)
+		// TODO: spawn smaller miner if room isn't owned or reserved (e.g. not owned or resered for the last x ticks in case reserve gets temporarily lost while this creep happens to be spawning)
 		this.miners = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 0, 1, 1, 5).reverse(), 1, {prespawn: this.memory.cache.prespawn, blindSpawn: true});
 	}
 
@@ -60,6 +61,7 @@ class DropMinerQuest extends Quest {
 	}
 
 	minerActions(creep) {
+		// TODO: add fleeing hostiles
 		if((Game.time % 50) === 1) {
 			let reqParts = _.filter(creep.body, function(bodyPart) { return (bodyPart.type === WORK) && (bodyPart.hits > 0); });
 

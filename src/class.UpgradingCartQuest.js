@@ -101,11 +101,28 @@ class UpgradingCartQuest extends Quest {
 		}
 
 		if(creep.hasLoad()) {
-			let colonyController = this.colony.flag.room.controller;
-			if(creep.upgradeController(colonyController) === ERR_NOT_IN_RANGE) {
-				creep.moveTo(colonyController);
+			let workTarget = this.colony.flag.room.controller;
+
+			if(this.memory.build) {
+				let findConstructionSite = () => {
+					return _.first(this.colony.flag.room.find(FIND_CONSTRUCTION_SITES));
+				};
+				let forgetConstructionSite = (o) => {
+					if(o instanceof ConstructionSite) {
+						return false;
+					}
+					return true;
+				};
+				let site = creep.rememberStructure(findConstructionSite, forgetConstructionSite, "remSiteId");
+				if(site) {
+					workTarget = site;
+				}
+			}
+
+			if(creep.buildOrUpgrade(workTarget) === ERR_NOT_IN_RANGE) {
+				creep.moveTo(workTarget);
 			} else {
-				creep.yieldRoad(colonyController);
+				creep.yieldRoad(workTarget);
 			}
 			return;
 		}
