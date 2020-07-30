@@ -8,7 +8,7 @@ class UpgradingCartQuest extends Quest {
 	 *
 	 */
 	constructor(id, flag, colony) {
-		super('upgradingCart', PRIORITY_LOW, id, flag, colony);
+		super('upgradingCart', PRIORITY_TRIVIAL, id, flag, colony);
 	}
 
 	initQuest() {

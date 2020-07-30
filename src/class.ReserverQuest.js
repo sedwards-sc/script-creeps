@@ -6,7 +6,7 @@ class ReserverQuest extends Quest {
 	 *
 	 */
 	constructor(id, flag, colony) {
-		super('reserver', PRIORITY_LOW, id, flag, colony);
+		super('reserver', PRIORITY_TRIVIAL, id, flag, colony);
 	}
 
 	initQuest() {

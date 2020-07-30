@@ -6,7 +6,7 @@ class HarvesterQuest extends Quest {
 	 *
 	 */
 	constructor(id, flag, colony) {
-		super('harvester', PRIORITY_MEDIUM, id, flag, colony);
+		super('harvester', PRIORITY_LOW, id, flag, colony);
 	}
 
 	initQuest() {
