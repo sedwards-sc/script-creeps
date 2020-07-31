@@ -20,6 +20,7 @@ class ReserverQuest extends Quest {
 			this.errorLog("insufficient energy capacity to spawn reserver", ERR_NOT_ENOUGH_RESOURCES)
 			maxReservers = 0;
 		}
+		// no prespawn because the two claim parts create a reserve window therefore don't need reserver there 24/7
 		this.reservers = this.attendance(this.nameId, reserverBody, maxReservers);
 	}
 

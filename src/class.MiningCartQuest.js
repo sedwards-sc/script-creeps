@@ -2,13 +2,13 @@
 
 const ENERGY_PER_TICK = 9;
 
-class UpgradingCartQuest extends Quest {
+class MiningCartQuest extends Quest {
 
 	/**
 	 *
 	 */
 	constructor(id, flag, colony) {
-		super('upgradingCart', PRIORITY_TRIVIAL, id, flag, colony);
+		super('miningCart', PRIORITY_TRIVIAL, id, flag, colony);
 	}
 
 	initQuest() {
@@ -42,46 +42,53 @@ class UpgradingCartQuest extends Quest {
 		}
 
 		if(this.memory.cache.carryPartsRequired === undefined) {
-			const ROAD_COST = 3;
-			const PLAIN_COST = 4;
-			const SWAMP_COST = 5;
-			let pathFinderResults = PathFinder.search(this.flag.pos, {pos: this.colony.flag.room.controller.pos, range: 3}, {
-				plainCost: PLAIN_COST,
-				swampCost: SWAMP_COST,
-				maxOps: 8000,
-				roomCallback: function(roomName) {
-					let room = Game.rooms[roomName];
-					if(!room) {
-						return;
-					}
-
-					let costs = new PathFinder.CostMatrix();
-					room.find(FIND_STRUCTURES).forEach(function(structure) {
-						if(structure.structureType === STRUCTURE_ROAD) {
-							costs.set(structure.pos.x, structure.pos.y, ROAD_COST);
-						} else if(structure.structureType !== STRUCTURE_CONTAINER && (structure.structureType !== STRUCTURE_RAMPART || !structure.my)) {
-							// Can't walk through non-walkable buildings
-							costs.set(structure.pos.x, structure.pos.y, 0xff);
+			if(this.colony.flag.room.storage) {
+				const ROAD_COST = 3;
+				const PLAIN_COST = 4;
+				const SWAMP_COST = 5;
+				let pathFinderResults = PathFinder.search(this.flag.pos, {pos: this.colony.flag.room.storage.pos, range: 1}, {
+					plainCost: PLAIN_COST,
+					swampCost: SWAMP_COST,
+					maxOps: 8000,
+					roomCallback: function(roomName) {
+						let room = Game.rooms[roomName];
+						if(!room) {
+							return;
 						}
-					});
-					return costs;
-				},
-			});
 
-			let pathLength = Math.max(pathFinderResults.path.length * 2, 1);
-			let energyPerTrip = pathLength * ENERGY_PER_TICK;
+						let costs = new PathFinder.CostMatrix();
+						room.find(FIND_STRUCTURES).forEach(function(structure) {
+							if(structure.structureType === STRUCTURE_ROAD) {
+								costs.set(structure.pos.x, structure.pos.y, ROAD_COST);
+							} else if(structure.structureType !== STRUCTURE_CONTAINER && (structure.structureType !== STRUCTURE_RAMPART || !structure.my)) {
+								// Can't walk through non-walkable buildings
+								costs.set(structure.pos.x, structure.pos.y, 0xff);
+							}
+						});
+						return costs;
+					},
+				});
 
-			// TODO: maybe this should be Math.ceil to account for the upgrading time
-			this.memory.cache.carryPartsRequired = Math.max(Math.floor(energyPerTrip / CARRY_CAPACITY), 1);
+				let pathLength = Math.max(pathFinderResults.path.length * 2, 1);
+				let energyPerTrip = pathLength * ENERGY_PER_TICK;
+
+				// TODO: maybe this should be Math.ceil; need to monitor real life performance
+				this.memory.cache.carryPartsRequired = Math.max(Math.floor(energyPerTrip / CARRY_CAPACITY), 1);
+			} else {
+				this.memory.cache.carryPartsRequired = 0;
+			}
 		}
 
 		this.carts = [];
 	}
 
 	runCensus() {
-		// TODO: spawn extra carts if the max spawn energy isn't sufficient to produce maxBodyUnits
-		let maxBodyUnits = Math.max(Math.ceil(this.memory.cache.carryPartsRequired / 2), 1);
-		this.carts = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 2, 3, 1, maxBodyUnits), 1, {prespawn: this.memory.cache.prespawn});
+		// TODO: spawn extra carts if the max spawn energy isn't sufficient to produce large enough single creep
+		let maxCarts = 0
+		if(this.memory.cache.carryPartsRequired > 0) {
+			maxCarts = 1;
+		}
+		this.carts = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(0, 1, 1, 1, this.memory.cache.carryPartsRequired), maxCarts, {prespawn: this.memory.cache.prespawn});
 	}
 
 	runActivities() {
@@ -101,28 +108,20 @@ class UpgradingCartQuest extends Quest {
 		}
 
 		if(creep.hasLoad()) {
-			let workTarget = this.colony.flag.room.controller;
-
-			if(this.memory.build) {
-				let findConstructionSite = () => {
-					return _.first(this.colony.flag.room.find(FIND_CONSTRUCTION_SITES));
-				};
-				let forgetConstructionSite = (o) => {
-					if(o instanceof ConstructionSite) {
-						return false;
-					}
-					return true;
-				};
-				let site = creep.rememberStructure(findConstructionSite, forgetConstructionSite, "remSiteId");
-				if(site) {
-					workTarget = site;
-				}
+			let storage = this.colony.flag.room.storage;
+			if(!storage) {
+				creep.errorLog('could not find colony storage', ERR_NOT_FOUND, 4);
+				return;
 			}
-
-			if(creep.buildOrUpgrade(workTarget) === ERR_NOT_IN_RANGE) {
-				creep.moveTo(workTarget);
+			if(storage.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
+				if(creep.pos.isNearTo(storage)) {
+					creep.transfer(storage, RESOURCE_ENERGY);
+				} else {
+					creep.blindMoveTo(storage);
+				}
 			} else {
-				creep.yieldRoad(workTarget);
+				creep.yieldRoad(storage);
+				creep.say('storage full');
 			}
 			return;
 		}
@@ -166,4 +165,4 @@ class UpgradingCartQuest extends Quest {
 	}
 }
 
-global.UpgradingCartQuest = UpgradingCartQuest;
+global.MiningCartQuest = MiningCartQuest;
