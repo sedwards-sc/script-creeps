@@ -1,5 +1,8 @@
 /* jshint esversion: 6 */
 
+const RESERVATION_BUFFER = 500;
+const VISION_LOSS_DELAY = 100;
+
 class ReserverQuest extends Quest {
 
 	/**
@@ -10,18 +13,28 @@ class ReserverQuest extends Quest {
 	}
 
 	initQuest() {
+		if(this.hasVision) {
+			this.memory.lastVisionTick = Game.time;
+
+			if(this.flag.room.controller &&
+				this.flag.room.controller.reservation &&
+				this.flag.room.controller.reservation.username === USERNAME &&
+				this.flag.room.controller.reservation.ticksToEnd > RESERVATION_BUFFER) {
+				this.reservedWithBuffer = true;
+			}
+		}
+
 		this.reservers = [];
 	}
 
 	runCensus() {
 		let reserverBody = [MOVE, MOVE, CLAIM, CLAIM];
-		let maxReservers = 1;
-		// TODO: also set maxReservers to 0 if there is vision in the target room and the controller's reserve counter is greater than some threshold
+		let maxReservers = 0;
 		if(this.spawnGroup.maxSpawnEnergy < calculateCreepCost(reserverBody)) {
-			this.errorLog("insufficient energy capacity to spawn reserver", ERR_NOT_ENOUGH_RESOURCES)
-			maxReservers = 0;
+			this.errorLog("insufficient energy capacity to spawn reserver", ERR_NOT_ENOUGH_RESOURCES);
+		} else if(!this.memory.lastVisionTick || Game.time > this.memory.lastVisionTick + VISION_LOSS_DELAY || (this.hasVision && !this.reservedWithBuffer)) {
+			maxReservers = 1;
 		}
-		// no prespawn because the two claim parts create a reserve window therefore don't need reserver there 24/7
 		this.reservers = this.attendance(this.nameId, reserverBody, maxReservers, {blindSpawn: true});
 	}
 
