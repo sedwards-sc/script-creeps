@@ -35,7 +35,7 @@ class ReserverQuest extends Quest {
 		} else if(!this.memory.lastVisionTick || Game.time > this.memory.lastVisionTick + VISION_LOSS_DELAY || (this.hasVision && !this.reservedWithBuffer)) {
 			maxReservers = 1;
 		}
-		this.reservers = this.attendance(this.nameId, reserverBody, maxReservers, {blindSpawn: true});
+		this.reservers = this.attendance(this.nameId, reserverBody, maxReservers, {blindSpawn: true, memory: {avoidMe: true}});
 	}
 
 	runActivities() {
