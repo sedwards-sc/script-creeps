@@ -71,20 +71,20 @@ class DropMinerQuest extends Quest {
 			}
 		}
 
-	    if(creep.pos.isEqualTo(this.flag)) {
-	        let mySource = Game.getObjectById(creep.memory.mySourceId);
-	        if(mySource === null) {
-	            mySource = this.flag.pos.findClosestByRange(FIND_SOURCES);
-	            creep.memory.mySourceId = mySource.id;
-	        }
+		if(creep.pos.isEqualTo(this.flag)) {
+			let mySource = Game.getObjectById(creep.memory.mySourceId);
+			if(mySource === null) {
+				mySource = this.flag.pos.findClosestByRange(FIND_SOURCES);
+				creep.memory.mySourceId = mySource.id;
+			}
 
-	        let harvestReturn = creep.harvest(mySource);
-	        if(harvestReturn !== OK && harvestReturn !== ERR_NOT_ENOUGH_RESOURCES) {
-	            creep.errorLog('could not successfully harvest', harvestReturn, 4);
-	        }
-	    } else {
-	        creep.moveTo(this.flag);
-	    }
+			let harvestReturn = creep.harvest(mySource);
+			if(harvestReturn !== OK && harvestReturn !== ERR_NOT_ENOUGH_RESOURCES) {
+				creep.errorLog('could not successfully harvest', harvestReturn, 4);
+			}
+		} else {
+			creep.blindMoveTo(this.flag);
+		}
 	}
 }
 

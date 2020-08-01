@@ -104,7 +104,7 @@ class LinkMinerQuest extends Quest {
 				}
 			}
 		} else {
-			creep.moveTo(this.flag);
+			creep.blindMoveTo(this.flag);
 		}
 	}
 }
