@@ -35,7 +35,7 @@ class ReserverQuest extends Quest {
 		} else if(!this.memory.lastVisionTick || Game.time > this.memory.lastVisionTick + VISION_LOSS_DELAY || (this.hasVision && !this.reservedWithBuffer)) {
 			maxReservers = 1;
 		}
-		this.reservers = this.attendance(this.nameId, reserverBody, maxReservers, {blindSpawn: true, memory: {avoidMe: true}});
+		this.reservers = this.attendance(this.nameId, reserverBody, maxReservers, {blindSpawn: true});
 	}
 
 	runActivities() {
@@ -51,10 +51,12 @@ class ReserverQuest extends Quest {
 
 	reserverActions(creep) {
 		if(creep.fleeHostiles()) {
+			creep.memory.avoidMe = false;
 			return;
 		}
 
 		if(creep.pos.isEqualTo(this.flag)) {
+			creep.memory.avoidMe = true;
 			let reserveReturn = creep.reserveController(creep.room.controller);
 	        if(reserveReturn !== OK) {
 				creep.errorLog('could not successfully reserve controller', reserveReturn, 4);
