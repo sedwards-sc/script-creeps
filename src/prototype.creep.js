@@ -324,6 +324,18 @@ Creep.prototype.blindMoveTo = function(destination, ops, dareDevil = false) {
 	} else {
 		ops.reusePath = 50;
 		ops.ignoreCreeps = true;
+		ops.costCallback = function(roomName, costMatrix) {
+			let room = Game.rooms[roomName];
+			if(room) {
+				room.findMyCreeps().forEach(
+					c => {
+						if(c.memory.avoidMe) {
+							costMatrix.set(c.pos.x, c.pos.y, 0xff);
+						}
+					}
+				);
+			}
+		};
 		return this.moveTo(destination, ops);
 	}
 };
