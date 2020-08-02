@@ -1,6 +1,6 @@
 /* jshint esversion: 6 */
 
-const RESERVATION_BUFFER = 500;
+const RESERVATION_BUFFER = 1000;
 const VISION_LOSS_DELAY = 100;
 
 class ReserverQuest extends Quest {
