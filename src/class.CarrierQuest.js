@@ -111,7 +111,7 @@ class CarrierQuest extends Quest {
 			//creep.memory.hasLoad = creep.carry.energy === creep.carryCapacity;
 
 			// use PathFiner with "flee" option to get away from the storage after refilling
-			// creep.idleOffRoad(this.flag);
+			creep.idleOffRoad(this.flag);
 			// creep.blindMoveTo(this.flag);
 		}
 	}
