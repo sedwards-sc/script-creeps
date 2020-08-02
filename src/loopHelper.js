@@ -7,6 +7,7 @@ require('class.SpawnGroup');
 
 require('class.Quest');
 
+require('class.CarrierQuest');
 require('class.DefenseQuest');
 require('class.DropMinerQuest');
 require('class.EmergencyHarvesterQuest');
@@ -17,6 +18,7 @@ require('class.ReserverQuest');
 require('class.UpgradingCartQuest');
 
 global.QUEST_CLASSES = {
+	'carrier': CarrierQuest,
 	'defense': DefenseQuest,
 	'dropMiner': DropMinerQuest,
 	'emergencyHarvester': EmergencyHarvesterQuest,
