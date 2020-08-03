@@ -81,6 +81,7 @@ class CarrierQuest extends Quest {
 				}
 			} else {
 				creep.say("no energy");
+				creep.idleOffRoad(this.flag);
 			}
 
 			return;
