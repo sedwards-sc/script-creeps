@@ -35,6 +35,11 @@ class CarrierQuest extends Quest {
 		for(let creep of this.carriers) {
 			if(!creep.spawning) {
 				this.carrierActions(creep)
+				if(creep.bored) {
+					creep.memory.avoidMe = true;
+				} else {
+					creep.memory.avoidMe = false;
+				}
 			}
 		}
 	}
@@ -118,15 +123,16 @@ class CarrierQuest extends Quest {
 				creep.blindMoveTo(target);
 			}
 		} else {
-			creep.say('bored');
-			// TODO: add avoidMe if not working (need to clear it when moving again)
-
-			// need them to go to flag after refilling or theyll block the storage
-			//creep.memory.hasLoad = creep.carry.energy === creep.carryCapacity;
-
-			// use PathFiner with "flee" option to get away from the storage after refilling
-			creep.idleOffRoad(this.flag);
-			// creep.blindMoveTo(this.flag);
+			let isFull = creep.store.getUsedCapacity() === creep.store.getCapacity();
+			creep.memory.hasLoad = isFull;
+			if(isFull) {
+				if(creep.pos.isNearTo(this.flag)) {
+					creep.say('bored');
+					creep.bored = true;
+				} else {
+					creep.blindMoveTo(this.flag);
+				}
+			}
 		}
 	}
 }
