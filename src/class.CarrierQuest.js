@@ -20,9 +20,8 @@ class CarrierQuest extends Quest {
 	}
 
 	runCensus() {
-		let options = {
-			prespawn: 0
-		};
+		let options = {};
+		options.prespawn = 0;
 		if(this.colony.flag.room.storage) {
 			options.destination = this.colony.flag.room.storage;
 		}

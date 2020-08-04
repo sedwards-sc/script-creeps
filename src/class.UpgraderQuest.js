@@ -10,12 +10,45 @@ class UpgraderQuest extends Quest {
 	}
 
 	initQuest() {
+		if(this.memory.cache.prespawn === undefined) {
+			const ROAD_COST = 1;
+			const PLAIN_COST = 2;
+			const SWAMP_COST = 10;
+			let pathFinderResults = PathFinder.search(this.spawnGroup.pos, this.flag.room.controller, {
+				plainCost: PLAIN_COST,
+				swampCost: SWAMP_COST,
+				maxOps: 8000,
+				roomCallback: function(roomName) {
+					let room = Game.rooms[roomName];
+					if(!room) {
+						return;
+					}
+
+					let costs = new PathFinder.CostMatrix();
+					room.find(FIND_STRUCTURES).forEach(function(structure) {
+						if(structure.structureType === STRUCTURE_ROAD) {
+							costs.set(structure.pos.x, structure.pos.y, ROAD_COST);
+						} else if(structure.structureType !== STRUCTURE_CONTAINER && (structure.structureType !== STRUCTURE_RAMPART || !structure.my)) {
+							// Can't walk through non-walkable buildings
+							costs.set(structure.pos.x, structure.pos.y, 0xff);
+						}
+					});
+					return costs;
+				},
+			});
+			this.memory.cache.prespawn = Math.max(pathFinderResults.path.length - 1, 0);
+		}
+
 		this.upgrader = [];
 	}
 
 	runCensus() {
-		// TODO: prespawn using distance from spawn to controller.
-		this.upgrader = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 1, 2, 1), 1, {prespawn: 0});
+		let options = {};
+		options.prespawn = this.memory.cache.prespawn;
+		if(this.colony.flag.room.storage) {
+			options.destination = this.colony.flag.room.storage;
+		}
+		this.upgrader = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 1, 2, 1), 1, options);
 	}
 
 	runActivities() {
