@@ -330,6 +330,77 @@ function deserializeRoomPosition(roomPosition) {
 	return new RoomPosition(roomPosition.x, roomPosition.y, roomPosition.roomName);
 }
 
+function drawFlagPath(arg1, arg2) {
+	const ROAD_COST = 3;
+	const PLAIN_COST = 4;
+	const SWAMP_COST = 5;
+
+	let position1;
+	if(arg1 instanceof RoomPosition) {
+		position1 = arg1;
+	} else if(typeof arg1.pos !== 'undefined' && arg1.pos instanceof RoomPosition) {
+		position1 = arg1.pos;
+	} else {
+		Logger.errorLog(`invalid parameter to drawFlagPath function: ${arg1} of type ${typeof arg1}`);
+	}
+
+	let position2;
+	if(arg2 instanceof RoomPosition) {
+		position2 = arg2;
+	} else if(typeof arg2.pos !== 'undefined' && arg2.pos instanceof RoomPosition) {
+		position2 = arg2.pos;
+	} else {
+		Logger.errorLog(`invalid parameter to drawFlagPath function: ${arg2} of type ${typeof arg2}`, ERR_INVALID_ARGS, 4);
+	}
+
+	let flagPath = PathFinder.search(position1, position2, {
+		plainCost: PLAIN_COST,
+		swampCost: SWAMP_COST,
+		maxOps: 8000,
+		roomCallback: function(roomName) {
+			let room = Game.rooms[roomName];
+			if(!room) {
+				return;
+			}
+			let costs = new PathFinder.CostMatrix();
+
+			room.find(FIND_STRUCTURES).forEach(function(structure) {
+				if(structure.structureType === STRUCTURE_ROAD) {
+					costs.set(structure.pos.x, structure.pos.y, ROAD_COST);
+				} else if(structure.structureType !== STRUCTURE_CONTAINER && (structure.structureType !== STRUCTURE_RAMPART || !structure.my)) {
+					// Can't walk through non-walkable buildings
+					costs.set(structure.pos.x, structure.pos.y, 0xff);
+				}
+			});
+
+			return costs;
+		},
+	});
+
+	if(!flagPath) {
+		Logger.errorLog('could not find path for drawFlagPath', ERR_NO_PATH, 4);
+		return;
+	}
+
+	for(let i in flagPath.path) {
+		let position = flagPath.path[i];
+		position.createFlag(`flagPath_${i}`);
+	}
+
+	return OK;
+}
+
+function removeFlagPath() {
+	for(let i in Game.flags) {
+		let flag = Game.flags[i];
+		if(/flagPath_/.test(flag) === true) {
+			console.log(flag.name);
+			flag.remove();
+		}
+	}
+	return OK;
+}
+
 function populateUtils(g) {
     g.undefToZero = undefToZero;
     g.isNullOrUndefined = isNullOrUndefined;
@@ -351,6 +422,8 @@ function populateUtils(g) {
 	g.configBody = configBody;
 	g.workerBody = workerBody;
 	g.deserializeRoomPosition = deserializeRoomPosition;
+	g.drawFlagPath = drawFlagPath;
+	g.removeFlagPath = removeFlagPath;
 }
 
 exports.populateUtils = populateUtils;
