@@ -72,8 +72,7 @@ class MiningCartQuest extends Quest {
 				let pathLength = Math.max(pathFinderResults.path.length * 2, 1);
 				let energyPerTrip = pathLength * ENERGY_PER_TICK;
 
-				// TODO: maybe this should be Math.ceil; need to monitor real life performance
-				this.memory.cache.carryPartsRequired = Math.max(Math.floor(energyPerTrip / CARRY_CAPACITY), 1);
+				this.memory.cache.carryPartsRequired = Math.max(Math.ceil(energyPerTrip / CARRY_CAPACITY), 1);
 			} else {
 				this.memory.cache.carryPartsRequired = 0;
 			}

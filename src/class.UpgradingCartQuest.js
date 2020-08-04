@@ -71,8 +71,7 @@ class UpgradingCartQuest extends Quest {
 			let pathLength = Math.max(pathFinderResults.path.length * 2, 1);
 			let energyPerTrip = pathLength * ENERGY_PER_TICK;
 
-			// TODO: maybe this should be Math.ceil to account for the upgrading time
-			this.memory.cache.carryPartsRequired = Math.max(Math.floor(energyPerTrip / CARRY_CAPACITY), 1);
+			this.memory.cache.carryPartsRequired = Math.max(Math.ceil(energyPerTrip / CARRY_CAPACITY), 1);
 		}
 
 		this.carts = [];
