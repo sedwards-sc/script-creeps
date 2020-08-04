@@ -110,6 +110,12 @@ class UpgraderQuest extends Quest {
 				_.filter(creep.room.findDroppedResources(), (r) => r.resourceType === RESOURCE_ENERGY && r.amount > 20)
 			);
 			energySources = energySources.concat(
+				_.filter(creep.room.findTombstones(), (t) => t.store.getUsedCapacity(RESOURCE_ENERGY) > 0)
+			);
+			energySources = energySources.concat(
+				_.filter(creep.room.findRuins(), (r) => r.store.getUsedCapacity(RESOURCE_ENERGY) > 0)
+			);
+			energySources = energySources.concat(
 				_.filter(creep.room.findStructures(STRUCTURE_CONTAINER), (s) => s.store.getUsedCapacity(RESOURCE_ENERGY) > 0)
 			);
 			energySources = energySources.concat(
@@ -124,10 +130,8 @@ class UpgraderQuest extends Quest {
 				if(e.amount > 20) {
 					return false;
 				}
-			} else if(e instanceof Structure) {
-				if(e.store && e.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
-					return false;
-				}
+			} else if(e.store && e.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+				return false;
 			}
 			return true;
 		};

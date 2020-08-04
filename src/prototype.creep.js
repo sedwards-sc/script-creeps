@@ -119,7 +119,9 @@ Creep.prototype.takeResource = function(target, resource, amount) {
 		target instanceof StructureContainer ||
 	    target instanceof StructureTerminal ||
 	    target instanceof StructureStorage ||
-	    target instanceof StructureLab) {
+	    target instanceof StructureLab ||
+	    target instanceof Tombstone ||
+	    target instanceof Ruin) {
 			return this.withdraw(target, resource, amount);
     }
 
