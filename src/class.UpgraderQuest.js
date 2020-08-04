@@ -1,5 +1,7 @@
 /* jshint esversion: 6 */
 
+const REMEMBER_ENERGY_KEY = "remEnergyId";
+
 class UpgraderQuest extends Quest {
 
 	/**
@@ -89,6 +91,7 @@ class UpgraderQuest extends Quest {
 			if(creep.buildOrUpgrade(workTarget) === ERR_NOT_IN_RANGE) {
 				creep.moveTo(workTarget);
 			} else {
+				// TODO: set avoidMe
 				creep.yieldRoad(workTarget);
 			}
 			return;
@@ -128,11 +131,12 @@ class UpgraderQuest extends Quest {
 			}
 			return true;
 		};
-		let energySource = creep.rememberStructure(findEnergy, forgetEnergy, "remEnergyId", true);
+		let energySource = creep.rememberStructure(findEnergy, forgetEnergy, REMEMBER_ENERGY_KEY, true);
 
 		if(energySource) {
 			if(creep.pos.isNearTo(energySource)) {
 				creep.takeResource(energySource, RESOURCE_ENERGY);
+				delete creep.memory[REMEMBER_ENERGY_KEY];
 			} else {
 				creep.moveTo(energySource);
 			}
