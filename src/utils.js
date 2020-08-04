@@ -331,9 +331,9 @@ function deserializeRoomPosition(roomPosition) {
 }
 
 function drawFlagPath(arg1, arg2) {
-	const ROAD_COST = 3;
-	const PLAIN_COST = 4;
-	const SWAMP_COST = 5;
+	const ROAD_COST = 1;
+	const PLAIN_COST = 2;
+	const SWAMP_COST = 10;
 
 	let position1;
 	if(arg1 instanceof RoomPosition) {

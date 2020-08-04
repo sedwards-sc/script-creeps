@@ -13,9 +13,9 @@ class UpgradingCartQuest extends Quest {
 
 	initQuest() {
 		if(this.memory.cache.prespawn === undefined) {
-			const ROAD_COST = 3;
-			const PLAIN_COST = 4;
-			const SWAMP_COST = 5;
+			const ROAD_COST = 1;
+			const PLAIN_COST = 2;
+			const SWAMP_COST = 10;
 			let pathFinderResults = PathFinder.search(this.spawnGroup.pos, this.flag.pos, {
 				plainCost: PLAIN_COST,
 				swampCost: SWAMP_COST,
@@ -42,9 +42,9 @@ class UpgradingCartQuest extends Quest {
 		}
 
 		if(this.memory.cache.carryPartsRequired === undefined) {
-			const ROAD_COST = 3;
-			const PLAIN_COST = 4;
-			const SWAMP_COST = 5;
+			const ROAD_COST = 1;
+			const PLAIN_COST = 2;
+			const SWAMP_COST = 10;
 			let pathFinderResults = PathFinder.search(this.flag.pos, {pos: this.colony.flag.room.controller.pos, range: 3}, {
 				plainCost: PLAIN_COST,
 				swampCost: SWAMP_COST,
