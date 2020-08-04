@@ -61,6 +61,34 @@ Room.prototype.findDroppedResources = function() {
 	return this.cache.droppedResources || [];
 };
 
+/**
+ * Returns array of tombstones in the room, caching results on a per-tick basis
+ * @returns {Tombstones[]}
+ */
+Room.prototype.findTombstones = function() {
+	if(!this.cache) {
+		this.cache = {};
+	}
+	if(!this.cache.tombstones) {
+		this.cache.tombstones = this.find(FIND_TOMBSTONES);
+	}
+	return this.cache.tombstones || [];
+};
+
+/**
+ * Returns array of ruins in the room, caching results on a per-tick basis
+ * @returns {Ruins[]}
+ */
+Room.prototype.findRuins = function() {
+	if(!this.cache) {
+		this.cache = {};
+	}
+	if(!this.cache.ruins) {
+		this.cache.ruins = this.find(FIND_RUINS);
+	}
+	return this.cache.ruins || [];
+};
+
 Object.defineProperty(Room.prototype, "ownedByMe", {
 	get: function myProperty() {
 		if(isNullOrUndefined(this)) {
