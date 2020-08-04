@@ -1,5 +1,7 @@
 /* jshint esversion: 6 */
 
+const EMERGENCY_CARRIER_DELAY = 250;
+
 class CarrierQuest extends Quest {
 
 	/**
@@ -7,6 +9,9 @@ class CarrierQuest extends Quest {
 	 */
 	constructor(id, flag, colony) {
 		super('carrier', PRIORITY_HIGH, id, flag, colony);
+		if(!this.memory.lastTick) {
+			this.memory.lastTick = Game.time;
+		}
 	}
 
 	initQuest() {
@@ -14,8 +19,16 @@ class CarrierQuest extends Quest {
 	}
 
 	runCensus() {
-		// TODO: check if there are other creeps in the room. if not, size based on energy available instead of max energy
-		this.carriers = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(0, 1, 1, 1, 8), 1, {prespawn: 0});
+		if(!this.memory.lastTick || Game.time > this.memory.lastTick + EMERGENCY_CARRIER_DELAY) {
+			this.log('emergency carrier mode activated', 5);
+			this.carriers = this.attendance(this.nameId, [CARRY, MOVE, CARRY, MOVE, CARRY, MOVE], 1, {prespawn: 0});
+		} else {
+			this.carriers = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(0, 1, 1, 1, 8), 1, {prespawn: 0});
+		}
+
+		if(this.carriers.length > 0) {
+			this.memory.lastTick = Game.time;
+		}
 	}
 
 	runActivities() {
