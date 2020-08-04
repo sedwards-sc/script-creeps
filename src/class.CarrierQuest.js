@@ -1,6 +1,7 @@
 /* jshint esversion: 6 */
 
 const EMERGENCY_CARRIER_DELAY = 250;
+const MAX_CARRIERS = 2;
 
 class CarrierQuest extends Quest {
 
@@ -28,9 +29,9 @@ class CarrierQuest extends Quest {
 
 		if(!this.memory.lastTick || Game.time > this.memory.lastTick + EMERGENCY_CARRIER_DELAY) {
 			this.log('emergency carrier mode activated', 5);
-			this.carriers = this.attendance(this.nameId, [CARRY, MOVE, CARRY, MOVE, CARRY, MOVE], 1, options);
+			this.carriers = this.attendance(this.nameId, [CARRY, MOVE, CARRY, MOVE, CARRY, MOVE], MAX_CARRIERS, options);
 		} else {
-			this.carriers = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(0, 1, 1, 1, 8), 1, options);
+			this.carriers = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(0, 1, 1, 1, 8), MAX_CARRIERS, options);
 		}
 
 		if(this.carriers.length > 0) {
