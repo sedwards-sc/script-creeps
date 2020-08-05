@@ -57,10 +57,10 @@ class ReserverQuest extends Quest {
 
 		if(creep.pos.isEqualTo(this.flag)) {
 			creep.memory.avoidMe = true;
-			let reserveReturn = creep.reserveController(creep.room.controller);
-	        if(reserveReturn !== OK) {
+			let reserveReturn = creep.reserveOrAttackController(creep.room.controller);
+			if(reserveReturn !== OK) {
 				creep.errorLog('could not successfully reserve controller', reserveReturn, 4);
-	        }
+			}
 		} else {
 			creep.moveTo(this.flag);
 		}

@@ -92,6 +92,21 @@ Creep.prototype.buildOrUpgrade = function(target) {
 	return ERR_INVALID_TARGET;
 }
 
+/**
+ * Have the creep reserve or attack a StructureController as appropriate
+ * @param target - controller
+ * @returns {number}
+ */
+Creep.prototype.reserveOrAttackController = function(target) {
+	if(target instanceof StructureController) {
+		if(target.reservation && target.reservation.username !== USERNAME) {
+			return this.attackController(target);
+		}
+		return this.reserveController(target);
+	}
+	return ERR_INVALID_TARGET;
+}
+
 // take a resource from anything else
 Creep.prototype.takeResource = function(target, resource, amount) {
     if (typeof target === 'string') {
