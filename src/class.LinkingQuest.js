@@ -1,5 +1,7 @@
 /* jshint esversion: 6 */
 
+const STORAGE_MINIMUM = 200000;
+
 class LinkingQuest extends Quest {
 
 	/**
@@ -85,13 +87,14 @@ class LinkingQuest extends Quest {
 			creep.memory.avoidMe = true;
 
 			if(creep.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
-				if(this.storageLink && this.storageLink.store.getFreeCapacity() > 0) {
+				if(this.storageLink && this.storageLink.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
 					creep.transfer(this.storageLink, RESOURCE_ENERGY);
 				} else {
 					creep.transfer(this.storage, RESOURCE_ENERGY);
 				}
 			} else {
-				if(this.storageLink && this.storageLink.store.getFreeCapacity() > 0) {
+				let excessEnergy = this.storage.store.getUsedCapacity(RESOURCE_ENERGY) > STORAGE_MINIMUM;
+				if(excessEnergy && this.storageLink && this.storageLink.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
 					creep.withdraw(this.storage, RESOURCE_ENERGY);
 				}
 			}
@@ -105,8 +108,8 @@ class LinkingQuest extends Quest {
 			return;
 		}
 
-		let loaded = this.storageLink.store.getUsedCapacity() >= this.storageLink.store.getCapacity() * 0.75;
-		let hasSpace = this.controllerLink.store.getFreeCapacity() >= this.controllerLink.store.getCapacity() * 0.75;
+		let loaded = this.storageLink.store.getUsedCapacity(RESOURCE_ENERGY) >= this.storageLink.store.getCapacity(RESOURCE_ENERGY) * 0.75;
+		let hasSpace = this.controllerLink.store.getFreeCapacity(RESOURCE_ENERGY) >= this.controllerLink.store.getCapacity(RESOURCE_ENERGY) * 0.75;
 		if(loaded && hasSpace && this.storageLink.cooldown === 0) {
 			this.storageLink.transferEnergy(this.controllerLink);
 		}
