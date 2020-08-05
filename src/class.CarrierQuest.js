@@ -2,6 +2,7 @@
 
 const EMERGENCY_CARRIER_DELAY = 250;
 const MAX_CARRIERS = 2;
+const REMEMBER_ENERGY_KEY = "remEnergyId";
 
 class CarrierQuest extends Quest {
 
@@ -95,12 +96,13 @@ class CarrierQuest extends Quest {
 					}
 					return true;
 				};
-				energySource = creep.rememberStructure(findEnergy, forgetEnergy, "remEnergyId");
+				energySource = creep.rememberStructure(findEnergy, forgetEnergy, REMEMBER_ENERGY_KEY);
 			}
 
 			if(energySource) {
 				if(creep.pos.isNearTo(energySource)) {
 					creep.takeResource(energySource, RESOURCE_ENERGY);
+					delete creep.memory[REMEMBER_ENERGY_KEY];
 				} else {
 					creep.blindMoveTo(energySource);
 				}
