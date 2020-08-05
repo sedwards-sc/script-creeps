@@ -56,7 +56,7 @@ class LinkingQuest extends Quest {
 			maxLinkers = 1;
 		}
 		// TODO: calculate prespawn based on distance from spawn to flag
-		this.linkers = this.attendance("linker_" + [MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY], maxLinkers, {prespawn: 2});
+		this.linkers = this.attendance("linker_" + this.id, [MOVE, CARRY, MOVE, CARRY, MOVE, CARRY, MOVE, CARRY], maxLinkers, {prespawn: 2});
 	}
 
 	runActivities() {
