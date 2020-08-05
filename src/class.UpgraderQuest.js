@@ -57,6 +57,11 @@ class UpgraderQuest extends Quest {
 		for(let creep of this.upgrader) {
 			if(!creep.spawning) {
 				this.upgraderActions(creep)
+				if(creep.working) {
+					creep.memory.avoidMe = true;
+				} else {
+					creep.memory.avoidMe = false;
+				}
 			}
 		}
 	}
@@ -89,9 +94,9 @@ class UpgraderQuest extends Quest {
 			}
 
 			if(creep.buildOrUpgrade(workTarget) === ERR_NOT_IN_RANGE) {
-				creep.moveTo(workTarget);
+				creep.blindMoveTo(workTarget);
 			} else {
-				// TODO: set avoidMe
+				creep.working = true;
 				creep.yieldRoad(workTarget);
 			}
 			return;
@@ -142,7 +147,7 @@ class UpgraderQuest extends Quest {
 				creep.takeResource(energySource, RESOURCE_ENERGY);
 				delete creep.memory[REMEMBER_ENERGY_KEY];
 			} else {
-				creep.moveTo(energySource);
+				creep.blindMoveTo(energySource);
 			}
 		} else {
 			creep.say("no energy");
