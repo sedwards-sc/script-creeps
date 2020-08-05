@@ -24,7 +24,7 @@ class LinkingQuest extends Quest {
 					delete this.memory.cache.storageLinkId;
 				}
 			} else {
-				let storageLink = _.first(_.sortBy(this.links, link => link.getRangeTo(this.storage)));
+				let storageLink = _.first(_.sortBy(this.links, link => link.pos.getRangeTo(this.storage)));
 				if(storageLink) {
 					this.memory.cache.storageLinkId = storageLink.id;
 					this.storageLink = storageLink;
@@ -39,7 +39,7 @@ class LinkingQuest extends Quest {
 					delete this.memory.cache.controllerLinkId;
 				}
 			} else {
-				let controllerLink = _.first(_.sortBy(this.links, link => link.getRangeTo(this.flag.room.controller)));
+				let controllerLink = _.first(_.sortBy(this.links, link => link.pos.getRangeTo(this.flag.room.controller)));
 				if(controllerLink) {
 					this.memory.cache.controllerLinkId = controllerLink.id;
 					this.controllerLink = controllerLink;
