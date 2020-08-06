@@ -74,6 +74,8 @@ class LinkMinerQuest extends Quest {
 		}
 
 		if(creep.pos.isEqualTo(this.flag)) {
+			creep.memory.avoidMe = true;
+
 			let mySource = Game.getObjectById(creep.memory.mySourceId);
 			if(mySource === null) {
 				mySource = this.flag.pos.findClosestByRange(FIND_SOURCES);
