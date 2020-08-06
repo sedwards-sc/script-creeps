@@ -61,7 +61,10 @@ class DropMinerQuest extends Quest {
 	}
 
 	minerActions(creep) {
-		// TODO: add fleeing hostiles
+		if(creep.fleeHostiles()) {
+			return;
+		}
+
 		if((Game.time % 50) === 1) {
 			let reqParts = _.filter(creep.body, function(bodyPart) { return (bodyPart.type === WORK) && (bodyPart.hits > 0); });
 
