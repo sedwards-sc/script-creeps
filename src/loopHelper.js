@@ -16,6 +16,7 @@ require('class.LinkingQuest');
 require('class.LinkMinerQuest');
 require('class.MiningCartQuest');
 require('class.ReserverQuest');
+require('class.SentinelQuest');
 require('class.UpgraderQuest');
 require('class.UpgradingCartQuest');
 
@@ -29,6 +30,7 @@ global.QUEST_CLASSES = {
 	'linkMiner': LinkMinerQuest,
 	'miningCart': MiningCartQuest,
 	'reserver': ReserverQuest,
+	'sentinel': SentinelQuest,
 	'upgrader': UpgraderQuest,
 	'upgradingCart': UpgradingCartQuest
 };

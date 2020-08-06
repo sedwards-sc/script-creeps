@@ -41,7 +41,7 @@ class UpgraderQuest extends Quest {
 			this.memory.cache.prespawn = Math.max(pathFinderResults.path.length - 1, 0);
 		}
 
-		this.upgrader = [];
+		this.upgraders = [];
 	}
 
 	runCensus() {
@@ -50,11 +50,11 @@ class UpgraderQuest extends Quest {
 		if(this.colony.flag.room.storage) {
 			options.destination = this.colony.flag.room.storage;
 		}
-		this.upgrader = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 1, 2, 1), 1, options);
+		this.upgraders = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 1, 2, 1), 1, options);
 	}
 
 	runActivities() {
-		for(let creep of this.upgrader) {
+		for(let creep of this.upgraders) {
 			if(!creep.spawning) {
 				this.upgraderActions(creep)
 				if(creep.working) {
