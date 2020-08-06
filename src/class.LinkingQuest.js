@@ -117,7 +117,10 @@ class LinkingQuest extends Quest {
 		if(this.controllerLink.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
 			_.filter(
 				this.flag.room.findMyCreeps(),
-				creep => creep.pos.isNearTo(this.controllerLink) && _.filter(creep.body, part => part.type === WORK).length > 0 && creep.store.getFreeCapacity(RESOURCE_ENERGY) >= 50
+				creep => creep.pos.isNearTo(this.controllerLink) &&
+					_.filter(creep.body, part => part.type === WORK).length > 0 &&
+					creep.store.getFreeCapacity(RESOURCE_ENERGY) >= 50 &&
+					creep.ticksToLive > 30
 			).forEach(
 				creep => creep.withdraw(this.controllerLink, RESOURCE_ENERGY)
 			);
