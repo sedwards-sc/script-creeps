@@ -52,6 +52,12 @@ RoomPosition.prototype.getPositionAtDirection = function(direction, range) {
 		x -= range;
 		y -= range;
 	}
+    // seems like this method was causing an error when fleeing creep was on an exit tile
+    // TODO: ensure this solution doesn't interfere with anything else using this method (other than fleeing)
+	if(x < 0) x = 0;
+	if(y < 0) y = 0;
+	if(x > 49) x = 49;
+	if(y > 49) y = 49;
 	return new RoomPosition(x, y, room);
 };
 
