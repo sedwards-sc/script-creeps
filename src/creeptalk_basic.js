@@ -67,7 +67,7 @@ var basic_language = {
   ],
 
   'transfer': [
-    'transfer'
+    'trnsfr'
   ],
 
   'upgradeController': [
@@ -75,7 +75,7 @@ var basic_language = {
   ],
 
   'withdraw': [
-    'withdraw'
+    'wthdrw'
   ],
 }
 
