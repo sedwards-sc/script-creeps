@@ -15,7 +15,12 @@ class HarvesterQuest extends Quest {
 
 	runCensus() {
 		// TODO: check if there are other creeps in the room. if not, size based on energy available instead of max energy
-		this.harvesters = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 1, 2, 1, 10), 1, {prespawn: 0, blindSpawn: true});
+		// TODO: check for spawnGroup better (quick hack for new rooms)
+		let harvesterBody = [];
+		if(this.spawnGroup) {
+			harvesterBody = this.spawnGroup.workerBodyRatio(1, 1, 2, 1, 10);
+		}
+		this.harvesters = this.attendance(this.nameId, harvesterBody, 1, {prespawn: 0, blindSpawn: true});
 	}
 
 	runActivities() {
