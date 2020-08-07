@@ -88,7 +88,7 @@ class EmergencyHarvesterQuest extends Quest {
 				if(energySources.length > 0) {
 					return creep.pos.findClosestByPath(energySources);
 				}
-				return creep.pos.findClosestByRange(FIND_SOURCES);
+				return this.flag.pos.findClosestByRange(FIND_SOURCES);
 			};
 			let forgetEnergy = (e) => {
 				if(e instanceof Source) {
