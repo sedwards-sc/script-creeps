@@ -27,7 +27,7 @@ var basic_language = {
   ],
 
   'harvest': [
-    'harvest'
+    'hrvst'
   ],
 
   'heal': [
@@ -35,7 +35,7 @@ var basic_language = {
   ],
 
   'move': [
-    'move'
+    'mv'
   ],
 
   'pickup': [
@@ -59,7 +59,7 @@ var basic_language = {
   ],
 
   'reserveController': [
-    'reserveController'
+    'resCon'
   ],
 
   'suicide': [
@@ -71,7 +71,7 @@ var basic_language = {
   ],
 
   'upgradeController': [
-    'upgradeController'
+    'upCon'
   ],
 
   'withdraw': [
