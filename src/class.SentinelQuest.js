@@ -18,7 +18,7 @@ class SentinelQuest extends Quest {
 		options.prespawn = 0;
 		options.blindSpawn = true;
 		// TODO: only spawn when there are hostiles in the room to watch
-		this.sentinels = this.attendance(this.nameId, this.spawnGroup.bodyRatio({move: 4, attack: 3, heal: 1}, 1), 1, options);
+		this.sentinels = this.attendance(this.nameId, this.spawnGroup.bodyRatio({move: 4, attack: 3, heal: 1}, 1, 3), 1, options);
 	}
 
 	runActivities() {
