@@ -26,6 +26,7 @@ class LinkingQuest extends Quest {
 					delete this.memory.cache.storageLinkId;
 				}
 			} else {
+				// TODO: ensure range to storage <= 2 to avoid picking up another link that is closest but not a storage link
 				let storageLink = _.first(_.sortBy(this.links, link => link.pos.getRangeTo(this.storage)));
 				if(storageLink) {
 					this.memory.cache.storageLinkId = storageLink.id;
@@ -41,6 +42,7 @@ class LinkingQuest extends Quest {
 					delete this.memory.cache.controllerLinkId;
 				}
 			} else {
+				// TODO: ensure range to controller is <= 3 to avoid picking up another link that is closest but isn't the controller link
 				let controllerLink = _.first(_.sortBy(this.links, link => link.pos.getRangeTo(this.flag.room.controller)));
 				if(controllerLink) {
 					this.memory.cache.controllerLinkId = controllerLink.id;

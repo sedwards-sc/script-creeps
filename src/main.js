@@ -14,6 +14,8 @@ require('prototype.creep');
 require('prototype.room');
 require('prototype.roomposition');
 require('prototype.structure');
+// var Traveler = require('class.Traveler');
+require('class.Traveler');
 
 // require creep talk after creep prototypes
 require('creeptalk')({

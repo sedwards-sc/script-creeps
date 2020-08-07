@@ -61,6 +61,12 @@ class ReserverQuest extends Quest {
 			if(reserveReturn !== OK) {
 				creep.errorLog('could not successfully reserve controller', reserveReturn, 4);
 			}
+			if(!creep.room.controller.sign || creep.room.controller.sign.username !== USERNAME) {
+				let signReturn = creep.signController(creep.room.controller, 'Marked territory');
+				if(signReturn !== OK) {
+					creep.errorLog('could not successfully sign controller', signReturn, 4);
+				}
+			}
 		} else {
 			creep.moveTo(this.flag);
 		}
