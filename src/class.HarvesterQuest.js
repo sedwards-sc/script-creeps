@@ -32,7 +32,7 @@ class HarvesterQuest extends Quest {
 	harvesterActions(creep) {
 		let withinRoom = creep.pos.roomName === this.flag.pos.roomName;
 		if(!withinRoom) {
-			creep.moveTo(this.flag);
+			creep.travelTo(this.flag, {'useFindRoute': true});
 			return;
 		}
 
