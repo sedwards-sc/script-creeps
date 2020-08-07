@@ -59,7 +59,7 @@ var basic_language = {
   ],
 
   'reserveController': [
-    'resCon'
+    'rsrv'
   ],
 
   'suicide': [
@@ -71,7 +71,7 @@ var basic_language = {
   ],
 
   'upgradeController': [
-    'upCon'
+    'upgrd'
   ],
 
   'withdraw': [
