@@ -103,7 +103,7 @@ class Quest {
             }
         }
 
-        if(count < max && this.allowSpawn && this.spawnGroup.isAvailable && (this.hasVision || options.blindSpawn)) {
+        if(count < max && this.allowSpawn && this.spawnGroup && this.spawnGroup.isAvailable && (this.hasVision || options.blindSpawn)) {
             let creepName = this.colony.name + "_" + roleName + "_" + Math.floor(Math.random() * 100);
             let outcome = this.spawnGroup.spawn(body, creepName, options.memory, options.reservation, options.destination || this.flag);
             if(outcome === OK) {
