@@ -80,6 +80,12 @@ class EmergencyHarvesterQuest extends Quest {
 					_.filter(creep.room.findDroppedResources(), (r) => r.resourceType === RESOURCE_ENERGY && r.amount > 20)
 				);
 				energySources = energySources.concat(
+					_.filter(creep.room.findTombstones(), (t) => t.store.getUsedCapacity(RESOURCE_ENERGY) > 0)
+				);
+				energySources = energySources.concat(
+					_.filter(creep.room.findRuins(), (r) => r.store.getUsedCapacity(RESOURCE_ENERGY) > 0)
+				);
+				energySources = energySources.concat(
 					_.filter(creep.room.findStructures(STRUCTURE_CONTAINER), (s) => s.store.getUsedCapacity(RESOURCE_ENERGY) > 0)
 				);
 				energySources = energySources.concat(
@@ -149,10 +155,20 @@ class EmergencyHarvesterQuest extends Quest {
 			}
 		} else {
 			// build
-			let targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-			if(targets.length) {
-				if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-					creep.moveTo(targets[0]);
+			let findConstructionSite = () => {
+				return _.first(this.flag.room.find(FIND_CONSTRUCTION_SITES));
+			};
+			let forgetConstructionSite = (o) => {
+				if(o instanceof ConstructionSite) {
+					return false;
+				}
+				return true;
+			};
+			let site = creep.rememberStructure(findConstructionSite, forgetConstructionSite, "remSiteId");
+
+			if(site) {
+				if(creep.build(site) == ERR_NOT_IN_RANGE) {
+					creep.moveTo(site);
 				}
 			} else {
 				// else upgrade
