@@ -41,7 +41,7 @@ class HarvesterQuest extends Quest {
 			return;
 		}
 
-		if(!creep.hasLoad() {
+		if(!creep.hasLoad()) {
 			let mySource = Game.getObjectById(creep.memory.mySourceId);
 			if(mySource === null) {
 				mySource = this.flag.pos.findClosestByRange(FIND_SOURCES);
