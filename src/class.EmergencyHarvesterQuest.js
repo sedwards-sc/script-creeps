@@ -98,7 +98,7 @@ class EmergencyHarvesterQuest extends Quest {
 			};
 			let forgetEnergy = (e) => {
 				if(e instanceof Source) {
-					if(e.energy > 0 && e.pos.openAdjacentSpots().length > 0) {
+					if(e.energy > 0 && (e.pos.openAdjacentSpots().length > 0 || creep.pos.isNearTo(e))) {
 						return false;
 					}
 				} else if(e instanceof Resource) {
@@ -114,6 +114,10 @@ class EmergencyHarvesterQuest extends Quest {
 					) {
 						return true;
 					}
+					if(e.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+						return false;
+					}
+				} else if(e instanceof Tombstone || e instanceof Ruin) {
 					if(e.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
 						return false;
 					}
