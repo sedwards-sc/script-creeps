@@ -20,6 +20,7 @@ require('class.ReserverQuest');
 require('class.SentinelQuest');
 require('class.UpgraderQuest');
 require('class.UpgradingCartQuest');
+require('class.WorkingCartQuest');
 
 global.QUEST_CLASSES = {
 	'carrier': CarrierQuest,
@@ -34,7 +35,8 @@ global.QUEST_CLASSES = {
 	'reserver': ReserverQuest,
 	'sentinel': SentinelQuest,
 	'upgrader': UpgraderQuest,
-	'upgradingCart': UpgradingCartQuest
+	'upgradingCart': UpgradingCartQuest,
+	'workingCar': WorkingCartQuest
 };
 
 var loopHelper = {};
