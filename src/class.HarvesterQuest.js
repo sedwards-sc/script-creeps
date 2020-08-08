@@ -93,6 +93,10 @@ class HarvesterQuest extends Quest {
 					if(e.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
 						return false;
 					}
+				} else if(e instanceof Tombstone || e instanceof Ruin) {
+					if(e.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+						return false;
+					}
 				}
 				return true;
 			};
