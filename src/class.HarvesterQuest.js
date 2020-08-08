@@ -47,7 +47,9 @@ class HarvesterQuest extends Quest {
 				mySource = this.flag.pos.findClosestByRange(FIND_SOURCES);
 				creep.memory.mySourceId = mySource.id;
 			}
-			if(creep.harvest(mySource) === ERR_NOT_IN_RANGE) {
+			if(creep.pos.isNearTo(mySource)) {
+				creep.harvest(mySource)
+			} else {
 				creep.moveTo(mySource);
 			}
 			return;
