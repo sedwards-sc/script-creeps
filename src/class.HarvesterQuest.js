@@ -62,7 +62,7 @@ class HarvesterQuest extends Quest {
 			}
 			return s.store.getFreeCapacity(RESOURCE_ENERGY) === 0;
 		};
-		let refillTarget = creep.rememberStructure(findRefillTarget, forgetRefillTarget, "remStructureId", true);
+		let refillTarget = creep.rememberStructure(findRefillTarget, forgetRefillTarget, "remRefillId", true);
 
 		if(refillTarget) {
 			if(creep.transfer(refillTarget, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
