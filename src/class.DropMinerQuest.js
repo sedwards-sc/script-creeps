@@ -84,6 +84,9 @@ class DropMinerQuest extends Quest {
 			let harvestReturn = creep.harvest(mySource);
 			if(harvestReturn !== OK && harvestReturn !== ERR_NOT_ENOUGH_RESOURCES) {
 				creep.errorLog('could not successfully harvest', harvestReturn, 4);
+				if(harvestReturn === ERR_NOT_IN_RANGE) {
+					delete creep.memory.mySourceId;
+				}
 			}
 		} else {
 			creep.blindMoveTo(this.flag);
