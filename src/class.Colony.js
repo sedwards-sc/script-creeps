@@ -12,13 +12,20 @@ class Colony {
 		this.flag = flag;
 		// TODO: adjust colony priority with flag attributes or something
 		this.priority = PRIORITY_MEDIUM;
+
 		Object.defineProperty(this, "memory", { enumerable: false, value: flag.memory });
+		if(!this.memory.cache) {
+			this.memory.cache = {};
+		}
+
 		if(!this.quests) {
 			this.quests = {};
 		}
+
 		if(!this.questList) {
 			this.questList = [];
 		}
+
 		// variables that require vision (null check where appropriate)
 		if(this.flag.room) {
 			this.hasVision = true;
@@ -158,17 +165,17 @@ class Colony {
 	/**
      * Cache Invalidation Phase - occasionally invalidate caches of colony and it's quests (see constants for probability setting)
      */
-    invalidateCache() {
-        if(Math.random() < CACHE_INVALIDATION_CHANCE) {
-			for(let quest of this.prioritizedQuestList) {
-				try {
-					quest.invalidateQuestCache();
-				} catch(e) {
-					Logger.errorLog("error caught in quest cache invalidation phase, colony:" + this.name + ", quest:" + quest.nameId, ERR_TIRED, 5);
-					Logger.log(e.stack, 5);
-				}
+	 invalidateCache() {
+		for(let quest of this.prioritizedQuestList) {
+			try {
+				quest.invalidateQuestCache();
+			} catch(e) {
+				Logger.errorLog("error caught in quest cache invalidation phase, colony:" + this.name + ", quest:" + quest.nameId, ERR_TIRED, 5);
+				Logger.log(e.stack, 5);
 			}
+		}
 
+		if(Math.random() < CACHE_INVALIDATION_CHANCE) {
 			try {
 				this.invalidateColonyCache();
 			} catch(e) {
@@ -181,6 +188,8 @@ class Colony {
 	 * implement Colony-type specific cache invalidation
 	 */
 	invalidateColonyCache() {
+		Logger.log("clearing colony cache for " + this.name, 1);
+		this.memory.cache = {};
 	}
 
 	getSpawnGroup() {

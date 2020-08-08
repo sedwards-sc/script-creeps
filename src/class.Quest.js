@@ -55,9 +55,10 @@ class Quest {
 	}
 
     invalidateQuestCache() {
-		// TODO: move this log message to the colony level
-		this.log("clearing quest cache", 1);
-		this.memory.cache = {};
+		if(Math.random() < CACHE_INVALIDATION_CHANCE) {
+			this.log("clearing quest cache", 1);
+			this.memory.cache = {};
+		}
 	}
 
 	/**
