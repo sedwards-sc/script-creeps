@@ -41,6 +41,66 @@ class HarvesterQuest extends Quest {
 			return;
 		}
 
+		if(!creep.hasLoad() {
+			let mySource = Game.getObjectById(creep.memory.mySourceId);
+			if(mySource === null) {
+				mySource = this.flag.pos.findClosestByRange(FIND_SOURCES);
+				creep.memory.mySourceId = mySource.id;
+			}
+			if(creep.harvest(mySource) === ERR_NOT_IN_RANGE) {
+				creep.moveTo(mySource);
+			}
+			return;
+		}
+
+		let findRefillTarget = () => {
+			return creep.getRefillTarget();
+		};
+		let forgetRefillTarget = (s) => {
+			if(s.structureType === STRUCTURE_TOWER) {
+				return s.store.getUsedCapacity(RESOURCE_ENERGY) > s.store.getCapacity(RESOURCE_ENERGY) * 0.95;
+			}
+			return s.store.getFreeCapacity(RESOURCE_ENERGY) === 0;
+		};
+		let refillTarget = creep.rememberStructure(findRefillTarget, forgetRefillTarget, "remStructureId", true);
+
+		if(refillTarget) {
+			if(creep.transfer(refillTarget, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
+				creep.moveTo(refillTarget);
+			}
+		} else {
+			// build
+			let findConstructionSite = () => {
+				return _.first(this.flag.room.find(FIND_CONSTRUCTION_SITES));
+			};
+			let forgetConstructionSite = (o) => {
+				if(o instanceof ConstructionSite) {
+					return false;
+				}
+				return true;
+			};
+			let site = creep.rememberStructure(findConstructionSite, forgetConstructionSite, "remSiteId");
+
+			if(site) {
+				if(creep.build(site) === ERR_NOT_IN_RANGE) {
+					creep.moveTo(site);
+				}
+			} else {
+				// else upgrade
+				if(creep.upgradeController(creep.room.controller) === ERR_NOT_IN_RANGE) {
+					creep.moveTo(creep.room.controller);
+				}
+			}
+		}
+	}
+
+	harvesterActionsWithMixedEnergy(creep) {
+		let withinRoom = creep.pos.roomName === this.flag.pos.roomName;
+		if(!withinRoom) {
+			creep.travelTo(this.flag, {'useFindRoute': true});
+			return;
+		}
+
 		let hasLoad = creep.hasLoad();
 		if(!hasLoad) {
 			let findEnergy = () => {
