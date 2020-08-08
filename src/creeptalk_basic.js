@@ -11,7 +11,7 @@ var basic_language = {
   ],
 
   'build': [
-    'build',
+    'bld',
   ],
 
   'claimController': [
@@ -27,7 +27,7 @@ var basic_language = {
   ],
 
   'harvest': [
-    'hrvst'
+    'hvst'
   ],
 
   'heal': [
