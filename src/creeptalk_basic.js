@@ -27,7 +27,7 @@ var basic_language = {
   ],
 
   'harvest': [
-    'hv'
+    'h'
   ],
 
   'heal': [
