@@ -11,7 +11,7 @@ var basic_language = {
   ],
 
   'build': [
-    'bld',
+    'b',
   ],
 
   'claimController': [
@@ -27,7 +27,7 @@ var basic_language = {
   ],
 
   'harvest': [
-    'hvst'
+    'hv'
   ],
 
   'heal': [
@@ -35,11 +35,11 @@ var basic_language = {
   ],
 
   'move': [
-    'mv'
+    'm'
   ],
 
   'pickup': [
-    'pickup'
+    'p'
   ],
 
   'rangedAttack': [
@@ -67,15 +67,15 @@ var basic_language = {
   ],
 
   'transfer': [
-    'trnsfr'
+    't'
   ],
 
   'upgradeController': [
-    'upgrd'
+    'u'
   ],
 
   'withdraw': [
-    'wthdrw'
+    'w'
   ],
 }
 
