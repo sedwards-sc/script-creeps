@@ -138,8 +138,16 @@ class WorkingCartQuest extends Quest {
 				let site = creep.rememberStructure(findConstructionSite, forgetConstructionSite, "remSiteId");
 
 				if(site) {
-					if(creep.build(site) == ERR_NOT_IN_RANGE) {
+					let buildReturn = creep.build(site);
+					if(buildReturn === ERR_NOT_IN_RANGE) {
 						creep.moveTo(site);
+					} else if(buildReturn === ERR_INVALID_TARGET && creep.pos.isEqualTo(site)) {
+						let openPositions = creep.pos.openAdjacentSpots(false);
+						if(openPositions.length > 0) {
+							creep.moveTo(_.first(openPositions));
+						} else {
+							this.errorLog("unable to move off construction site");
+						}
 					}
 				} else {
 					// else upgrade
