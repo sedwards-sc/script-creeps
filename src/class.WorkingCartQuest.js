@@ -79,8 +79,9 @@ class WorkingCartQuest extends Quest {
 
 	runCensus() {
 		// TODO: spawn extra carts if the max spawn energy isn't sufficient to produce maxBodyUnits
-		let maxBodyUnits = Math.max(Math.ceil(this.memory.cache.carryPartsRequired / 2), 1);
-		this.carts = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 2, 3, 1, maxBodyUnits), 1, {prespawn: this.memory.cache.prespawn});
+		// let maxBodyUnits = Math.max(Math.ceil(this.memory.cache.carryPartsRequired / 2), 1);
+		// this.carts = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 2, 3, 1, maxBodyUnits), 1, {prespawn: this.memory.cache.prespawn});
+		this.carts = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 1, 2, 1, this.memory.cache.carryPartsRequired), 1, {prespawn: this.memory.cache.prespawn});
 	}
 
 	runActivities() {
