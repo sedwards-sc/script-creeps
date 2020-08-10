@@ -1,6 +1,7 @@
 /* jshint esversion: 6 */
 
 const REMEMBER_ENERGY_KEY = "remEnergyId";
+const STORAGE_THRESHOLD = 5000;
 
 class UpgraderQuest extends Quest {
 
@@ -104,7 +105,7 @@ class UpgraderQuest extends Quest {
 
 		let findEnergy = () => {
 			let energySources = [];
-			if(creep.room.storage && creep.room.storage.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+			if(creep.room.storage && creep.room.storage.store.getUsedCapacity(RESOURCE_ENERGY) > STORAGE_THRESHOLD) {
 				energySources.push(creep.room.storage);
 			}
 			if(creep.room.terminal && creep.room.terminal.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
