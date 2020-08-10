@@ -56,7 +56,12 @@ class DefenseQuest extends Quest {
 			}
 			return;
 		}
-		defender.idleOffRoad(this.flag);
+
+		if(defender.pos.isNearTo(this.flag)) {
+			defender.idleOffRoad(this.flag);
+		} else {
+			defender.blindMoveTo(this.flag);
+		}
 	}
 
 	towerRepair() {
