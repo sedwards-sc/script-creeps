@@ -40,6 +40,12 @@ class DropMinerQuest extends Quest {
 			this.memory.cache.prespawn = Math.max(pathFinderResults.path.length - 1, 0);
 		}
 
+		if(this.flag.room) {
+			if(this.flag.room.findStructures(STRUCTURE_INVADER_CORE).length > 0) {
+				this.dismantleCore = true;
+			}
+		}
+
 		this.miners = [];
 	}
 
@@ -52,7 +58,11 @@ class DropMinerQuest extends Quest {
 	runActivities() {
 		for(let creep of this.miners) {
 			if(!creep.spawning) {
-				this.minerActions(creep)
+				if(this.dismantleCore) {
+					this.dismantleCoreActions(creep);
+				} else {
+					this.minerActions(creep);
+				}
 			}
 		}
 	}
@@ -90,6 +100,30 @@ class DropMinerQuest extends Quest {
 			}
 		} else {
 			creep.blindMoveTo(this.flag);
+		}
+	}
+
+	dismantleCoreActions(creep) {
+		if(creep.fleeHostiles()) {
+			return;
+		}
+
+		let withinRoom = creep.pos.roomName === this.flag.pos.roomName;
+		if(!withinRoom) {
+			creep.blindMoveTo(this.flag);
+			return;
+		}
+
+		let invaderCores = creep.room.findStructures(STRUCTURE_INVADER_CORE);
+		if(invaderCores.length > 0) {
+			let coreTarget = _.first(invaderCores);
+			if(creep.pos.isNearTo(coreTarget)) {
+				creep.dismantle(coreTarget);
+			} else {
+				creep.blindMoveTo(coreTarget);
+			}
+		} else {
+			creep.log("cannot find core to dismantle");
 		}
 	}
 }
