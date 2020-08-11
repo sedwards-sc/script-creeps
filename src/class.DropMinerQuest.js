@@ -118,7 +118,7 @@ class DropMinerQuest extends Quest {
 		if(invaderCores.length > 0) {
 			let coreTarget = _.first(invaderCores);
 			if(creep.pos.isNearTo(coreTarget)) {
-				creep.dismantle(coreTarget);
+				creep.log(creep.dismantle(coreTarget));
 			} else {
 				creep.blindMoveTo(coreTarget);
 			}
