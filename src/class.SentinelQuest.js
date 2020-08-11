@@ -91,7 +91,7 @@ class SentinelQuest extends Quest {
 				if(invaderCores.length > 0) {
 					let coreTarget = _.first(invaderCores);
 					if(creep.pos.isNearTo(coreTarget)) {
-						creep.attack(coreTarget);
+						creep.attack(coreTarget)
 					} else {
 						creep.blindMoveTo(coreTarget);
 					}
