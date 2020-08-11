@@ -82,12 +82,17 @@ class MiningCartQuest extends Quest {
 	}
 
 	runCensus() {
-		// TODO: spawn extra carts if the max spawn energy isn't sufficient to produce large enough single creep
-		let maxCarts = 0
-		if(this.memory.cache.carryPartsRequired > 0) {
+		let maxCarts = 0;
+		let carrysPerCreep = this.memory.cache.carryPartsRequired;
+		if(carrysPerCreep > 0) {
 			maxCarts = 1;
+			while(carrysPerCreep > 20 || calculateCreepCost(workerBody(0, carrysPerCreep, carrysPerCreep)) > this.spawnGroup.maxSpawnEnergy) {
+				// TODO: add a limit to the number of carts
+				maxCarts++;
+				carrysPerCreep = Math.ceil(this.memory.cache.carryPartsRequired / maxCarts);
+			}
 		}
-		this.carts = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(0, 1, 1, 1, this.memory.cache.carryPartsRequired), maxCarts, {prespawn: this.memory.cache.prespawn});
+		this.carts = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(0, 1, 1, 1, carrysPerCreep), maxCarts, {prespawn: this.memory.cache.prespawn});
 	}
 
 	runActivities() {
