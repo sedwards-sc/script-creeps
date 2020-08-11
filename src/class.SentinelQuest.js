@@ -87,7 +87,15 @@ class SentinelQuest extends Quest {
 			}
 
 			if(!attackTarget && !healTarget) {
-				if(!creep.pos.isNearTo(this.flag)) {
+				let invaderCores = creep.room.findStructures(STRUCTURE_INVADER_CORE);
+				if(invaderCores.length > 0) {
+					let coreTarget = _.first(invaderCores);
+					if(creep.pos.isNearTo(coreTarget)) {
+						creep.attack(coreTarget)
+					} else {
+						creep.blindMoveTo(coreTarget);
+					}
+				} else if(!creep.pos.isNearTo(this.flag)) {
 					creep.blindMoveTo(this.flag);
 				}
 			}
