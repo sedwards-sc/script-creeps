@@ -53,7 +53,7 @@ class LinkingQuest extends Quest {
 				if(this.memory.cache.sourceLinkIds.length > 0) {
 					this.memory.cache.sourceLinkIds.forEach(
 						linkId => {
-							let link = Game.structues[linkId];
+							let link = Game.structures[linkId];
 							if(link) {
 								this.sourceLinks.push(link);
 							}
