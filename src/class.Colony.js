@@ -188,8 +188,11 @@ class Colony {
 	 * implement Colony-type specific cache invalidation
 	 */
 	invalidateColonyCache() {
-		Logger.log("clearing colony cache for " + this.name, 1);
+		let lastTick = this.memory.cache.lastTick ? this.memory.cache.lastTick : 0;
+		let cacheTime = Game.time - lastTick;
 		this.memory.cache = {};
+		this.memory.cache.lastTick = Game.time;
+		Logger.log("clearing colony cache for " + this.name + " after " + cacheTime + " ticks", 1);
 	}
 
 	getSpawnGroup() {

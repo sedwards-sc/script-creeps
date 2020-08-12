@@ -56,8 +56,11 @@ class Quest {
 
     invalidateQuestCache() {
 		if(Math.random() < CACHE_INVALIDATION_CHANCE) {
-			this.log("clearing quest cache", 1);
+			let lastTick = this.memory.cache.lastTick ? this.memory.cache.lastTick : 0;
+			let cacheTime = Game.time - lastTick;
 			this.memory.cache = {};
+			this.memory.cache.lastTick = Game.time;
+			this.log("quest cache cleared after " + cacheTime + " ticks", 1);
 		}
 	}
 
