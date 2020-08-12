@@ -26,8 +26,7 @@ class LinkingQuest extends Quest {
 					delete this.memory.cache.storageLinkId;
 				}
 			} else {
-				// TODO: ensure range to storage <= 2 to avoid picking up another link that is closest but not a storage link
-				let storageLink = _.first(_.sortBy(this.links, link => link.pos.getRangeTo(this.storage)));
+				let storageLink = _.first(_.filter(this.links, link => link.pos.getRangeTo(this.storage) <= 2));
 				if(storageLink) {
 					this.memory.cache.storageLinkId = storageLink.id;
 					this.storageLink = storageLink;
@@ -42,12 +41,50 @@ class LinkingQuest extends Quest {
 					delete this.memory.cache.controllerLinkId;
 				}
 			} else {
-				// TODO: ensure range to controller is <= 3 to avoid picking up another link that is closest but isn't the controller link
-				let controllerLink = _.first(_.sortBy(this.links, link => link.pos.getRangeTo(this.flag.room.controller)));
+				let controllerLink = _.first(_.filter(this.links, link => link.pos.getRangeTo(this.flag.room.controller) <= 2));
 				if(controllerLink) {
 					this.memory.cache.controllerLinkId = controllerLink.id;
 					this.controllerLink = controllerLink;
 				}
+			}
+
+			this.sourceLinks = [];
+			if(_.isArray(this.memory.cache.sourceLinkIds)) {
+				if(this.memory.cache.sourceLinkIds.length > 0) {
+					this.memory.cache.sourceLinkIds.forEach(
+						linkId => {
+							let link = Game.structues[linkId];
+							if(link) {
+								this.sourceLinks.push(link);
+							}
+						}
+					);
+				}
+			} else {
+				this.memory.cache.sourceLinkIds = [];
+
+				let potentialSourceLinks = _.filter(
+					this.links,
+					link => {
+						if(this.storageLink && link.id === this.storageLink.id) {
+							return false;
+						}
+						if(this.controllerLink && link.id === this.controllerLink.id) {
+							return false;
+						}
+						return true;
+					}
+				);
+
+				potentialSourceLinks.forEach(
+					link => {
+						let linkSource = _.first(_.filter(this.flag.room.sources, source => source.pos.getRangeTo(link) <= 2));
+						if(linkSource) {
+							this.memory.cache.sourceLinkIds.push(link.id);
+							this.sourceLinks.push(link);
+						}
+					}
+				);
 			}
 		}
 
@@ -64,17 +101,29 @@ class LinkingQuest extends Quest {
 	}
 
 	runActivities() {
-		this.linkers.forEach(creep => this.linkerActions(creep));
+		this.linkers.forEach(
+			creep => {
+				if(this.controllerLink) {
+					this.linkerActionsUpgrade(creep)
+				} else {
+					this.linkerActionsIncome(creep);
+				}
+			}
+		);
 
 		if(this.requiredStructures) {
-			this.runLinks();
+			if(this.controllerLink) {
+				this.runLinksUpgrade();
+			} else {
+				this.runLinksIncome();
+			}
 		}
 	}
 
 	questEnd() {
 	}
 
-	linkerActions(creep) {
+	linkerActionsUpgrade(creep) {
 		if(!this.requiredStructures) {
 			creep.say("missing");
 			return;
@@ -105,7 +154,35 @@ class LinkingQuest extends Quest {
 		}
 	}
 
-	runLinks() {
+	linkerActionsIncome(creep) {
+		if(!this.requiredStructures) {
+			creep.say("missing");
+			return;
+		}
+
+		if(creep.ticksToLive <= 1) {
+			creep.transfer(this.storage, RESOURCE_ENERGY);
+			return;
+		}
+
+		if(creep.pos.isEqualTo(this.flag)) {
+			creep.memory.avoidMe = true;
+
+			if(creep.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+				if(this.storage.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
+					creep.transfer(this.storage, RESOURCE_ENERGY);
+				}
+			} else {
+				if(this.storageLink && this.storageLink.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+					creep.withdraw(this.storageLink, RESOURCE_ENERGY);
+				}
+			}
+		} else {
+			creep.blindMoveTo(this.flag);
+		}
+	}
+
+	runLinksUpgrade() {
 		if(!this.storageLink || !this.controllerLink || this.storageLink.id === this.controllerLink.id) {
 			return;
 		}
@@ -127,6 +204,22 @@ class LinkingQuest extends Quest {
 				creep => creep.withdraw(this.controllerLink, RESOURCE_ENERGY)
 			);
 		}
+	}
+
+	runLinksIncome() {
+		if(!this.storageLink) {
+			return;
+		}
+
+		this.sourceLinks.forEach(
+			link => {
+				let loaded = link.store.getUsedCapacity(RESOURCE_ENERGY) >= link.store.getCapacity(RESOURCE_ENERGY) * 0.75;
+				let hasSpace = this.storageLink.store.getFreeCapacity(RESOURCE_ENERGY) >= this.storageLink.store.getCapacity(RESOURCE_ENERGY) * 0.75;
+				if(loaded && hasSpace && link.cooldown === 0) {
+					link.transferEnergy(this.storageLink);
+				}
+			}
+		);
 	}
 }
 
