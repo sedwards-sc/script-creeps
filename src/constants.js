@@ -7,7 +7,7 @@ global.TOWER_RESERVE_ENERGY = 400;
 global.MINIMUM_RAMPART_HEALTH = 5000;
 global.MINIMUM_WALL_HEALTH = 5000;
 
-global.CACHE_INVALIDATION_CHANCE = 0.01;
+global.CACHE_INVALIDATION_CHANCE = 0.005;
 
 global.USERNAME = _.first(_.toArray(Game.structures)).owner.username;
 
