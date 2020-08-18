@@ -61,6 +61,7 @@ class Colony {
 	 */
 	initColony() {
 		if(!this.memory.planned && this.flag.room) {
+			this.log("planning", 3);
 			this.memory.planned = true;
 		}
 
@@ -219,6 +220,14 @@ class Colony {
 				}
 			}
 		}
+	}
+
+	log(msg, severity = 2) {
+		return Logger.log(`${this.flag.pos.roomName}::${this.name}, msg: ${msg}`, severity);
+	}
+
+	errorLog(msg, errCode = -10, severity = 3) {
+		return Logger.log(`!!!Error!!! ${this.flag.pos.roomName}::${this.name}, msg: ${msg} (${errorCodeToText(errCode)})`, severity);
 	}
 }
 
