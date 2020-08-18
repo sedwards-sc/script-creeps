@@ -60,6 +60,10 @@ class Colony {
 	 * implement Colony-type specific initializiation
 	 */
 	initColony() {
+		if(!this.memory.planned && this.flag.room) {
+			this.memory.planned = true;
+		}
+
 		// gather flag data, instantiate quests
 		// TODO: move quest flag finding to loopHelper. instatiation should happen here
 		let questList = {};
