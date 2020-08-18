@@ -63,6 +63,16 @@ class Colony {
 		if(!this.memory.planned && this.flag.room) {
 			this.log("planning", 3);
 			this.memory.planned = true;
+
+			// place base core with 3 spawns, storage, terminal, link, and one tower
+
+			// place controller link
+
+			// place source links
+
+			// place extractor
+
+			// place labs, power spawn, etc
 		}
 
 		// gather flag data, instantiate quests
