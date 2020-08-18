@@ -46,12 +46,20 @@ class UpgraderQuest extends Quest {
 	}
 
 	runCensus() {
+		// TODO: set maxUpgraders for level 8 room
+		let maxUpgraders = 1;
 		let options = {};
 		options.prespawn = this.memory.cache.prespawn;
+
 		if(this.colony.flag.room.storage) {
 			options.destination = this.colony.flag.room.storage;
+
+			let storageEnergy = this.colony.flag.room.storage.store.getUsedCapacity(RESOURCE_ENERGY);
+			if(storageEnergy > 0) {
+				maxUpgraders = Math.floor(storageEnergy / 100000) + 1;
+			}
 		}
-		this.upgraders = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 1, 2, 1), 1, options);
+		this.upgraders = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 1, 2, 1), maxUpgraders, options);
 	}
 
 	runActivities() {
