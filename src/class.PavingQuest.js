@@ -16,7 +16,7 @@ class PavingQuest extends Quest {
 
 	initQuest() {
 		if(this.memory.cache.partsRequired === undefined) {
-			let sum = _.sumBy(this.flag.room.findStructures(STRUCTURE_ROAD), r => r.hitsMax);
+			let sum = _.sum(this.flag.room.findStructures(STRUCTURE_ROAD), r => r.hitsMax);
 			this.memory.cache.partsRequired = Math.max(Math.ceil(sum / 500000), 1);
 		}
 
