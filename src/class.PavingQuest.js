@@ -20,6 +20,27 @@ class PavingQuest extends Quest {
 			this.memory.cache.partsRequired = Math.max(Math.ceil(sum / 500000), 1);
 		}
 
+		if(this.memory.cache.roomPaved === undefined) {
+			this.memory.cache.roomPaved = true;
+
+			// TODO: make this a cached find
+			let pavingStructures = _.filter(this.flag.room.find(FIND_MY_STRUCTURES), s => s.structureType === STRUCTURE_SPAWN)
+			pavingStructures.forEach(
+				structure => {
+					let openSpots = structure.pos.openAdjacentSpots(true);
+					openSpots.forEach(
+						pos => {
+							let notAConstructionSite = pos.lookFor(LOOK_CONSTRUCTION_SITES).length === 0;
+							let notARoad = pos.lookForStructure(STRUCTURE_ROAD) === undefined;
+							if(notAConstructionSite && notARoad) {
+								this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'})
+							}
+						}
+					);
+				}
+			);
+		}
+
 		this.pavers = [];
 	}
 

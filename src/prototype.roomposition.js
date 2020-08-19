@@ -63,7 +63,7 @@ RoomPosition.prototype.getPositionAtDirection = function(direction, range) {
 
 /**
 * @param structureType
-* @returns {Structure} structure of type structureType that resides at position (null if no structure of that type is present)
+* @returns {Structure} structure of type structureType that resides at position (undefined if no structure of that type is present)
 */
 RoomPosition.prototype.lookForStructure = function(structureType) {
 	let structures = this.lookFor(LOOK_STRUCTURES);
