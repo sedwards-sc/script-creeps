@@ -20,7 +20,12 @@ class PavingQuest extends Quest {
 
 	runCensus() {
 		// TODO: scale based on number of roads
-		this.pavers = this.attendance("paver_" + this.id, this.spawnGroup.workerBodyRatio(1, 3, 2, 1, 4), 1);
+		let options = {};
+		options.prespawn = 0;
+		if(this.colony.flag.room.storage) {
+			options.destination = this.colony.flag.room.storage;
+		}
+		this.pavers = this.attendance("paver_" + this.id, this.spawnGroup.workerBodyRatio(1, 3, 2, 1, 4), 1, options);
 	}
 
 	runActivities() {
