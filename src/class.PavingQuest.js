@@ -24,7 +24,6 @@ class PavingQuest extends Quest {
 	}
 
 	runCensus() {
-		// TODO: scale based on number of roads
 		let options = {};
 		options.prespawn = 0;
 		if(this.colony.flag.room.storage) {
