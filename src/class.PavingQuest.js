@@ -108,7 +108,7 @@ class PavingQuest extends Quest {
 		// I'm in the room and I have energy
 
 		let findRoad = () => {
-			return _.first(_.filter(creep.room.findStructures(STRUCTURE_ROAD), (s) => s.hits < s.hitsMax - 1000));
+			return creep.pos.findClosestByPath(_.filter(creep.room.findStructures(STRUCTURE_ROAD), (s) => s.hits < s.hitsMax - 1000));
 		};
 		let forgetRoad = (s) => s.hits === s.hitsMax;
 		let target = creep.rememberStructure(findRoad, forgetRoad, REMEMBER_ROAD_KEY);
