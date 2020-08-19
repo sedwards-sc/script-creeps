@@ -24,7 +24,10 @@ class PavingQuest extends Quest {
 			this.memory.cache.roomPaved = true;
 
 			// TODO: make this a cached find
-			let pavingStructures = _.filter(this.flag.room.find(FIND_MY_STRUCTURES), s => s.structureType === STRUCTURE_SPAWN)
+			let pavingStructures = _.filter(
+				this.flag.room.find(FIND_MY_STRUCTURES),
+				s => s.structureType === STRUCTURE_SPAWN || s.structureType === STRUCTURE_EXTENSION
+			);
 			pavingStructures.forEach(
 				structure => {
 					let openSpots = structure.pos.openAdjacentSpots(true);
@@ -33,7 +36,7 @@ class PavingQuest extends Quest {
 							let notAConstructionSite = pos.lookFor(LOOK_CONSTRUCTION_SITES).length === 0;
 							let notARoad = pos.lookForStructure(STRUCTURE_ROAD) === undefined;
 							if(notAConstructionSite && notARoad) {
-								this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'})
+								this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
 							}
 						}
 					);
