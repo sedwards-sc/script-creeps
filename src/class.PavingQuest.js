@@ -29,6 +29,9 @@ class PavingQuest extends Quest {
 				s => {
 					return s.structureType === STRUCTURE_SPAWN ||
 						s.structureType === STRUCTURE_EXTENSION ||
+						s.structureType === STRUCTURE_STORAGE ||
+						s.structureType === STRUCTURE_TERMINAL ||
+						s.structureType === STRUCTURE_LINK ||
 						s.structureType === STRUCTURE_TOWER
 				}
 			);
