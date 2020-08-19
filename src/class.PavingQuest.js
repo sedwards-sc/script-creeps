@@ -22,7 +22,7 @@ class PavingQuest extends Quest {
 		}
 
 		if(this.memory.cache.roomPaved === undefined) {
-			// this.memory.cache.roomPaved = true;
+			this.memory.cache.roomPaved = true;
 
 			// TODO: make this a cached find
 			let pavingStructures = _.filter(
@@ -46,9 +46,8 @@ class PavingQuest extends Quest {
 							let notAConstructionSite = pos.lookFor(LOOK_CONSTRUCTION_SITES).length === 0;
 							let notARoad = pos.lookForStructure(STRUCTURE_ROAD) === undefined;
 							if(notAConstructionSite && notARoad) {
-								this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
-								sitesCreated++;
-								// if(this.flag.room.createConstructionSite(pos, STRUCTURE_ROAD) === OK) sitesCreated++;
+								// this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
+								if(this.flag.room.createConstructionSite(pos, STRUCTURE_ROAD) === OK) sitesCreated++;
 							}
 						}
 					);
