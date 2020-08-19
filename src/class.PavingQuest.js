@@ -116,11 +116,10 @@ class PavingQuest extends Quest {
 		if(!target) {
 			// look for construction site roads if there are no roads to repair
 			let findRoadUnderConstruction = () => {
-				return _.first(creep.room.find(FIND_CONSTRUCTION_SITES, {
-					filter: function(site) {
-						return site.structureType === STRUCTURE_ROAD;
-					}
-				}));
+				let roadSites = creep.room.findConstructionSitesByType(STRUCTURE_ROAD);
+				if(roadSites.length > 0) {
+					return creep.pos.findClosestByPath(roadSites);
+				}
 			};
 			let forgetRoadUnderConstruction = (s) => s.progress === s.progressTotal;
 			target = creep.rememberStructure(findRoadUnderConstruction, forgetRoadUnderConstruction, REMEMBER_CONSTRUCTION_KEY);

@@ -48,6 +48,35 @@ Room.prototype.findMyCreeps = function() {
 };
 
 /**
+ * Returns array of construction sites, caching results on a per-tick basis
+ * @returns {ConstructionSite[]}
+ */
+Room.prototype.findConstructionSites = function() {
+	if(!this.cache) {
+		this.cache = {};
+	}
+	if(!this.cache.constructionSites) {
+		this.cache.constructionSites = this.find(FIND_CONSTRUCTION_SITES);
+	}
+	return this.cache.constructionSites || [];
+};
+
+/**
+ * Returns array of construction sites of a specified structure type, caching results on a per-tick basis
+ * @param structureType
+ * @returns {ConstructionSite[]}
+ */
+Room.prototype.findConstructionSitesByType = function(structureType) {
+	if(!this.cache) {
+		this.cache = {};
+	}
+	if(!this.cache.constructionSitesByType) {
+		this.cache.constructionSitesByType = _.groupBy(this.findConstructionSites(), (s) => s.structureType);
+	}
+	return this.cache.constructionSitesByType[structureType] || [];
+};
+
+/**
  * Returns array of dropped resources, caching results on a per-tick basis
  * @returns {Resource[]}
  */
