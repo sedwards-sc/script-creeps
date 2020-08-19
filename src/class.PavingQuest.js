@@ -15,6 +15,11 @@ class PavingQuest extends Quest {
 	}
 
 	initQuest() {
+		if(this.memory.cache.partsRequired === undefined) {
+			let sum = _.sumBy(this.flag.room.findStructures(STRUCTURE_ROAD), r => r.hitsMax);
+			this.memory.cache.partsRequired = Math.max(Math.ceil(sum / 500000), 1);
+		}
+
 		this.pavers = [];
 	}
 
@@ -25,7 +30,7 @@ class PavingQuest extends Quest {
 		if(this.colony.flag.room.storage) {
 			options.destination = this.colony.flag.room.storage;
 		}
-		this.pavers = this.attendance("paver_" + this.id, this.spawnGroup.workerBodyRatio(1, 3, 2, 1, 4), 1, options);
+		this.pavers = this.attendance("paver_" + this.id, this.spawnGroup.workerBodyRatio(1, 3, 2, 1, this.memory.cache.partsRequired), 1, options);
 	}
 
 	runActivities() {
