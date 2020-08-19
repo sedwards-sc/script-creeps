@@ -4,6 +4,7 @@ const REMEMBER_ENERGY_KEY = "remEnergyId";
 const REMEMBER_ROAD_KEY = "remRoadId";
 const REMEMBER_CONSTRUCTION_KEY = "remConId";
 const STORAGE_THRESHOLD = 5000;
+const ROAD_BLOCK_SIZE = 10;
 
 class PavingQuest extends Quest {
 
@@ -35,8 +36,10 @@ class PavingQuest extends Quest {
 						s.structureType === STRUCTURE_TOWER
 				}
 			);
+			let sitesCreated = 0;
 			pavingStructures.forEach(
 				structure => {
+					if(sitesCreated >= ROAD_BLOCK_SIZE) return false;
 					let openSpots = structure.pos.openAdjacentDiagonalSpots(true);
 					openSpots.forEach(
 						pos => {
@@ -44,6 +47,8 @@ class PavingQuest extends Quest {
 							let notARoad = pos.lookForStructure(STRUCTURE_ROAD) === undefined;
 							if(notAConstructionSite && notARoad) {
 								this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
+								sitesCreated++;
+								// if(this.flag.room.createConstructionSite(pos, STRUCTURE_ROAD) === OK) sitesCreated++;
 							}
 						}
 					);
