@@ -37,7 +37,7 @@ class PavingQuest extends Quest {
 			);
 			pavingStructures.forEach(
 				structure => {
-					let openSpots = structure.pos.openAdjacentSpots(true);
+					let openSpots = structure.pos.openAdjacentDiagonalSpots(true);
 					openSpots.forEach(
 						pos => {
 							let notAConstructionSite = pos.lookFor(LOOK_CONSTRUCTION_SITES).length === 0;
