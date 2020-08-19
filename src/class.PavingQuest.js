@@ -21,12 +21,16 @@ class PavingQuest extends Quest {
 		}
 
 		if(this.memory.cache.roomPaved === undefined) {
-			this.memory.cache.roomPaved = true;
+			// this.memory.cache.roomPaved = true;
 
 			// TODO: make this a cached find
 			let pavingStructures = _.filter(
 				this.flag.room.find(FIND_MY_STRUCTURES),
-				s => s.structureType === STRUCTURE_SPAWN || s.structureType === STRUCTURE_EXTENSION
+				s => {
+					return s.structureType === STRUCTURE_SPAWN ||
+						s.structureType === STRUCTURE_EXTENSION ||
+						s.structureType === STRUCTURE_TOWER
+				}
 			);
 			pavingStructures.forEach(
 				structure => {
