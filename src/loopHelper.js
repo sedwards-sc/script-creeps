@@ -16,6 +16,7 @@ require('class.HarvesterQuest');
 require('class.LinkingQuest');
 require('class.LinkMinerQuest');
 require('class.MiningCartQuest');
+require('class.PavingQuest');
 require('class.ReserverQuest');
 require('class.SentinelQuest');
 require('class.UpgraderQuest');
@@ -32,11 +33,12 @@ global.QUEST_CLASSES = {
 	'linking': LinkingQuest,
 	'linkMiner': LinkMinerQuest,
 	'miningCart': MiningCartQuest,
+	'paving': PavingQuest,
 	'reserver': ReserverQuest,
 	'sentinel': SentinelQuest,
 	'upgrader': UpgraderQuest,
 	'upgradingCart': UpgradingCartQuest,
-	'workingCar': WorkingCartQuest
+	'workingCart': WorkingCartQuest
 };
 
 var loopHelper = {};
