@@ -192,17 +192,14 @@ Creep.prototype.withdrawEverything = function (target) {
 	return ERR_NOT_ENOUGH_RESOURCES;
 };
 
-// Uses the deprecated "carry"
-// TODO: update to use "store"
-// Creep.prototype.transferEverything = function (target) {
-// 	for(let resourceType in this.carry) {
-// 		let amount = this.carry[resourceType];
-// 		if(amount > 0) {
-// 			return this.transfer(target, resourceType);
-// 		}
-// 	}
-// 	return ERR_NOT_ENOUGH_RESOURCES;
-// };
+Creep.prototype.transferEverything = function (target) {
+	for(let resourceType in this.store) {
+		if(this.store[resourceType] > 0) {
+			return this.transfer(target, resourceType);
+		}
+	}
+	return ERR_NOT_ENOUGH_RESOURCES;
+};
 
 // TODO: ensure optimal usage of new "store"
 Creep.prototype.hasLoad = function() {
