@@ -118,11 +118,11 @@ RoomPosition.prototype.openAdjacentSpots = function(ignoreCreeps) {
 };
 
 /**
- * Returns all surrounding diagonal positions that are currently open
+ * Returns all surrounding non-diagonal positions that are currently open
  * @param ignoreCreeps - if true, will consider positions containing a creep to be open
  * @returns {RoomPosition[]}
  */
-RoomPosition.prototype.openAdjacentDiagonalSpots = function(ignoreCreeps) {
+RoomPosition.prototype.openAdjacentNonDiagonalSpots = function(ignoreCreeps) {
 	let positions = [];
 	for(let i = 1; i <= 8; i += 2) {
 		let testPosition = this.getPositionAtDirection(i);

@@ -40,7 +40,7 @@ class PavingQuest extends Quest {
 			pavingStructures.forEach(
 				structure => {
 					if(sitesCreated >= ROAD_BLOCK_SIZE) return false;
-					let openSpots = structure.pos.openAdjacentDiagonalSpots(true);
+					let openSpots = structure.pos.openAdjacentNonDiagonalSpots(true);
 					openSpots.forEach(
 						pos => {
 							let notAConstructionSite = pos.lookFor(LOOK_CONSTRUCTION_SITES).length === 0;
