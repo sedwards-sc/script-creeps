@@ -107,8 +107,9 @@ class UpgraderQuest extends Quest {
 				creep.blindMoveTo(workTarget);
 			} else {
 				creep.working = true;
-				// TODO: don't yield road if upgrading
-				creep.yieldRoad(workTarget);
+				if(workTarget instanceof ConstructionSite) {
+					creep.yieldRoad(workTarget);
+				}
 			}
 			return;
 		}
