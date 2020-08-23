@@ -21,36 +21,59 @@ class PavingQuest extends Quest {
 			this.memory.cache.partsRequired = Math.max(Math.ceil(sum / 500000), 1);
 		}
 
-		if(this.memory.cache.roomPaved === undefined) {
-			this.memory.cache.roomPaved = true;
+		if(this.memory.cache.pavingCycle === undefined) {
+			this.memory.cache.pavingCycle = true;
+			let spotsToPave = [];
 
-			// TODO: make this a cached find
-			let pavingStructures = _.filter(
-				this.flag.room.find(FIND_MY_STRUCTURES),
-				s => {
-					return s.structureType === STRUCTURE_SPAWN ||
-						s.structureType === STRUCTURE_EXTENSION ||
-						s.structureType === STRUCTURE_STORAGE ||
-						s.structureType === STRUCTURE_TERMINAL ||
-						s.structureType === STRUCTURE_LINK ||
-						s.structureType === STRUCTURE_TOWER
-				}
+			let pavingStructures = [];
+			pavingStructures = pavingStructures.concat(
+				this.flag.room.findStructures(STRUCTURE_SPAWN),
+				this.flag.room.findStructures(STRUCTURE_EXTENSION),
+				this.flag.room.findStructures(STRUCTURE_STORAGE),
+				this.flag.room.findStructures(STRUCTURE_TERMINAL),
+				this.flag.room.findStructures(STRUCTURE_LINK),
+				this.flag.room.findStructures(STRUCTURE_TOWER)
 			);
-			let sitesCreated = 0;
+			pavingStructures = _.filter(pavingStructures, s => s.my);
 			pavingStructures.forEach(
 				structure => {
-					if(sitesCreated >= ROAD_BLOCK_SIZE) return false;
-					let openSpots = structure.pos.openAdjacentNonDiagonalSpots(true);
-					openSpots.forEach(
+					structure.pos.openAdjacentNonDiagonalSpots(true).forEach(
 						pos => {
 							let notAConstructionSite = pos.lookFor(LOOK_CONSTRUCTION_SITES).length === 0;
 							let notARoad = pos.lookForStructure(STRUCTURE_ROAD) === undefined;
 							if(notAConstructionSite && notARoad) {
-								// this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
-								if(this.flag.room.createConstructionSite(pos, STRUCTURE_ROAD) === OK) sitesCreated++;
+								spotsToPave.push(pos);
 							}
 						}
 					);
+				}
+			);
+
+			this.colony.POIs.forEach(
+				poi => {
+					let pos;
+					if(poi instanceof RoomPosition) {
+						pos = poi;
+					} else if(poi.pos && poi.pos instanceof RoomPosition) {
+						pos = poi.pos;
+					} else {
+						return false;
+					}
+
+					// calculate path between POI and ?
+					
+
+					// push positions in path to the spotsToPave list
+				}
+			);
+
+			// TODO: make spotsToPave unique/distinct
+			let sitesCreated = 0;
+			spotsToPave.forEach(
+				pos => {
+					if(sitesCreated >= ROAD_BLOCK_SIZE) return false;
+					// this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
+					if(this.flag.room.createConstructionSite(pos, STRUCTURE_ROAD) === OK) sitesCreated++;
 				}
 			);
 		}

@@ -26,6 +26,10 @@ class Colony {
 			this.questList = [];
 		}
 
+		if(!this.POIs) {
+			this.POIs = [];
+		}
+
 		// variables that require vision (null check where appropriate)
 		if(this.flag.room) {
 			this.hasVision = true;
@@ -114,6 +118,9 @@ class Colony {
 
 						this.quests[questClassName][questId] = quest;
 						this.questList.push(quest);
+						if(quest.POI) {
+							this.POIs.push(quest.flag);
+						}
 					}
 				}
 			}

@@ -104,7 +104,7 @@ class LinkingQuest extends Quest {
 		this.linkers.forEach(
 			creep => {
 				if(this.controllerLink) {
-					this.linkerActionsUpgrade(creep)
+					this.linkerActionsUpgrade(creep);
 				} else {
 					this.linkerActionsIncome(creep);
 				}
