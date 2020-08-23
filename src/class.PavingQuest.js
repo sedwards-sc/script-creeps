@@ -60,10 +60,29 @@ class PavingQuest extends Quest {
 						return false;
 					}
 
-					// calculate path between POI and ?
-					
+					// calculate path between main spawn and POI position
+					// this might be expensive for a lot of paths.... maybe one path per cycle?
+					let pathFinderResults = PathFinder.search(this.spawnGroup.pos, {pos: pos, range: 1}, {
+						maxOps: 8000,
+						roomCallback: function(roomName) {
+							let room = Game.rooms[roomName];
+							if(!room) {
+								return;
+							}
+
+							let costs = new PathFinder.CostMatrix();
+							// TODO: used cached find
+							room.find(FIND_STRUCTURES).forEach(function(structure) {
+								if(structure.structureType !== STRUCTURE_ROAD && structure.structureType !== STRUCTURE_CONTAINER && (structure.structureType !== STRUCTURE_RAMPART || !structure.my)) {
+									costs.set(structure.pos.x, structure.pos.y, 0xff);
+								}
+							});
+							return costs;
+						},
+					});
 
 					// push positions in path to the spotsToPave list
+					spotsToPave = spotsToPave.concat(pathFinderResults.path);
 				}
 			);
 
@@ -72,8 +91,8 @@ class PavingQuest extends Quest {
 			spotsToPave.forEach(
 				pos => {
 					if(sitesCreated >= ROAD_BLOCK_SIZE) return false;
-					// this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
-					if(this.flag.room.createConstructionSite(pos, STRUCTURE_ROAD) === OK) sitesCreated++;
+					this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
+					// if(this.flag.room.createConstructionSite(pos, STRUCTURE_ROAD) === OK) sitesCreated++;
 				}
 			);
 		}
