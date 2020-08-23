@@ -7,6 +7,7 @@ class LinkMinerQuest extends Quest {
 	 */
 	constructor(id, flag, colony) {
 		super('linkMiner', PRIORITY_MEDIUM, id, flag, colony);
+		// this.POI = true;
 	}
 
 	initQuest() {
@@ -102,7 +103,7 @@ class LinkMinerQuest extends Quest {
 
 				let transferReturn = creep.transfer(myTransferStructure, RESOURCE_ENERGY);
 				if(transferReturn != OK) {
-					creeps.errorLog('could not successfully transfer', transferReturn);
+					creep.errorLog('could not successfully transfer', transferReturn);
 				}
 			}
 		} else {
