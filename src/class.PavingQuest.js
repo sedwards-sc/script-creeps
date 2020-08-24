@@ -150,7 +150,8 @@ class PavingQuest extends Quest {
 		if(this.colony.flag.room.storage) {
 			options.destination = this.colony.flag.room.storage;
 		}
-		this.pavers = this.attendance("paver_" + this.id, this.spawnGroup.workerBodyRatio(1, 3, 2, 1, this.memory.cache.partsRequired), 1, options);
+		// TODO: only build with less MOVE parts after colony is paved
+		this.pavers = this.attendance("paver_" + this.id, this.spawnGroup.workerBodyRatio(1, 3, 4, 1, this.memory.cache.partsRequired), 1, options);
 	}
 
 	runActivities() {
