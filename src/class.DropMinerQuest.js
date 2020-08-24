@@ -8,7 +8,7 @@ class DropMinerQuest extends Quest {
 	constructor(id, flag, colony) {
 		// TODO: adjust priority vs harvesters
 		super('dropMiner', PRIORITY_MEDIUM, id, flag, colony);
-		// this.POI = true;
+		// this.poi = true;
 	}
 
 	initQuest() {

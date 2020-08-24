@@ -7,7 +7,7 @@ class LinkMinerQuest extends Quest {
 	 */
 	constructor(id, flag, colony) {
 		super('linkMiner', PRIORITY_MEDIUM, id, flag, colony);
-		// this.POI = true;
+		// this.poi = true;
 	}
 
 	initQuest() {

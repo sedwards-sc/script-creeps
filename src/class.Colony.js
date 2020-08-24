@@ -26,8 +26,8 @@ class Colony {
 			this.questList = [];
 		}
 
-		if(!this.POIs) {
-			this.POIs = [];
+		if(!this.poiList) {
+			this.poiList = [];
 		}
 
 		// variables that require vision (null check where appropriate)
@@ -118,8 +118,8 @@ class Colony {
 
 						this.quests[questClassName][questId] = quest;
 						this.questList.push(quest);
-						if(quest.POI) {
-							this.POIs.push(quest.flag);
+						if(quest.poi) {
+							this.poiList.push(quest.flag);
 						}
 					}
 				}

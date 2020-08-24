@@ -10,7 +10,7 @@ class UpgraderQuest extends Quest {
 	 */
 	constructor(id, flag, colony) {
 		super('upgrader', PRIORITY_LOW, id, flag, colony);
-		this.POI = true;
+		this.poi = true;
 	}
 
 	initQuest() {
