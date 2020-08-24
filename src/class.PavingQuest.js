@@ -252,7 +252,11 @@ class PavingQuest extends Quest {
 		if(!target) {
 			// look for construction site roads if there are no roads to repair
 			let findRoadUnderConstruction = () => {
-				let roadSites = [];
+				let roadSites = creep.room.findConstructionSitesByType(STRUCTURE_ROAD);
+				if(roadSites.length) {
+					return creep.pos.findClosestByPath(roadSites);
+				}
+
 				this.maintainRoomsList.forEach(
 					roomName => {
 						let room = Game.rooms[roomName];
@@ -262,7 +266,7 @@ class PavingQuest extends Quest {
 					}
 				);
 				if(roadSites.length) {
-					return creep.pos.findClosestByPath(roadSites);
+					return _.first(roadSites);
 				}
 			};
 			let forgetRoadUnderConstruction = (s) => s.progress === s.progressTotal;
