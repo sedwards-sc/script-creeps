@@ -132,7 +132,7 @@ class PavingQuest extends Quest {
 				}
 			);
 
-			if(sitesCreated === 0) {
+			if(spotsToPave.length === 0) {
 				this.memory.cache.colonyPaved = true;
 			}
 		}
