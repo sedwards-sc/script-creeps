@@ -127,7 +127,8 @@ class PavingQuest extends Quest {
 					if(sitesCreated >= ROAD_BLOCK_SIZE) return false;
 					// this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
 					// Game.rooms[pos.roomName].visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'green'});
-					if(this.flag.room.createConstructionSite(pos, STRUCTURE_ROAD) === OK) sitesCreated++;
+					let room = Game.rooms[pos.roomName];
+					if(room && room.createConstructionSite(pos, STRUCTURE_ROAD) === OK) sitesCreated++;
 				}
 			);
 
