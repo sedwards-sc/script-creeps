@@ -16,13 +16,38 @@ class PavingQuest extends Quest {
 	}
 
 	initQuest() {
+		this.maintainRooms = {};
+		this.maintainRooms[this.flag.pos.roomName] = true;
+		this.colony.poiList.forEach(
+			poi => {
+				let roomName;
+				if(poi instanceof RoomPosition) {
+					roomName = poi.roomName;
+				} else if(poi.pos && poi.pos instanceof RoomPosition) {
+					roomName = poi.pos.roomName;
+				} else {
+					return false;
+				}
+				this.maintainRooms[roomName] = true;
+			}
+		);
+		this.maintainRoomsList = Object.keys(this.maintainRooms);
+
 		if(this.memory.cache.partsRequired === undefined) {
-			let sum = _.sum(this.flag.room.findStructures(STRUCTURE_ROAD), r => r.hitsMax);
+			let sum = 0;
+			this.maintainRoomsList.forEach(
+				roomName => {
+					let room = Game.rooms[roomName];
+					if(room) {
+						sum += _.sum(room.findStructures(STRUCTURE_ROAD), r => r.hitsMax);
+					}
+				}
+			);
 			this.memory.cache.partsRequired = Math.max(Math.ceil(sum / 500000), 1);
 		}
 
 		if(this.memory.cache.pavingCycle === undefined) {
-			// this.memory.cache.pavingCycle = true;
+			this.memory.cache.pavingCycle = true;
 			let spotsToPave = [];
 
 			let pavingStructures = [];
@@ -101,28 +126,19 @@ class PavingQuest extends Quest {
 				pos => {
 					if(sitesCreated >= ROAD_BLOCK_SIZE) return false;
 					// this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
-					Game.rooms[pos.roomName].visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'green'});
-					// if(this.flag.room.createConstructionSite(pos, STRUCTURE_ROAD) === OK) sitesCreated++;
+					// Game.rooms[pos.roomName].visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'green'});
+					if(this.flag.room.createConstructionSite(pos, STRUCTURE_ROAD) === OK) sitesCreated++;
 				}
 			);
+
+			if(sitesCreated === 0) {
+				this.memory.cache.colonyPaved = true;
+			}
 		}
 
-		this.maintainRooms = {};
-		this.colony.poiList.forEach(
-			poi => {
-				let roomName;
-				if(poi instanceof RoomPosition) {
-					roomName = poi.roomName;
-				} else if(poi.pos && poi.pos instanceof RoomPosition) {
-					roomName = poi.pos.roomName;
-				} else {
-					return false;
-				}
-				this.maintainRooms[roomName] = true;
-			}
-		);
-		this.maintainRoomsList = Object.keys(this.maintainRooms);
-		this.log(this.maintainRoomsList);
+		if(this.memory.cache.colonyPaved) {
+			this.colony.paved = true;
+		}
 
 		this.pavers = [];
 	}
