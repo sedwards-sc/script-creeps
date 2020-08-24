@@ -97,7 +97,22 @@ class PavingQuest extends Quest {
 			);
 		}
 
-		this.colony.POIs.forEach();
+		this.maintainRooms = {};
+		this.colony.poiList.forEach(
+			poi => {
+				let roomName;
+				if(poi instanceof RoomPosition) {
+					roomName = poi.roomName;
+				} else if(poi.pos && poi.pos instanceof RoomPosition) {
+					roomName = poi.pos.roomName;
+				} else {
+					return false;
+				}
+				this.maintainRooms[roomName] = true;
+			}
+		);
+		this.maintainRoomsList = Object.keys(this.maintainRooms);
+		this.log(this.maintainRoomsList);
 
 		this.pavers = [];
 	}
