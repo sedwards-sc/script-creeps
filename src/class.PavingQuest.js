@@ -82,7 +82,16 @@ class PavingQuest extends Quest {
 					});
 
 					// push positions in path to the spotsToPave list
-					spotsToPave = spotsToPave.concat(pathFinderResults.path);
+					// spotsToPave = spotsToPave.concat(pathFinderResults.path);
+					pathFinderResults.path.forEach(
+						pos => {
+							let notAConstructionSite = pos.lookFor(LOOK_CONSTRUCTION_SITES).length === 0;
+							let notARoad = pos.lookForStructure(STRUCTURE_ROAD) === undefined;
+							if(notAConstructionSite && notARoad) {
+								spotsToPave.push(pos);
+							}
+						}
+					);
 				}
 			);
 
@@ -92,7 +101,7 @@ class PavingQuest extends Quest {
 				pos => {
 					if(sitesCreated >= ROAD_BLOCK_SIZE) return false;
 					// this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
-					Game.rooms[pos.roomName].visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
+					Game.rooms[pos.roomName].visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'green'});
 					// if(this.flag.room.createConstructionSite(pos, STRUCTURE_ROAD) === OK) sitesCreated++;
 				}
 			);
