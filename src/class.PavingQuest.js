@@ -169,11 +169,11 @@ class PavingQuest extends Quest {
 			return;
 		}
 
-		let withinRoom = creep.pos.roomName === this.flag.pos.roomName;
-		if(!withinRoom) {
-			creep.blindMoveTo(this.flag);
-			return;
-		}
+		// let withinRoom = creep.pos.roomName === this.flag.pos.roomName;
+		// if(!withinRoom) {
+		// 	creep.blindMoveTo(this.flag);
+		// 	return;
+		// }
 
 		if(!creep.hasLoad()) {
 			let findEnergy = () => {
@@ -233,7 +233,18 @@ class PavingQuest extends Quest {
 		// I'm in the room and I have energy
 
 		let findRoad = () => {
-			return creep.pos.findClosestByPath(_.filter(creep.room.findStructures(STRUCTURE_ROAD), (s) => s.hits < s.hitsMax - 1000));
+			let roads = [];
+			this.maintainRoomsList.forEach(
+				roomName => {
+					let room = Game.rooms[roomName];
+					if(room) {
+						roads = roads.concat(
+							_.filter(room.findStructures(STRUCTURE_ROAD), (s) => s.hits < s.hitsMax - 1000)
+						);
+					}
+				}
+			);
+			return creep.pos.findClosestByPath(roads);
 		};
 		let forgetRoad = (s) => s.hits === s.hitsMax;
 		let target = creep.rememberStructure(findRoad, forgetRoad, REMEMBER_ROAD_KEY);
@@ -241,8 +252,16 @@ class PavingQuest extends Quest {
 		if(!target) {
 			// look for construction site roads if there are no roads to repair
 			let findRoadUnderConstruction = () => {
-				let roadSites = creep.room.findConstructionSitesByType(STRUCTURE_ROAD);
-				if(roadSites.length > 0) {
+				let roadSites = [];
+				this.maintainRoomsList.forEach(
+					roomName => {
+						let room = Game.rooms[roomName];
+						if(room) {
+							roadSites = roadSites.concat(room.findConstructionSitesByType(STRUCTURE_ROAD));
+						}
+					}
+				);
+				if(roadSites.length) {
 					return creep.pos.findClosestByPath(roadSites);
 				}
 			};
