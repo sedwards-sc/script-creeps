@@ -49,7 +49,7 @@ class PavingQuest extends Quest {
 				}
 			);
 
-			this.colony.POIs.forEach(
+			this.colony.poiList.forEach(
 				poi => {
 					let pos;
 					if(poi instanceof RoomPosition) {
@@ -91,11 +91,13 @@ class PavingQuest extends Quest {
 			spotsToPave.forEach(
 				pos => {
 					if(sitesCreated >= ROAD_BLOCK_SIZE) return false;
-					// this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
-					if(this.flag.room.createConstructionSite(pos, STRUCTURE_ROAD) === OK) sitesCreated++;
+					this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
+					// if(this.flag.room.createConstructionSite(pos, STRUCTURE_ROAD) === OK) sitesCreated++;
 				}
 			);
 		}
+
+		this.colony.POIs.forEach();
 
 		this.pavers = [];
 	}
