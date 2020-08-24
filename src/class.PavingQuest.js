@@ -233,7 +233,11 @@ class PavingQuest extends Quest {
 		// I'm in the room and I have energy
 
 		let findRoad = () => {
-			let roads = [];
+			let roads = _.filter(creep.room.findStructures(STRUCTURE_ROAD), (s) => s.hits < s.hitsMax - 1000);
+			if(roads.length) {
+				return creep.pos.findClosestByPath(roads);
+			}
+
 			this.maintainRoomsList.forEach(
 				roomName => {
 					let room = Game.rooms[roomName];
@@ -244,7 +248,7 @@ class PavingQuest extends Quest {
 					}
 				}
 			);
-			return creep.pos.findClosestByPath(roads);
+			return _.first(roads);
 		};
 		let forgetRoad = (s) => s.hits === s.hitsMax;
 		let target = creep.rememberStructure(findRoad, forgetRoad, REMEMBER_ROAD_KEY);
@@ -265,9 +269,7 @@ class PavingQuest extends Quest {
 						}
 					}
 				);
-				if(roadSites.length) {
-					return _.first(roadSites);
-				}
+				return _.first(roadSites);
 			};
 			let forgetRoadUnderConstruction = (s) => s.progress === s.progressTotal;
 			target = creep.rememberStructure(findRoadUnderConstruction, forgetRoadUnderConstruction, REMEMBER_CONSTRUCTION_KEY);
