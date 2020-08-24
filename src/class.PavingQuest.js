@@ -22,7 +22,7 @@ class PavingQuest extends Quest {
 		}
 
 		if(this.memory.cache.pavingCycle === undefined) {
-			this.memory.cache.pavingCycle = true;
+			// this.memory.cache.pavingCycle = true;
 			let spotsToPave = [];
 
 			let pavingStructures = [];
@@ -91,7 +91,8 @@ class PavingQuest extends Quest {
 			spotsToPave.forEach(
 				pos => {
 					if(sitesCreated >= ROAD_BLOCK_SIZE) return false;
-					this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
+					// this.flag.room.visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
+					Game.rooms[pos.roomName].visual.circle(pos, {fill: 'transparent', radius: 0.55, stroke: 'red'});
 					// if(this.flag.room.createConstructionSite(pos, STRUCTURE_ROAD) === OK) sitesCreated++;
 				}
 			);
