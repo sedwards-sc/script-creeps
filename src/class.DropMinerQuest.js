@@ -94,7 +94,7 @@ class DropMinerQuest extends Quest {
 			if(rangeToFlag === 1) {
 				const otherCreep = _.first(this.flag.pos.lookFor(LOOK_CREEPS));
 				if(otherCreep && otherCreep.getActiveBodyparts(WORK) <= 1) {
-					otherCreep.moveTo(_.first(otherCreep.pos.openAdjacentSpots()));
+					otherCreep.blindMoveTo(creep);
 				}
 			}
 			creep.blindMoveTo(this.flag);
