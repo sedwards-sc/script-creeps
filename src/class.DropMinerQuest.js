@@ -75,7 +75,8 @@ class DropMinerQuest extends Quest {
 			}
 		}
 
-		if(creep.pos.isEqualTo(this.flag)) {
+		const rangeToFlag = creep.pos.getRangeTo(this.flag);
+		if(rangeToFlag === 0) {
 			let mySource = Game.getObjectById(creep.memory.mySourceId);
 			if(mySource === null) {
 				mySource = this.flag.pos.findClosestByRange(FIND_SOURCES);
@@ -90,6 +91,12 @@ class DropMinerQuest extends Quest {
 				}
 			}
 		} else {
+			if(rangeToFlag === 1) {
+				const otherCreep = _.first(this.flag.pos.lookFor(LOOK_CREEPS));
+				if(otherCreep && otherCreep.getActiveBodyparts(WORK) <= 1) {
+					otherCreep.moveTo(_.first(otherCreep.pos.openAdjacentSpots()));
+				}
+			}
 			creep.blindMoveTo(this.flag);
 		}
 	}
