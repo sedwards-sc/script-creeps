@@ -66,7 +66,8 @@ class PavingQuest extends Quest {
 						pos => {
 							let notAConstructionSite = pos.lookFor(LOOK_CONSTRUCTION_SITES).length === 0;
 							let notARoad = pos.lookForStructure(STRUCTURE_ROAD) === undefined;
-							if(notAConstructionSite && notARoad) {
+							let notExit = !pos.isNearExit(0);
+							if(notAConstructionSite && notARoad && notExit) {
 								spotsToPave.push(pos);
 							}
 						}
@@ -112,7 +113,8 @@ class PavingQuest extends Quest {
 						pos => {
 							let notAConstructionSite = pos.lookFor(LOOK_CONSTRUCTION_SITES).length === 0;
 							let notARoad = pos.lookForStructure(STRUCTURE_ROAD) === undefined;
-							if(notAConstructionSite && notARoad) {
+							let notExit = !pos.isNearExit(0);
+							if(notAConstructionSite && notARoad && notExit) {
 								spotsToPave.push(pos);
 							}
 						}
