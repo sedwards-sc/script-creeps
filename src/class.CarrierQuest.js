@@ -27,12 +27,17 @@ class CarrierQuest extends Quest {
 			options.destination = this.colony.flag.room.storage;
 		}
 
+		let body = [];
 		if(!this.memory.lastTick || Game.time > this.memory.lastTick + EMERGENCY_CARRIER_DELAY) {
 			this.log('emergency carrier mode activated', 5);
-			this.carriers = this.attendance(this.nameId, [CARRY, MOVE, CARRY, MOVE, CARRY, MOVE], MAX_CARRIERS, options);
+			body = [CARRY, MOVE, CARRY, MOVE, CARRY, MOVE];
+		} else if(this.colony.paved) {
+			body = this.spawnGroup.workerBodyRatio(0, 2, 1, 1, 4);
 		} else {
-			this.carriers = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(0, 1, 1, 1, 8), MAX_CARRIERS, options);
+			body = this.spawnGroup.workerBodyRatio(0, 1, 1, 1, 8);
 		}
+
+		this.carriers = this.attendance(this.nameId, body, MAX_CARRIERS, options);
 
 		if(this.carriers.length > 0) {
 			this.memory.lastTick = Game.time;
