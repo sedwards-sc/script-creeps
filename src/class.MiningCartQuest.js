@@ -92,7 +92,15 @@ class MiningCartQuest extends Quest {
 				carrysPerCreep = Math.ceil(this.memory.cache.carryPartsRequired / maxCarts);
 			}
 		}
-		this.carts = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(0, 1, 1, 1, carrysPerCreep), maxCarts, {prespawn: this.memory.cache.prespawn});
+
+		let body = [];
+		if(this.colony.paved) {
+			body = this.spawnGroup.workerBodyRatio(0, 2, 1, 1, Math.ceil(carrysPerCreep / 2));
+		} else {
+			body = this.spawnGroup.workerBodyRatio(0, 1, 1, 1, carrysPerCreep);
+		}
+
+		this.carts = this.attendance(this.nameId, body, maxCarts, {prespawn: this.memory.cache.prespawn});
 	}
 
 	runActivities() {
