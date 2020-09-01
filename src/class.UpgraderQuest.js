@@ -60,7 +60,15 @@ class UpgraderQuest extends Quest {
 				maxUpgraders = Math.floor(storageEnergy / 100000) + 1;
 			}
 		}
-		this.upgraders = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 1, 2, 1), maxUpgraders, options);
+
+		let body = [];
+		if(this.colony.paved) {
+			body = this.spawnGroup.workerBodyRatio(1, 1, 1, 1);
+		} else {
+			body = this.spawnGroup.workerBodyRatio(1, 1, 2, 1);
+		}
+
+		this.upgraders = this.attendance(this.nameId, body, maxUpgraders, options);
 	}
 
 	runActivities() {
