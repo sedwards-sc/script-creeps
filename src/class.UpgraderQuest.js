@@ -47,25 +47,32 @@ class UpgraderQuest extends Quest {
 	}
 
 	runCensus() {
-		// TODO: set maxUpgraders for level 8 room
 		let maxUpgraders = 1;
+		let body = [];
 		let options = {};
 		options.prespawn = this.memory.cache.prespawn;
+		if(this.colony.flag.room.storage) options.destination = this.colony.flag.room.storage;
 
-		if(this.colony.flag.room.storage) {
-			options.destination = this.colony.flag.room.storage;
-
-			let storageEnergy = this.colony.flag.room.storage.store.getUsedCapacity(RESOURCE_ENERGY);
-			if(storageEnergy > 0) {
-				maxUpgraders = Math.floor(storageEnergy / 100000) + 1;
+		if(this.colony.flag.room.controller.level === 8) {
+			if(this.colony.paved) {
+				body = this.spawnGroup.workerBodyRatio(1, 1, 1, 1, 15);
+			} else {
+				maxUpgraders = 3;
+				body = this.spawnGroup.workerBodyRatio(1, 1, 2, 1, 5);
 			}
-		}
-
-		let body = [];
-		if(this.colony.paved) {
-			body = this.spawnGroup.workerBodyRatio(1, 1, 1, 1);
 		} else {
-			body = this.spawnGroup.workerBodyRatio(1, 1, 2, 1);
+			if(this.colony.flag.room.storage) {
+				let storageEnergy = this.colony.flag.room.storage.store.getUsedCapacity(RESOURCE_ENERGY);
+				if(storageEnergy > 0) {
+					maxUpgraders = Math.floor(storageEnergy / 100000) + 1;
+				}
+			}
+
+			if(this.colony.paved) {
+				body = this.spawnGroup.workerBodyRatio(1, 1, 1, 1);
+			} else {
+				body = this.spawnGroup.workerBodyRatio(1, 1, 2, 1);
+			}
 		}
 
 		this.upgraders = this.attendance(this.nameId, body, maxUpgraders, options);
