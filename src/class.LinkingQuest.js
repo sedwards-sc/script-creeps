@@ -1,6 +1,7 @@
 /* jshint esversion: 6 */
 
 const STORAGE_MINIMUM = 200000;
+const TERMINAL_MINIMUM = 50000;
 
 class LinkingQuest extends Quest {
 
@@ -137,15 +138,20 @@ class LinkingQuest extends Quest {
 		if(creep.pos.isEqualTo(this.flag)) {
 			creep.memory.avoidMe = true;
 
+			let roomTerminal = this.flag.room.terminal;
 			if(creep.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
 				if(this.storageLink && this.storageLink.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
 					creep.transfer(this.storageLink, RESOURCE_ENERGY);
+				} else if(roomTerminal && roomTerminal.store.getUsedCapacity(RESOURCE_ENERGY) < TERMINAL_MINIMUM) {
+					creep.transfer(roomTerminal, RESOURCE_ENERGY);
 				} else {
 					creep.transfer(this.storage, RESOURCE_ENERGY);
 				}
 			} else {
 				let excessEnergy = this.storage.store.getUsedCapacity(RESOURCE_ENERGY) > STORAGE_MINIMUM;
-				if(excessEnergy && this.storageLink && this.storageLink.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
+				let storageLinkSpace = this.storageLink && this.storageLink.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+				let terminalNeedsFilling = roomTerminal && roomTerminal.store.getUsedCapacity(RESOURCE_ENERGY) < TERMINAL_MINIMUM;
+				if(excessEnergy && (storageLinkSpace || terminalNeedsFilling)) {
 					creep.withdraw(this.storage, RESOURCE_ENERGY);
 				}
 			}
@@ -168,13 +174,19 @@ class LinkingQuest extends Quest {
 		if(creep.pos.isEqualTo(this.flag)) {
 			creep.memory.avoidMe = true;
 
+			let roomTerminal = this.flag.room.terminal;
 			if(creep.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
-				if(this.storage.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
+				if(roomTerminal && roomTerminal.store.getUsedCapacity(RESOURCE_ENERGY) < TERMINAL_MINIMUM && this.storage.store.getUsedCapacity(RESOURCE_ENERGY) > STORAGE_MINIMUM) {
+					creep.transfer(roomTerminal, RESOURCE_ENERGY);
+				} else if(this.storage.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
 					creep.transfer(this.storage, RESOURCE_ENERGY);
 				}
 			} else {
 				if(this.storageLink && this.storageLink.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
 					creep.withdraw(this.storageLink, RESOURCE_ENERGY);
+				} else if(roomTerminal && roomTerminal.store.getUsedCapacity(RESOURCE_ENERGY) > TERMINAL_MINIMUM) {
+					let energy = roomTerminal.store.getUsedCapacity(RESOURCE_ENERGY) - TERMINAL_MINIMUM;
+					creep.withdraw(roomTerminal, RESOURCE_ENERGY, energy);
 				}
 			}
 		} else {
