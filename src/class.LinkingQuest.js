@@ -185,7 +185,7 @@ class LinkingQuest extends Quest {
 				if(this.storageLink && this.storageLink.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
 					creep.withdraw(this.storageLink, RESOURCE_ENERGY);
 				} else if(roomTerminal && roomTerminal.store.getUsedCapacity(RESOURCE_ENERGY) > TERMINAL_MINIMUM) {
-					let energy = roomTerminal.store.getUsedCapacity(RESOURCE_ENERGY) - TERMINAL_MINIMUM;
+					let energy = Math.min(roomTerminal.store.getUsedCapacity(RESOURCE_ENERGY) - TERMINAL_MINIMUM, creep.store.getFreeCapacity(RESOURCE_ENERGY));
 					creep.withdraw(roomTerminal, RESOURCE_ENERGY, energy);
 				}
 			}
