@@ -88,7 +88,12 @@ class PavingQuest extends Quest {
 
 					// calculate path between main spawn and POI position
 					// this might be expensive for a lot of paths.... maybe one path per cycle?
+					const ROAD_COST = 1;
+					const PLAIN_COST = 2;
+					const SWAMP_COST = 10;
 					let pathFinderResults = PathFinder.search(this.spawnGroup.pos, {pos: pos, range: 1}, {
+						plainCost: PLAIN_COST,
+						swampCost: SWAMP_COST,
 						maxOps: 8000,
 						roomCallback: function(roomName) {
 							let room = Game.rooms[roomName];
@@ -99,7 +104,10 @@ class PavingQuest extends Quest {
 							let costs = new PathFinder.CostMatrix();
 							// TODO: used cached find
 							room.find(FIND_STRUCTURES).forEach(function(structure) {
-								if(structure.structureType !== STRUCTURE_ROAD && structure.structureType !== STRUCTURE_CONTAINER && (structure.structureType !== STRUCTURE_RAMPART || !structure.my)) {
+								if(structure.structureType === STRUCTURE_ROAD) {
+									costs.set(structure.pos.x, structure.pos.y, ROAD_COST);
+								} else if(structure.structureType !== STRUCTURE_CONTAINER && (structure.structureType !== STRUCTURE_RAMPART || !structure.my)) {
+									// Can't walk through non-walkable buildings
 									costs.set(structure.pos.x, structure.pos.y, 0xff);
 								}
 							});
