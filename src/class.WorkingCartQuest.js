@@ -71,7 +71,7 @@ class WorkingCartQuest extends Quest {
 			let pathLength = Math.max(pathFinderResults.path.length * 2, 1);
 			let energyPerTrip = pathLength * ENERGY_PER_TICK;
 
-			this.memory.cache.carryPartsRequired = Math.max(Math.ceil(energyPerTrip / CARRY_CAPACITY), 1);
+			this.memory.cache.carryPartsRequired = Math.max(Math.ceil(energyPerTrip / CARRY_CAPACITY), 1) * 2;
 		}
 
 		this.carts = [];
