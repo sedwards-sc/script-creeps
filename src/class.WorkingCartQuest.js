@@ -78,10 +78,22 @@ class WorkingCartQuest extends Quest {
 	}
 
 	runCensus() {
-		// TODO: spawn extra carts if the max spawn energy isn't sufficient to produce maxBodyUnits
-		// let maxBodyUnits = Math.max(Math.ceil(this.memory.cache.carryPartsRequired / 2), 1);
-		// this.carts = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 2, 3, 1, maxBodyUnits), 1, {prespawn: this.memory.cache.prespawn});
-		this.carts = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(1, 1, 2, 1, this.memory.cache.carryPartsRequired), 1, {prespawn: this.memory.cache.prespawn});
+		let maxCarts = 1;
+		let carrysPerCreep = this.memory.cache.carryPartsRequired;
+		while(carrysPerCreep > 20 || calculateCreepCost(workerBody(carrysPerCreep, carrysPerCreep, carrysPerCreep * 2)) > this.spawnGroup.maxSpawnEnergy) {
+			// TODO: add a limit to the number of carts
+			maxCarts++;
+			carrysPerCreep = Math.ceil(this.memory.cache.carryPartsRequired / maxCarts);
+		}
+
+		let body = [];
+		if(this.colony.paved) {
+			body = this.spawnGroup.workerBodyRatio(1, 1, 1, 1, carrysPerCreep);
+		} else {
+			body = this.spawnGroup.workerBodyRatio(1, 1, 2, 1, carrysPerCreep);
+		}
+
+		this.carts = this.attendance(this.nameId, body, maxCarts, {prespawn: this.memory.cache.prespawn});
 	}
 
 	runActivities() {
