@@ -12,12 +12,26 @@
 
 /**
  * Returns array of structures, caching results on a per-tick basis
+ * @returns {Structure[]}
+ */
+Room.prototype.findAllStructures = function() {
+	if(!this.cache) {
+		this.cache = {};
+	}
+	if(!this.cache.structures) {
+		this.cache.structures = this.find(FIND_STRUCTURES);
+	}
+	return this.cache.structures || [];
+};
+
+/**
+ * Returns array of structures (specified by type), caching results on a per-tick basis
  * @param structureType
  * @returns {Structure[]}
  */
 Room.prototype.findStructures = function(structureType) {
 	if(!Game.cache.structures[this.name]) {
-		Game.cache.structures[this.name] = _.groupBy(this.find(FIND_STRUCTURES), (s) => s.structureType);
+		Game.cache.structures[this.name] = _.groupBy(this.findAllStructures(), (s) => s.structureType);
 	}
 	return Game.cache.structures[this.name][structureType] || [];
 };

@@ -102,8 +102,10 @@ class PavingQuest extends Quest {
 							}
 
 							let costs = new PathFinder.CostMatrix();
-							// TODO: used cached find
-							room.find(FIND_STRUCTURES).forEach(function(structure) {
+
+							room.findConstructionSitesByType(STRUCTURE_ROAD).forEach(roadSite => costs.set(roadSite.pos.x, roadSite.pos.y, ROAD_COST));
+
+							room.findAllStructures().forEach(function(structure) {
 								if(structure.structureType === STRUCTURE_ROAD) {
 									costs.set(structure.pos.x, structure.pos.y, ROAD_COST);
 								} else if(structure.structureType !== STRUCTURE_CONTAINER && (structure.structureType !== STRUCTURE_RAMPART || !structure.my)) {
