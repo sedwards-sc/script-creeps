@@ -80,8 +80,7 @@ class WorkingCartQuest extends Quest {
 	runCensus() {
 		let maxCarts = 1;
 		let carrysPerCreep = this.memory.cache.carryPartsRequired;
-		while(carrysPerCreep > 20 || calculateCreepCost(workerBody(carrysPerCreep, carrysPerCreep, carrysPerCreep * 2)) > this.spawnGroup.maxSpawnEnergy) {
-			// TODO: add a limit to the number of carts
+		while((carrysPerCreep > 20 || calculateCreepCost(workerBody(carrysPerCreep, carrysPerCreep, carrysPerCreep * 2)) > this.spawnGroup.maxSpawnEnergy) && maxCarts < 4) {
 			maxCarts++;
 			carrysPerCreep = Math.ceil(this.memory.cache.carryPartsRequired / maxCarts);
 		}
