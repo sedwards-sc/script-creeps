@@ -18,7 +18,7 @@ class SentinelQuest extends Quest {
 		options.prespawn = 0;
 		options.blindSpawn = true;
 		// TODO: only spawn when there are hostiles in the room to watch
-		this.sentinels = this.attendance(this.nameId, this.spawnGroup.bodyRatio({move: 4, attack: 3, heal: 1}, 1, 3), 1, options);
+		this.sentinels = this.attendance(this.nameId, this.spawnGroup.bodyRatio({move: 5, attack: 3, ranged_attack: 1, heal: 1}, 1, 3), 1, options);
 	}
 
 	runActivities() {
@@ -35,6 +35,7 @@ class SentinelQuest extends Quest {
 	sentinelActions(creep) {
 		if(creep.healingSelf(creep.hitsMax / 2)) {
 			 creep.heal(creep);
+			 creep.rangedMassAttack();
 			 creep.fleeHostiles();
 			 return;
 		}
@@ -58,6 +59,9 @@ class SentinelQuest extends Quest {
 				attacking = true;
 			} else {
 				creep.blindMoveTo(attackTarget);
+			}
+			if(creep.pos.inRangeTo(attackTarget, 3)) {
+				creep.rangedAttack(attackTarget);
 			}
 		} else {
 			// heal to max if no hostiles
