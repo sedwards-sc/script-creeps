@@ -90,7 +90,7 @@ class PavingQuest extends Quest {
 					// this might be expensive for a lot of paths.... maybe one path per cycle?
 					const ROAD_COST = 1;
 					const PLAIN_COST = 2;
-					const SWAMP_COST = 5;
+					const SWAMP_COST = 3;
 					let pathFinderResults = PathFinder.search(this.spawnGroup.pos, {pos: pos, range: 1}, {
 						plainCost: PLAIN_COST,
 						swampCost: SWAMP_COST,
