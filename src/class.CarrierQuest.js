@@ -141,7 +141,9 @@ class CarrierQuest extends Quest {
 			creep.memory.hasLoad = isFull;
 			if(isFull) {
 				if(creep.pos.isNearTo(this.flag)) {
-					creep.say('bored');
+					if(Game.time % 5 === 0) {
+						creep.say('idle');
+					}
 					creep.bored = true;
 				} else {
 					creep.blindMoveTo(this.flag);
