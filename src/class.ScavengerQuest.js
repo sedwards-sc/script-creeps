@@ -17,7 +17,11 @@ class ScavengerQuest extends Quest {
 
 	runCensus() {
 		// TODO: only spawn if there are resources to scavenge
-		this.scavengers = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(0, 1, 1, 1, 4), 1);
+		let maxScavengers = 0;
+		if(this.flag.room.storage && this.flag.room.storage.store.getFreeCapacity() > 5000) {
+			maxScavengers = 1;
+		}
+		this.scavengers = this.attendance(this.nameId, this.spawnGroup.workerBodyRatio(0, 1, 1, 1, 4), maxScavengers);
 	}
 
 	runActivities() {
@@ -62,6 +66,7 @@ class ScavengerQuest extends Quest {
 		let findResource = () => {
 			let resourceSources = [];
 			resourceSources = resourceSources.concat(
+				// TODO: ignore piles under drop miners
 				_.filter(creep.room.findDroppedResources(), (r) => r.amount > 20)
 			);
 			resourceSources = resourceSources.concat(
