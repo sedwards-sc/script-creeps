@@ -132,8 +132,12 @@ class MiningCartQuest extends Quest {
 					creep.blindMoveTo(storage);
 				}
 			} else {
-				creep.yieldRoad(storage);
 				creep.say('storage full');
+				if(creep.pos.isEqualTo(this.colony.flag)) {
+					creep.drop(RESOURCE_ENERGY);
+				} else {
+					creep.blindMoveTo(this.colony.flag);
+				}
 			}
 			return;
 		}
