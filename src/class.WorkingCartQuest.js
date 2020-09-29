@@ -80,7 +80,7 @@ class WorkingCartQuest extends Quest {
 	runCensus() {
 		let maxCarts = 1;
 		let carrysPerCreep = this.memory.cache.carryPartsRequired;
-		while((carrysPerCreep > 20 || calculateCreepCost(workerBody(carrysPerCreep, carrysPerCreep, carrysPerCreep * 2)) > this.spawnGroup.maxSpawnEnergy) && maxCarts < 4) {
+		while((carrysPerCreep > 20 || calculateCreepCost(workerBody(carrysPerCreep, carrysPerCreep, carrysPerCreep * 2)) > this.spawnGroup.maxSpawnEnergy) && maxCarts < 5) {
 			maxCarts++;
 			carrysPerCreep = Math.ceil(this.memory.cache.carryPartsRequired / maxCarts);
 		}
@@ -176,34 +176,27 @@ class WorkingCartQuest extends Quest {
 			return;
 		}
 
-		let findSource = () => {
-			return this.flag.pos.findClosestByRange(FIND_SOURCES);
-		};
-		let forgetSource = (s) => {
-			return false;
-		};
-		let source = creep.rememberStructure(findSource, forgetSource, 'sourceStructureId', true);
-		if(!source) {
-			creep.errorLog('could not find source near flag', ERR_NOT_FOUND, 4);
+		if(creep.pos.getRangeTo(this.flag) > 3) {
+			creep.blindMoveTo(this.flag);
 			return;
 		}
 
-		if(creep.pos.getRangeTo(source) > 3) {
-			creep.blindMoveTo(source);
-			return;
+		let energySupply = _.first(_.filter(this.flag.pos.lookFor(LOOK_RESOURCES), r => r.resourceType === RESOURCE_ENERGY && r.amount >= 20));
+		if(!energySupply) {
+			let container = this.flag.pos.lookForStructure(STRUCTURE_CONTAINER);
+			if(container && container.store.getUsedCapacity(RESOURCE_ENERGY) >= 20) {
+				energySupply = container;
+			}
 		}
 
-		// TODO: add container awareness
-		let energyPiles = _.filter(creep.room.findDroppedResources(), (r) => r.resourceType === RESOURCE_ENERGY && r.amount >= 20 && source.pos.getRangeTo(r) <= 3)
-		if(energyPiles.length > 0) {
-			let target = creep.pos.findClosestByRange(energyPiles);
-			if(creep.pos.isNearTo(target)) {
-				creep.takeResource(target, RESOURCE_ENERGY);
+		if(energySupply) {
+			if(creep.pos.isNearTo(energySupply)) {
+				creep.takeResource(energySupply, RESOURCE_ENERGY);
 			} else {
-				creep.blindMoveTo(target);
+				creep.blindMoveTo(energySupply);
 			}
 		} else {
-			creep.yieldRoad(source);
+			creep.yieldRoad(this.flag);
 			creep.say('waiting');
 		}
 	}
