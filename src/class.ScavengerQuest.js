@@ -66,8 +66,8 @@ class ScavengerQuest extends Quest {
 		let findResource = () => {
 			let resourceSources = [];
 			resourceSources = resourceSources.concat(
-				// TODO: ignore piles under drop miners
-				_.filter(creep.room.findDroppedResources(), (r) => r.amount > 20)
+				// TODO: ignore piles under drop miners specifically
+				_.filter(creep.room.findDroppedResources(), (r) => r.amount > 20 && r.pos.lookFor(LOOK_CREEPS).length === 0)
 			);
 			resourceSources = resourceSources.concat(
 				_.filter(creep.room.findTombstones(), (t) => t.store.getUsedCapacity() > 0)
