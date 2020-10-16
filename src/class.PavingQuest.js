@@ -154,6 +154,8 @@ class PavingQuest extends Quest {
 		}
 
 		this.pavers = [];
+
+		this.builders = [];
 	}
 
 	runCensus() {
@@ -164,12 +166,26 @@ class PavingQuest extends Quest {
 		}
 		// TODO: only build with less MOVE parts after colony is paved
 		this.pavers = this.attendance("paver_" + this.id, this.spawnGroup.workerBodyRatio(1, 3, 4, 1, this.memory.cache.partsRequired), 1, options);
+
+		let maxBuilders = 1;
+		if(this.memory.cache.colonyPaved) {
+			maxBuilders = 0;
+		}
+
+		// TODO: check percentage of swamp tiles and use more move parts if above threshold
+		this.builders = this.attendance("pavingBuilder_" + this.id, this.spawnGroup.workerBodyRatio(1, 3, 4, 1, 5), maxBuilders, options);
 	}
 
 	runActivities() {
 		for(let creep of this.pavers) {
 			if(!creep.spawning) {
-				this.paverActions(creep)
+				this.paverActions(creep);
+			}
+		}
+
+		for(let creep of this.builders) {
+			if(!creep.spawning) {
+				this.builderActions(creep);
 			}
 		}
 	}
@@ -286,6 +302,153 @@ class PavingQuest extends Quest {
 			};
 			let forgetRoadUnderConstruction = (s) => s.progress === s.progressTotal;
 			target = creep.rememberStructure(findRoadUnderConstruction, forgetRoadUnderConstruction, REMEMBER_CONSTRUCTION_KEY);
+		}
+
+		if(!target) {
+			// no roads to repair or build. fill up and head to flag
+			let isFull = creep.store.getUsedCapacity() === creep.store.getCapacity();
+			creep.memory.hasLoad = isFull;
+			if(isFull) {
+				if(creep.pos.inRangeTo(this.flag, 3)) {
+					creep.say('idle');
+					creep.yieldRoad(this.flag);
+				} else {
+					creep.blindMoveTo(this.flag);
+				}
+			}
+			return;
+		}
+
+		// and I have a target
+
+		let range = creep.pos.getRangeTo(target);
+		if(range > 3) {
+			creep.blindMoveTo(target);
+			// repair any damaged road I'm standing on
+			let road = creep.pos.lookForStructure(STRUCTURE_ROAD);
+			if(road && road.hits < road.hitsMax - 100) {
+				creep.repair(road);
+			}
+			return;
+		}
+
+		// and I'm in range
+
+		if(target instanceof StructureRoad) {
+			creep.repair(target);
+		} else if(target instanceof ConstructionSite) {
+			creep.build(target);
+		} else {
+			creep.errorLog(`unknown target: ${target}`, ERR_INVALID_TARGET, 5);
+			delete creep.memory[REMEMBER_ROAD_KEY];
+			delete creep.memory[REMEMBER_CONSTRUCTION_KEY];
+		}
+		creep.yieldRoad(target);
+	}
+
+	builderActions(creep) {
+		if(creep.fleeHostiles()) {
+			return;
+		}
+
+		if(!creep.hasLoad()) {
+			let findEnergy = () => {
+				let energySources = [];
+				if(creep.room.storage && creep.room.storage.store.getUsedCapacity(RESOURCE_ENERGY) > STORAGE_THRESHOLD) {
+					energySources.push(creep.room.storage);
+				}
+				if(creep.room.terminal && creep.room.terminal.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+					energySources.push(creep.room.terminal);
+				}
+				// TODO: check for minimum pile size based on creep's carry capacity
+				energySources = energySources.concat(
+					_.filter(creep.room.findDroppedResources(), (r) => r.resourceType === RESOURCE_ENERGY && r.amount > 20)
+				);
+				energySources = energySources.concat(
+					_.filter(creep.room.findTombstones(), (t) => t.store.getUsedCapacity(RESOURCE_ENERGY) > 0)
+				);
+				energySources = energySources.concat(
+					_.filter(creep.room.findRuins(), (r) => r.store.getUsedCapacity(RESOURCE_ENERGY) > 0)
+				);
+				energySources = energySources.concat(
+					_.filter(creep.room.findStructures(STRUCTURE_CONTAINER), (s) => s.store.getUsedCapacity(RESOURCE_ENERGY) > 0)
+				);
+				energySources = energySources.concat(
+					_.filter(creep.room.findStructures(STRUCTURE_LINK), (s) => s.store.getUsedCapacity(RESOURCE_ENERGY) > 0)
+				);
+				if(energySources.length > 0) {
+					return creep.pos.findClosestByPath(energySources);
+				}
+			};
+			let forgetEnergy = (e) => {
+				if(e instanceof Resource) {
+					if(e.amount > 20) {
+						return false;
+					}
+				} else if(e.store && e.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
+					return false;
+				}
+				return true;
+			};
+			let energySource = creep.rememberStructure(findEnergy, forgetEnergy, REMEMBER_ENERGY_KEY, true);
+
+			if(energySource) {
+				if(creep.pos.isNearTo(energySource)) {
+					creep.takeResource(energySource, RESOURCE_ENERGY);
+					delete creep.memory[REMEMBER_ENERGY_KEY];
+				} else {
+					creep.blindMoveTo(energySource);
+				}
+			} else {
+				creep.say("no energy");
+				creep.idleOffRoad(this.flag);
+			}
+			return;
+		}
+
+		// I'm in the room and I have energy
+
+		let findRoadUnderConstruction = () => {
+			let roadSites = creep.room.findConstructionSitesByType(STRUCTURE_ROAD);
+			if(roadSites.length) {
+				return creep.pos.findClosestByPath(roadSites);
+			}
+
+			this.maintainRoomsList.forEach(
+				roomName => {
+					let room = Game.rooms[roomName];
+					if(room) {
+						roadSites = roadSites.concat(room.findConstructionSitesByType(STRUCTURE_ROAD));
+					}
+				}
+			);
+			return _.first(roadSites);
+		};
+		let forgetRoadUnderConstruction = (s) => s.progress === s.progressTotal;
+		let target = creep.rememberStructure(findRoadUnderConstruction, forgetRoadUnderConstruction, REMEMBER_CONSTRUCTION_KEY);
+
+		if(!target) {
+			// look for roads to repair if none to build
+			let findRoad = () => {
+				let roads = _.filter(creep.room.findStructures(STRUCTURE_ROAD), (s) => s.hits < s.hitsMax - 1000);
+				if(roads.length) {
+					return creep.pos.findClosestByPath(roads);
+				}
+
+				this.maintainRoomsList.forEach(
+					roomName => {
+						let room = Game.rooms[roomName];
+						if(room) {
+							roads = roads.concat(
+								_.filter(room.findStructures(STRUCTURE_ROAD), (s) => s.hits < s.hitsMax - 1000)
+							);
+						}
+					}
+				);
+				return _.first(roads);
+			};
+			let forgetRoad = (s) => s.hits === s.hitsMax;
+			target = creep.rememberStructure(findRoad, forgetRoad, REMEMBER_ROAD_KEY);
 		}
 
 		if(!target) {
