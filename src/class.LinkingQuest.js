@@ -187,6 +187,9 @@ class LinkingQuest extends Quest {
 				} else if(roomTerminal && roomTerminal.store.getUsedCapacity(RESOURCE_ENERGY) > TERMINAL_MINIMUM) {
 					let energy = Math.min(roomTerminal.store.getUsedCapacity(RESOURCE_ENERGY) - TERMINAL_MINIMUM, creep.store.getFreeCapacity(RESOURCE_ENERGY));
 					creep.withdraw(roomTerminal, RESOURCE_ENERGY, energy);
+				} else if(roomTerminal && roomTerminal.store.getUsedCapacity(RESOURCE_ENERGY) < TERMINAL_MINIMUM && this.storage.store.getUsedCapacity(RESOURCE_ENERGY) > STORAGE_MINIMUM) {
+					let energy = Math.min(TERMINAL_MINIMUM - roomTerminal.store.getUsedCapacity(RESOURCE_ENERGY), creep.store.getFreeCapacity(RESOURCE_ENERGY));
+					creep.withdraw(this.storage, RESOURCE_ENERGY, energy);
 				}
 			}
 		} else {
